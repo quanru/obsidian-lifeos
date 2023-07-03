@@ -1,13 +1,27 @@
 import {
   App,
   Editor,
+  MarkdownPostProcessorContext,
   MarkdownView,
   Modal,
   Notice,
   Plugin,
+  PluginManifest,
   PluginSettingTab,
   Setting,
 } from 'obsidian';
+import {
+  DataviewApi,
+  getAPI,
+  isPluginEnabled,
+} from 'obsidian-dataview';
+
+import TaskRecordList from 'src/views/TaskRecordList';
+import TaskDoneList from 'src/views/TaskDoneList';
+import AreaList from 'src/views/AreaList';
+import ProjectList from 'src/views/ProjectList';
+import { Project } from 'src/para/Project';
+import { Area } from 'src/para/Area';
 
 // Remember to rename these classes and interfaces!
 
@@ -21,9 +35,27 @@ const DEFAULT_SETTINGS: MyPluginSettings = {
 
 export default class MyPlugin extends Plugin {
   settings: MyPluginSettings;
+  dataviewAPI: DataviewApi | undefined;
+
+  constructor(app: App, manifest: PluginManifest) {
+    super(app, manifest);
+    if (!isPluginEnabled(app)) {
+      new Notice('You need to install dataview first!');
+      throw Error('dataview is not available!');
+    }
+
+    this.app = app;
+    this.dataviewAPI = getAPI(app);
+
+    if (!this.dataviewAPI) {
+      new Notice('Dataview API enable failed!');
+      throw Error('dataview api enable failed!');
+    }
+  }
 
   async onload() {
     await this.loadSettings();
+    this.loadGlobalHelpers();
 
     // This creates an icon in the left ribbon.
     const ribbonIconEl = this.addRibbonIcon(
@@ -92,6 +124,32 @@ export default class MyPlugin extends Plugin {
     this.registerInterval(
       window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000)
     );
+
+    const views = {
+      ProjectList,
+      AreaList,
+      TaskRecordList,
+      TaskDoneList,
+    }
+
+    this.registerMarkdownCodeBlockProcessor(
+      'periodic-para',
+      (
+        source: keyof typeof views,
+        el: HTMLElement,
+        ctx: MarkdownPostProcessorContext
+      ) => {
+        if (!source) {
+          throw new Error(`Please provide a view name!`);
+        }
+
+        if (!Object.keys(views).includes(source)) {
+          throw new Error(`There is no view for ${source} in this plugin`);
+        } 
+        
+        return views[source].bind(this)(source, el, ctx);
+      }
+    );
   }
 
   onunload() {}
@@ -102,6 +160,12 @@ export default class MyPlugin extends Plugin {
 
   async saveSettings() {
     await this.saveData(this.settings);
+  }
+
+  loadGlobalHelpers() {
+    (window as any).PeriodicPARA = {};
+    (window as any).PeriodicPARA.Project = new Project(this.app);
+    (window as any).PeriodicPARA.Area = new Area(this.app);
   }
 }
 
