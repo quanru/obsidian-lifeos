@@ -3,9 +3,8 @@
   "name": "Periodic PARA Plugin",
   "version": "1.0.0",
   "minAppVersion": "0.15.0",
-  "description": "This is a sample plugin for Obsidian. This plugin demonstrates some of the capabilities of the Obsidian API.",
-  "author": "Obsidian",
-  "authorUrl": "https://obsidian.md",
-  "fundingUrl": "https://obsidian.md/pricing",
+  "description": "This is a plugin to assist in practicing the PARA system with periodic notes.",
+  "author": "YiBing Lin <quanruzhuoxiu@gmail.com>",
+  "authorUrl": "https://quanru.github.io",
   "isDesktopOnly": false
 }
