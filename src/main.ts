@@ -52,7 +52,7 @@ export default class MyPlugin extends Plugin {
 
     this.loadHelpers();
     this.loadGlobalHelpers();
-    this.addSettingTab(new SettingTab(this.app, this));
+    // this.addSettingTab(new SettingTab(this.app, this));
 
     const views = {
       ProjectList: this.project.list,
@@ -122,17 +122,17 @@ class SettingTab extends PluginSettingTab {
 
     containerEl.empty();
 
-    containerEl.createEl('h2', { text: 'Settings for my awesome plugin.' });
+    containerEl.createEl('h2', { text: 'Settings for Periodic PARA plugin.' });
 
     new Setting(containerEl)
-      .setName('Setting #1')
-      .setDesc("It's a secret")
+      .setName('Periodic notes folder')
+      .setDesc("It's a Periodic notes folder")
       .addText((text) =>
         text
-          .setPlaceholder('Enter your secret')
+          .setPlaceholder('Enter your Periodic notes folder')
           .setValue(this.plugin.settings.periodicNotesPath)
           .onChange(async (value) => {
-            console.log('Secret: ' + value);
+            console.log('Periodic Notes folder: ' + value);
             this.plugin.settings.periodicNotesPath = value;
             await this.plugin.saveSettings();
           })

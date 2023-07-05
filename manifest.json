@@ -1,10 +1,11 @@
 {
   "id": "periodic-para",
-  "name": "Periodic PARA Plugin",
-  "version": "1.0.0-beta.3",
+  "name": "Periodic PARA",
+  "version": "1.0.0-beta.4",
   "minAppVersion": "0.15.0",
   "description": "This is a plugin to assist in practicing the PARA system with periodic notes.",
   "author": "YiBing Lin <quanruzhuoxiu@gmail.com>",
   "authorUrl": "https://quanru.github.io",
+  "fundingUrl": "https://www.buymeacoffee.com/leyang",
   "isDesktopOnly": false
 }
