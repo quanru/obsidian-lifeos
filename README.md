@@ -59,7 +59,7 @@ Generate a list of README.md snapshots in the specified directory.
 
 ~~~markdown
 <% PeriodicPARA.File.list('1. Projects') %>
-```
+~~~
 
 to
 
