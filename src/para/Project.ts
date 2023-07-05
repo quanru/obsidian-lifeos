@@ -1,4 +1,5 @@
-import { App, TFile, moment } from 'obsidian';
+import type { App } from 'obsidian';
+import { TFile, moment } from 'obsidian';
 import { Date } from 'src/periodic/Date';
 import {
   Component,
@@ -81,10 +82,11 @@ export class Project {
         `${this.settings.periodicNotesPath}/${momentDay.year()}/Daily/${String(
           momentDay.month() + 1
         ).padStart(2, '0')}/${momentDay.format('YYYY-MM-DD')}.md`
-      ) as TFile;
-      const reg = new RegExp(`${scope[0]}([\\s\\S]*)${scope[1]}`);
+      );
 
-      if (file) {
+      if (file instanceof TFile) {
+        const reg = new RegExp(`${scope[0]}([\\s\\S]*)${scope[1]}`);
+
         let todayTotalTime = '0hr0';
         tasks.push(async () => {
           const fileContent = await this.app.vault.read(file);
@@ -124,13 +126,13 @@ export class Project {
 
           totalTime = this.timeAdd(totalTime, todayTotalTime);
         });
-      }
 
-      if (day === to) {
-        break;
-      }
+        if (day === to) {
+          break;
+        }
 
-      day = momentDay.add(1, 'day').format('YYYY-MM-DD');
+        day = momentDay.add(1, 'day').format('YYYY-MM-DD');
+      }
     }
 
     await Promise.all(tasks.map((task) => task()));
@@ -183,5 +185,5 @@ export class Project {
       ctx.sourcePath,
       new Component()
     );
-  }
+  };
 }

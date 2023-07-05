@@ -1,4 +1,5 @@
-import type { App, TFile, TFolder } from 'obsidian';
+import type { App, TFile } from 'obsidian';
+import { TFolder } from 'obsidian';
 import { PluginSettings } from 'src/type';
 
 export class File {
@@ -11,15 +12,17 @@ export class File {
   }
 
   list(fileFolder: string) {
-    const READMEList = (
-      this.app.vault.getAbstractFileByPath(fileFolder) as TFolder
-    ).children
-      .sort()
-      .filter((area: TFile) => area.extension !== 'md')
-      .map((area, index: number) => {
-        return `${index + 1}. [[${area.path}/README|${area.name}]]`;
-      });
+    const file = this.app.vault.getAbstractFileByPath(fileFolder);
 
-    return READMEList.join('\n');
+    if (file instanceof TFolder) {
+      const READMEList = file.children
+        .sort()
+        .filter((area: TFile) => area.extension !== 'md')
+        .map((area, index: number) => {
+          return `${index + 1}. [[${area.path}/README|${area.name}]]`;
+        });
+
+      return READMEList.join('\n');
+    }
   }
 }

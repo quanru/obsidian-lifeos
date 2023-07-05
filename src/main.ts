@@ -1,11 +1,8 @@
-import {
+import { Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import type {
   App,
   MarkdownPostProcessorContext,
-  Notice,
-  Plugin,
   PluginManifest,
-  PluginSettingTab,
-  Setting,
 } from 'obsidian';
 import { DataviewApi, getAPI, isPluginEnabled } from 'obsidian-dataview';
 
@@ -20,7 +17,7 @@ const DEFAULT_SETTINGS: PluginSettings = {
   periodicNotesPath: 'PeriodicNotes',
 };
 
-export default class MyPlugin extends Plugin {
+export default class PeriodicPARA extends Plugin {
   settings: PluginSettings;
   project: Project;
   area: Area;
@@ -110,9 +107,9 @@ export default class MyPlugin extends Plugin {
 }
 
 class SettingTab extends PluginSettingTab {
-  plugin: MyPlugin;
+  plugin: PeriodicPARA;
 
-  constructor(app: App, plugin: MyPlugin) {
+  constructor(app: App, plugin: PeriodicPARA) {
     super(app, plugin);
     this.plugin = plugin;
   }

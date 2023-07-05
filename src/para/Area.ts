@@ -1,12 +1,7 @@
 import type { DateType, PluginSettings } from 'src/type';
 import { Date } from 'src/periodic/Date';
-import {
-  App,
-  Component,
-  MarkdownPostProcessorContext,
-  MarkdownRenderer,
-  TFile,
-} from 'obsidian';
+import type { App, MarkdownPostProcessorContext } from 'obsidian';
+import { Component, MarkdownRenderer, TFile } from 'obsidian';
 
 export class Area {
   app: App;
@@ -37,26 +32,31 @@ export class Area {
       const quarter = quarterList[index];
       const file = this.app.vault.getAbstractFileByPath(
         `${this.settings.periodicNotesPath}/${year}/${year}-${quarter}.md`
-      ) as TFile;
-      const reg = new RegExp(`${scope[0]}([\\s\\S]*)${scope[1]}`);
+      );
 
-      if (file) {
-        tasks.push(async () => {
-          const fileContent = await this.app.vault.read(file);
-          const regMatch = fileContent.match(reg);
-          const areaContent = regMatch?.length ? regMatch[1]?.split('\n') : [];
-          areaContent.map((area) => {
-            if (!area) {
-              return;
-            }
+      if (file instanceof TFile) {
+        const reg = new RegExp(`${scope[0]}([\\s\\S]*)${scope[1]}`);
 
-            const realArea = (area.match(/\[\[(.*)\|?(.*)\]\]/) ||
-              [])[1]?.replace(/\|.*/, '');
-            if (realArea && !areaList.includes(realArea)) {
-              areaList.push(realArea);
-            }
+        if (file) {
+          tasks.push(async () => {
+            const fileContent = await this.app.vault.read(file);
+            const regMatch = fileContent.match(reg);
+            const areaContent = regMatch?.length
+              ? regMatch[1]?.split('\n')
+              : [];
+            areaContent.map((area) => {
+              if (!area) {
+                return;
+              }
+
+              const realArea = (area.match(/\[\[(.*)\|?(.*)\]\]/) ||
+                [])[1]?.replace(/\|.*/, '');
+              if (realArea && !areaList.includes(realArea)) {
+                areaList.push(realArea);
+              }
+            });
           });
-        });
+        }
       }
     }
 
