@@ -126,13 +126,13 @@ export class Project {
 
           totalTime = this.timeAdd(totalTime, todayTotalTime);
         });
-
-        if (day === to) {
-          break;
-        }
-
-        day = momentDay.add(1, 'day').format('YYYY-MM-DD');
       }
+
+      if (day === to) {
+        break;
+      }
+
+      day = momentDay.add(1, 'day').format('YYYY-MM-DD');
     }
 
     await Promise.all(tasks.map((task) => task()));
