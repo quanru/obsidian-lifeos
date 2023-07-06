@@ -1,11 +1,12 @@
 # Obsidian Periodic PARA
 
-This is a plugin for [LifeOS](https://sspai.com/post/80802), which assist in practicing the PARA system with periodic notes.
+- This is a plugin for [LifeOS](https://sspai.com/post/80802), which assist in practicing the PARA system with periodic notes.
+- You can download the [LifeOS-example](https://github.com/quanru/obsidian-example-LifeOS) to experience it.
 
 ## Installation
 
 #### BRAT
-Periodic PARA has not been available in the Obsidian community plugin browser, but I already submitted it for review. You can install it by [BRAT](https://github.com/TfTHacker/obsidian42-brat).
+Periodic PARA has not been available in the Obsidian community plugin browser, but I already submitted it for [review](https://github.com/obsidianmd/obsidian-releases/pull/2117). You can install it by [BRAT](https://github.com/TfTHacker/obsidian42-brat).
 
 #### Manual
 Go to the [releases](https://github.com/quanru/obsidian-periodic-para/releases) and download the latest `main.js` and `manifest.json` files. Create a folder called `periodic-para` inside `.obsidian/plugins` and place both files in it.
