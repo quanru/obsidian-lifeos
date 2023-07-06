@@ -4,8 +4,8 @@ This is a plugin for [LifeOS](https://sspai.com/post/80802), which assist in pra
 
 ## Installation
 
-#### Recommended
-Periodic PARA is available in the Obsidian community plugin browser.
+#### BRAT
+Periodic PARA has not been available in the Obsidian community plugin browser, but I already submitted it for review. You can install it by [BRAT](https://github.com/TfTHacker/obsidian42-brat).
 
 #### Manual
 Go to the [releases](https://github.com/quanru/obsidian-periodic-para/releases) and download the latest `main.js` and `manifest.json` files. Create a folder called `periodic-para` inside `.obsidian/plugins` and place both files in it.
