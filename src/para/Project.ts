@@ -1,13 +1,13 @@
 import type { App } from 'obsidian';
+import type { TaskConditionType, PluginSettings } from '../type';
+
 import { TFile, moment } from 'obsidian';
-import { Date } from 'src/periodic/Date';
+import { Date } from '../periodic/Date';
 import {
   Component,
   MarkdownPostProcessorContext,
   MarkdownRenderer,
 } from 'obsidian';
-import type { TaskConditionType, PluginSettings } from 'src/type';
-
 export class Project {
   app: App;
   date: Date;
@@ -152,7 +152,7 @@ export class Project {
     };
   }
 
-  list = async (
+  listByTime = async (
     source: string,
     el: HTMLElement,
     ctx: MarkdownPostProcessorContext
@@ -179,7 +179,7 @@ export class Project {
         }`
       );
     });
-    MarkdownRenderer.renderMarkdown(
+    return MarkdownRenderer.renderMarkdown(
       list.join('\n'),
       div,
       ctx.sourcePath,

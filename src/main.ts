@@ -6,12 +6,15 @@ import type {
 } from 'obsidian';
 import { DataviewApi, getAPI, isPluginEnabled } from 'obsidian-dataview';
 
-import { Project } from 'src/para/Project';
-import { Area } from 'src/para/Area';
-import { Task } from 'src/periodic/Task';
-import { File } from 'src/periodic/File';
-import { Date } from 'src/periodic/Date';
-import type { PluginSettings } from 'src/type';
+import { Project } from './para/Project';
+import { Area } from './para/Area';
+import { Task } from './periodic/Task';
+import { Bullet } from './periodic/Bullet';
+import { File } from './periodic/File';
+import { Date } from './periodic/Date';
+import type { PluginSettings } from './type';
+import { ERROR_MESSAGES } from './constant';
+import { renderError } from './util';
 
 const DEFAULT_SETTINGS: PluginSettings = {
   periodicNotesPath: 'PeriodicNotes',
@@ -23,21 +26,22 @@ export default class PeriodicPARA extends Plugin {
   area: Area;
   task: Task;
   file: File;
+  bullet: Bullet;
   date: Date;
   dataview: DataviewApi;
 
   constructor(app: App, manifest: PluginManifest) {
     super(app, manifest);
     if (!isPluginEnabled(app)) {
-      new Notice('You need to install dataview first!');
-      throw Error('dataview is not available!');
+      new Notice(ERROR_MESSAGES.NO_DATAVIEW_INSTALL);
+      throw Error(ERROR_MESSAGES.NO_DATAVIEW_INSTALL);
     }
 
     const dataviewApi = getAPI(app);
 
     if (!dataviewApi) {
-      new Notice('Dataview API enable failed!');
-      throw Error('dataview api enable failed!');
+      new Notice(ERROR_MESSAGES.FAILED_DATAVIEW_API);
+      throw Error(ERROR_MESSAGES.FAILED_DATAVIEW_API);
     }
 
     this.app = app;
@@ -52,10 +56,14 @@ export default class PeriodicPARA extends Plugin {
     // this.addSettingTab(new SettingTab(this.app, this));
 
     const views = {
-      ProjectList: this.project.list,
-      AreaList: this.area.list,
-      TaskRecordList: this.task.recordList,
-      TaskDoneList: this.task.doneList,
+      // views by time -> time context -> periodic notes
+      ProjectListByTime: this.project.listByTime,
+      AreaListByTime: this.area.listByTime,
+      TaskRecordListByTime: this.task.recordListByTime,
+      TaskDoneListByTime: this.task.doneListByTime,
+      // views by tag -> topic context -> para
+      TaskListByTag: this.task.listByTag,
+      BulletListByTag: this.bullet.listByTag,
     };
 
     this.registerMarkdownCodeBlockProcessor(
@@ -65,15 +73,28 @@ export default class PeriodicPARA extends Plugin {
         el: HTMLElement,
         ctx: MarkdownPostProcessorContext
       ) => {
-        if (!source) {
-          throw new Error(`Please provide a view name!`);
+        const view = source.trim() as keyof typeof views;
+
+        if (!view) {
+          return renderError(
+            ERROR_MESSAGES.NO_VIEW_PROVIDED,
+            el.createEl('div'),
+            ctx.sourcePath
+          );
         }
 
-        if (!Object.keys(views).includes(source)) {
-          throw new Error(`There is no view for ${source} in this plugin`);
+        if (!Object.keys(views).includes(view)) {
+          return renderError(
+            `${ERROR_MESSAGES.NO_VIEW_EXISTED}: ${view}`,
+            el.createEl('div'),
+            ctx.sourcePath
+          );
         }
 
-        return views[source](source, el, ctx);
+        const callback =
+          views[view] || views[`${view}ByTime` as keyof typeof views];
+
+        return callback(view, el, ctx);
       }
     );
   }
@@ -94,6 +115,7 @@ export default class PeriodicPARA extends Plugin {
     this.task = new Task(this.app, this.settings, this.dataview);
     this.file = new File(this.app, this.settings);
     this.date = new Date(this.app, this.settings);
+    this.bullet = new Bullet(this.app, this.settings, this.dataview);
   }
 
   loadGlobalHelpers() {
@@ -102,6 +124,7 @@ export default class PeriodicPARA extends Plugin {
     (window as any).PeriodicPARA.Area = this.area;
     (window as any).PeriodicPARA.Task = this.task;
     (window as any).PeriodicPARA.File = this.file;
+    (window as any).PeriodicPARA.Bullet = this.bullet;
     (window as any).PeriodicPARA.Date = this.date;
   }
 }
