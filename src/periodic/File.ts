@@ -1,6 +1,7 @@
 import type { App, TFile } from 'obsidian';
+import type { PluginSettings } from '../type';
+
 import { TFolder } from 'obsidian';
-import { PluginSettings } from 'src/type';
 
 export class File {
   app: App;

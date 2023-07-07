@@ -24,7 +24,7 @@ Periodic PARA works by writing markdown code block, which query project, area, t
 
 ~~~markdown
 ```periodic-para
-TaskDoneList
+TaskDoneListByTime
 ```
 ~~~
 
@@ -32,7 +32,7 @@ TaskDoneList
 
 ~~~markdown
 ```periodic-para
-TaskRecordList
+TaskRecordListByTime
 ```
 ~~~
 
@@ -40,7 +40,7 @@ TaskRecordList
 
 ~~~markdown
 ```periodic-para
-ProjectList
+ProjectListByTime
 ```
 ~~~
 
@@ -48,7 +48,7 @@ ProjectList
 
 ~~~markdown
 ```periodic-para
-AreaList
+AreaListByTime
 ```
 ~~~
 

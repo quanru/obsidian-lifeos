@@ -1,6 +1,7 @@
-import type { DateType, PluginSettings } from 'src/type';
-import { Date } from 'src/periodic/Date';
 import type { App, MarkdownPostProcessorContext } from 'obsidian';
+import type { DateType, PluginSettings } from '../type';
+
+import { Date } from '../periodic/Date';
 import { Component, MarkdownRenderer, TFile } from 'obsidian';
 
 export class Area {
@@ -65,7 +66,7 @@ export class Area {
     return areaList;
   }
 
-  list = async (
+  listByTime = async (
     source: string,
     el: HTMLElement,
     ctx: MarkdownPostProcessorContext
@@ -86,7 +87,7 @@ export class Area {
       );
     });
 
-    MarkdownRenderer.renderMarkdown(
+    return MarkdownRenderer.renderMarkdown(
       list.join('\n'),
       div,
       ctx.sourcePath,
