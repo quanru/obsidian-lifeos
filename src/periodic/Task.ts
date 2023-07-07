@@ -85,7 +85,7 @@ export class Task {
     const filepath = ctx.sourcePath;
     const {
       frontmatter: { tags },
-    } = this.dataview.page(filepath)?.file;
+    } = this.dataview.page(filepath)?.file || {};
     const component = new Component();
     const containerEl = el.createEl('div');
 
@@ -107,6 +107,7 @@ export class Task {
 
     const markdown = await this.dataview.tryQueryMarkdown(`
 TASK
+FROM -"Templates"
 WHERE ${where} AND file.path != "${filepath}"
 SORT completed ASC
     `);
