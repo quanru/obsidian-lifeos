@@ -1,6 +1,6 @@
 import { moment } from 'obsidian';
 import type { App } from 'obsidian';
-import type { DateType, DateRangeType, PluginSettings } from 'src/type';
+import type { DateType, DateRangeType, PluginSettings } from '../type';
 
 export class Date {
   app: App;

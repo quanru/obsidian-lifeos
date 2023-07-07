@@ -1,9 +1,13 @@
-import { moment, Component } from 'obsidian';
 import type { App, MarkdownPostProcessorContext } from 'obsidian';
-import { DataviewApi, STask } from 'obsidian-dataview';
+import type { TaskConditionType, PluginSettings } from '../type';
 
-import { Date } from 'src/periodic/Date';
-import { TaskStatusType, TaskConditionType, PluginSettings } from 'src/type';
+import { TaskStatusType } from '../type';
+import { moment, Component, MarkdownRenderer } from 'obsidian';
+import { DataviewApi, STask } from 'obsidian-dataview';
+import { ERROR_MESSAGES } from '../constant';
+
+import { Date } from '../periodic/Date';
+import { renderError } from '../util';
 
 export class Task {
   app: App;
@@ -17,7 +21,7 @@ export class Task {
     this.date = new Date(this.app, this.settings);
   }
 
-  doneList = (
+  doneListByTime = (
     source: string,
     el: HTMLElement,
     ctx: MarkdownPostProcessorContext
@@ -40,7 +44,7 @@ export class Task {
     this.dataview.taskList(tasks, false, el, c);
   };
 
-  recordList = (
+  recordListByTime = (
     source: string,
     el: HTMLElement,
     ctx: MarkdownPostProcessorContext
@@ -55,10 +59,9 @@ export class Task {
       })
     );
     // 收集日期范围内的日记文件
-    const c = new Component();
+    const component = new Component();
 
-    c.load();
-    this.dataview.taskList(tasks, false, el, c);
+    this.dataview.taskList(tasks, false, el, component);
 
     // 收集日期范围内的非日记文件
     const files = this.date.files(parsed);
@@ -70,9 +73,50 @@ export class Task {
         .file.tasks.where((task: STask) => task);
       const c = new Component();
 
-      c.load();
       this.dataview.taskList(tasks, false, el, c);
     }
+  };
+
+  listByTag = async (
+    source: string,
+    el: HTMLElement,
+    ctx: MarkdownPostProcessorContext
+  ) => {
+    const filepath = ctx.sourcePath;
+    const {
+      frontmatter: { tags },
+    } = this.dataview.page(filepath)?.file;
+    const component = new Component();
+    const containerEl = el.createEl('div');
+
+    if (!tags) {
+      return renderError(
+        ERROR_MESSAGES.NO_FRONT_MATTER_TAG,
+        containerEl,
+        ctx.sourcePath
+      );
+    }
+
+    const where = tags
+      .map((tag: string[], index: number) => {
+        return `contains(tags, "#${tag}") ${
+          index === tags.length - 1 ? '' : 'OR'
+        }`;
+      })
+      .join(' ');
+
+    const markdown = await this.dataview.tryQueryMarkdown(`
+TASK
+WHERE ${where} AND file.path != "${filepath}"
+SORT completed ASC
+    `);
+
+    return MarkdownRenderer.renderMarkdown(
+      markdown,
+      containerEl,
+      ctx.sourcePath,
+      component
+    );
   };
 
   filter(
