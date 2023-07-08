@@ -74,6 +74,7 @@ export default class PeriodicPARA extends Plugin {
         ctx: MarkdownPostProcessorContext
       ) => {
         const view = source.trim() as keyof typeof views;
+        const legacyView = `${view}ByTime` as keyof typeof views;
 
         if (!view) {
           return renderError(
@@ -83,7 +84,10 @@ export default class PeriodicPARA extends Plugin {
           );
         }
 
-        if (!Object.keys(views).includes(view)) {
+        if (
+          !Object.keys(views).includes(view) &&
+          !Object.keys(views).includes(legacyView)
+        ) {
           return renderError(
             `${ERROR_MESSAGES.NO_VIEW_EXISTED}: ${view}`,
             el.createEl('div'),
@@ -91,8 +95,7 @@ export default class PeriodicPARA extends Plugin {
           );
         }
 
-        const callback =
-          views[view] || views[`${view}ByTime` as keyof typeof views];
+        const callback = views[view] || views[legacyView];
 
         return callback(view, el, ctx);
       }
