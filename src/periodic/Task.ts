@@ -85,7 +85,7 @@ export class Task {
     const filepath = ctx.sourcePath;
     const {
       frontmatter: { tags },
-    } = this.dataview.page(filepath)?.file || {};
+    } = this.dataview.page(filepath)?.file || { frontmatter: {} };
     const component = new Component();
     const containerEl = el.createEl('div');
 

@@ -28,7 +28,7 @@ export class Bullet {
     const filepath = ctx.sourcePath;
     const {
       frontmatter: { tags },
-    } = this.dataview.page(filepath)?.file || {};
+    } = this.dataview.page(filepath)?.file || { frontmatter: {} };
     const component = new Component();
     const containerEl = el.createEl('div');
 
@@ -52,17 +52,22 @@ export class Bullet {
         }`;
       })
       .join(' ');
-    const markdown = await this.dataview.tryQueryMarkdown(`
+    const markdown = await this.dataview.tryQueryMarkdown(
+      `
 TABLE WITHOUT ID rows.L.text AS "Text", rows.file.link AS "File"
 FROM (${from}) AND -"Templates"
 FLATTEN file.lists AS L
 WHERE ${where} AND !L.task AND file.path != "${filepath}"
 GROUP BY file.link
 SORT rows.file.link DESC
-    `);
+    `
+    );
+    const formatedMarkdown = markdown
+      .replaceAll('\\\\', '\\')
+      .replaceAll('\n<', '<');
 
     return MarkdownRenderer.renderMarkdown(
-      markdown.replaceAll('\\|', '|'),
+      formatedMarkdown,
       el.createEl('div'),
       ctx.sourcePath,
       component
