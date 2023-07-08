@@ -62,12 +62,13 @@ GROUP BY file.link
 SORT rows.file.link DESC
     `
     );
-    const formatedMarkdown = markdown
+    const formattedMarkdown = markdown
       .replaceAll('\\\\', '\\')
       .replaceAll('\n<', '<');
 
+    component.load();
     return MarkdownRenderer.renderMarkdown(
-      formatedMarkdown,
+      formattedMarkdown,
       el.createEl('div'),
       ctx.sourcePath,
       component

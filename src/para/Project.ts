@@ -179,11 +179,16 @@ export class Project {
         }`
       );
     });
+
+    const component = new Component();
+
+    component.load();
+
     return MarkdownRenderer.renderMarkdown(
       list.join('\n'),
       div,
       ctx.sourcePath,
-      new Component()
+      component
     );
   };
 }

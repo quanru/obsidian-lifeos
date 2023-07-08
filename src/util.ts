@@ -7,6 +7,7 @@ export function renderError(
 ) {
   const component = new Component();
 
+  component.load();
   return MarkdownRenderer.renderMarkdown(
     msg,
     containerEl,

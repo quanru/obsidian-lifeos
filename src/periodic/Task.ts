@@ -38,10 +38,10 @@ export class Task {
         })
       )
       .sort((t: STask) => t.completion, 'asc');
-    const c = new Component();
+    const component = new Component();
 
-    c.load();
-    this.dataview.taskList(tasks, false, el, c);
+    component.load();
+    this.dataview.taskList(tasks, false, el, component);
   };
 
   recordListByTime = (
@@ -58,9 +58,11 @@ export class Task {
         ...condition,
       })
     );
+
     // 收集日期范围内的日记文件
     const component = new Component();
 
+    component.load();
     this.dataview.taskList(tasks, false, el, component);
 
     // 收集日期范围内的非日记文件
@@ -71,9 +73,10 @@ export class Task {
       const tasks = this.dataview
         .pages(`"${pages.join('" or "')}"`)
         .file.tasks.where((task: STask) => task);
-      const c = new Component();
+      const component = new Component();
 
-      this.dataview.taskList(tasks, false, el, c);
+      component.load();
+      this.dataview.taskList(tasks, false, el, component);
     }
   };
 
@@ -111,6 +114,8 @@ FROM -"Templates"
 WHERE ${where} AND file.path != "${filepath}"
 SORT completed ASC
     `);
+
+    component.load();
 
     return MarkdownRenderer.renderMarkdown(
       markdown,
