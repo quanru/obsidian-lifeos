@@ -1,7 +1,8 @@
 import type { App, MarkdownPostProcessorContext } from 'obsidian';
+import type { TableResult } from 'obsidian-dataview/lib/api/plugin-api';
 import { PluginSettings } from '../type';
 
-import { Component, MarkdownRenderer } from 'obsidian';
+import { Component } from 'obsidian';
 import { DataviewApi } from 'obsidian-dataview';
 
 import { File } from '../periodic/File';
@@ -52,26 +53,24 @@ export class Bullet {
         }`;
       })
       .join(' ');
-    const markdown = await this.dataview.tryQueryMarkdown(
+    const result = (await this.dataview.tryQuery(
       `
-TABLE WITHOUT ID rows.L.text AS "Text", rows.file.link AS "File"
+TABLE WITHOUT ID rows.L.text AS "Bullet", rows.file.link AS "File"
 FROM (${from}) AND -"Templates"
 FLATTEN file.lists AS L
 WHERE ${where} AND !L.task AND file.path != "${filepath}"
 GROUP BY file.link
 SORT rows.file.link DESC
     `
-    );
-    const formattedMarkdown = markdown
-      .replaceAll('\\\\', '\\')
-      .replaceAll('\n<', '<');
+    )) as TableResult;
 
     component.load();
-    return MarkdownRenderer.renderMarkdown(
-      formattedMarkdown,
+    return this.dataview.table(
+      result.headers,
+      result.values,
       el.createEl('div'),
-      ctx.sourcePath,
-      component
+      component,
+      ctx.sourcePath
     );
   };
 }

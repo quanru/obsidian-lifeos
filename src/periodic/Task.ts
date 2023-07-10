@@ -1,8 +1,9 @@
 import type { App, MarkdownPostProcessorContext } from 'obsidian';
 import type { TaskConditionType, PluginSettings } from '../type';
+import type { TaskResult } from 'obsidian-dataview/lib/api/plugin-api';
 
 import { TaskStatusType } from '../type';
-import { moment, Component, MarkdownRenderer } from 'obsidian';
+import { moment, Component } from 'obsidian';
 import { DataviewApi, STask } from 'obsidian-dataview';
 import { ERROR_MESSAGES } from '../constant';
 
@@ -52,32 +53,33 @@ export class Task {
     const filename = this.app.workspace.getActiveFile()?.basename;
     const parsed = this.date.parse(filename);
     const condition = this.date.days(parsed);
-    const tasks = this.dataview.pages('').file.tasks.where((t: STask) =>
+    let tasks = [];
+    // 收集日期范围内的日记文件
+    const dailyTasks = this.dataview.pages('').file.tasks.where((t: STask) =>
       this.filter(t, {
         date: TaskStatusType.RECORD,
         ...condition,
       })
     );
-
-    // 收集日期范围内的日记文件
-    const component = new Component();
-
-    component.load();
-    this.dataview.taskList(tasks, false, el, component);
+    
+    tasks= [...dailyTasks];
 
     // 收集日期范围内的非日记文件
     const files = this.date.files(parsed);
     const pages = Object.values(files).flat();
 
     if (pages.length) {
-      const tasks = this.dataview
+      const nonDailyTasks = this.dataview
         .pages(`"${pages.join('" or "')}"`)
         .file.tasks.where((task: STask) => task);
-      const component = new Component();
 
-      component.load();
-      this.dataview.taskList(tasks, false, el, component);
+      tasks = [...dailyTasks, ...nonDailyTasks];
     }
+
+    const component = new Component();
+
+    component.load();
+    this.dataview.taskList(tasks, false, el, component);
   };
 
   listByTag = async (
@@ -108,21 +110,16 @@ export class Task {
       })
       .join(' ');
 
-    const markdown = await this.dataview.tryQueryMarkdown(`
+    const { values: tasks } = await this.dataview.tryQuery(`
 TASK
 FROM -"Templates"
 WHERE ${where} AND file.path != "${filepath}"
 SORT completed ASC
-    `);
+    `) as TaskResult;
 
     component.load();
 
-    return MarkdownRenderer.renderMarkdown(
-      markdown,
-      containerEl,
-      ctx.sourcePath,
-      component
-    );
+    return this.dataview.taskList(tasks, false, el, component);
   };
 
   filter(
