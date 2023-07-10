@@ -5,6 +5,8 @@
 
 ## Installation
 
+> [Dataview](https://github.com/blacksmithgu/obsidian-dataview) is required, please install it first.
+
 #### BRAT
 Periodic PARA has not been available in the Obsidian community plugin browser, but I already submitted it for [review](https://github.com/obsidianmd/obsidian-releases/pull/2117). You can install it by [BRAT](https://github.com/TfTHacker/obsidian42-brat).
 
@@ -23,7 +25,7 @@ Periodic PARA works by writing markdown code block, which query project, area, t
 #### query tasks by done date
 
 ~~~markdown
-```periodic-para
+```PeriodicPARA
 TaskDoneListByTime
 ```
 ~~~
@@ -31,7 +33,7 @@ TaskDoneListByTime
 #### query tasks by record date
 
 ~~~markdown
-```periodic-para
+```PeriodicPARA
 TaskRecordListByTime
 ```
 ~~~
@@ -39,7 +41,7 @@ TaskRecordListByTime
 #### query projects by current date
 
 ~~~markdown
-```periodic-para
+```PeriodicPARA
 ProjectListByTime
 ```
 ~~~
@@ -47,7 +49,7 @@ ProjectListByTime
 #### query areas by current date
 
 ~~~markdown
-```periodic-para
+```PeriodicPARA
 AreaListByTime
 ```
 ~~~

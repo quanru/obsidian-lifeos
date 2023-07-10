@@ -65,41 +65,39 @@ export default class PeriodicPARA extends Plugin {
       TaskListByTag: this.task.listByTag,
       BulletListByTag: this.bullet.listByTag,
     };
+    const handler = (
+      source: keyof typeof views,
+      el: HTMLElement,
+      ctx: MarkdownPostProcessorContext
+    ) => {
+      const view = source.trim() as keyof typeof views;
+      const legacyView = `${view}ByTime` as keyof typeof views;
 
-    this.registerMarkdownCodeBlockProcessor(
-      'periodic-para',
-      (
-        source: keyof typeof views,
-        el: HTMLElement,
-        ctx: MarkdownPostProcessorContext
-      ) => {
-        const view = source.trim() as keyof typeof views;
-        const legacyView = `${view}ByTime` as keyof typeof views;
-
-        if (!view) {
-          return renderError(
-            ERROR_MESSAGES.NO_VIEW_PROVIDED,
-            el.createEl('div'),
-            ctx.sourcePath
-          );
-        }
-
-        if (
-          !Object.keys(views).includes(view) &&
-          !Object.keys(views).includes(legacyView)
-        ) {
-          return renderError(
-            `${ERROR_MESSAGES.NO_VIEW_EXISTED}: ${view}`,
-            el.createEl('div'),
-            ctx.sourcePath
-          );
-        }
-
-        const callback = views[view] || views[legacyView];
-
-        return callback(view, el, ctx);
+      if (!view) {
+        return renderError(
+          ERROR_MESSAGES.NO_VIEW_PROVIDED,
+          el.createEl('div'),
+          ctx.sourcePath
+        );
       }
-    );
+
+      if (
+        !Object.keys(views).includes(view) &&
+        !Object.keys(views).includes(legacyView)
+      ) {
+        return renderError(
+          `${ERROR_MESSAGES.NO_VIEW_EXISTED}: ${view}`,
+          el.createEl('div'),
+          ctx.sourcePath
+        );
+      }
+
+      const callback = views[view] || views[legacyView];
+
+      return callback(view, el, ctx);
+    };
+    this.registerMarkdownCodeBlockProcessor('PeriodicPARA', handler);
+    this.registerMarkdownCodeBlockProcessor('periodic-para', handler); // for backward compatibility
   }
 
   onunload() {}
@@ -145,7 +143,7 @@ class SettingTab extends PluginSettingTab {
 
     containerEl.empty();
 
-    containerEl.createEl('h2', { text: 'Settings for Periodic PARA plugin.' });
+    containerEl.createEl('h2', { text: 'Advanced.' });
 
     new Setting(containerEl)
       .setName('Periodic notes folder')
