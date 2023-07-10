@@ -37,7 +37,7 @@ export class Bullet {
       return renderError(
         ERROR_MESSAGES.NO_FRONT_MATTER_TAG,
         containerEl,
-        ctx.sourcePath
+        filepath
       );
     }
 
@@ -70,7 +70,7 @@ SORT rows.file.link DESC
       result.values,
       el.createEl('div'),
       component,
-      ctx.sourcePath
+      filepath
     );
   };
 }

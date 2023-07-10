@@ -104,7 +104,8 @@ export class Project {
               // 特殊处理总耗时
               todayTotalTime = project;
             }
-
+            // 1. [[WOT.README|分享-2023 WOT 分享会]] 4hr20
+            // 1. [[1. Projects/分享-2023 WOT 分享会/README|分享-2023 WOT 分享会]]  4hr20
             const realProject = (project.match(/\[\[(.*)\|?(.*)\]\]/) ||
               [])[1]?.replace(/\|.*/, '');
 
@@ -159,7 +160,10 @@ export class Project {
   ) => {
     const project = new Project(this.app, this.settings);
     const date = new Date(this.app, this.settings);
-    const filename = this.app.workspace.getActiveFile()?.basename;
+    const { basename: filename, path } = this.app.workspace.getActiveFile() || {
+      filename: '',
+      path: '',
+    };
     const parsed = date.days(date.parse(filename));
 
     const scope = ['## 项目列表', '## 日常记录'];
@@ -169,10 +173,13 @@ export class Project {
     );
     const div = el.createEl('div');
     const list: string[] = [];
-    const reg = /\/(.*)\//;
 
     projectList.map((project: string, index: number) => {
-      const regMatch = project.match(reg);
+      // WOT.README
+      // 1. Projects/分享-2023 WOT 分享会/README
+      const file = this.app.metadataCache.getFirstLinkpathDest(project, path);
+      const regMatch = file?.path.match(/\/(.*)\//);
+
       list.push(
         `${index + 1}. [[${project}|${regMatch?.length ? regMatch[1] : ''}]] ${
           projectTimeConsume[project]
