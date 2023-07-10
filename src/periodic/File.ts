@@ -1,7 +1,6 @@
-import type { App, TFile } from 'obsidian';
+import { App, Notice, TFolder } from 'obsidian';
 import type { PluginSettings } from '../type';
-
-import { TFolder } from 'obsidian';
+import { ERROR_MESSAGES } from '../constant';
 
 export class File {
   app: App;
@@ -13,15 +12,26 @@ export class File {
   }
 
   list(fileFolder: string) {
-    const file = this.app.vault.getAbstractFileByPath(fileFolder);
+    const folder = this.app.vault.getAbstractFileByPath(fileFolder);
 
-    if (file instanceof TFolder) {
-      const READMEList = file.children
+    if (folder instanceof TFolder) {
+      const subFolderList = folder.children
         .sort()
-        .filter((area: TFile) => area.extension !== 'md')
-        .map((area, index: number) => {
-          return `${index + 1}. [[${area.path}/README|${area.name}]]`;
-        });
+        .filter((file) => file instanceof TFolder);
+      const READMEList = subFolderList.map((subFolder, index: number) => {
+        // 搜索 README，不存在的话，搜索第一个形如 XXX.README 的
+        if (subFolder instanceof TFolder) {
+          const files = subFolder.children;
+
+          const README = files.find((file) => file.path.match(/(.*\.)?README\.md/));
+
+          if (!README) {
+            new Notice(ERROR_MESSAGES.NO_README_EXIST + subFolder.path);
+            throw Error(ERROR_MESSAGES.NO_README_EXIST  + subFolder.path);
+          }
+          return `${index + 1}. [[${README?.path}|${subFolder.name}]]`;
+        }
+      });
 
       return READMEList.join('\n');
     }
