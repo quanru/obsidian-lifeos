@@ -76,7 +76,7 @@ export class Area {
     ctx: MarkdownPostProcessorContext
   ) => {
     const div = el.createEl('div');
-    const markdown = this.file.list('1. Projects');
+    const markdown = this.file.list('2. Areas');
     const component = new Component();
 
     component.load();
