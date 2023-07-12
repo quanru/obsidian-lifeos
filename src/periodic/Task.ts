@@ -61,8 +61,8 @@ export class Task {
         ...condition,
       })
     );
-    
-    tasks= [...dailyTasks];
+
+    tasks = [...dailyTasks];
 
     // 收集日期范围内的非日记文件
     const files = this.date.files(parsed);
@@ -110,12 +110,12 @@ export class Task {
       })
       .join(' ');
 
-    const { values: tasks } = await this.dataview.tryQuery(`
+    const { values: tasks } = (await this.dataview.tryQuery(`
 TASK
 FROM -"Templates"
 WHERE ${where} AND file.path != "${filepath}"
 SORT completed ASC
-    `) as TaskResult;
+    `)) as TaskResult;
 
     component.load();
 
@@ -133,8 +133,13 @@ SORT completed ASC
     if (!task) return false;
 
     if (!from && !to) return false;
+    console.log(this.settings.habitHeader);
 
-    if (task?.section?.subpath?.includes('习惯打卡')) return false;
+    if (
+      task?.section?.type === 'header' &&
+      task?.section?.subpath?.trim() === (this.settings.habitHeader.trim())
+    )
+      return false;
 
     let dateText = '';
 

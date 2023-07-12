@@ -3,6 +3,7 @@ import type { TaskConditionType, PluginSettings } from '../type';
 
 import { TFile, moment } from 'obsidian';
 import { Date } from '../periodic/Date';
+import { File } from '../periodic/File';
 import {
   Component,
   MarkdownPostProcessorContext,
@@ -12,10 +13,12 @@ export class Project {
   app: App;
   date: Date;
   settings: PluginSettings;
+  file: File;
   constructor(app: App, settings: PluginSettings) {
     this.app = app;
     this.settings = settings;
     this.date = new Date(this.app, this.settings);
+    this.file = new File(this.app, this.settings);
   }
 
   timeAdd(timeString1: string, timeString2: string) {
@@ -65,7 +68,7 @@ export class Project {
       from: '',
       to: '',
     },
-    scope: string[]
+    header: string
   ) {
     const { from, to } = condition;
     const timeReg = /\d+hr(\d+)?/;
@@ -85,7 +88,7 @@ export class Project {
       );
 
       if (file instanceof TFile) {
-        const reg = new RegExp(`${scope[0]}([\\s\\S]*)${scope[1]}`);
+        const reg = new RegExp(`# ${header}([\\s\\S]+?)\n#`);
 
         let todayTotalTime = '0hr0';
         tasks.push(async () => {
@@ -153,6 +156,25 @@ export class Project {
     };
   }
 
+  listByFolder = async (
+    source: string,
+    el: HTMLElement,
+    ctx: MarkdownPostProcessorContext
+  ) => {
+    const div = el.createEl('div');
+    const markdown = this.file.list('1. Projects');
+    const component = new Component();
+
+    component.load();
+
+    return MarkdownRenderer.renderMarkdown(
+      markdown,
+      div,
+      ctx.sourcePath,
+      component
+    );
+  };
+
   listByTime = async (
     source: string,
     el: HTMLElement,
@@ -166,11 +188,12 @@ export class Project {
     };
     const parsed = date.days(date.parse(filename));
 
-    const scope = ['## 项目列表', '## 日常记录'];
+    const header = this.settings.projectListHeader;
     const { projectList, projectTimeConsume } = await project.filter(
       parsed,
-      scope
+      header
     );
+
     const div = el.createEl('div');
     const list: string[] = [];
 
