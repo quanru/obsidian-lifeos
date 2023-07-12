@@ -1,5 +1,8 @@
 export interface PluginSettings {
-  periodicNotesPath: string;
+  periodicNotesPath: string,
+  projectListHeader: string;
+  areaListHeader: string;
+  habitHeader: string;
 }
 
 export type DateType = {

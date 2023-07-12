@@ -27,7 +27,6 @@ export class File {
 
           if (!README) {
             new Notice(ERROR_MESSAGES.NO_README_EXIST + subFolder.path);
-            throw Error(ERROR_MESSAGES.NO_README_EXIST  + subFolder.path);
           }
           return `${index + 1}. [[${README?.path}|${subFolder.name}]]`;
         }
@@ -35,5 +34,7 @@ export class File {
 
       return READMEList.join('\n');
     }
+
+    return `No files in ${fileFolder}`;
   }
 }

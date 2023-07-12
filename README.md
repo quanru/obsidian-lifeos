@@ -1,6 +1,6 @@
 # Obsidian Periodic PARA
 
-- This is a plugin for [LifeOS](https://sspai.com/post/80802), which assist in practicing the PARA system with periodic notes.
+- This is a plugin for [LifeOS](https://quanru.github.io/2023/07/08/Building%20my%20second%20brain%20%F0%9F%A7%A0%20with%20Obsidian/), which assist in practicing the PARA system with periodic notes.
 - You can download the [LifeOS-example](https://github.com/quanru/obsidian-example-LifeOS) to experience it.
 
 ## Installation
@@ -22,7 +22,7 @@ Configuration not yet supported, will be supported later.
 
 Periodic PARA works by writing markdown code block, which query project, area, task list according to the date parsed from current filename.
 
-#### query tasks by done date
+#### query by time
 
 ~~~markdown
 ```PeriodicPARA
@@ -30,7 +30,6 @@ TaskDoneListByTime
 ```
 ~~~
 
-#### query tasks by record date
 
 ~~~markdown
 ```PeriodicPARA
@@ -38,7 +37,6 @@ TaskRecordListByTime
 ```
 ~~~
 
-#### query projects by current date
 
 ~~~markdown
 ```PeriodicPARA
@@ -46,13 +44,52 @@ ProjectListByTime
 ```
 ~~~
 
-#### query areas by current date
-
 ~~~markdown
 ```PeriodicPARA
 AreaListByTime
 ```
 ~~~
+
+#### query by tag
+
+~~~markdown
+```PeriodicPARA
+TaskListByTag
+```
+~~~
+
+~~~markdown
+```PeriodicPARA
+BulletListByTag
+```
+~~~
+
+#### query para by folder
+
+~~~markdown
+```PeriodicPARA
+ProjectListByFolder
+```
+~~~
+
+~~~markdown
+```PeriodicPARA
+AreaListByFolder
+```
+~~~
+
+~~~markdown
+```PeriodicPARA
+ResourceListByFolder
+```
+~~~
+
+~~~markdown
+```PeriodicPARA
+ArchiveListByFolder
+```
+~~~
+
 
 ### [templater](https://github.com/SilentVoid13/Templater) helpers
 
@@ -74,3 +111,9 @@ to
 ## example
 
 ![](assets/periodic-para-plugin.png)
+
+
+## next
+- [ ] Supports custom directories
+  - PARA directories
+  - Periodic directories

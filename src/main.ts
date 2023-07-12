@@ -8,6 +8,8 @@ import { DataviewApi, getAPI, isPluginEnabled } from 'obsidian-dataview';
 
 import { Project } from './para/Project';
 import { Area } from './para/Area';
+import { Resource } from './para/Resource';
+import { Archive } from './para/Archive';
 import { Task } from './periodic/Task';
 import { Bullet } from './periodic/Bullet';
 import { File } from './periodic/File';
@@ -18,12 +20,17 @@ import { renderError } from './util';
 
 const DEFAULT_SETTINGS: PluginSettings = {
   periodicNotesPath: 'PeriodicNotes',
+  projectListHeader: 'Project List',
+  areaListHeader: 'First Things Dimension',
+  habitHeader: 'Habit',
 };
 
 export default class PeriodicPARA extends Plugin {
   settings: PluginSettings;
   project: Project;
   area: Area;
+  resource: Resource;
+  archive: Archive;
   task: Task;
   file: File;
   bullet: Bullet;
@@ -53,7 +60,7 @@ export default class PeriodicPARA extends Plugin {
 
     this.loadHelpers();
     this.loadGlobalHelpers();
-    // this.addSettingTab(new SettingTab(this.app, this));
+    this.addSettingTab(new SettingTab(this.app, this));
 
     const views = {
       // views by time -> time context -> periodic notes
@@ -64,6 +71,11 @@ export default class PeriodicPARA extends Plugin {
       // views by tag -> topic context -> para
       TaskListByTag: this.task.listByTag,
       BulletListByTag: this.bullet.listByTag,
+      // views by folder
+      ProjectListByFolder: this.project.listByFolder,
+      AreaListByFolder: this.area.listByFolder,
+      ResourceListByFolder: this.resource.listByFolder,
+      ArchiveListByFolder: this.archive.listByFolder,
     };
     const handler = (
       source: keyof typeof views,
@@ -103,6 +115,9 @@ export default class PeriodicPARA extends Plugin {
   onunload() {}
 
   async loadSettings() {
+    // const periodicNotesPluginSettings = await this.app.plugins
+    //   .getPlugin('periodic-notes')
+    //   .loadData();
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
   }
 
@@ -113,6 +128,8 @@ export default class PeriodicPARA extends Plugin {
   loadHelpers() {
     this.project = new Project(this.app, this.settings);
     this.area = new Area(this.app, this.settings);
+    this.resource = new Resource(this.app, this.settings);
+    this.archive = new Archive(this.app, this.settings);
     this.task = new Task(this.app, this.settings, this.dataview);
     this.file = new File(this.app, this.settings);
     this.date = new Date(this.app, this.settings);
@@ -146,15 +163,40 @@ class SettingTab extends PluginSettingTab {
     containerEl.createEl('h2', { text: 'Advanced.' });
 
     new Setting(containerEl)
-      .setName('Periodic notes folder')
-      .setDesc("It's a Periodic notes folder")
+      .setName('Project List Header:')
+      .setDesc('Where the Project List is in a daily note')
       .addText((text) =>
         text
-          .setPlaceholder('Enter your Periodic notes folder')
-          .setValue(this.plugin.settings.periodicNotesPath)
+          .setPlaceholder(DEFAULT_SETTINGS.projectListHeader)
+          .setValue(this.plugin.settings.projectListHeader)
           .onChange(async (value) => {
-            console.log('Periodic Notes folder: ' + value);
-            this.plugin.settings.periodicNotesPath = value;
+            this.plugin.settings.projectListHeader = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName('Area List Header:')
+      .setDesc('Where the Area List is in a quarterly note')
+      .addText((text) =>
+        text
+          .setPlaceholder(DEFAULT_SETTINGS.areaListHeader)
+          .setValue(this.plugin.settings.areaListHeader)
+          .onChange(async (value) => {
+            this.plugin.settings.areaListHeader = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName('Habit Header:')
+      .setDesc('Where the Habit module is in a daily note')
+      .addText((text) =>
+        text
+          .setPlaceholder(DEFAULT_SETTINGS.habitHeader)
+          .setValue(this.plugin.settings.habitHeader)
+          .onChange(async (value) => {
+            this.plugin.settings.habitHeader = value;
             await this.plugin.saveSettings();
           })
       );
