@@ -133,7 +133,6 @@ SORT completed ASC
     if (!task) return false;
 
     if (!from && !to) return false;
-    console.log(this.settings.habitHeader);
 
     if (
       task?.section?.type === 'header' &&
