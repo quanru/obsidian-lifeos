@@ -27,7 +27,7 @@ export class Bullet {
     ctx: MarkdownPostProcessorContext
   ) => {
     const filepath = ctx.sourcePath;
-    const {
+    let {
       frontmatter: { tags },
     } = this.dataview.page(filepath)?.file || { frontmatter: {} };
     const component = new Component();
@@ -39,6 +39,10 @@ export class Bullet {
         containerEl,
         filepath
       );
+    }
+
+    if (typeof tags === 'string') {
+      tags = [tags];
     }
 
     const from = tags

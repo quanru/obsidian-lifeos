@@ -88,7 +88,7 @@ export class Task {
     ctx: MarkdownPostProcessorContext
   ) => {
     const filepath = ctx.sourcePath;
-    const {
+    let {
       frontmatter: { tags },
     } = this.dataview.page(filepath)?.file || { frontmatter: {} };
     const component = new Component();
@@ -100,6 +100,10 @@ export class Task {
         containerEl,
         ctx.sourcePath
       );
+    }
+
+    if (typeof tags === 'string') {
+      tags = [tags];
     }
 
     const where = tags
