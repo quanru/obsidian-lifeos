@@ -1,4 +1,4 @@
-import { App, Notice, TFolder } from 'obsidian';
+import { App, Notice, TFile, TFolder } from 'obsidian';
 import type { PluginSettings } from '../type';
 import { ERROR_MESSAGES } from '../constant';
 
@@ -23,12 +23,18 @@ export class File {
         if (subFolder instanceof TFolder) {
           const files = subFolder.children;
 
-          const README = files.find((file) => file.path.match(/(.*\.)?README\.md/));
+          const README = files.find((file) =>
+            file.path.match(/(.*\.)?README\.md/)
+          );
 
           if (!README) {
             new Notice(ERROR_MESSAGES.NO_README_EXIST + subFolder.path);
           }
-          return `${index + 1}. [[${README?.path}|${subFolder.name}]]`;
+
+          if (README instanceof TFile) {
+            const link = this.app.metadataCache.fileToLinktext(README, README?.path);
+            return `${index + 1}. [[${link}|${subFolder.name}]]`;
+          }
         }
       });
 

@@ -1,22 +1,10 @@
-import type { App, MarkdownPostProcessorContext } from 'obsidian';
-import type { DateType, PluginSettings } from '../type';
+import type { MarkdownPostProcessorContext } from 'obsidian';
+import type { DateType } from '../type';
 
-import { Date } from '../periodic/Date';
-import { File } from '../periodic/File';
 import { Component, MarkdownRenderer, TFile } from 'obsidian';
+import { Base } from './Base';
 
-export class Area {
-  app: App;
-  date: Date;
-  settings: PluginSettings;
-  file: File;
-  constructor(app: App, settings: PluginSettings) {
-    this.app = app;
-    this.settings = settings;
-    this.date = new Date(this.app, this.settings);
-    this.file = new File(this.app, this.settings);
-  }
-
+export class Area extends Base {
   async filter(
     condition: DateType = {
       year: null,
@@ -76,7 +64,7 @@ export class Area {
     ctx: MarkdownPostProcessorContext
   ) => {
     const div = el.createEl('div');
-    const markdown = this.file.list('2. Areas');
+    const markdown = this.file.list(this.dir);
     const component = new Component();
 
     component.load();

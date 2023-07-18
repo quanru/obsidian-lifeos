@@ -20,6 +20,10 @@ import { renderError } from './util';
 
 const DEFAULT_SETTINGS: PluginSettings = {
   periodicNotesPath: 'PeriodicNotes',
+  projectsPath: '1. Projects',
+  areasPath: '2. Areas',
+  resourcesPath: '3. Resources',
+  archivesPath: '4. Archives',
   projectListHeader: 'Project List',
   areaListHeader: 'First Things Dimension',
   habitHeader: 'Habit',
@@ -126,10 +130,10 @@ export default class PeriodicPARA extends Plugin {
   }
 
   loadHelpers() {
-    this.project = new Project(this.app, this.settings);
-    this.area = new Area(this.app, this.settings);
-    this.resource = new Resource(this.app, this.settings);
-    this.archive = new Archive(this.app, this.settings);
+    this.project = new Project(this.settings.projectsPath, this.app, this.settings);
+    this.area = new Area(this.settings.areasPath, this.app, this.settings);
+    this.resource = new Resource(this.settings.resourcesPath, this.app, this.settings);
+    this.archive = new Archive(this.settings.archivesPath, this.app, this.settings);
     this.task = new Task(this.app, this.settings, this.dataview);
     this.file = new File(this.app, this.settings);
     this.date = new Date(this.app, this.settings);
@@ -161,6 +165,66 @@ class SettingTab extends PluginSettingTab {
     containerEl.empty();
 
     containerEl.createEl('h2', { text: 'Advanced.' });
+
+    new Setting(containerEl)
+      .setName('Periodic Notes Folder:')
+      .addText((text) =>
+        text
+          .setPlaceholder(DEFAULT_SETTINGS.periodicNotesPath)
+          .setValue(this.plugin.settings.periodicNotesPath)
+          .onChange(async (value) => {
+            this.plugin.settings.periodicNotesPath = value;
+            await this.plugin.saveSettings();
+          })
+    );
+    
+    new Setting(containerEl)
+    .setName('Projects Folder:')
+    .addText((text) =>
+      text
+        .setPlaceholder(DEFAULT_SETTINGS.projectsPath)
+        .setValue(this.plugin.settings.projectsPath)
+        .onChange(async (value) => {
+          this.plugin.settings.projectsPath = value;
+          await this.plugin.saveSettings();
+        })
+    );
+
+    new Setting(containerEl)
+    .setName('Areas Folder:')
+    .addText((text) =>
+      text
+        .setPlaceholder(DEFAULT_SETTINGS.areasPath)
+        .setValue(this.plugin.settings.areasPath)
+        .onChange(async (value) => {
+          this.plugin.settings.areasPath = value;
+          await this.plugin.saveSettings();
+        })
+    );
+
+    new Setting(containerEl)
+    .setName('Resources Folder:')
+    .addText((text) =>
+      text
+        .setPlaceholder(DEFAULT_SETTINGS.resourcesPath)
+        .setValue(this.plugin.settings.resourcesPath)
+        .onChange(async (value) => {
+          this.plugin.settings.resourcesPath = value;
+          await this.plugin.saveSettings();
+        })
+    );
+
+    new Setting(containerEl)
+    .setName('Archives Folder:')
+    .addText((text) =>
+      text
+        .setPlaceholder(DEFAULT_SETTINGS.archivesPath)
+        .setValue(this.plugin.settings.archivesPath)
+        .onChange(async (value) => {
+          this.plugin.settings.archivesPath = value;
+          await this.plugin.saveSettings();
+        })
+    );
 
     new Setting(containerEl)
       .setName('Project List Header:')

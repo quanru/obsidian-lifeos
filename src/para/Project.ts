@@ -1,26 +1,15 @@
-import type { App } from 'obsidian';
-import type { TaskConditionType, PluginSettings } from '../type';
+import type { TaskConditionType } from '../type';
 
 import { TFile, moment } from 'obsidian';
 import { Date } from '../periodic/Date';
-import { File } from '../periodic/File';
 import {
   Component,
   MarkdownPostProcessorContext,
   MarkdownRenderer,
 } from 'obsidian';
-export class Project {
-  app: App;
-  date: Date;
-  settings: PluginSettings;
-  file: File;
-  constructor(app: App, settings: PluginSettings) {
-    this.app = app;
-    this.settings = settings;
-    this.date = new Date(this.app, this.settings);
-    this.file = new File(this.app, this.settings);
-  }
+import { Base } from './Base';
 
+export class Project extends Base {
   timeAdd(timeString1: string, timeString2: string) {
     if (!timeString1) {
       return timeString2;
@@ -167,7 +156,7 @@ export class Project {
     ctx: MarkdownPostProcessorContext
   ) => {
     const div = el.createEl('div');
-    const markdown = this.file.list('1. Projects');
+    const markdown = this.file.list(this.dir);
     const component = new Component();
 
     component.load();
@@ -185,7 +174,6 @@ export class Project {
     el: HTMLElement,
     ctx: MarkdownPostProcessorContext
   ) => {
-    const project = new Project(this.app, this.settings);
     const date = new Date(this.app, this.settings);
     const { basename: filename, path } = this.app.workspace.getActiveFile() || {
       filename: '',
