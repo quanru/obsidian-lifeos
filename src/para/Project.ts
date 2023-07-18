@@ -68,7 +68,8 @@ export class Project {
       from: '',
       to: '',
     },
-    header: string
+    header: string,
+    filePath: string
   ) {
     const { from, to } = condition;
     const timeReg = /\d+hr(\d+)?/;
@@ -116,15 +117,19 @@ export class Project {
               return;
             }
 
+            const projectFile =
+              this.app.metadataCache.getFirstLinkpathDest(realProject, filePath)
+                ?.path || '';
+
             const [projectTime = ''] = project.match(timeReg) || [];
 
-            projectTimeConsume[realProject] = this.timeAdd(
-              projectTimeConsume[realProject],
+            projectTimeConsume[projectFile] = this.timeAdd(
+              projectTimeConsume[projectFile],
               projectTime
             );
 
-            if (!projectList.includes(realProject)) {
-              projectList.push(realProject);
+            if (!projectList.includes(projectFile)) {
+              projectList.push(projectFile);
             }
           });
 
@@ -189,9 +194,10 @@ export class Project {
     const parsed = date.days(date.parse(filename));
 
     const header = this.settings.projectListHeader;
-    const { projectList, projectTimeConsume } = await project.filter(
+    const { projectList, projectTimeConsume } = await this.filter(
       parsed,
-      header
+      header,
+      path
     );
 
     const div = el.createEl('div');
@@ -200,8 +206,7 @@ export class Project {
     projectList.map((project: string, index: number) => {
       // WOT.README
       // 1. Projects/分享-2023 WOT 分享会/README
-      const file = this.app.metadataCache.getFirstLinkpathDest(project, path);
-      const regMatch = file?.path.match(/\/(.*)\//);
+      const regMatch = project.match(/\/(.*)\//);
 
       list.push(
         `${index + 1}. [[${project}|${regMatch?.length ? regMatch[1] : ''}]] ${
