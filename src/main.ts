@@ -40,6 +40,7 @@ export default class PeriodicPARA extends Plugin {
   bullet: Bullet;
   date: Date;
   dataview: DataviewApi;
+  views: Record<string, any>;
 
   constructor(app: App, manifest: PluginManifest) {
     super(app, manifest);
@@ -64,9 +65,45 @@ export default class PeriodicPARA extends Plugin {
 
     this.loadHelpers();
     this.loadGlobalHelpers();
+    this.loadViews();
     this.addSettingTab(new SettingTab(this.app, this));
 
-    const views = {
+    const handler = (
+      source: keyof typeof this.views,
+      el: HTMLElement,
+      ctx: MarkdownPostProcessorContext
+    ) => {
+      const view = source.trim() as keyof typeof this.views;
+      const legacyView = `${view}ByTime` as keyof typeof this.views;
+
+      if (!view) {
+        return renderError(
+          ERROR_MESSAGES.NO_VIEW_PROVIDED,
+          el.createEl('div'),
+          ctx.sourcePath
+        );
+      }
+
+      if (
+        !Object.keys(this.views).includes(view) &&
+        !Object.keys(this.views).includes(legacyView)
+      ) {
+        return renderError(
+          `${ERROR_MESSAGES.NO_VIEW_EXISTED}: ${view}`,
+          el.createEl('div'),
+          ctx.sourcePath
+        );
+      }
+
+      const callback = this.views[view] || this.views[legacyView];
+
+      return callback(view, el, ctx);
+    };
+    this.registerMarkdownCodeBlockProcessor('PeriodicPARA', handler);
+    this.registerMarkdownCodeBlockProcessor('periodic-para', handler); // for backward compatibility
+  }
+  loadViews() {
+    this.views = {
       // views by time -> time context -> periodic notes
       ProjectListByTime: this.project.listByTime,
       AreaListByTime: this.area.listByTime,
@@ -81,39 +118,6 @@ export default class PeriodicPARA extends Plugin {
       ResourceListByFolder: this.resource.listByFolder,
       ArchiveListByFolder: this.archive.listByFolder,
     };
-    const handler = (
-      source: keyof typeof views,
-      el: HTMLElement,
-      ctx: MarkdownPostProcessorContext
-    ) => {
-      const view = source.trim() as keyof typeof views;
-      const legacyView = `${view}ByTime` as keyof typeof views;
-
-      if (!view) {
-        return renderError(
-          ERROR_MESSAGES.NO_VIEW_PROVIDED,
-          el.createEl('div'),
-          ctx.sourcePath
-        );
-      }
-
-      if (
-        !Object.keys(views).includes(view) &&
-        !Object.keys(views).includes(legacyView)
-      ) {
-        return renderError(
-          `${ERROR_MESSAGES.NO_VIEW_EXISTED}: ${view}`,
-          el.createEl('div'),
-          ctx.sourcePath
-        );
-      }
-
-      const callback = views[view] || views[legacyView];
-
-      return callback(view, el, ctx);
-    };
-    this.registerMarkdownCodeBlockProcessor('PeriodicPARA', handler);
-    this.registerMarkdownCodeBlockProcessor('periodic-para', handler); // for backward compatibility
   }
 
   onunload() {}
@@ -127,13 +131,28 @@ export default class PeriodicPARA extends Plugin {
 
   async saveSettings() {
     await this.saveData(this.settings);
+    this.loadHelpers();
+    this.loadGlobalHelpers();
+    this.loadViews();
   }
 
   loadHelpers() {
-    this.project = new Project(this.settings.projectsPath, this.app, this.settings);
+    this.project = new Project(
+      this.settings.projectsPath,
+      this.app,
+      this.settings
+    );
     this.area = new Area(this.settings.areasPath, this.app, this.settings);
-    this.resource = new Resource(this.settings.resourcesPath, this.app, this.settings);
-    this.archive = new Archive(this.settings.archivesPath, this.app, this.settings);
+    this.resource = new Resource(
+      this.settings.resourcesPath,
+      this.app,
+      this.settings
+    );
+    this.archive = new Archive(
+      this.settings.archivesPath,
+      this.app,
+      this.settings
+    );
     this.task = new Task(this.app, this.settings, this.dataview);
     this.file = new File(this.app, this.settings);
     this.date = new Date(this.app, this.settings);
@@ -166,21 +185,17 @@ class SettingTab extends PluginSettingTab {
 
     containerEl.createEl('h2', { text: 'Advanced.' });
 
-    new Setting(containerEl)
-      .setName('Periodic Notes Folder:')
-      .addText((text) =>
-        text
-          .setPlaceholder(DEFAULT_SETTINGS.periodicNotesPath)
-          .setValue(this.plugin.settings.periodicNotesPath)
-          .onChange(async (value) => {
-            this.plugin.settings.periodicNotesPath = value;
-            await this.plugin.saveSettings();
-          })
+    new Setting(containerEl).setName('Periodic Notes Folder:').addText((text) =>
+      text
+        .setPlaceholder(DEFAULT_SETTINGS.periodicNotesPath)
+        .setValue(this.plugin.settings.periodicNotesPath)
+        .onChange(async (value) => {
+          this.plugin.settings.periodicNotesPath = value;
+          await this.plugin.saveSettings();
+        })
     );
-    
-    new Setting(containerEl)
-    .setName('Projects Folder:')
-    .addText((text) =>
+
+    new Setting(containerEl).setName('Projects Folder:').addText((text) =>
       text
         .setPlaceholder(DEFAULT_SETTINGS.projectsPath)
         .setValue(this.plugin.settings.projectsPath)
@@ -190,9 +205,7 @@ class SettingTab extends PluginSettingTab {
         })
     );
 
-    new Setting(containerEl)
-    .setName('Areas Folder:')
-    .addText((text) =>
+    new Setting(containerEl).setName('Areas Folder:').addText((text) =>
       text
         .setPlaceholder(DEFAULT_SETTINGS.areasPath)
         .setValue(this.plugin.settings.areasPath)
@@ -201,10 +214,7 @@ class SettingTab extends PluginSettingTab {
           await this.plugin.saveSettings();
         })
     );
-
-    new Setting(containerEl)
-    .setName('Resources Folder:')
-    .addText((text) =>
+    new Setting(containerEl).setName('Resources Folder:').addText((text) =>
       text
         .setPlaceholder(DEFAULT_SETTINGS.resourcesPath)
         .setValue(this.plugin.settings.resourcesPath)
@@ -214,9 +224,7 @@ class SettingTab extends PluginSettingTab {
         })
     );
 
-    new Setting(containerEl)
-    .setName('Archives Folder:')
-    .addText((text) =>
+    new Setting(containerEl).setName('Archives Folder:').addText((text) =>
       text
         .setPlaceholder(DEFAULT_SETTINGS.archivesPath)
         .setValue(this.plugin.settings.archivesPath)
@@ -236,6 +244,8 @@ class SettingTab extends PluginSettingTab {
           .onChange(async (value) => {
             this.plugin.settings.projectListHeader = value;
             await this.plugin.saveSettings();
+            this.plugin.loadHelpers();
+            this.plugin.loadGlobalHelpers();
           })
       );
 
@@ -249,6 +259,8 @@ class SettingTab extends PluginSettingTab {
           .onChange(async (value) => {
             this.plugin.settings.areaListHeader = value;
             await this.plugin.saveSettings();
+            this.plugin.loadHelpers();
+            this.plugin.loadGlobalHelpers();
           })
       );
 
@@ -262,6 +274,8 @@ class SettingTab extends PluginSettingTab {
           .onChange(async (value) => {
             this.plugin.settings.habitHeader = value;
             await this.plugin.saveSettings();
+            this.plugin.loadHelpers();
+            this.plugin.loadGlobalHelpers();
           })
       );
   }
