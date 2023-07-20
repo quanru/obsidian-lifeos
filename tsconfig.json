@@ -11,7 +11,8 @@
     "importHelpers": true,
     "isolatedModules": true,
     "strictNullChecks": true,
-    "lib": ["DOM", "ES5", "ES6", "ES7", "ES2021"]
+    "lib": ["DOM", "ES5", "ES6", "ES7", "ES2021"],
+    "jsx": "react"
   },
   "include": ["**/*.ts"]
 }

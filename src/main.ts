@@ -1,4 +1,4 @@
-import { Notice, Plugin } from 'obsidian';
+import { Notice, Plugin, setIcon } from 'obsidian';
 import type {
   App,
   MarkdownPostProcessorContext,
@@ -14,10 +14,22 @@ import { Task } from './periodic/Task';
 import { Bullet } from './periodic/Bullet';
 import { File } from './periodic/File';
 import { Date } from './periodic/Date';
+import { SettingTab } from './SettingTab';
 import type { PluginSettings } from './type';
 import { ERROR_MESSAGES } from './constant';
 import { renderError } from './util';
-import { DEFAULT_SETTINGS, SettingTab } from './SettingTab';
+import { ExampleView } from './view/ExampleView';
+
+const DEFAULT_SETTINGS: PluginSettings = {
+  periodicNotesPath: 'PeriodicNotes',
+  projectsPath: '1. Projects',
+  areasPath: '2. Areas',
+  resourcesPath: '3. Resources',
+  archivesPath: '4. Archives',
+  projectListHeader: 'Project List',
+  areaListHeader: 'First Things Dimension',
+  habitHeader: 'Habit',
+};
 
 export default class PeriodicPARA extends Plugin {
   settings: PluginSettings;
@@ -52,6 +64,13 @@ export default class PeriodicPARA extends Plugin {
 
   async onload() {
     await this.loadSettings();
+
+    const item = this.addRibbonIcon('add', 'PeriodicPARA', () => {
+      const view = new ExampleView(this.app.workspace.getLeaf());
+
+      view.onOpen();
+    });
+    setIcon(item, 'plus');
 
     this.loadHelpers();
     this.loadGlobalHelpers();
