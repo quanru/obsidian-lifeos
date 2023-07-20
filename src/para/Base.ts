@@ -1,4 +1,4 @@
-import type { App } from 'obsidian';
+import { type App, type MarkdownPostProcessorContext, Component, MarkdownRenderer } from 'obsidian';
 import type { PluginSettings } from '../type';
 import { Date } from '../periodic/Date';
 import { File } from '../periodic/File';
@@ -21,4 +21,23 @@ export abstract class Base {
   snapshot(dir = this.dir) {
     return this.file.list(dir);
   }
+
+  listByFolder = async (
+    source: string,
+    el: HTMLElement,
+    ctx: MarkdownPostProcessorContext
+  ) => {
+    const div = el.createEl('div');
+    const markdown = this.file.list(this.dir);
+    const component = new Component();
+
+    component.load();
+
+    return MarkdownRenderer.renderMarkdown(
+      markdown,
+      div,
+      ctx.sourcePath,
+      component
+    );
+  };
 }

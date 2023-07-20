@@ -14,7 +14,17 @@ Periodic PARA has not been available in the Obsidian community plugin browser, b
 Go to the [releases](https://github.com/quanru/obsidian-periodic-para/releases) and download the latest `main.js` and `manifest.json` files. Create a folder called `periodic-para` inside `.obsidian/plugins` and place both files in it.
 
 ## Settings
-Configuration not yet supported, will be supported later.
+
+|Setting|Description|
+|---|---|
+|Periodic Notes Folder| Default is 'PeriodicNotes', Set a folder for periodic notes. The format of daily, weekly, monthly, quarterly, and yearly notes in the directory must meet the following requirements: YYYY-MM-DD、YYYY-Www、YYYY-MM、YYYY-Qq |
+|Projects Folder      | Default is '1. Projects', Set a folder where the PARA project is located, each subdirectory is a project, and each project must have a [XXX.]README.md file as the project index |
+|Areas Folder         | Default is '2. Areas', Set a folder where the PARA area is located, each subdirectory is a area, and each area must have a [XXX.]README.md file as the area index |
+|Resources Folder     | Default is '3. Resources', Set a folder where the PARA resource is located, each subdirectory is a resource, and each resource must have a [XXX.]README.md file as the resource index |
+|Archives Folder      | Default is '4. Archives', Set a folder where the PARA archive is located, each subdirectory is a archive, and each archive must have a [XXX.]README.md file as the archive index |
+|Project List Header  | Default is 'Project List', Set the title of the module in which the project snapshots are located in daily notes to collect the projects experienced in the current period in the weekly, monthly, quarterly, and yearly notes |
+|Area List Header     | Default is 'First Things Dimension', Set the title of the module in which the area snapshots are located in quarterly notes to collect the areas experienced in the current period in the yearly notes |
+|Habit List Header    | Default is 'Habit', Set the title of the module in daily notes where the habit is located, and the task query view will ignore tasks under that title |
 
 ## Usage
 
@@ -98,7 +108,16 @@ ArchiveListByFolder
 Generate a list of README.md snapshots in the specified directory.
 
 ~~~markdown
-<% PeriodicPARA.File.list('1. Projects') %>
+<% PeriodicPARA.Project.snapshot() %>
+<% PeriodicPARA.Area.snapshot() %>
+<% PeriodicPARA.Resource.snapshot() %>
+<% PeriodicPARA.Archive.snapshot() %>
+~~~
+
+For example:
+
+~~~markdown
+<% PeriodicPARA.Project.snapshot() %>
 ~~~
 
 to
@@ -110,10 +129,13 @@ to
 
 ## example
 
+![](assets/periodic-para-plugin-en.png)
+
 ![](assets/periodic-para-plugin.png)
 
 
 ## next
-- [ ] Supports custom directories
+- [x] Supports custom directories
   - PARA directories
   - Periodic directories
+- [ ] Support *ListByTag(ProjectListByTag, AreaListByTag, ResourceListByTag, ArchiveListByTag)

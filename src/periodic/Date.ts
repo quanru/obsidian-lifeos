@@ -1,12 +1,15 @@
 import { moment } from 'obsidian';
+import { File } from './File';
 import type { App } from 'obsidian';
 import type { DateType, DateRangeType, PluginSettings } from '../type';
 
 export class Date {
   app: App;
   settings: PluginSettings;
+  file: File;
   constructor(app: App, settings: PluginSettings) {
     this.app = app;
+    this.file = new File(app, settings);
     this.settings = settings;
   }
   parse(fileName = ''): DateType {
@@ -177,27 +180,36 @@ export class Date {
 
     const currentDate = moment(from).clone();
     while (currentDate.isBefore(moment(to))) {
-      weeks.add(
-        `${
-          this.settings.periodicNotesPath
-        }/${currentDate.weekYear()}/Weekly/${currentDate.weekYear()}-W${String(
-          currentDate.isoWeek()
-        ).padStart(2, '0')}.md`
+      const weekLink = `${currentDate.weekYear()}-W${String(
+        currentDate.isoWeek()
+      ).padStart(2, '0')}.md`;
+      const weekFile = this.file.get(
+        weekLink,
+        '',
+        this.settings.periodicNotesPath
       );
-      months.add(
-        `${
-          this.settings.periodicNotesPath
-        }/${currentDate.year()}/Monthly/${currentDate.year()}-${String(
-          currentDate.month() + 1
-        ).padStart(2, '0')}.md`
+
+      weeks.add(weekFile?.path);
+
+      const monthLink = `${currentDate.year()}-${String(
+        currentDate.month() + 1
+      ).padStart(2, '0')}.md`;
+      const monthFile = this.file.get(
+        monthLink,
+        '',
+        this.settings.periodicNotesPath
       );
-      quarters.add(
-        `${
-          this.settings.periodicNotesPath
-        }/${currentDate.year()}/Quarterly/${currentDate.year()}-Q${Math.ceil(
-          (currentDate.month() + 1) / 3
-        )}.md`
+      months.add(monthFile?.path);
+
+      const quarterLink = `${currentDate.year()}-Q${Math.ceil(
+        (currentDate.month() + 1) / 3
+      )}.md`;
+      const quarterFile = this.file.get(
+        quarterLink,
+        '',
+        this.settings.periodicNotesPath
       );
+      quarters.add(quarterFile);
 
       currentDate.add(1, 'day');
     }

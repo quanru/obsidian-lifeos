@@ -32,7 +32,10 @@ export class File {
           }
 
           if (README instanceof TFile) {
-            const link = this.app.metadataCache.fileToLinktext(README, README?.path);
+            const link = this.app.metadataCache.fileToLinktext(
+              README,
+              README?.path
+            );
             return `${index + 1}. [[${link}|${subFolder.name}]]`;
           }
         }
@@ -42,5 +45,17 @@ export class File {
     }
 
     return `No files in ${fileFolder}`;
+  }
+
+  get(link: string, sourcePath = '', fileFolder: string) {
+    const file = this.app.metadataCache.getFirstLinkpathDest(link, sourcePath);
+
+    if (!fileFolder) {
+      return file;
+    }
+
+    if (file?.path.includes(fileFolder)) {
+      return file;
+    }
   }
 }

@@ -22,10 +22,8 @@ export class Area extends Base {
 
     for (let index = 0; index < quarterList.length; index++) {
       const quarter = quarterList[index];
-      const file = this.app.vault.getAbstractFileByPath(
-        // YYYY/YYYY-[Q]Q
-        `${this.settings.periodicNotesPath}/${year}/${year}-${quarter}.md`
-      );
+      const link = `${year}-${quarter}.md`;
+      const file = this.file.get(link, '', this.settings.periodicNotesPath);
 
       if (file instanceof TFile) {
         const reg = new RegExp(`# ${header}([\\s\\S]+?)\n#`);
@@ -58,25 +56,6 @@ export class Area extends Base {
     return areaList;
   }
 
-  listByFolder = async (
-    source: string,
-    el: HTMLElement,
-    ctx: MarkdownPostProcessorContext
-  ) => {
-    const div = el.createEl('div');
-    const markdown = this.file.list(this.dir);
-    const component = new Component();
-
-    component.load();
-
-    return MarkdownRenderer.renderMarkdown(
-      markdown,
-      div,
-      ctx.sourcePath,
-      component
-    );
-  };
-
   listByTime = async (
     source: string,
     el: HTMLElement,
@@ -94,7 +73,8 @@ export class Area extends Base {
     const list: string[] = [];
 
     areaList.map((area: string, index: number) => {
-      const file = this.app.metadataCache.getFirstLinkpathDest(area, path);
+      const file = this.file.get(area, path, this.settings.areasPath);
+
       const regMatch = file?.path.match(/\/(.*)\//);
 
       list.push(

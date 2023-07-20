@@ -71,11 +71,8 @@ export class Project extends Base {
     // eslint-disable-next-line no-constant-condition
     while (true) {
       const momentDay = moment(day);
-      const file = this.app.vault.getAbstractFileByPath(
-        `${this.settings.periodicNotesPath}/${momentDay.year()}/Daily/${String(
-          momentDay.month() + 1
-        ).padStart(2, '0')}/${momentDay.format('YYYY-MM-DD')}.md`
-      );
+      const link = `${momentDay.format('YYYY-MM-DD')}.md`;
+      const file = this.file.get(link, '', this.settings.periodicNotesPath);
 
       if (file instanceof TFile) {
         const reg = new RegExp(`# ${header}([\\s\\S]+?)\n#`);
@@ -107,7 +104,7 @@ export class Project extends Base {
             }
 
             const projectFile =
-              this.app.metadataCache.getFirstLinkpathDest(realProject, filePath)
+              this.file.get(realProject, filePath, this.settings.projectsPath)
                 ?.path || '';
 
             const [projectTime = ''] = project.match(timeReg) || [];
@@ -149,25 +146,6 @@ export class Project extends Base {
       totalTime,
     };
   }
-
-  listByFolder = async (
-    source: string,
-    el: HTMLElement,
-    ctx: MarkdownPostProcessorContext
-  ) => {
-    const div = el.createEl('div');
-    const markdown = this.file.list(this.dir);
-    const component = new Component();
-
-    component.load();
-
-    return MarkdownRenderer.renderMarkdown(
-      markdown,
-      div,
-      ctx.sourcePath,
-      component
-    );
-  };
 
   listByTime = async (
     source: string,
