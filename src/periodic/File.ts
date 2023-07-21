@@ -47,7 +47,7 @@ export class File {
     return `No files in ${fileFolder}`;
   }
 
-  get(link: string, sourcePath = '', fileFolder: string) {
+  get(link: string, sourcePath = '', fileFolder?: string) {
     const file = this.app.metadataCache.getFirstLinkpathDest(link, sourcePath);
 
     if (!fileFolder) {

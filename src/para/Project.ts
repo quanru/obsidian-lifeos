@@ -104,9 +104,8 @@ export class Project extends Base {
             }
 
             const projectFile =
-              this.file.get(realProject, filePath, this.settings.projectsPath)
+              this.file.get(realProject)
                 ?.path || '';
-
             const [projectTime = ''] = project.match(timeReg) || [];
 
             projectTimeConsume[projectFile] = this.timeAdd(

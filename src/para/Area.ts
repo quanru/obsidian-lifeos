@@ -73,7 +73,7 @@ export class Area extends Base {
     const list: string[] = [];
 
     areaList.map((area: string, index: number) => {
-      const file = this.file.get(area, path, this.settings.areasPath);
+      const file = this.file.get(area);
 
       const regMatch = file?.path.match(/\/(.*)\//);
 
