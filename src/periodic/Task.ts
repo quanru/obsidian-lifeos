@@ -7,6 +7,7 @@ import { moment, Component } from 'obsidian';
 import { DataviewApi, STask } from 'obsidian-dataview';
 import { ERROR_MESSAGES } from '../constant';
 
+import { File } from '../periodic/File';
 import { Date } from '../periodic/Date';
 import { renderError } from '../util';
 
@@ -15,11 +16,13 @@ export class Task {
   date: Date;
   dataview: DataviewApi;
   settings: PluginSettings;
+  file: File;
   constructor(app: App, settings: PluginSettings, dataview: DataviewApi) {
     this.app = app;
     this.settings = settings;
     this.dataview = dataview;
-    this.date = new Date(this.app, this.settings);
+    this.file = new File(this.app, this.settings, this.dataview);
+    this.date = new Date(this.app, this.settings, this.file);
   }
 
   doneListByTime = (
@@ -88,22 +91,16 @@ export class Task {
     ctx: MarkdownPostProcessorContext
   ) => {
     const filepath = ctx.sourcePath;
-    let {
-      frontmatter: { tags },
-    } = this.dataview.page(filepath)?.file || { frontmatter: {} };
+    const tags = this.file.tags(filepath);
     const component = new Component();
     const containerEl = el.createEl('div');
 
-    if (!tags) {
+    if (!tags.length) {
       return renderError(
         ERROR_MESSAGES.NO_FRONT_MATTER_TAG,
         containerEl,
-        ctx.sourcePath
+        filepath
       );
-    }
-
-    if (typeof tags === 'string') {
-      tags = [tags];
     }
 
     const where = tags

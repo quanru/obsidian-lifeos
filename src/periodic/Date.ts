@@ -1,5 +1,5 @@
 import { moment } from 'obsidian';
-import { File } from './File';
+import type { File } from './File';
 import type { App } from 'obsidian';
 import type { DateType, DateRangeType, PluginSettings } from '../type';
 
@@ -7,9 +7,9 @@ export class Date {
   app: App;
   settings: PluginSettings;
   file: File;
-  constructor(app: App, settings: PluginSettings) {
+  constructor(app: App, settings: PluginSettings, file: File) {
     this.app = app;
-    this.file = new File(app, settings);
+    this.file = file;
     this.settings = settings;
   }
   parse(fileName = ''): DateType {

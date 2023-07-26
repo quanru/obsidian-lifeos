@@ -102,6 +102,10 @@ export default class PeriodicPARA extends Plugin {
       // views by tag -> topic context -> para
       TaskListByTag: this.task.listByTag,
       BulletListByTag: this.bullet.listByTag,
+      ProjectListByTag: this.project.listByTag,
+      AreaListByTag: this.area.listByTag,
+      ResourceListByTag: this.resource.listByTag,
+      ArchiveListByTag: this.archive.listByTag,
       // views by folder
       ProjectListByFolder: this.project.listByFolder,
       AreaListByFolder: this.area.listByFolder,
@@ -124,26 +128,35 @@ export default class PeriodicPARA extends Plugin {
   }
 
   loadHelpers() {
+    this.task = new Task(this.app, this.settings, this.dataview);
+    this.file = new File(this.app, this.settings, this.dataview);
+    this.date = new Date(this.app, this.settings, this.file);
+    this.bullet = new Bullet(this.app, this.settings, this.dataview);
+
     this.project = new Project(
       this.settings.projectsPath,
       this.app,
-      this.settings
+      this.settings,
+      this.file
     );
-    this.area = new Area(this.settings.areasPath, this.app, this.settings);
+    this.area = new Area(
+      this.settings.areasPath,
+      this.app,
+      this.settings,
+      this.file
+    );
     this.resource = new Resource(
       this.settings.resourcesPath,
       this.app,
-      this.settings
+      this.settings,
+      this.file
     );
     this.archive = new Archive(
       this.settings.archivesPath,
       this.app,
-      this.settings
+      this.settings,
+      this.file
     );
-    this.task = new Task(this.app, this.settings, this.dataview);
-    this.file = new File(this.app, this.settings);
-    this.date = new Date(this.app, this.settings);
-    this.bullet = new Bullet(this.app, this.settings, this.dataview);
   }
 
   loadGlobalHelpers() {

@@ -2,9 +2,9 @@ import type { MarkdownPostProcessorContext } from 'obsidian';
 import type { DateType } from '../type';
 
 import { Component, MarkdownRenderer, TFile } from 'obsidian';
-import { Base } from './Base';
+import { Item } from './Item';
 
-export class Area extends Base {
+export class Area extends Item {
   async filter(
     condition: DateType = {
       year: null,
@@ -61,10 +61,7 @@ export class Area extends Base {
     el: HTMLElement,
     ctx: MarkdownPostProcessorContext
   ) => {
-    const { basename: filename, path } = this.app.workspace.getActiveFile() || {
-      filename: '',
-      path: '',
-    };
+    const filename = this.app.workspace.getActiveFile()?.basename;
     const parsed = this.date.parse(filename);
 
     const header = this.settings.areaListHeader;

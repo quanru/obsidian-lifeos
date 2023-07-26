@@ -7,9 +7,9 @@ import {
   MarkdownPostProcessorContext,
   MarkdownRenderer,
 } from 'obsidian';
-import { Base } from './Base';
+import { Item } from './Item';
 
-export class Project extends Base {
+export class Project extends Item {
   timeAdd(timeString1: string, timeString2: string) {
     if (!timeString1) {
       return timeString2;
@@ -151,7 +151,7 @@ export class Project extends Base {
     el: HTMLElement,
     ctx: MarkdownPostProcessorContext
   ) => {
-    const date = new Date(this.app, this.settings);
+    const date = new Date(this.app, this.settings, this.file);
     const { basename: filename, path } = this.app.workspace.getActiveFile() || {
       filename: '',
       path: '',

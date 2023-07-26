@@ -1,2 +1,2 @@
-import { Base } from './Base';
-export class Archive extends Base {}
+import { Item } from './Item';
+export class Archive extends Item {}

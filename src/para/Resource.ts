@@ -1,3 +1,3 @@
-import { Base } from './Base';
+import { Item } from './Item';
 
-export class Resource extends Base {}
+export class Resource extends Item {}

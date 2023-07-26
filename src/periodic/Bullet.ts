@@ -18,7 +18,7 @@ export class Bullet {
     this.app = app;
     this.settings = settings;
     this.dataview = dataview;
-    this.file = new File(this.app, this.settings);
+    this.file = new File(this.app, this.settings, this.dataview);
   }
 
   listByTag = async (
@@ -27,22 +27,16 @@ export class Bullet {
     ctx: MarkdownPostProcessorContext
   ) => {
     const filepath = ctx.sourcePath;
-    let {
-      frontmatter: { tags },
-    } = this.dataview.page(filepath)?.file || { frontmatter: {} };
+    const tags = this.file.tags(filepath);
     const component = new Component();
     const containerEl = el.createEl('div');
 
-    if (!tags) {
+    if (!tags.length) {
       return renderError(
         ERROR_MESSAGES.NO_FRONT_MATTER_TAG,
         containerEl,
         filepath
       );
-    }
-
-    if (typeof tags === 'string') {
-      tags = [tags];
     }
 
     const from = tags

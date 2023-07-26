@@ -30,9 +30,17 @@ Go to the [releases](https://github.com/quanru/obsidian-periodic-para/releases) 
 
 ### query code block
 
-Periodic PARA works by writing markdown code block, which query project, area, task list according to the date parsed from current filename.
+Periodic PARA works by writing markdown code block, which query project, area, task list according to the date parsed from current filename, and query task, bullet, project, area, resource, archive list according to the tags parsed from frontmatter.
 
 #### query by time
+
+Time scope is parsed from current file name, for example:
+
+- 2023-01-01.md // Only 1 January is included
+- 2023-W21.md // Every day of week 21
+- 2023-06.md // Every day and every week of June
+- 2023-Q3.md // Every day, every week, every month of Quarter 3
+- 2023.md // Every day, every week, every month, every quarter of 2023
 
 ~~~markdown
 ```PeriodicPARA
@@ -62,6 +70,17 @@ AreaListByTime
 
 #### query by tag
 
+Tags is parsed from the frontmatter of current file, for example:
+
+~~~markdown
+---
+tags: 
+- x-project
+---
+~~~
+
+The following code block would use x-project as the tag for the query.
+
 ~~~markdown
 ```PeriodicPARA
 TaskListByTag
@@ -71,6 +90,30 @@ TaskListByTag
 ~~~markdown
 ```PeriodicPARA
 BulletListByTag
+```
+~~~
+
+~~~markdown
+```PeriodicPARA
+ProjectListByTag
+```
+~~~
+
+~~~markdown
+```PeriodicPARA
+AreaListByTag
+```
+~~~
+
+~~~markdown
+```PeriodicPARA
+ResourceListByTag
+```
+~~~
+
+~~~markdown
+```PeriodicPARA
+ArchiveListByTag
 ```
 ~~~
 
@@ -138,4 +181,4 @@ to
 - [x] Supports custom directories
   - PARA directories
   - Periodic directories
-- [ ] Support *ListByTag(ProjectListByTag, AreaListByTag, ResourceListByTag, ArchiveListByTag)
+- [x] Support *ListByTag(ProjectListByTag, AreaListByTag, ResourceListByTag, ArchiveListByTag)
