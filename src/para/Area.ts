@@ -61,7 +61,7 @@ export class Area extends Item {
     el: HTMLElement,
     ctx: MarkdownPostProcessorContext
   ) => {
-    const filename = this.app.workspace.getActiveFile()?.basename;
+    const filename = ctx.sourcePath;
     const parsed = this.date.parse(filename);
 
     const header = this.settings.areaListHeader;

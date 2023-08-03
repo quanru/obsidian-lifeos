@@ -12,13 +12,15 @@ export class Date {
     this.file = file;
     this.settings = settings;
   }
-  parse(fileName = ''): DateType {
+  parse(path = ''): DateType {
+    const fileName = this.app.vault.getAbstractFileByPath(path)?.name;
+
     const [[, year], [, quarter], [, month], [, week], [, day]] = [
-      fileName.match(/(^\d{4})/) || [], // year
-      fileName.match(/^\d{4}-Q(\d{1})/) || [], // quarter
-      fileName.match(/^\d{4}-(\d{2})/) || [], // month
-      fileName.match(/^\d{4}-W(\d{2})/) || [], // week
-      fileName.match(/^\d{4}-\d{2}-(\d{2})/) || [], // day
+      fileName?.match(/(^\d{4})/) || [], // year
+      fileName?.match(/^\d{4}-Q(\d{1})/) || [], // quarter
+      fileName?.match(/^\d{4}-(\d{2})/) || [], // month
+      fileName?.match(/^\d{4}-W(\d{2})/) || [], // week
+      fileName?.match(/^\d{4}-\d{2}-(\d{2})/) || [], // day
     ];
 
     return {

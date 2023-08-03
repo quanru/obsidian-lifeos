@@ -30,9 +30,14 @@ export class Task {
     el: HTMLElement,
     ctx: MarkdownPostProcessorContext
   ) => {
-    const filename = this.app.workspace.getActiveFile()?.basename;
+    const filename = ctx.sourcePath;
     const parsed = this.date.parse(filename);
     const condition = this.date.days(parsed);
+
+    if (condition.from === null && condition.to === null) {
+      return;
+    }
+
     const tasks = this.dataview
       .pages('')
       .file.tasks.where((t: STask) =>
@@ -53,9 +58,14 @@ export class Task {
     el: HTMLElement,
     ctx: MarkdownPostProcessorContext
   ) => {
-    const filename = this.app.workspace.getActiveFile()?.basename;
+    const filename = ctx.sourcePath;
     const parsed = this.date.parse(filename);
     const condition = this.date.days(parsed);
+
+    if (condition.from === null && condition.to === null) {
+      return;
+    }
+
     let tasks = [];
     // 收集日期范围内的日记文件
     const dailyTasks = this.dataview.pages('').file.tasks.where((t: STask) =>

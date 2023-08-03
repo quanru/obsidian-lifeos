@@ -58,7 +58,6 @@ export class Project extends Item {
       to: '',
     },
     header: string,
-    filePath: string
   ) {
     const { from, to } = condition;
     const timeReg = /\d+hr(\d+)?/;
@@ -152,17 +151,12 @@ export class Project extends Item {
     ctx: MarkdownPostProcessorContext
   ) => {
     const date = new Date(this.app, this.settings, this.file);
-    const { basename: filename, path } = this.app.workspace.getActiveFile() || {
-      filename: '',
-      path: '',
-    };
-    const parsed = date.days(date.parse(filename));
+    const parsed = date.days(date.parse(ctx.sourcePath));
 
     const header = this.settings.projectListHeader;
     const { projectList, projectTimeConsume } = await this.filter(
       parsed,
       header,
-      path
     );
 
     const div = el.createEl('div');
