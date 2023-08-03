@@ -2,8 +2,8 @@ import type { TaskConditionType } from '../type';
 
 import { TFile, moment } from 'obsidian';
 import { Date } from '../periodic/Date';
+import { Markdown } from '../component/Markdown'
 import {
-  Component,
   MarkdownPostProcessorContext,
   MarkdownRenderer,
 } from 'obsidian';
@@ -174,15 +174,15 @@ export class Project extends Item {
       );
     });
 
-    const component = new Component();
+    const component = new Markdown(div);
 
-    component.load();
-
-    return MarkdownRenderer.renderMarkdown(
+    MarkdownRenderer.renderMarkdown(
       list.join('\n'),
       div,
       ctx.sourcePath,
       component
     );
+
+    ctx.addChild(component);
   };
 }

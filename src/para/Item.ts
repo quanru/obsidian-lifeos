@@ -1,12 +1,12 @@
 import {
   type App,
   type MarkdownPostProcessorContext,
-  Component,
   MarkdownRenderer,
 } from 'obsidian';
 import type { PluginSettings } from '../type';
 import { Date } from '../periodic/Date';
 import { File } from '../periodic/File';
+import { Markdown } from '../component/Markdown'
 
 export class Item {
   dir: string;
@@ -34,16 +34,16 @@ export class Item {
   ) => {
     const div = el.createEl('div');
     const markdown = this.file.list(this.dir);
-    const component = new Component();
+    const component = new Markdown(div);
 
-    component.load();
-
-    return MarkdownRenderer.renderMarkdown(
+    MarkdownRenderer.renderMarkdown(
       markdown || '- Nothing',
       div,
       ctx.sourcePath,
       component
     );
+
+    ctx.addChild(component);
   };
 
   listByTag = async (
@@ -55,15 +55,15 @@ export class Item {
     const tags = this.file.tags(filepath);
     const div = el.createEl('div');
     const markdown = this.file.list(this.dir, { tags });
-    const component = new Component();
+    const component = new Markdown(div);
 
-    component.load();
-
-    return MarkdownRenderer.renderMarkdown(
+    MarkdownRenderer.renderMarkdown(
       markdown || '- Nothing',
       div,
       ctx.sourcePath,
       component
     );
+
+    ctx.addChild(component);
   };
 }

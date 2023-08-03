@@ -3,12 +3,13 @@ import type { TaskConditionType, PluginSettings } from '../type';
 import type { TaskResult } from 'obsidian-dataview/lib/api/plugin-api';
 
 import { TaskStatusType } from '../type';
-import { moment, Component } from 'obsidian';
+import { moment } from 'obsidian';
 import { DataviewApi, STask } from 'obsidian-dataview';
 import { ERROR_MESSAGES } from '../constant';
 
 import { File } from '../periodic/File';
 import { Date } from '../periodic/Date';
+import { Markdown } from '../component/Markdown';
 import { renderError } from '../util';
 
 export class Task {
@@ -47,10 +48,13 @@ export class Task {
         })
       )
       .sort((t: STask) => t.completion, 'asc');
-    const component = new Component();
 
-    component.load();
-    this.dataview.taskList(tasks, false, el, component);
+    const div = el.createEl('div');
+    const component = new Markdown(div);
+
+    this.dataview.taskList(tasks, false, div, component);
+
+    ctx.addChild(component);
   };
 
   recordListByTime = (
@@ -89,10 +93,12 @@ export class Task {
       tasks = [...dailyTasks, ...nonDailyTasks];
     }
 
-    const component = new Component();
+    const div = el.createEl('div');
+    const component = new Markdown(div);
 
-    component.load();
-    this.dataview.taskList(tasks, false, el, component);
+    this.dataview.taskList(tasks, false, div, component);
+
+    ctx.addChild(component);
   };
 
   listByTag = async (
@@ -102,13 +108,13 @@ export class Task {
   ) => {
     const filepath = ctx.sourcePath;
     const tags = this.file.tags(filepath);
-    const component = new Component();
-    const containerEl = el.createEl('div');
+    const div = el.createEl('div');
+    const component = new Markdown(div);
 
     if (!tags.length) {
       return renderError(
         ERROR_MESSAGES.NO_FRONT_MATTER_TAG,
-        containerEl,
+        div,
         filepath
       );
     }
@@ -128,9 +134,9 @@ WHERE ${where} AND file.path != "${filepath}"
 SORT completed ASC
     `)) as TaskResult;
 
-    component.load();
+    this.dataview.taskList(tasks, false, div, component);
 
-    return this.dataview.taskList(tasks, false, el, component);
+    ctx.addChild(component);
   };
 
   filter(
@@ -147,7 +153,7 @@ SORT completed ASC
 
     if (
       task?.section?.type === 'header' &&
-      task?.section?.subpath?.trim() === (this.settings.habitHeader.trim())
+      task?.section?.subpath?.trim() === this.settings.habitHeader.trim()
     )
       return false;
 

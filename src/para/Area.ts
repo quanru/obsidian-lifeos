@@ -1,8 +1,9 @@
 import type { MarkdownPostProcessorContext } from 'obsidian';
 import type { DateType } from '../type';
 
-import { Component, MarkdownRenderer, TFile } from 'obsidian';
+import { MarkdownRenderer, TFile } from 'obsidian';
 import { Item } from './Item';
+import { Markdown } from '../component/Markdown'
 
 export class Area extends Item {
   async filter(
@@ -79,15 +80,15 @@ export class Area extends Item {
       );
     });
 
-    const component = new Component();
+    const component = new Markdown(div);
 
-    component.load();
-
-    return MarkdownRenderer.renderMarkdown(
+    MarkdownRenderer.renderMarkdown(
       list.join('\n'),
       div,
       ctx.sourcePath,
       component
     );
+
+    ctx.addChild(component);
   };
 }
