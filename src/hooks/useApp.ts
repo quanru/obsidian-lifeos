@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { App } from 'obsidian';
 import { AppContext } from '../context';
+import type { ContextType } from '../type';
 
-export const useApp = (): App | undefined => {
+export const useApp = (): ContextType | undefined => {
   return React.useContext(AppContext);
 };

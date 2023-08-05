@@ -18,7 +18,7 @@ import { SettingTab } from './SettingTab';
 import type { PluginSettings } from './type';
 import { ERROR_MESSAGES } from './constant';
 import { renderError } from './util';
-import { ExampleView } from './view/ExampleView';
+import { AddTemplateView } from './view/AddTemplateView';
 
 const DEFAULT_SETTINGS: PluginSettings = {
   periodicNotesPath: 'PeriodicNotes',
@@ -66,7 +66,7 @@ export default class PeriodicPARA extends Plugin {
     await this.loadSettings();
 
     const item = this.addRibbonIcon('add', 'PeriodicPARA', () => {
-      const view = new ExampleView(this.app.workspace.getLeaf());
+      const view = new AddTemplateView(this.app.workspace.getLeaf(), this.settings);
 
       view.onOpen();
     });

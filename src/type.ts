@@ -1,9 +1,11 @@
+import type { App } from "obsidian";
+
 export interface PluginSettings {
-  periodicNotesPath: string,
-  projectsPath: string,
-  areasPath: string,
-  resourcesPath: string,
-  archivesPath: string,
+  periodicNotesPath: string;
+  projectsPath: string;
+  areasPath: string;
+  resourcesPath: string;
+  archivesPath: string;
   projectListHeader: string;
   areaListHeader: string;
   habitHeader: string;
@@ -32,3 +34,5 @@ export type TaskConditionType = {
   from?: string | null;
   to?: string | null;
 };
+
+export type ContextType = { app: App; settings: PluginSettings };
