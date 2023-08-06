@@ -3,6 +3,7 @@ import type {
   App,
   MarkdownPostProcessorContext,
   PluginManifest,
+  WorkspaceLeaf,
 } from 'obsidian';
 import { DataviewApi, getAPI, isPluginEnabled } from 'obsidian-dataview';
 
@@ -18,7 +19,8 @@ import { SettingTab } from './SettingTab';
 import type { PluginSettings } from './type';
 import { ERROR_MESSAGES } from './constant';
 import { renderError } from './util';
-import { AddTemplateView } from './view/AddTemplateView';
+import { PeriodicPARAView, VIEW_TYPE } from './view/PeriodicPARA';
+import { openView } from './openView';
 
 const DEFAULT_SETTINGS: PluginSettings = {
   periodicNotesPath: 'PeriodicNotes',
@@ -64,11 +66,22 @@ export default class PeriodicPARA extends Plugin {
 
   async onload() {
     await this.loadSettings();
+    this.registerView(VIEW_TYPE, (leaf) => {
+      return new PeriodicPARAView(leaf, this.settings);
+    });
 
-    const item = this.addRibbonIcon('add', 'PeriodicPARA', () => {
-      const view = new AddTemplateView(this.app.workspace.getLeaf(), this.settings);
+    const item = this.addRibbonIcon('add', 'PeriodicPARA', async () => {
+      const leafs = this.app.workspace.getLeavesOfType(VIEW_TYPE);
 
-      view.onOpen();
+      if (leafs.length > 0) {
+        this.app.workspace.revealLeaf(leafs[0]);
+        return;
+      }
+
+      const leaf = this.app.workspace.getLeaf(false);
+
+      await leaf.setViewState({ type: VIEW_TYPE, active: true });
+      this.app.workspace.revealLeaf(leaf);
     });
     setIcon(item, 'plus');
 
