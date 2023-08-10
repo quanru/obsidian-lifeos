@@ -181,6 +181,7 @@ export class Date {
     const quarters = new Set();
 
     const currentDate = moment(from).clone();
+
     while (currentDate.isBefore(moment(to))) {
       const weekLink = `${currentDate.weekYear()}-W${String(
         currentDate.isoWeek()
@@ -191,7 +192,9 @@ export class Date {
         this.settings.periodicNotesPath
       );
 
-      weeks.add(weekFile?.path);
+      if (weekFile) {
+        weeks.add(weekFile.path);
+      }
 
       const monthLink = `${currentDate.year()}-${String(
         currentDate.month() + 1
@@ -201,7 +204,10 @@ export class Date {
         '',
         this.settings.periodicNotesPath
       );
-      months.add(monthFile?.path);
+
+      if (monthFile) {
+        months.add(monthFile.path);
+      }
 
       const quarterLink = `${currentDate.year()}-Q${Math.ceil(
         (currentDate.month() + 1) / 3
@@ -211,7 +217,10 @@ export class Date {
         '',
         this.settings.periodicNotesPath
       );
-      quarters.add(quarterFile);
+
+      if (quarterFile) {
+        quarters.add(quarterFile.path);
+      }
 
       currentDate.add(1, 'day');
     }

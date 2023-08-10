@@ -3,7 +3,6 @@ import type {
   App,
   MarkdownPostProcessorContext,
   PluginManifest,
-  WorkspaceLeaf,
 } from 'obsidian';
 import { DataviewApi, getAPI, isPluginEnabled } from 'obsidian-dataview';
 
@@ -20,7 +19,6 @@ import type { PluginSettings } from './type';
 import { ERROR_MESSAGES } from './constant';
 import { renderError } from './util';
 import { PeriodicPARAView, VIEW_TYPE } from './view/PeriodicPARA';
-import { openView } from './openView';
 
 const DEFAULT_SETTINGS: PluginSettings = {
   periodicNotesPath: 'PeriodicNotes',
