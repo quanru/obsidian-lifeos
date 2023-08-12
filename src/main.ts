@@ -20,6 +20,8 @@ import { ERROR_MESSAGES } from './constant';
 import { renderError } from './util';
 import { PeriodicPARAView, VIEW_TYPE } from './view/PeriodicPARA';
 
+import './main.less';
+
 const DEFAULT_SETTINGS: PluginSettings = {
   periodicNotesPath: 'PeriodicNotes',
   projectsPath: '1. Projects',
@@ -68,20 +70,14 @@ export default class PeriodicPARA extends Plugin {
       return new PeriodicPARAView(leaf, this.settings);
     });
 
-    const item = this.addRibbonIcon('add', 'PeriodicPARA', async () => {
-      const leafs = this.app.workspace.getLeavesOfType(VIEW_TYPE);
+    const item = this.addRibbonIcon('zap', 'Periodic PARA', this.initView);
+    setIcon(item, 'zap');
 
-      if (leafs.length > 0) {
-        this.app.workspace.revealLeaf(leafs[0]);
-        return;
-      }
-
-      const leaf = this.app.workspace.getLeaf(false);
-
-      await leaf.setViewState({ type: VIEW_TYPE, active: true });
-      this.app.workspace.revealLeaf(leaf);
+    this.addCommand({
+      id: 'periodic-para',
+      name: 'Create Notes',
+      callback: this.initView,
     });
-    setIcon(item, 'plus');
 
     this.loadHelpers();
     this.loadGlobalHelpers();
@@ -198,4 +194,19 @@ export default class PeriodicPARA extends Plugin {
     (window as any).PeriodicPARA.Bullet = this.bullet;
     (window as any).PeriodicPARA.Date = this.date;
   }
+
+  initView = async () => {
+    const leafs = this.app.workspace.getLeavesOfType(VIEW_TYPE);
+
+    if (leafs.length > 0) {
+      this.app.workspace.revealLeaf(leafs[0]);
+      return;
+    }
+
+    const leaf = this.app.workspace.getLeaf(false);
+
+    await leaf.setViewState({ type: VIEW_TYPE, active: true });
+
+    this.app.workspace.revealLeaf(leaf);
+  };
 }

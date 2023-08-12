@@ -4,7 +4,7 @@ import type PeriodicPARA from './main';
 import type { PluginSettings } from './type';
 
 export const DEFAULT_SETTINGS: PluginSettings = {
-  periodicNotesPath: 'PeriodicNotes',
+  periodicNotesPath: '0. PeriodicNotes',
   projectsPath: '1. Projects',
   areasPath: '2. Areas',
   resourcesPath: '3. Resources',

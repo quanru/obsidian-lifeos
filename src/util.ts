@@ -14,3 +14,8 @@ export function renderError(
     component
   );
 }
+
+export const isDarkTheme = () => {
+  const el = document.querySelector('body');
+  return el?.className.includes('theme-dark') ?? false;
+};

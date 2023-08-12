@@ -9,9 +9,12 @@ import {
   Radio,
   Tabs,
   Input,
-  InputTag,
-} from '@arco-design/web-react';
-
+  ConfigProvider,
+  theme,
+} from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import reduceCSSCalc from 'reduce-css-calc';
+import dayjs from 'dayjs';
 import {
   PARA,
   PROJECT,
@@ -26,17 +29,17 @@ import {
   YEARLY,
   ERROR_MESSAGES,
 } from '../constant';
+import { isDarkTheme } from '../util';
+import type { PluginSettings } from '../type';
 
-import '@arco-design/web-react/es/Form/style/index.js';
-import '@arco-design/web-react/es/Button/style/index.js';
-import '@arco-design/web-react/es/DatePicker/style/index.js';
-import '@arco-design/web-react/es/Radio/style/index.js';
-import '@arco-design/web-react/es/Tabs/style/index.js';
-import '@arco-design/web-react/es/Input/style/index.js';
-import '@arco-design/web-react/es/InputTag/style/index.js';
+import enUS from 'antd/locale/en_US';
+import zhCN from 'antd/locale/zh_CN';
+import 'dayjs/locale/zh-cn';
 
-const { TabPane } = Tabs;
-const { YearPicker, QuarterPicker, MonthPicker, WeekPicker } = DatePicker;
+const localeMap: Record<string, any> = {
+  en: enUS,
+  zh: zhCN,
+};
 
 export const AddTemplate = () => {
   const { app, settings } = useApp() || {};
@@ -44,202 +47,234 @@ export const AddTemplate = () => {
   const [paraActiveTab, setParaActiveTab] = useState(PROJECT);
   const [type, setType] = useState(PERIODIC_NOTES);
   const [form] = Form.useForm();
+  const today = dayjs(new Date());
+  const SubmitButton = (
+    <Form.Item
+      style={{
+        display: 'flex',
+        justifyContent: 'right',
+        alignItems: 'center',
+        paddingTop: 25,
+        paddingRight: 25,
+      }}
+    >
+      <Button
+        htmlType="submit"
+        type="primary"
+        shape="circle"
+        size="large"
+        icon={<PlusOutlined />}
+      ></Button>
+    </Form.Item>
+  );
+  const createFile = async (values: any) => {
+    if (!app || !settings) {
+      return;
+    }
 
-  return (
-    <>
-      <Form
-        style={{ maxWidth: 750 }}
-        form={form}
-        onSubmit={async (values) => {
-          if (!app || !settings) {
+    let templateFile = '';
+    let folder;
+    let file;
+    let tag = '';
+
+    if (type === PARA) {
+      let path;
+      let key;
+
+      path =
+        settings[
+          `${paraActiveTab.toLocaleLowerCase()}sPath` as keyof PluginSettings
+        ]; // settings.archivesPath;
+      key = values[`${paraActiveTab}Name`]; // values.archiveName;
+      tag = values[`${paraActiveTab}Tag`]; // values.archiveTag;
+
+      if (!tag) {
+        return new Notice(ERROR_MESSAGES.TAGS_MUST_INPUT);
+      }
+
+      folder = `${path}/${key}`;
+      file = `${folder}/README.md`;
+      templateFile = `${path}/Template.md`;
+    } else if (type === PERIODIC_NOTES) {
+      const key = periodicActiveTab;
+      let year = values[key]['$y'];
+      let value;
+
+      if (periodicActiveTab === DAILY) {
+        folder = `${
+          settings.periodicNotesPath
+        }/${year}/${periodicActiveTab}/${String(
+          moment(values.daily).month() + 1
+        ).padStart(2, '0')}`;
+        value = values[key].format('YYYY-MM-DD');
+      } else if (periodicActiveTab === WEEKLY) {
+        folder = `${settings.periodicNotesPath}/${year}/${periodicActiveTab}`;
+        value = values[key].format('gggg-[W]w');
+      } else if (periodicActiveTab === MONTHLY) {
+        folder = `${settings.periodicNotesPath}/${year}/${periodicActiveTab}`;
+        value = values[key].format('YYYY-MM');
+      } else if (periodicActiveTab === QUARTERLY) {
+        folder = `${settings.periodicNotesPath}/${year}/${periodicActiveTab}`;
+        value = values[key].format('YYYY-[Q]Q');
+      } else if (periodicActiveTab === YEARLY) {
+        folder = `${settings.periodicNotesPath}/${year}`;
+        value = year;
+      }
+
+      file = `${folder}/${value}.md`;
+      templateFile = `${settings.periodicNotesPath}/Templates/${periodicActiveTab}.md`;
+    }
+
+    const templateTFile = app.vault.getAbstractFileByPath(templateFile!);
+
+    if (!templateTFile) {
+      return new Notice(ERROR_MESSAGES.NO_TEMPLATE_EXIST + templateFile);
+    }
+
+    if (templateTFile instanceof TFile) {
+      const templateContent = await app.vault.read(templateTFile);
+
+      if (!folder || !file) {
+        return;
+      }
+
+      let tFile = app.vault.getAbstractFileByPath(file);
+
+      if (tFile && tFile instanceof TFile) {
+        return await app.workspace.getLeaf().openFile(tFile);
+      }
+
+      if (!app.vault.getAbstractFileByPath(folder)) {
+        app.vault.createFolder(folder);
+      }
+
+      const fileCreated = await app.vault.create(file, templateContent);
+
+      await Promise.all([
+        app.fileManager.processFrontMatter(fileCreated, (frontMatter) => {
+          if (!tag) {
             return;
           }
 
-          let templateFile;
-          let folder;
-          let file;
-          let tags: string[] = [];
+          frontMatter.tags = frontMatter.tags || [];
+          frontMatter.tags.push(tag);
+        }),
+        app.workspace.getLeaf().openFile(fileCreated),
+      ]);
+      form.resetFields();
+    }
+  };
 
-          if (type === PARA) {
-            let path;
-            let key;
-
-            if (paraActiveTab === PROJECT) {
-              path = settings.projectsPath;
-              key = values.projectName;
-              tags = values.projectTags;
-            } else if (paraActiveTab === AREA) {
-              path = settings.areasPath;
-              key = values.areaName;
-              tags = values.areaTags;
-            } else if (paraActiveTab === RESOURCE) {
-              path = settings.resourcesPath;
-              key = values.resourceName;
-              tags = values.resourceTags;
-            } else if (paraActiveTab === ARCHIVE) {
-              path = settings.archivesPath;
-              key = values.archiveName;
-              tags = values.archiveTags;
-            }
-
-            if (!tags?.length) {
-              return new Notice(ERROR_MESSAGES.TAGS_MUST_INPUT);
-            }
-
-            folder = app.vault.getRoot().path + `${path}/${key}`;
-            file = `${folder}/README.md`;
-            templateFile = `${path}/Template.md`;
-          } else if (type === PERIODIC_NOTES) {
-            const key = periodicActiveTab.toLowerCase();
-            const value = values[key].format
-              ? values[key].format('gggg-[W]w') // for WeekPicker bug https://github.com/arco-design/arco-design/issues/553#issuecomment-1049541725
-              : values[key];
-            const year = value.match(/(^\d\d\d\d)-?/)[1];
-
-            if (periodicActiveTab === DAILY) {
-              folder = `${
-                settings.periodicNotesPath
-              }/${year}/${periodicActiveTab}/${String(
-                moment(values.daily).month() + 1
-              ).padStart(2, '0')}`;
-            } else if (
-              periodicActiveTab === WEEKLY ||
-              periodicActiveTab === MONTHLY ||
-              periodicActiveTab === QUARTERLY
-            ) {
-              folder = `${settings.periodicNotesPath}/${year}/${periodicActiveTab}`;
-            } else if (periodicActiveTab === YEARLY) {
-              folder = `${settings.periodicNotesPath}/${year}`;
-            }
-
-            file = `${folder}/${value}.md`;
-            templateFile = `${settings.periodicNotesPath}/Templates/${periodicActiveTab}.md`;
-          }
-
-          const templateTFile = app.vault.getAbstractFileByPath(templateFile!);
-
-          if (!templateTFile) {
-            return new Notice(ERROR_MESSAGES.NO_TEMPLATE_EXIST + templateFile);
-          }
-
-          if (templateTFile instanceof TFile) {
-            const templateContent = await app.vault.read(templateTFile);
-
-            if (!folder || !file) {
-              return;
-            }
-
-            if (app.vault.getAbstractFileByPath(file)) {
-              return new Notice(ERROR_MESSAGES.FILE_ALREADY_EXIST + file);
-            }
-
-            if (!app.vault.getAbstractFileByPath(folder)) {
-              app.vault.createFolder(folder);
-            }
-
-            const tFile = await app.vault.create(file, templateContent);
-
-            await app.fileManager.processFrontMatter(tFile, (frontMatter) => {
-              if (tags.length) {
-                frontMatter.tags = frontMatter.tags || [];
-                frontMatter.tags = tags.concat(frontMatter.tags);
-              }
-            });
-            await app.workspace.getLeaf().openFile(tFile);
-          }
+  return (
+    <ConfigProvider
+      locale={localeMap[window.localStorage.getItem('language') || 'en']}
+      theme={{
+        token: {
+          colorPrimary: reduceCSSCalc(
+            getComputedStyle(document.body).getPropertyValue(
+              '--interactive-accent'
+            )
+          ),
+        },
+        algorithm: isDarkTheme() ? theme.darkAlgorithm : theme.defaultAlgorithm,
+      }}
+    >
+      <Form
+        style={{ maxWidth: 750 }}
+        initialValues={{
+          [DAILY]: today,
+          [WEEKLY]: today,
+          [MONTHLY]: today,
+          [QUARTERLY]: today,
+          [YEARLY]: today,
         }}
+        form={form}
+        onFinish={createFile}
       >
         <Radio.Group
-          type="button"
           name="type"
+          buttonStyle="solid"
           value={type}
-          onChange={setType}
+          onChange={(e) => setType(e.target.value)}
           style={{ marginBottom: 40 }}
-          options={[PERIODIC_NOTES, PARA]}
-        ></Radio.Group>
+        >
+          <Radio.Button value={PERIODIC_NOTES}>{PERIODIC_NOTES}</Radio.Button>
+          <Radio.Button value={PARA}>{PARA}</Radio.Button>
+        </Radio.Group>
         {type === PERIODIC_NOTES ? (
           <Tabs
             key={PERIODIC_NOTES}
-            activeTab={periodicActiveTab}
+            activeKey={periodicActiveTab}
             onChange={setPeriodicActiveTab}
-          >
-            <TabPane key={DAILY} title={DAILY}>
-              <Form.Item field="daily">
-                <DatePicker
-                  style={{ width: 200 }}
-                />
-              </Form.Item>
-            </TabPane>
-            <TabPane key={WEEKLY} title={WEEKLY}>
-              <Form.Item
-                getValueFromEvent={(_, current) => current}
-                field="weekly"
-              >
-                <WeekPicker format="gggg-[W]w" style={{ width: 200 }} />
-              </Form.Item>
-            </TabPane>
-            <TabPane key={MONTHLY} title={MONTHLY}>
-              <Form.Item field="monthly">
-                <MonthPicker style={{ width: 200 }} />
-              </Form.Item>
-            </TabPane>
-            <TabPane key={QUARTERLY} title={QUARTERLY}>
-              <Form.Item field="quarterly">
-                <QuarterPicker style={{ width: 200 }} />
-              </Form.Item>
-            </TabPane>
-            <TabPane key={YEARLY} title={YEARLY}>
-              <Form.Item field="yearly">
-                <YearPicker style={{ width: 200 }} />
-              </Form.Item>
-            </TabPane>
-          </Tabs>
+            items={[DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY].map(
+              (periodic) => {
+                const pickerMap: Record<
+                  string,
+                  'date' | 'week' | 'month' | 'quarter' | 'year'
+                > = {
+                  [DAILY]: 'date',
+                  [WEEKLY]: 'week',
+                  [MONTHLY]: 'month',
+                  [QUARTERLY]: 'quarter',
+                  [YEARLY]: 'year',
+                };
+                const picker = pickerMap[periodic];
+
+                return {
+                  label: periodic,
+                  key: periodic,
+                  children: (
+                    <>
+                      <Form.Item name={periodic}>
+                        <DatePicker
+                          picker={picker}
+                          showToday={false}
+                          style={{ width: 200 }}
+                          inputReadOnly
+                          open
+                          renderExtraFooter={() => SubmitButton}
+                          getPopupContainer={(triggerNode: any) =>
+                            triggerNode.parentNode
+                          }
+                        />
+                      </Form.Item>
+                    </>
+                  ),
+                };
+              }
+            )}
+          ></Tabs>
         ) : (
-          <Tabs
-            key="PARA"
-            activeTab={paraActiveTab}
-            onChange={setParaActiveTab}
-          >
-            <TabPane key={PROJECT} title={PROJECT}>
-              <Form.Item field="projectName">
-                <Input type="text" allowClear placeholder="Project Name" />
-              </Form.Item>
-              <Form.Item field="projectTags">
-                <InputTag allowClear placeholder="Tags" />
-              </Form.Item>
-            </TabPane>
-            <TabPane key={AREA} title={AREA}>
-              <Form.Item field="areaName">
-                <Input type="text" allowClear placeholder="Area Name" />
-              </Form.Item>
-              <Form.Item field="areaTags">
-                <InputTag allowClear placeholder="Tags" />
-              </Form.Item>
-            </TabPane>
-            <TabPane key={RESOURCE} title={RESOURCE}>
-              <Form.Item field="resourceName">
-                <Input type="text" allowClear placeholder="Resource Name" />
-              </Form.Item>
-              <Form.Item field="resourceTags">
-                <InputTag allowClear placeholder="Tags" />
-              </Form.Item>
-            </TabPane>
-            <TabPane key={ARCHIVE} title={ARCHIVE}>
-              <Form.Item field="archiveName">
-                <Input type="text" allowClear placeholder="Archive Name" />
-              </Form.Item>
-              <Form.Item field="archiveTags">
-                <InputTag allowClear placeholder="Tags" />
-              </Form.Item>
-            </TabPane>
-          </Tabs>
+          <>
+            <Tabs
+              key="PARA"
+              activeKey={paraActiveTab}
+              onChange={setParaActiveTab}
+              items={[PROJECT, AREA, RESOURCE, ARCHIVE].map((item) => {
+                return {
+                  label: item,
+                  key: item,
+                  children: (
+                    <>
+                      <Form.Item name={`${item}Name`}>
+                        <Input
+                          type="text"
+                          allowClear
+                          placeholder={`${item} Name`}
+                        />
+                      </Form.Item>
+                      <Form.Item name={`${item}Tag`}>
+                        <Input allowClear placeholder={`${item} Tag`} />
+                      </Form.Item>
+                    </>
+                  ),
+                };
+              })}
+            ></Tabs>
+            {SubmitButton}
+          </>
         )}
-        <Form.Item>
-          <Button htmlType="submit" type="primary" style={{ width: 200 }}>
-            Create
-          </Button>
-        </Form.Item>
       </Form>
-    </>
+    </ConfigProvider>
   );
 };

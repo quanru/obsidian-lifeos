@@ -6,7 +6,6 @@ export const ERROR_MESSAGES = {
   NO_VIEW_EXISTED: 'There is no this view in periodic PARA plugin',
   NO_README_EXIST: 'There is no README.md or xxx.README.md in ',
   NO_TEMPLATE_EXIST: 'There is no template file exist: ',
-  FILE_ALREADY_EXIST: 'The file is already exist: ',
   TAGS_MUST_INPUT: 'Please input tags!'
 };
 
