@@ -3,12 +3,32 @@
 - This is a plugin for [LifeOS](https://forum.obsidian.md/t/building-my-second-brain-with-obsidian/62934), which assist in practicing the PARA system with periodic notes.
 - You can download the [LifeOS-example](https://github.com/quanru/obsidian-example-LifeOS/tree/english-version) to experience it.
 
+## Screenshots
+
+### Views
+
+![](assets/periodic-para-plugin-en.png)
+
+![](assets/periodic-para-plugin.png)
+
+### Create Periodic Notes & PARA Notes
+
+![](assets/periodic-para-plugin-add-1-en.png)
+![](assets/periodic-para-plugin-add-2-en.png)
+
+## Demo
+
+See [Youtube Demo](https://www.youtube.com/watch?v=poey9QoB7ns)
+
 ## Installation
 
 > [Dataview](https://github.com/blacksmithgu/obsidian-dataview) is required, please install it first.
 
-#### BRAT
-Periodic PARA has not been available in the Obsidian community plugin browser, but I already submitted it for [review](https://github.com/obsidianmd/obsidian-releases/pull/2117). You can install it by [BRAT](https://github.com/TfTHacker/obsidian42-brat).
+#### Recommended
+Periodic PARA is available in the Obsidian community plugin browser!
+  1. Search for "Periodic PARA" in Obsidian's community plugins browser
+  2. Enable the plugin in your Obsidian settings (find "Periodic PARA" under "Community plugins").
+  3. Check the settings. You can customize the directory of periodic notes and PARA notes.
 
 #### Manual
 Go to the [releases](https://github.com/quanru/obsidian-periodic-para/releases) and download the latest `main.js` and `manifest.json` files. Create a folder called `periodic-para` inside `.obsidian/plugins` and place both files in it.
@@ -170,12 +190,6 @@ to
 2. [[1. Projects/y-project/README|y-project]]
 ~~~
 
-## example
-
-![](assets/periodic-para-plugin-en.png)
-
-![](assets/periodic-para-plugin.png)
-
 ## Support
 
 - [Discord](https://discord.gg/HZGanKEkuZ)
@@ -187,9 +201,3 @@ If this plugin do help you, please buy me a cup of coffee on [buymeacoffee](http
 <a href="https://www.buymeacoffee.com/leyang">
   <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=leyang&button_colour=6495ED&font_colour=ffffff&font_family=Lato&outline_colour=000000&coffee_colour=FFDD00">
 </a>
-
-## Next
-- [x] Supports custom directories
-  - PARA directories
-  - Periodic directories
-- [x] Support *ListByTag(ProjectListByTag, AreaListByTag, ResourceListByTag, ArchiveListByTag)
