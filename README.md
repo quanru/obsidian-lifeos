@@ -12,13 +12,12 @@
 ![](assets/periodic-para-plugin.png)
 
 ### Create Periodic Notes & PARA Notes
+> See [Youtube Demo](https://www.youtube.com/watch?v=poey9QoB7ns)
+
+It is recommended to work with [Templater](https://silentvoid13.github.io/Templater/) so that you can use the template variables and functions provided by [Templater](https://silentvoid13.github.io/Templater/).
 
 ![](assets/periodic-para-plugin-add-1-en.png)
 ![](assets/periodic-para-plugin-add-2-en.png)
-
-## Demo
-
-See [Youtube Demo](https://www.youtube.com/watch?v=poey9QoB7ns)
 
 ## Installation
 
@@ -192,7 +191,17 @@ to
 
 ## Support
 
+- [Twitter](https://twitter.com/quanruzhuoxiu)
 - [Discord](https://discord.gg/HZGanKEkuZ)
+
+## Acknowledgements
+
+Also, I relied on the code from these excellent plugins:
+
+- [PARA](https://fortelabs.com/blog/para/). Thanks to Tiago Forte for inventing such a great organizational method.
+- [obsidian-periodic-notes](https://github.com/liamcain/obsidian-periodic-notes). Gave me the inspiration to develop this plugin.
+- [obsidian-dataview](https://github.com/blacksmithgu/obsidian-dataview). The underlying plugin uses dataview's query interface.
+- [Templater](https://github.com/SilentVoid13/Templater). Provides decoupled template creation, allowing a very large number of plugins to create files with the help of it.
 
 ## Donations
 
