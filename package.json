@@ -1,6 +1,6 @@
 {
   "name": "periodic-para",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "This is a plugin for [LifeOS](https://sspai.com/post/80802)",
   "main": "main.js",
   "scripts": {

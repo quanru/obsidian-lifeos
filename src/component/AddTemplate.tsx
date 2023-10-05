@@ -104,7 +104,7 @@ export const AddTemplate = () => {
         folder = `${
           settings.periodicNotesPath
         }/${year}/${periodicActiveTab}/${String(
-          moment(values.daily).month() + 1
+          values[key].month() + 1
         ).padStart(2, '0')}`;
         value = values[key].format('YYYY-MM-DD');
       } else if (periodicActiveTab === WEEKLY) {
