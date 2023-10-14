@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { useApp } from 'src/hooks/useApp';
-import { Notice, TFile } from 'obsidian';
+import { Notice, TFile, moment } from 'obsidian';
 import {
   Form,
   Button,
@@ -149,10 +149,7 @@ export const AddTemplate = () => {
       }
 
       const fileCreated = await app.vault.create(file, templateContent);
-      await new Promise((resolve) => {
-        // compatible with Templater plugin: https://github.com/SilentVoid13/Templater/commit/1117b48906e9ffba6bacd8d6768e63ed3eacd5d9
-        setTimeout(resolve, 500);
-      });
+
       await Promise.all([
         app.fileManager.processFrontMatter(fileCreated, (frontMatter) => {
           if (!tag) {
