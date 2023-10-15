@@ -268,7 +268,7 @@ export const AddTemplate = () => {
                             const itemTag = form
                               .getFieldValue(`${item}Tag`)
                               .replace(/^#/, '');
-                            const itemFolder = itemTag.replace('/', '-');
+                            const itemFolder = itemTag.replace(/\//g, '-');
                             const itemREADME = itemTag.split('/').reverse()[0];
 
                             form.setFieldValue(
