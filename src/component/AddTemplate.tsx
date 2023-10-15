@@ -76,6 +76,7 @@ export const AddTemplate = () => {
     let folder;
     let file;
     let tag = '';
+    let README = '';
 
     if (type === PARA) {
       let path;
@@ -85,15 +86,16 @@ export const AddTemplate = () => {
         settings[
           `${paraActiveTab.toLocaleLowerCase()}sPath` as keyof PluginSettings
         ]; // settings.archivesPath;
-      key = values[`${paraActiveTab}Name`]; // values.archiveName;
+      key = values[`${paraActiveTab}Folder`]; // values.archiveFolder;
       tag = values[`${paraActiveTab}Tag`]; // values.archiveTag;
+      README = values[`${paraActiveTab}README`]; // values.archiveREADME;
 
       if (!tag) {
         return new Notice(ERROR_MESSAGES.TAGS_MUST_INPUT);
       }
 
       folder = `${path}/${key}`;
-      file = `${folder}/README.md`;
+      file = `${folder}/${README}`;
       templateFile = `${path}/Template.md`;
     } else if (type === PERIODIC_NOTES) {
       const key = periodicActiveTab;
@@ -256,15 +258,46 @@ export const AddTemplate = () => {
                   key: item,
                   children: (
                     <>
-                      <Form.Item name={`${item}Name`}>
+                      <Form.Item
+                        labelCol={{ flex: '80px' }}
+                        label="Tag"
+                        name={`${item}Tag`}
+                      >
+                        <Input
+                          onChange={() => {
+                            const itemTag = form
+                              .getFieldValue(`${item}Tag`)
+                              .replace(/^#/, '');
+                            const itemFolder = itemTag.replace('/', '-');
+                            const itemREADME = itemTag.split('/').reverse()[0];
+
+                            form.setFieldValue(
+                              `${item}README`,
+                              (itemREADME ? itemREADME + '.' : '') + 'README.md'
+                            );
+                            form.setFieldValue(`${item}Folder`, itemFolder);
+                          }}
+                          allowClear
+                          placeholder="PKM/LifeOS"
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        labelCol={{ flex: '80px' }}
+                        label="Folder"
+                        name={`${item}Folder`}
+                      >
                         <Input
                           type="text"
                           allowClear
-                          placeholder={`${item} Name`}
+                          placeholder="PKM-LifeOS"
                         />
                       </Form.Item>
-                      <Form.Item name={`${item}Tag`}>
-                        <Input allowClear placeholder={`${item} Tag`} />
+                      <Form.Item
+                        labelCol={{ flex: '80px' }}
+                        label="README"
+                        name={`${item}README`}
+                      >
+                        <Input allowClear placeholder="LifeOS.README.md" />
                       </Form.Item>
                     </>
                   ),
