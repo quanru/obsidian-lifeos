@@ -74,11 +74,11 @@ export class Project extends Item {
       const file = this.file.get(link, '', this.settings.periodicNotesPath);
 
       if (file instanceof TFile) {
-        const reg = new RegExp(`# ${header}([\\s\\S]+?)\n#`);
+        const reg = new RegExp(`# ${header}([\\s\\S]*?)(?=##|$)`);
 
         let todayTotalTime = '0hr0';
         tasks.push(async () => {
-          const fileContent = await this.app.vault.read(file);
+          const fileContent = await this.app.vault.cachedRead(file);
           const regMatch = fileContent.match(reg);
           const projectContent = regMatch?.length
             ? regMatch[1]?.split('\n')

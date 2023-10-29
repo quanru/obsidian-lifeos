@@ -6,7 +6,12 @@ export const ERROR_MESSAGES = {
   NO_VIEW_EXISTED: 'There is no this view in periodic PARA plugin',
   NO_README_EXIST: 'There is no README.md or xxx.README.md in ',
   NO_TEMPLATE_EXIST: 'There is no template file exist: ',
-  TAGS_MUST_INPUT: 'Please input tags!'
+  TAGS_MUST_INPUT: 'Please input tags!',
+  DAILY_RECORD_FETCH_FAILED: 'Fetch daily record failed: ',
+  NO_DAILY_RECORD_HEADER: 'Please set daily record header in Periodic PARA plugin',
+  NO_DAILY_RECORD_API: 'Please set daily record API in Periodic PARA plugin',
+  NO_DAILY_RECORD_TOKEN: 'Please set daily record access token in Periodic PARA plugin',
+  NO_DAILY_FILE_EXIST: 'Daily file not exists, please create it first: ',
 };
 
 export const PARA = 'PARA Notes';
@@ -15,7 +20,7 @@ export const AREA = 'Area';
 export const RESOURCE = 'Resource';
 export const ARCHIVE = 'Archive';
 
-export const PERIODIC_NOTES = 'Periodic Notes';
+export const PERIODIC = 'Periodic Notes';
 export const DAILY = 'Daily';
 export const WEEKLY = 'Weekly';
 export const MONTHLY = 'Monthly';
