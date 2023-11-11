@@ -19,8 +19,9 @@ const renamePlugin = {
       const outcss = outfile.replace(/\.js$/, '.css');
       const fixcss = outfile.replace(/main\.js$/, 'styles.css');
       if (fs.existsSync(outcss)) {
-        console.log('Renaming', outcss, 'to', fixcss);
+        console.log('Start renaming', outcss, 'to', fixcss);
         fs.renameSync(outcss, fixcss);
+        console.log('End renaming', outcss, 'to', fixcss);
       }
     });
   },

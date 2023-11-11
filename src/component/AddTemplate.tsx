@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { useApp } from 'src/hooks/useApp';
-import { Notice, TFile, moment } from 'obsidian';
+import { Notice, TFile } from 'obsidian';
 import {
   Form,
   Button,
@@ -21,7 +21,7 @@ import {
   AREA,
   RESOURCE,
   ARCHIVE,
-  PERIODIC_NOTES,
+  PERIODIC,
   DAILY,
   WEEKLY,
   MONTHLY,
@@ -45,7 +45,7 @@ export const AddTemplate = () => {
   const { app, settings } = useApp() || {};
   const [periodicActiveTab, setPeriodicActiveTab] = useState(DAILY);
   const [paraActiveTab, setParaActiveTab] = useState(PROJECT);
-  const [type, setType] = useState(PERIODIC_NOTES);
+  const [type, setType] = useState(PERIODIC);
   const [form] = Form.useForm();
   const today = dayjs(new Date());
   const SubmitButton = (
@@ -97,7 +97,7 @@ export const AddTemplate = () => {
       folder = `${path}/${key}`;
       file = `${folder}/${README}`;
       templateFile = `${path}/Template.md`;
-    } else if (type === PERIODIC_NOTES) {
+    } else if (type === PERIODIC) {
       const key = periodicActiveTab;
       let year = values[key]['$y'];
       let value;
@@ -134,7 +134,7 @@ export const AddTemplate = () => {
     }
 
     if (templateTFile instanceof TFile) {
-      const templateContent = await app.vault.read(templateTFile);
+      const templateContent = await app.vault.cachedRead(templateTFile);
 
       if (!folder || !file) {
         return;
@@ -193,19 +193,21 @@ export const AddTemplate = () => {
         form={form}
         onFinish={createFile}
       >
-        <Radio.Group
-          name="type"
-          buttonStyle="solid"
-          value={type}
-          onChange={(e) => setType(e.target.value)}
-          style={{ marginBottom: 40 }}
-        >
-          <Radio.Button value={PERIODIC_NOTES}>{PERIODIC_NOTES}</Radio.Button>
-          <Radio.Button value={PARA}>{PARA}</Radio.Button>
-        </Radio.Group>
-        {type === PERIODIC_NOTES ? (
+        {settings?.usePARANotes && settings?.usePeriodicNotes && (
+          <Radio.Group
+            name="type"
+            buttonStyle="solid"
+            value={type}
+            onChange={(e) => setType(e.target.value)}
+            style={{ marginBottom: 40 }}
+          >
+            <Radio.Button value={PERIODIC}>{PERIODIC}</Radio.Button>
+            <Radio.Button value={PARA}>{PARA}</Radio.Button>
+          </Radio.Group>
+        )}
+        {type === PERIODIC && settings?.usePeriodicNotes && (
           <Tabs
-            key={PERIODIC_NOTES}
+            key={PERIODIC}
             activeKey={periodicActiveTab}
             onChange={setPeriodicActiveTab}
             items={[DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY].map(
@@ -246,7 +248,8 @@ export const AddTemplate = () => {
               }
             )}
           ></Tabs>
-        ) : (
+        )}
+        {type === PARA && settings?.usePARANotes && (
           <>
             <Tabs
               key="PARA"

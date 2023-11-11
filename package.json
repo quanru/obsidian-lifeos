@@ -1,6 +1,6 @@
 {
   "name": "periodic-para",
-  "version": "1.5.1",
+  "version": "1.6.0",
   "description": "This is a plugin for [LifeOS](https://sspai.com/post/80802)",
   "main": "main.js",
   "scripts": {
@@ -28,6 +28,7 @@
   "dependencies": {
     "@ant-design/icons": "^5.2.5",
     "antd": "^5.8.2",
+    "axios": "^1.5.1",
     "dayjs": "^1.11.9",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

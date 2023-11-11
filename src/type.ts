@@ -1,4 +1,4 @@
-import type { App } from "obsidian";
+import type { App } from 'obsidian';
 
 export interface PluginSettings {
   periodicNotesPath: string;
@@ -9,6 +9,12 @@ export interface PluginSettings {
   projectListHeader: string;
   areaListHeader: string;
   habitHeader: string;
+  dailyRecordHeader: string;
+  dailyRecordAPI: string;
+  dailyRecordToken: string;
+  useDailyRecord: boolean;
+  usePeriodicNotes: boolean;
+  usePARANotes: boolean;
 }
 
 export type DateType = {
@@ -36,3 +42,19 @@ export type TaskConditionType = {
 };
 
 export type ContextType = { app: App; settings: PluginSettings };
+
+export type DailyRecordType = {
+  rowStatus: 'ARCHIVED' | 'ACTIVE' | 'NORMAL';
+  updatedTs: number;
+  createdTs: number;
+  createdAt: string;
+  updatedAt: string;
+  content: string;
+};
+
+export type FetchError = {
+  code: number;
+  message: string;
+  msg?: string;
+  error?: string;
+}
