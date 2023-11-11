@@ -22,7 +22,7 @@ It is recommended to work with [Templater](https://silentvoid13.github.io/Templa
 
 ### Daily Record 
 
-![](https://github.com/quanru/obsidian-periodic-para/assets/11739753/3d967527-b021-4a15-acd4-f5e6b0701a99)
+https://github.com/quanru/obsidian-periodic-para/assets/11739753/3d967527-b021-4a15-acd4-f5e6b0701a99
 
 ## Installation
 
@@ -77,7 +77,7 @@ There are two ways to use it:
 1. Free self-deployment mode: Integration with [usememos](https://github.com/usememos/memos), you need to deploy your own usemes.
 2. Subscription mode: [Contact](https://github.com/quanru/obsidian-periodic-para#support) the author to purchase or obtain a trial token.
 
-![Shortcuts (iOS, iPadOS or macOS)](https://github.com/quanru/obsidian-periodic-para/assets/11739753/3d967527-b021-4a15-acd4-f5e6b0701a99)
+[Shortcuts (iOS, iPadOS or macOS)](https://www.icloud.com/shortcuts/1eaef307112843ed9f91d256f5ee7ad9)
 
 ### query code block
 
