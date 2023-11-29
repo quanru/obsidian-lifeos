@@ -89,6 +89,7 @@ export default class PeriodicPARA extends Plugin {
 
       if (!view) {
         return renderError(
+          this.app,
           ERROR_MESSAGES.NO_VIEW_PROVIDED,
           el.createEl('div'),
           ctx.sourcePath
@@ -100,6 +101,7 @@ export default class PeriodicPARA extends Plugin {
         !Object.keys(this.views).includes(legacyView)
       ) {
         return renderError(
+          this.app,
           `${ERROR_MESSAGES.NO_VIEW_EXISTED}: ${view}`,
           el.createEl('div'),
           ctx.sourcePath

@@ -36,7 +36,8 @@ export class Item {
     const markdown = this.file.list(this.dir);
     const component = new Markdown(div);
 
-    MarkdownRenderer.renderMarkdown(
+    MarkdownRenderer.render(
+      this.app,
       markdown || '- Nothing',
       div,
       ctx.sourcePath,
@@ -57,7 +58,8 @@ export class Item {
     const markdown = this.file.list(this.dir, { tags });
     const component = new Markdown(div);
 
-    MarkdownRenderer.renderMarkdown(
+    MarkdownRenderer.render(
+      this.app,
       markdown || '- Nothing',
       div,
       ctx.sourcePath,

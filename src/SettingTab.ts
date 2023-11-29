@@ -47,7 +47,7 @@ export class SettingTab extends PluginSettingTab {
             this.display();
           })
       );
-
+    // TODO onChange 节流防抖
     if (this.plugin.settings.usePeriodicNotes) {
       new Setting(containerEl)
         .setName('Periodic Notes Folder:')

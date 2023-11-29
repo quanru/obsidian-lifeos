@@ -33,6 +33,7 @@ export class Bullet {
 
     if (!tags.length) {
       return renderError(
+        this.app,
         ERROR_MESSAGES.NO_FRONT_MATTER_TAG,
         div,
         filepath

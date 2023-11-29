@@ -176,7 +176,8 @@ export class Project extends Item {
 
     const component = new Markdown(div);
 
-    MarkdownRenderer.renderMarkdown(
+    MarkdownRenderer.render(
+      this.app,
       list.join('\n'),
       div,
       ctx.sourcePath,
