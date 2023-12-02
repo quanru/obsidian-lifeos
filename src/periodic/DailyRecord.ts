@@ -1,8 +1,15 @@
-import axios from 'axios';
-import { App, Notice, TFile, moment } from 'obsidian';
+import axios, { Axios } from 'axios';
+import { App, TFile, moment, normalizePath } from 'obsidian';
 import type { File } from './File';
-import type { PluginSettings, DailyRecordType, FetchError } from '../type';
+import {
+  type PluginSettings,
+  type DailyRecordType,
+  type FetchError,
+  type ResourceType,
+  LogLevel,
+} from '../type';
 import { ERROR_MESSAGES } from '../constant';
+import { formatDailyRecord, generateFileName, logMessage } from 'src/util';
 
 export class DailyRecord {
   app: App;
@@ -12,6 +19,7 @@ export class DailyRecord {
   lastTime: string;
   offset: number;
   localKey: string;
+  axios: Axios;
   constructor(app: App, settings: PluginSettings, file: File) {
     this.app = app;
     this.file = file;
@@ -20,42 +28,40 @@ export class DailyRecord {
     this.offset = 0;
     this.localKey = `periodic-para-daily-record-last-time-${this.settings.dailyRecordToken}`;
     this.lastTime = window.localStorage.getItem(this.localKey) || '';
+    this.axios = axios.create({
+      headers: {
+        Authorization: `Bearer ${this.settings.dailyRecordToken}`,
+        Accept: 'application/json',
+      },
+    });
 
     if (!this.settings.dailyRecordAPI) {
-      new Notice(ERROR_MESSAGES.NO_DAILY_RECORD_API);
-      console.log(ERROR_MESSAGES.NO_DAILY_RECORD_API);
+      logMessage(ERROR_MESSAGES.NO_DAILY_RECORD_API);
       return;
     }
 
     if (!this.settings.dailyRecordToken) {
-      new Notice(ERROR_MESSAGES.NO_DAILY_RECORD_TOKEN);
-      console.log(ERROR_MESSAGES.NO_DAILY_RECORD_TOKEN);
+      logMessage(ERROR_MESSAGES.NO_DAILY_RECORD_TOKEN);
       return;
     }
 
     if (!this.settings.dailyRecordHeader) {
-      new Notice(ERROR_MESSAGES.NO_DAILY_RECORD_HEADER);
-      console.log(ERROR_MESSAGES.NO_DAILY_RECORD_HEADER);
+      logMessage(ERROR_MESSAGES.NO_DAILY_RECORD_HEADER);
       return;
     }
 
-    new Notice('Start sync daily record');
-    console.log('Start sync daily record');
+    logMessage('Start sync daily record');
   }
 
   async fetch() {
     try {
-      const { data } = await axios.get<DailyRecordType[] | FetchError>(
+      const { data } = await this.axios.get<DailyRecordType[] | FetchError>(
         this.settings.dailyRecordAPI,
         {
           params: {
             limit: this.limit,
             offset: this.offset,
             rowStatus: 'NORMAL',
-          },
-          headers: {
-            Accept: 'application/json',
-            Authorization: `Bearer ${this.settings.dailyRecordToken}`,
           },
         }
       );
@@ -68,9 +74,10 @@ export class DailyRecord {
         data.message || data.msg || data.error || JSON.stringify(data)
       );
     } catch (error) {
-      new Notice(`${ERROR_MESSAGES.DAILY_RECORD_FETCH_FAILED}: ${error}`);
-      console.log(`${ERROR_MESSAGES.DAILY_RECORD_FETCH_FAILED}: ${error}`);
-      throw error;
+      logMessage(
+        `${ERROR_MESSAGES.DAILY_RECORD_FETCH_FAILED}: ${error}`,
+        LogLevel.error
+      );
     }
   }
 
@@ -81,21 +88,83 @@ export class DailyRecord {
 
   sync = async () => {
     this.offset = 0;
-    this.insert();
+    this.downloadResource();
+    this.insertDailyRecord();
   };
 
-  insert = async () => {
-    const title = `# ${this.settings.dailyRecordHeader}\n`;
+  async downloadResource() {
+    const { origin } = new URL(this.settings.dailyRecordAPI);
+
+    try {
+      const { data } = await this.axios.get<ResourceType[] | FetchError>(
+        origin + '/api/v1/resource'
+      );
+
+      if (Array.isArray(data)) {
+        await Promise.all(
+          data.map(async (resource) => {
+            const folder = `${this.settings.periodicNotesPath}/Attachments`;
+            const resourcePath = normalizePath(
+              `${folder}/${generateFileName(resource)}`
+            );
+
+            const isResourceExists = await this.app.vault.adapter.exists(
+              resourcePath
+            );
+
+            if (isResourceExists) {
+              return;
+            }
+
+            const { data } = await this.axios.get(
+              `${origin}/o/r/${resource.id}`,
+              {
+                responseType: 'arraybuffer',
+              }
+            );
+
+            if (!data) {
+              return;
+            }
+
+            if (!this.app.vault.getAbstractFileByPath(folder)) {
+              this.app.vault.createFolder(folder);
+            }
+
+            await this.app.vault.adapter.writeBinary(
+              resourcePath,
+              Buffer.from(data)
+            );
+          })
+        );
+        return data;
+      }
+
+      throw new Error(
+        data.message || data.msg || data.error || JSON.stringify(data)
+      );
+    } catch (error) {
+      if (error.response.status === 404) {
+        return;
+      }
+      logMessage(
+        `${ERROR_MESSAGES.RESOURCE_FETCH_FAILED}: ${error}`,
+        LogLevel.error
+      );
+    }
+  }
+
+  insertDailyRecord = async () => {
+    const header = this.settings.dailyRecordHeader;
     const dailyRecordByDay: Record<string, Record<string, string>> = {};
     const records = (await this.fetch()) || [];
-    const timeStamp = records[0]?.createdAt
+    const mostRecentTimeStamp = records[0]?.createdAt
       ? moment(records[0]?.createdAt).unix()
       : records[0]?.createdTs;
 
-    if (!records.length || timeStamp * 1000 < Number(this.lastTime)) {
+    if (!records.length || mostRecentTimeStamp * 1000 < Number(this.lastTime)) {
       // 直到 record 返回为空，或者最新的一条记录的时间，晚于上一次同步时间
-      new Notice('End sync daily record');
-      console.log('End sync daily record');
+      logMessage('End sync daily record');
 
       window.localStorage.setItem(this.localKey, Date.now().toString());
 
@@ -103,33 +172,17 @@ export class DailyRecord {
     }
 
     for (const record of records) {
-      const { createdTs, createdAt, content } = record;
-      const timeStamp = createdAt ? moment(createdAt).unix() : createdTs;
-      const [day, time] = moment(timeStamp * 1000)
-        .format('YYYY-MM-DD HH:mm')
-        .split(' ');
-
-      if (!content) {
+      if (!record.content) {
         continue;
       }
 
-      const [firstLine, ...otherLine] = content.split('\n');
-      const isTask = /^- \[.*?\]/.test(firstLine); // 目前仅支持 task
-      const targetFirstLine = // 将标签和时间戳加到第一行
-        (isTask
-          ? `- [ ] ${time} ${firstLine.replace(/^- \[.*?\]/, '')}`
-          : `- ${time} ${firstLine}`) + ` #daily-record ^${timeStamp}`;
-      const finalTargetContent =
-        targetFirstLine +
-        (otherLine?.length
-          ? '\n' + otherLine.join('\n').replace(/[\n\s]*$/, '') // 增头去尾
-          : '');
+      const [date, timeStamp, formattedRecord] = formatDailyRecord(record);
 
-      if (dailyRecordByDay[day]) {
-        dailyRecordByDay[day][timeStamp] = finalTargetContent;
+      if (dailyRecordByDay[date]) {
+        dailyRecordByDay[date][timeStamp] = formattedRecord;
       } else {
-        dailyRecordByDay[day] = {
-          [timeStamp]: finalTargetContent,
+        dailyRecordByDay[date] = {
+          [timeStamp]: formattedRecord,
         };
       }
     }
@@ -143,22 +196,20 @@ export class DailyRecord {
         );
 
         if (!targetFile) {
-          new Notice(`${ERROR_MESSAGES.NO_DAILY_FILE_EXIST} ${today}`);
-          console.log(`${ERROR_MESSAGES.NO_DAILY_FILE_EXIST} ${today}`);
-          throw new Error(`${ERROR_MESSAGES.NO_DAILY_FILE_EXIST} ${today}`);
+          logMessage(
+            `${ERROR_MESSAGES.NO_DAILY_FILE_EXIST} ${today}`,
+            LogLevel.error
+          );
         }
 
-        const reg = new RegExp(`${title}([\\s\\S]*?)(?=##|$)`);
+        const reg = new RegExp(`# ${header}([\\s\\S]*?)(?=\\n##|$)`);
         if (targetFile instanceof TFile) {
           const originFileContent = await this.app.vault.read(targetFile);
           const regMatch = originFileContent.match(reg);
 
           if (!regMatch?.length || !regMatch?.index) {
             if (!this.settings.dailyRecordToken) {
-              new Notice(
-                'Current daily file will not insert daily record due to no daily record header'
-              );
-              console.log(
+              logMessage(
                 'Current daily file will not insert daily record due to no daily record header'
               );
               return;
@@ -168,7 +219,7 @@ export class DailyRecord {
           }
 
           const localRecordContent = regMatch[1]?.trim();
-          const from = regMatch?.index + title.length;
+          const from = regMatch?.index + header.length + 3; // 3 代表 `# ${header}\n`
           const to = from + localRecordContent.length;
           const prefix = originFileContent.slice(0, from);
           const suffix = originFileContent.slice(to);
@@ -235,6 +286,6 @@ export class DailyRecord {
     );
 
     this.offset = this.offset + this.limit;
-    this.insert();
+    this.insertDailyRecord();
   };
 }

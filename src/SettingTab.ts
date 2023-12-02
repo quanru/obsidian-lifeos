@@ -17,7 +17,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   dailyRecordToken: '',
   useDailyRecord: false,
   usePeriodicNotes: true,
-  usePARANotes: true
+  usePARANotes: true,
 };
 
 export class SettingTab extends PluginSettingTab {

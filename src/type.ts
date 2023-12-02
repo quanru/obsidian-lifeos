@@ -43,6 +43,11 @@ export type TaskConditionType = {
 
 export type ContextType = { app: App; settings: PluginSettings };
 
+export type ResourceType = {
+  id: string;
+  filename: string;
+};
+
 export type DailyRecordType = {
   rowStatus: 'ARCHIVED' | 'ACTIVE' | 'NORMAL';
   updatedTs: number;
@@ -50,6 +55,7 @@ export type DailyRecordType = {
   createdAt: string;
   updatedAt: string;
   content: string;
+  resourceList?: ResourceType[];
 };
 
 export type FetchError = {
@@ -57,4 +63,10 @@ export type FetchError = {
   message: string;
   msg?: string;
   error?: string;
+};
+
+export enum LogLevel {
+  'info',
+  'warn',
+  'error',
 }

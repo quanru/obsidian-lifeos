@@ -1,4 +1,4 @@
-import { Notice, Plugin, setIcon } from 'obsidian';
+import { Plugin, setIcon } from 'obsidian';
 import type {
   App,
   MarkdownPostProcessorContext,
@@ -16,10 +16,10 @@ import { File } from './periodic/File';
 import { Date } from './periodic/Date';
 import { DailyRecord } from './periodic/DailyRecord';
 import { SettingTab } from './SettingTab';
-import type { PluginSettings } from './type';
-import { DEFAULT_SETTINGS  } from './SettingTab'
+import { LogLevel, type PluginSettings } from './type';
+import { DEFAULT_SETTINGS } from './SettingTab';
 import { ERROR_MESSAGES } from './constant';
-import { renderError } from './util';
+import { logMessage, renderError } from './util';
 import { PeriodicPARAView, VIEW_TYPE } from './view/PeriodicPARA';
 
 import './main.less';
@@ -43,15 +43,15 @@ export default class PeriodicPARA extends Plugin {
   constructor(app: App, manifest: PluginManifest) {
     super(app, manifest);
     if (!isPluginEnabled(app)) {
-      new Notice(ERROR_MESSAGES.NO_DATAVIEW_INSTALL);
-      throw Error(ERROR_MESSAGES.NO_DATAVIEW_INSTALL);
+      logMessage(ERROR_MESSAGES.NO_DATAVIEW_INSTALL, LogLevel.error);
+      return;
     }
 
     const dataviewApi = getAPI(app);
 
     if (!dataviewApi) {
-      new Notice(ERROR_MESSAGES.FAILED_DATAVIEW_API);
-      throw Error(ERROR_MESSAGES.FAILED_DATAVIEW_API);
+      logMessage(ERROR_MESSAGES.FAILED_DATAVIEW_API, LogLevel.error);
+      return;
     }
 
     this.app = app;

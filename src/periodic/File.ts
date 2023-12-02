@@ -1,7 +1,8 @@
-import { App, Notice, TFile, TFolder } from 'obsidian';
+import { App, TFile, TFolder } from 'obsidian';
 import type { PluginSettings } from '../type';
 import { ERROR_MESSAGES } from '../constant';
 import { DataviewApi } from 'obsidian-dataview';
+import { logMessage } from 'src/util';
 
 export class File {
   app: App;
@@ -52,7 +53,7 @@ export class File {
             }
 
             if (!README) {
-              new Notice(ERROR_MESSAGES.NO_README_EXIST + subFolder.path);
+              logMessage(ERROR_MESSAGES.NO_README_EXIST + subFolder.path);
             }
 
             if (README instanceof TFile) {

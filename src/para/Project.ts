@@ -2,11 +2,8 @@ import type { TaskConditionType } from '../type';
 
 import { TFile, moment } from 'obsidian';
 import { Date } from '../periodic/Date';
-import { Markdown } from '../component/Markdown'
-import {
-  MarkdownPostProcessorContext,
-  MarkdownRenderer,
-} from 'obsidian';
+import { Markdown } from '../component/Markdown';
+import { MarkdownPostProcessorContext, MarkdownRenderer } from 'obsidian';
 import { Item } from './Item';
 
 export class Project extends Item {
@@ -57,7 +54,7 @@ export class Project extends Item {
       from: '',
       to: '',
     },
-    header: string,
+    header: string
   ) {
     const { from, to } = condition;
     const timeReg = /\d+hr(\d+)?/;
@@ -74,7 +71,7 @@ export class Project extends Item {
       const file = this.file.get(link, '', this.settings.periodicNotesPath);
 
       if (file instanceof TFile) {
-        const reg = new RegExp(`# ${header}([\\s\\S]*?)(?=##|$)`);
+        const reg = new RegExp(`# ${header}([\\s\\S]*?)(?=\\n##|$)`);
 
         let todayTotalTime = '0hr0';
         tasks.push(async () => {
@@ -102,9 +99,7 @@ export class Project extends Item {
               return;
             }
 
-            const projectFile =
-              this.file.get(realProject)
-                ?.path || '';
+            const projectFile = this.file.get(realProject)?.path || '';
             const [projectTime = ''] = project.match(timeReg) || [];
 
             projectTimeConsume[projectFile] = this.timeAdd(
@@ -156,7 +151,7 @@ export class Project extends Item {
     const header = this.settings.projectListHeader;
     const { projectList, projectTimeConsume } = await this.filter(
       parsed,
-      header,
+      header
     );
 
     const div = el.createEl('div');

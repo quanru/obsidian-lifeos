@@ -2,7 +2,7 @@ import type { App, MarkdownPostProcessorContext } from 'obsidian';
 import type { TableResult } from 'obsidian-dataview/lib/api/plugin-api';
 import { PluginSettings } from '../type';
 
-import { Markdown } from '../component/Markdown'
+import { Markdown } from '../component/Markdown';
 import { DataviewApi } from 'obsidian-dataview';
 
 import { File } from '../periodic/File';

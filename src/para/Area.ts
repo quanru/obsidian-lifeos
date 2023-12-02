@@ -3,7 +3,7 @@ import type { DateType } from '../type';
 
 import { MarkdownRenderer, TFile } from 'obsidian';
 import { Item } from './Item';
-import { Markdown } from '../component/Markdown'
+import { Markdown } from '../component/Markdown';
 
 export class Area extends Item {
   async filter(
@@ -27,7 +27,7 @@ export class Area extends Item {
       const file = this.file.get(link, '', this.settings.periodicNotesPath);
 
       if (file instanceof TFile) {
-        const reg = new RegExp(`# ${header}([\\s\\S]*?)(?=##|$)`);
+        const reg = new RegExp(`# ${header}([\\s\\S]*?)(?=\\n##|$)`);
 
         if (file) {
           tasks.push(async () => {

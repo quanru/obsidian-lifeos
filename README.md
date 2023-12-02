@@ -20,7 +20,7 @@ It is recommended to work with [Templater](https://silentvoid13.github.io/Templa
 ![](assets/periodic-para-plugin-add-1-en.png)
 ![](assets/periodic-para-plugin-add-2-en.png)
 
-### Daily Record 
+### Daily Record
 
 https://github.com/quanru/obsidian-periodic-para/assets/11739753/3d967527-b021-4a15-acd4-f5e6b0701a99
 
@@ -73,7 +73,8 @@ You can quickly record through [Shortcuts](https://support.apple.com/guide/short
 
 Currently, only plain text can be recorded.
 
-There are two ways to use it: 
+There are two ways to use it:
+
 1. Free self-deployment mode: Integration with [usememos](https://github.com/usememos/memos), you need to deploy your own usememos.
 2. Subscription mode: [Contact](https://github.com/quanru/obsidian-periodic-para#support) the author to purchase or obtain a trial token.
 

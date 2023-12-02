@@ -6,7 +6,7 @@ import {
 import type { PluginSettings } from '../type';
 import { Date } from '../periodic/Date';
 import { File } from '../periodic/File';
-import { Markdown } from '../component/Markdown'
+import { Markdown } from '../component/Markdown';
 
 export class Item {
   dir: string;
