@@ -25,7 +25,7 @@ export function formatDailyRecord(record: DailyRecordType) {
   const [date, time] = moment(timeStamp * 1000)
     .format('YYYY-MM-DD HH:mm')
     .split(' ');
-  const [firstLine, ...otherLine] = content.split('\n');
+  const [firstLine, ...otherLine] = content.trim().split('\n');
   const isTask = /^- \[.*?\]/.test(firstLine); // 目前仅支持 task
   const targetFirstLine = // 将标签和时间戳加到第一行
     (isTask
@@ -37,7 +37,7 @@ export function formatDailyRecord(record: DailyRecordType) {
       otherLine
         .map((line: string) => (/^[ \t]/.test(line) ? line : `\t${line}`))
         .join('\n')
-        .replace(/[\n\s]*$/, '') // 增头去尾
+        .trimEnd()
     : '';
   const targetResourceLine = resourceList?.length // 资源文件
     ? '\n' +
