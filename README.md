@@ -69,16 +69,15 @@ Go to the [releases](https://github.com/quanru/obsidian-periodic-para/releases) 
 
 ### daily record
 
-You can quickly record through [Shortcuts](https://support.apple.com/guide/shortcuts-mac/intro-to-shortcuts-apdf22b0444c/mac) and pull them into your diary through this plugin.
-
-Currently, only plain text can be recorded.
+You can quickly record 
 
 There are two ways to use it:
 
 1. Free self-deployment mode: Integration with [usememos](https://github.com/usememos/memos), you need to deploy your own usememos.
-2. Subscription mode: [Contact](https://github.com/quanru/obsidian-periodic-para#support) the author to purchase or obtain a trial token.
+2. Subscription mode: [Contact](https://github.com/quanru/obsidian-periodic-para#support) the author to purchase or obtain a trial token
 
-[Shortcuts (iOS, iPadOS or macOS)](https://www.icloud.com/shortcuts/1eaef307112843ed9f91d256f5ee7ad9)
+Way 1 supports a full-featured [usememos](https://github.com/usememos/memos) ecosystem, includes [Mobile App](https://memos.moe/) and [Shortcuts (iOS, iPadOS or macOS)](https://www.icloud.com/shortcuts/1eaef307112843ed9f91d256f5ee7ad9);
+Way 2 only plain text can be recorded through [Shortcuts](https://support.apple.com/guide/shortcuts-mac/intro-to-shortcuts-apdf22b0444c/mac).
 
 ### query code block
 
