@@ -4,6 +4,7 @@ import type { DateType } from '../type';
 import { MarkdownRenderer, TFile } from 'obsidian';
 import { Item } from './Item';
 import { Markdown } from '../component/Markdown';
+import { generateHeaderRegExp } from 'src/util';
 
 export class Area extends Item {
   async filter(
@@ -27,14 +28,14 @@ export class Area extends Item {
       const file = this.file.get(link, '', this.settings.periodicNotesPath);
 
       if (file instanceof TFile) {
-        const reg = new RegExp(`# ${header}([\\s\\S]*?)(?=\\n##|$)`);
+        const reg = generateHeaderRegExp(header);
 
         if (file) {
           tasks.push(async () => {
             const fileContent = await this.app.vault.cachedRead(file);
             const regMatch = fileContent.match(reg);
             const areaContent = regMatch?.length
-              ? regMatch[1]?.split('\n')
+              ? regMatch[2]?.split('\n')
               : [];
             areaContent.map((area) => {
               if (!area) {

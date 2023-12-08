@@ -69,3 +69,12 @@ export function logMessage(message: string, level: LogLevel = LogLevel.info) {
     throw Error(message);
   }
 }
+
+export function generateHeaderRegExp(header: string) {
+  const formattedHeader = /^#+/.test(header.trim())
+    ? header.trim()
+    : `# ${header.trim()}`;
+  const reg = new RegExp(`(${formattedHeader}[^\n]*)([\\s\\S]*?)(?=\\n##|$)`);
+
+  return reg;
+}

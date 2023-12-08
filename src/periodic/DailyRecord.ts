@@ -9,7 +9,12 @@ import {
   LogLevel,
 } from '../type';
 import { ERROR_MESSAGES } from '../constant';
-import { formatDailyRecord, generateFileName, logMessage } from 'src/util';
+import {
+  formatDailyRecord,
+  generateFileName,
+  generateHeaderRegExp,
+  logMessage,
+} from 'src/util';
 
 export class DailyRecord {
   app: App;
@@ -201,8 +206,8 @@ export class DailyRecord {
             LogLevel.error
           );
         }
+        const reg = generateHeaderRegExp(header);
 
-        const reg = new RegExp(`# ${header}([\\s\\S]*?)(?=\\n##|$)`);
         if (targetFile instanceof TFile) {
           const originFileContent = await this.app.vault.read(targetFile);
           const regMatch = originFileContent.match(reg);
@@ -218,8 +223,8 @@ export class DailyRecord {
             return;
           }
 
-          const localRecordContent = regMatch[1]?.trim();
-          const from = regMatch?.index + header.length + 3; // 3 代表 `# ${header}\n`
+          const localRecordContent = regMatch[2]?.trim();
+          const from = regMatch?.index + regMatch[1].length + 1;
           const to = from + localRecordContent.length;
           const prefix = originFileContent.slice(0, from);
           const suffix = originFileContent.slice(to);

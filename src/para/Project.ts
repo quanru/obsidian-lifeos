@@ -5,6 +5,7 @@ import { Date } from '../periodic/Date';
 import { Markdown } from '../component/Markdown';
 import { MarkdownPostProcessorContext, MarkdownRenderer } from 'obsidian';
 import { Item } from './Item';
+import { generateHeaderRegExp } from 'src/util';
 
 export class Project extends Item {
   timeAdd(timeString1: string, timeString2: string) {
@@ -71,14 +72,13 @@ export class Project extends Item {
       const file = this.file.get(link, '', this.settings.periodicNotesPath);
 
       if (file instanceof TFile) {
-        const reg = new RegExp(`# ${header}([\\s\\S]*?)(?=\\n##|$)`);
-
+        const reg = generateHeaderRegExp(header);
         let todayTotalTime = '0hr0';
         tasks.push(async () => {
           const fileContent = await this.app.vault.cachedRead(file);
           const regMatch = fileContent.match(reg);
           const projectContent = regMatch?.length
-            ? regMatch[1]?.split('\n')
+            ? regMatch[2]?.split('\n')
             : [];
 
           projectContent.map((project) => {
