@@ -1,6 +1,6 @@
 # Obsidian Periodic PARA
 
-- This is a plugin for [LifeOS](https://forum.obsidian.md/t/building-my-second-brain-with-obsidian/62934), which assist in practicing the PARA system with periodic notes.
+- This is a plugin for [LifeOS](https://forum.obsidian.md/t/building-my-second-brain-with-obsidian/62934), which assist in practicing the PARA method with periodic notes and usememos.
 - You can download the [LifeOS-example](https://github.com/quanru/obsidian-example-LifeOS/tree/english-version) to experience it.
 
 ## Screenshots
@@ -50,12 +50,12 @@ Go to the [releases](https://github.com/quanru/obsidian-periodic-para/releases) 
 | Area List Header        | Default is 'First Things Dimension', Set the title of the module in which the area snapshots are located in quarterly notes to collect the areas experienced in the current period in the yearly notes                         |
 | Habit List Header       | Default is 'Habit', Set the title of the module in daily notes where the habit is located, and the task query view will ignore tasks under that title                                                                          |
 
-| Daily Record Settings | Description                                      |
-| --------------------- | ------------------------------------------------ |
-| Enable                | Sync daily record by remote API                  |
-| Header                | Where the Daily Record module is in a daily note |
-| API                   | The daily record API                             |
-| Token                 | The token of your API                            |
+| Daily Record Settings | Description                                                                   |
+| --------------------- | ----------------------------------------------------------------------------- |
+| Enable                | Sync daily record by remote [usememos](https://github.com/usememos/memos) API |
+| Header                | Where the Daily Record module is in a daily note                              |
+| API                   | The daily record API                                                          |
+| Token                 | The token of your API                                                         |
 
 | P.A.R.A Notes Settings | Description                                                                                                                                                                           |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -68,8 +68,7 @@ Go to the [releases](https://github.com/quanru/obsidian-periodic-para/releases) 
 ## Usage
 
 ### daily record
-
-You can quickly record 
+> [usememos](https://github.com/usememos/memos)
 
 There are two ways to use it:
 
