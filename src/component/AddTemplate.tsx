@@ -228,21 +228,19 @@ export const AddTemplate = () => {
                   label: periodic,
                   key: periodic,
                   children: (
-                    <>
-                      <Form.Item name={periodic}>
-                        <DatePicker
-                          picker={picker}
-                          showToday={false}
-                          style={{ width: 200 }}
-                          inputReadOnly
-                          open
-                          renderExtraFooter={() => SubmitButton}
-                          getPopupContainer={(triggerNode: any) =>
-                            triggerNode.parentNode
-                          }
-                        />
-                      </Form.Item>
-                    </>
+                    <Form.Item name={periodic}>
+                      <DatePicker
+                        picker={picker}
+                        showToday={false}
+                        style={{ width: 200 }}
+                        inputReadOnly
+                        open
+                        renderExtraFooter={() => SubmitButton}
+                        getPopupContainer={(triggerNode: any) =>
+                          triggerNode.parentNode
+                        }
+                      />
+                    </Form.Item>
                   ),
                 };
               }
