@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { useApp } from 'src/hooks/useApp';
-import { Notice, TFile } from 'obsidian';
+import { Notice } from 'obsidian';
 import {
   Form,
   Button,
@@ -14,7 +14,7 @@ import {
 } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import reduceCSSCalc from 'reduce-css-calc';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import {
   PARA,
   PROJECT,
@@ -29,17 +29,21 @@ import {
   YEARLY,
   ERROR_MESSAGES,
 } from '../constant';
-import { isDarkTheme } from '../util';
+import { createFile, isDarkTheme } from '../util';
 import type { PluginSettings } from '../type';
 
 import enUS from 'antd/locale/en_US';
 import zhCN from 'antd/locale/zh_CN';
 import 'dayjs/locale/zh-cn';
+import 'dayjs/locale/zh';
 
 const localeMap: Record<string, any> = {
   en: enUS,
+  'en-us': enUS,
   zh: zhCN,
+  'zh-cn': zhCN,
 };
+const locale = window.localStorage.getItem('language') || 'en';
 
 export const AddTemplate = () => {
   const { app, settings } = useApp() || {};
@@ -51,11 +55,8 @@ export const AddTemplate = () => {
   const SubmitButton = (
     <Form.Item
       style={{
-        display: 'flex',
-        justifyContent: 'right',
-        alignItems: 'center',
-        paddingTop: 25,
-        paddingRight: 25,
+        width: '100%',
+        textAlign: 'end',
       }}
     >
       <Button
@@ -67,109 +68,93 @@ export const AddTemplate = () => {
       ></Button>
     </Form.Item>
   );
-  const createFile = async (values: any) => {
+
+  const createPeriodicFile = async (d: Dayjs) => {
+    const dates = dayjs(d.format()).locale(locale);
+
     if (!app || !settings) {
       return;
     }
 
     let templateFile = '';
-    let folder;
-    let file;
+    let folder = '';
+    let file = '';
+
+    let year = dates.year();
+    let value;
+
+    if (periodicActiveTab === DAILY) {
+      folder = `${
+        settings.periodicNotesPath
+      }/${year}/${periodicActiveTab}/${String(dates.month() + 1).padStart(
+        2,
+        '0'
+      )}`;
+      value = dates.format('YYYY-MM-DD');
+    } else if (periodicActiveTab === WEEKLY) {
+      folder = `${settings.periodicNotesPath}/${year}/${periodicActiveTab}`;
+      value = dates.format('gggg-[W]w');
+    } else if (periodicActiveTab === MONTHLY) {
+      folder = `${settings.periodicNotesPath}/${year}/${periodicActiveTab}`;
+      value = dates.format('YYYY-MM');
+    } else if (periodicActiveTab === QUARTERLY) {
+      folder = `${settings.periodicNotesPath}/${year}/${periodicActiveTab}`;
+      value = dates.format('YYYY-[Q]Q');
+    } else if (periodicActiveTab === YEARLY) {
+      folder = `${settings.periodicNotesPath}/${year}`;
+      value = year;
+    }
+
+    file = `${folder}/${value}.md`;
+    templateFile = `${settings.periodicNotesPath}/Templates/${periodicActiveTab}.md`;
+
+    await createFile(app, {
+      templateFile,
+      folder,
+      file,
+    });
+  };
+
+  const createPARAFile = async (values: any) => {
+    if (!app || !settings) {
+      return;
+    }
+
+    let templateFile = '';
+    let folder = '';
+    let file = '';
     let tag = '';
     let README = '';
+    let path;
+    let key;
 
-    if (type === PARA) {
-      let path;
-      let key;
+    path =
+      settings[
+        `${paraActiveTab.toLocaleLowerCase()}sPath` as keyof PluginSettings
+      ]; // settings.archivesPath;
+    key = values[`${paraActiveTab}Folder`]; // values.archiveFolder;
+    tag = values[`${paraActiveTab}Tag`]; // values.archiveTag;
+    README = values[`${paraActiveTab}README`]; // values.archiveREADME;
 
-      path =
-        settings[
-          `${paraActiveTab.toLocaleLowerCase()}sPath` as keyof PluginSettings
-        ]; // settings.archivesPath;
-      key = values[`${paraActiveTab}Folder`]; // values.archiveFolder;
-      tag = values[`${paraActiveTab}Tag`]; // values.archiveTag;
-      README = values[`${paraActiveTab}README`]; // values.archiveREADME;
-
-      if (!tag) {
-        return new Notice(ERROR_MESSAGES.TAGS_MUST_INPUT);
-      }
-
-      folder = `${path}/${key}`;
-      file = `${folder}/${README}`;
-      templateFile = `${path}/Template.md`;
-    } else if (type === PERIODIC) {
-      const key = periodicActiveTab;
-      let year = values[key]['$y'];
-      let value;
-
-      if (periodicActiveTab === DAILY) {
-        folder = `${
-          settings.periodicNotesPath
-        }/${year}/${periodicActiveTab}/${String(
-          values[key].month() + 1
-        ).padStart(2, '0')}`;
-        value = values[key].format('YYYY-MM-DD');
-      } else if (periodicActiveTab === WEEKLY) {
-        folder = `${settings.periodicNotesPath}/${year}/${periodicActiveTab}`;
-        value = values[key].format('gggg-[W]w');
-      } else if (periodicActiveTab === MONTHLY) {
-        folder = `${settings.periodicNotesPath}/${year}/${periodicActiveTab}`;
-        value = values[key].format('YYYY-MM');
-      } else if (periodicActiveTab === QUARTERLY) {
-        folder = `${settings.periodicNotesPath}/${year}/${periodicActiveTab}`;
-        value = values[key].format('YYYY-[Q]Q');
-      } else if (periodicActiveTab === YEARLY) {
-        folder = `${settings.periodicNotesPath}/${year}`;
-        value = year;
-      }
-
-      file = `${folder}/${value}.md`;
-      templateFile = `${settings.periodicNotesPath}/Templates/${periodicActiveTab}.md`;
+    if (!tag) {
+      return new Notice(ERROR_MESSAGES.TAGS_MUST_INPUT);
     }
 
-    const templateTFile = app.vault.getAbstractFileByPath(templateFile!);
+    folder = `${path}/${key}`;
+    file = `${folder}/${README}`;
+    templateFile = `${path}/Template.md`;
 
-    if (!templateTFile) {
-      return new Notice(ERROR_MESSAGES.NO_TEMPLATE_EXIST + templateFile);
-    }
-
-    if (templateTFile instanceof TFile) {
-      const templateContent = await app.vault.cachedRead(templateTFile);
-
-      if (!folder || !file) {
-        return;
-      }
-
-      let tFile = app.vault.getAbstractFileByPath(file);
-
-      if (tFile && tFile instanceof TFile) {
-        return await app.workspace.getLeaf().openFile(tFile);
-      }
-
-      if (!app.vault.getAbstractFileByPath(folder)) {
-        app.vault.createFolder(folder);
-      }
-
-      const fileCreated = await app.vault.create(file, templateContent);
-
-      await Promise.all([
-        app.fileManager.processFrontMatter(fileCreated, (frontMatter) => {
-          if (!tag) {
-            return;
-          }
-
-          frontMatter.tags = frontMatter.tags || [];
-          frontMatter.tags.push(tag);
-        }),
-        app.workspace.getLeaf().openFile(fileCreated),
-      ]);
-      form.resetFields();
-    }
+    await createFile(app, {
+      templateFile,
+      folder,
+      file,
+      tag,
+    });
   };
 
   return (
     <ConfigProvider
-      locale={localeMap[window.localStorage.getItem('language') || 'en']}
+      locale={localeMap[locale]}
       theme={{
         token: {
           colorPrimary: reduceCSSCalc(
@@ -182,7 +167,12 @@ export const AddTemplate = () => {
       }}
     >
       <Form
-        style={{ maxWidth: 750 }}
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          flexWrap: 'wrap',
+          alignContent: 'flex-start',
+        }}
         initialValues={{
           [DAILY]: today,
           [WEEKLY]: today,
@@ -191,7 +181,7 @@ export const AddTemplate = () => {
           [YEARLY]: today,
         }}
         form={form}
-        onFinish={createFile}
+        onFinish={createPARAFile}
       >
         {settings?.usePARANotes && settings?.usePeriodicNotes && (
           <Radio.Group
@@ -199,7 +189,11 @@ export const AddTemplate = () => {
             buttonStyle="solid"
             value={type}
             onChange={(e) => setType(e.target.value)}
-            style={{ marginBottom: 40 }}
+            style={{
+              width: '100%',
+              textAlign: 'center',
+              marginBottom: 5,
+            }}
           >
             <Radio.Button value={PERIODIC}>{PERIODIC}</Radio.Button>
             <Radio.Button value={PARA}>{PARA}</Radio.Button>
@@ -210,6 +204,7 @@ export const AddTemplate = () => {
             key={PERIODIC}
             activeKey={periodicActiveTab}
             onChange={setPeriodicActiveTab}
+            centered
             items={[DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY].map(
               (periodic) => {
                 const pickerMap: Record<
@@ -230,12 +225,12 @@ export const AddTemplate = () => {
                   children: (
                     <Form.Item name={periodic}>
                       <DatePicker
+                        onSelect={createPeriodicFile}
                         picker={picker}
                         showToday={false}
                         style={{ width: 200 }}
                         inputReadOnly
                         open
-                        renderExtraFooter={() => SubmitButton}
                         getPopupContainer={(triggerNode: any) =>
                           triggerNode.parentNode
                         }
@@ -253,6 +248,8 @@ export const AddTemplate = () => {
               key="PARA"
               activeKey={paraActiveTab}
               onChange={setParaActiveTab}
+              centered
+              style={{ width: '100%' }}
               items={[PROJECT, AREA, RESOURCE, ARCHIVE].map((item) => {
                 return {
                   label: item,
