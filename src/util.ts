@@ -1,7 +1,8 @@
-import { Component, MarkdownRenderer, Notice, moment } from 'obsidian';
+import { Component, MarkdownRenderer, Notice, TFile, moment } from 'obsidian';
 import type { App } from 'obsidian';
 import type { DailyRecordType, ResourceType } from './type';
 import { LogLevel } from './type';
+import { ERROR_MESSAGES } from './constant';
 
 export function renderError(
   app: App,
@@ -12,6 +13,59 @@ export function renderError(
   const component = new Component();
 
   return MarkdownRenderer.render(app, msg, containerEl, sourcePath, component);
+}
+
+export async function createFile(
+  app: App,
+  options: {
+    templateFile: string;
+    folder: string;
+    file: string;
+    tag?: string;
+  }
+) {
+  if (!app) {
+    return;
+  }
+
+  const { templateFile, folder, file, tag } = options;
+  const templateTFile = app.vault.getAbstractFileByPath(templateFile!);
+
+  if (!templateTFile) {
+    return new Notice(ERROR_MESSAGES.NO_TEMPLATE_EXIST + templateFile);
+  }
+
+  if (templateTFile instanceof TFile) {
+    const templateContent = await app.vault.cachedRead(templateTFile);
+
+    if (!folder || !file) {
+      return;
+    }
+
+    let tFile = app.vault.getAbstractFileByPath(file);
+
+    if (tFile && tFile instanceof TFile) {
+      return await app.workspace.getLeaf().openFile(tFile);
+    }
+
+    if (!app.vault.getAbstractFileByPath(folder)) {
+      app.vault.createFolder(folder);
+    }
+
+    const fileCreated = await app.vault.create(file, templateContent);
+
+    await Promise.all([
+      app.fileManager.processFrontMatter(fileCreated, (frontMatter) => {
+        if (!tag) {
+          return;
+        }
+
+        frontMatter.tags = frontMatter.tags || [];
+        frontMatter.tags.push(tag);
+      }),
+      app.workspace.getLeaf().openFile(fileCreated),
+    ]);
+  }
 }
 
 export function isDarkTheme() {
