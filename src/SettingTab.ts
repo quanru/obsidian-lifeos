@@ -1,4 +1,5 @@
 import { PluginSettingTab, Setting } from 'obsidian';
+import debounce from 'debounce';
 import type { App } from 'obsidian';
 import type PeriodicPARA from './main';
 import type { PluginSettings } from './type';
@@ -47,7 +48,7 @@ export class SettingTab extends PluginSettingTab {
             this.display();
           })
       );
-    // TODO onChange 节流防抖
+
     if (this.plugin.settings.usePeriodicNotes) {
       new Setting(containerEl)
         .setName('Periodic Notes Folder:')
@@ -55,10 +56,12 @@ export class SettingTab extends PluginSettingTab {
           text
             .setPlaceholder(DEFAULT_SETTINGS.periodicNotesPath)
             .setValue(this.plugin.settings.periodicNotesPath)
-            .onChange(async (value) => {
-              this.plugin.settings.periodicNotesPath = value;
-              await this.plugin.saveSettings();
-            })
+            .onChange(
+              debounce(async (value) => {
+                this.plugin.settings.periodicNotesPath = value;
+                await this.plugin.saveSettings();
+              }, 500)
+            )
         );
 
       new Setting(containerEl)
@@ -68,10 +71,12 @@ export class SettingTab extends PluginSettingTab {
           text
             .setPlaceholder(DEFAULT_SETTINGS.habitHeader)
             .setValue(this.plugin.settings.habitHeader)
-            .onChange(async (value) => {
-              this.plugin.settings.habitHeader = value;
-              await this.plugin.saveSettings();
-            })
+            .onChange(
+              debounce(async (value) => {
+                this.plugin.settings.habitHeader = value;
+                await this.plugin.saveSettings();
+              }, 500)
+            )
         );
 
       new Setting(containerEl)
@@ -81,10 +86,12 @@ export class SettingTab extends PluginSettingTab {
           text
             .setPlaceholder(DEFAULT_SETTINGS.projectListHeader)
             .setValue(this.plugin.settings.projectListHeader)
-            .onChange(async (value) => {
-              this.plugin.settings.projectListHeader = value;
-              await this.plugin.saveSettings();
-            })
+            .onChange(
+              debounce(async (value) => {
+                this.plugin.settings.projectListHeader = value;
+                await this.plugin.saveSettings();
+              }, 500)
+            )
         );
 
       new Setting(containerEl)
@@ -94,10 +101,12 @@ export class SettingTab extends PluginSettingTab {
           text
             .setPlaceholder(DEFAULT_SETTINGS.areaListHeader)
             .setValue(this.plugin.settings.areaListHeader)
-            .onChange(async (value) => {
-              this.plugin.settings.areaListHeader = value;
-              await this.plugin.saveSettings();
-            })
+            .onChange(
+              debounce(async (value) => {
+                this.plugin.settings.areaListHeader = value;
+                await this.plugin.saveSettings();
+              }, 500)
+            )
         );
 
       new Setting(containerEl)
@@ -121,10 +130,12 @@ export class SettingTab extends PluginSettingTab {
             text
               .setPlaceholder(DEFAULT_SETTINGS.dailyRecordHeader)
               .setValue(this.plugin.settings.dailyRecordHeader)
-              .onChange(async (value) => {
-                this.plugin.settings.dailyRecordHeader = value;
-                await this.plugin.saveSettings();
-              })
+              .onChange(
+                debounce(async (value) => {
+                  this.plugin.settings.dailyRecordHeader = value;
+                  await this.plugin.saveSettings();
+                }, 500)
+              )
           );
 
         new Setting(containerEl)
@@ -134,10 +145,12 @@ export class SettingTab extends PluginSettingTab {
             text
               .setPlaceholder(DEFAULT_SETTINGS.dailyRecordAPI)
               .setValue(this.plugin.settings.dailyRecordAPI)
-              .onChange(async (value) => {
-                this.plugin.settings.dailyRecordAPI = value;
-                await this.plugin.saveSettings();
-              })
+              .onChange(
+                debounce(async (value) => {
+                  this.plugin.settings.dailyRecordAPI = value;
+                  await this.plugin.saveSettings();
+                }, 500)
+              )
           );
 
         new Setting(containerEl)
@@ -147,10 +160,12 @@ export class SettingTab extends PluginSettingTab {
             text
               .setPlaceholder(DEFAULT_SETTINGS.dailyRecordToken)
               .setValue(this.plugin.settings.dailyRecordToken)
-              .onChange(async (value) => {
-                this.plugin.settings.dailyRecordToken = value;
-                await this.plugin.saveSettings();
-              })
+              .onChange(
+                debounce(async (value) => {
+                  this.plugin.settings.dailyRecordToken = value;
+                  await this.plugin.saveSettings();
+                }, 500)
+              )
           );
       }
     }
@@ -175,39 +190,47 @@ export class SettingTab extends PluginSettingTab {
         text
           .setPlaceholder(DEFAULT_SETTINGS.projectsPath)
           .setValue(this.plugin.settings.projectsPath)
-          .onChange(async (value) => {
-            this.plugin.settings.projectsPath = value;
-            await this.plugin.saveSettings();
-          })
+          .onChange(
+            debounce(async (value) => {
+              this.plugin.settings.projectsPath = value;
+              await this.plugin.saveSettings();
+            }, 500)
+          )
       );
 
       new Setting(containerEl).setName('Areas Folder:').addText((text) =>
         text
           .setPlaceholder(DEFAULT_SETTINGS.areasPath)
           .setValue(this.plugin.settings.areasPath)
-          .onChange(async (value) => {
-            this.plugin.settings.areasPath = value;
-            await this.plugin.saveSettings();
-          })
+          .onChange(
+            debounce(async (value) => {
+              this.plugin.settings.areasPath = value;
+              await this.plugin.saveSettings();
+            }, 500)
+          )
       );
       new Setting(containerEl).setName('Resources Folder:').addText((text) =>
         text
           .setPlaceholder(DEFAULT_SETTINGS.resourcesPath)
           .setValue(this.plugin.settings.resourcesPath)
-          .onChange(async (value) => {
-            this.plugin.settings.resourcesPath = value;
-            await this.plugin.saveSettings();
-          })
+          .onChange(
+            debounce(async (value) => {
+              this.plugin.settings.resourcesPath = value;
+              await this.plugin.saveSettings();
+            }, 500)
+          )
       );
 
       new Setting(containerEl).setName('Archives Folder:').addText((text) =>
         text
           .setPlaceholder(DEFAULT_SETTINGS.archivesPath)
           .setValue(this.plugin.settings.archivesPath)
-          .onChange(async (value) => {
-            this.plugin.settings.archivesPath = value;
-            await this.plugin.saveSettings();
-          })
+          .onChange(
+            debounce(async (value) => {
+              this.plugin.settings.archivesPath = value;
+              await this.plugin.saveSettings();
+            }, 500)
+          )
       );
     }
   }

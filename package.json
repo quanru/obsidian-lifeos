@@ -1,6 +1,6 @@
 {
   "name": "periodic-para",
-  "version": "1.7.3",
+  "version": "1.7.4",
   "description": "Assist in practicing the PARA method with periodic notes and usememos.",
   "main": "main.js",
   "scripts": {
@@ -30,6 +30,7 @@
     "antd": "^5.8.2",
     "axios": "^1.5.1",
     "dayjs": "^1.11.9",
+    "debounce": "^2.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "reduce-css-calc": "^2.1.8"
