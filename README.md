@@ -23,7 +23,7 @@ It is recommended to work with [Templater](https://silentvoid13.github.io/Templa
 ### Daily Record
 
 #### Memos Web App
-https://github.com/quanru/obsidian-periodic-para/assets/11739753/03632674-bdda-4091-9761-584612deb6d4
+https://github.com/quanru/obsidian-periodic-para/assets/11739753/b2dfbe07-869c-4b08-93a8-85c289755a71
 
 ### iOS Shortcut
 https://github.com/quanru/obsidian-periodic-para/assets/11739753/3d967527-b021-4a15-acd4-f5e6b0701a99
