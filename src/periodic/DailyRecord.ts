@@ -136,10 +136,7 @@ export class DailyRecord {
               this.app.vault.createFolder(folder);
             }
 
-            await this.app.vault.adapter.writeBinary(
-              resourcePath,
-              Buffer.from(data)
-            );
+            await this.app.vault.adapter.writeBinary(resourcePath, data);
           })
         );
         return data;
