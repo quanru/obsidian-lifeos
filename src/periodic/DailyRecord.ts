@@ -26,6 +26,21 @@ export class DailyRecord {
   localKey: string;
   axios: Axios;
   constructor(app: App, settings: PluginSettings, file: File) {
+    if (!settings.dailyRecordAPI) {
+      logMessage(ERROR_MESSAGES.NO_DAILY_RECORD_API);
+      return;
+    }
+
+    if (!settings.dailyRecordToken) {
+      logMessage(ERROR_MESSAGES.NO_DAILY_RECORD_TOKEN);
+      return;
+    }
+
+    if (!settings.dailyRecordHeader) {
+      logMessage(ERROR_MESSAGES.NO_DAILY_RECORD_HEADER);
+      return;
+    }
+
     this.app = app;
     this.file = file;
     this.settings = settings;
@@ -39,21 +54,6 @@ export class DailyRecord {
         Accept: 'application/json',
       },
     });
-
-    if (!this.settings.dailyRecordAPI) {
-      logMessage(ERROR_MESSAGES.NO_DAILY_RECORD_API);
-      return;
-    }
-
-    if (!this.settings.dailyRecordToken) {
-      logMessage(ERROR_MESSAGES.NO_DAILY_RECORD_TOKEN);
-      return;
-    }
-
-    if (!this.settings.dailyRecordHeader) {
-      logMessage(ERROR_MESSAGES.NO_DAILY_RECORD_HEADER);
-      return;
-    }
 
     logMessage('Start sync daily record');
   }
@@ -174,7 +174,7 @@ export class DailyRecord {
     }
 
     for (const record of records) {
-      if (!record.content) {
+      if (!record.content && !record.resourceList?.length) {
         continue;
       }
 
