@@ -191,8 +191,12 @@ export class DailyRecord {
 
     await Promise.all(
       Object.keys(dailyRecordByDay).map(async (today) => {
+        const momentDay = moment(today);
+        const link = `${momentDay.year()}/Daily/${String(
+          momentDay.month() + 1
+        ).padStart(2, '0')}/${momentDay.format('YYYY-MM-DD')}.md`;
         const targetFile = this.file.get(
-          today,
+          link,
           '',
           this.settings.periodicNotesPath
         );

@@ -24,7 +24,7 @@ export class Area extends Item {
 
     for (let index = 0; index < quarterList.length; index++) {
       const quarter = quarterList[index];
-      const link = `${year}-${quarter}.md`;
+      const link = `${year}/Quarterly/${year}-${quarter}.md`;
       const file = this.file.get(link, '', this.settings.periodicNotesPath);
 
       if (file instanceof TFile) {
@@ -42,7 +42,7 @@ export class Area extends Item {
                 return;
               }
 
-              const realArea = (area.match(/\[\[(.*)\|?(.*)\]\]/) ||
+              const realArea = (area.match(/\d+\. \[\[(.*)\|?(.*)\]\]/) ||
                 [])[1]?.replace(/\|.*/, '');
               if (realArea && !areaList.includes(realArea)) {
                 areaList.push(realArea);

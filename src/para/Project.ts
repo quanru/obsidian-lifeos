@@ -68,7 +68,9 @@ export class Project extends Item {
     // eslint-disable-next-line no-constant-condition
     while (true) {
       const momentDay = moment(day);
-      const link = `${momentDay.format('YYYY-MM-DD')}.md`;
+      const link = `${momentDay.year()}/Daily/${String(
+        momentDay.month() + 1
+      ).padStart(2, '0')}/${momentDay.format('YYYY-MM-DD')}.md`;
       const file = this.file.get(link, '', this.settings.periodicNotesPath);
 
       if (file instanceof TFile) {
@@ -92,7 +94,7 @@ export class Project extends Item {
             }
             // 1. [[WOT.README|分享-2023 WOT 分享会]] 4hr20
             // 1. [[1. Projects/分享-2023 WOT 分享会/README|分享-2023 WOT 分享会]]  4hr20
-            const realProject = (project.match(/\[\[(.*)\|?(.*)\]\]/) ||
+            const realProject = (project.match(/\d+\. \[\[(.*)\|?(.*)\]\]/) ||
               [])[1]?.replace(/\|.*/, '');
 
             if (!realProject) {

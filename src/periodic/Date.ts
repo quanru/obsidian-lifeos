@@ -183,7 +183,7 @@ export class Date {
     const currentDate = moment(from).clone();
 
     while (currentDate.isBefore(moment(to))) {
-      const weekLink = `${currentDate.weekYear()}-W${String(
+      const weekLink = `${currentDate.weekYear()}/Weekly/${currentDate.weekYear()}-W${String(
         currentDate.isoWeek()
       ).padStart(2, '0')}.md`;
       const weekFile = this.file.get(
@@ -196,7 +196,7 @@ export class Date {
         weeks.add(weekFile.path);
       }
 
-      const monthLink = `${currentDate.year()}-${String(
+      const monthLink = `${currentDate.year()}/Monthly/${currentDate.year()}-${String(
         currentDate.month() + 1
       ).padStart(2, '0')}.md`;
       const monthFile = this.file.get(
@@ -209,7 +209,7 @@ export class Date {
         months.add(monthFile.path);
       }
 
-      const quarterLink = `${currentDate.year()}-Q${Math.ceil(
+      const quarterLink = `${currentDate.year()}/Quarterly/${currentDate.year()}-Q${Math.ceil(
         (currentDate.month() + 1) / 3
       )}.md`;
       const quarterFile = this.file.get(
