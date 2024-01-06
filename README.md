@@ -1,17 +1,19 @@
 # Obsidian Periodic PARA
 
 - This is a plugin for [LifeOS](https://forum.obsidian.md/t/building-my-second-brain-with-obsidian/62934), which assist in practicing the PARA method with periodic notes and usememos.
-- You can download the [LifeOS-example](https://github.com/quanru/obsidian-example-LifeOS/tree/english-version) to experience it.
+- It is recommended to download the [LifeOS-example](https://github.com/quanru/obsidian-example-LifeOS/tree/english-version) to experience it.
 
-## Screenshots
+## Features
 
-### Views
-
-![](assets/periodic-para-plugin-en.png)
+### Periodic Notes
 
 ![](assets/periodic-para-plugin.png)
 
-### Create Periodic Notes & PARA Notes
+### Combine Periodic Notes with PARA Notes
+
+![](assets/periodic-para-plugin-en.png)
+
+### Create Periodic Notes & PARA Notes Visually
 
 > See [Youtube Demo](https://www.youtube.com/watch?v=poey9QoB7ns)
 
@@ -20,21 +22,21 @@ It is recommended to work with [Templater](https://silentvoid13.github.io/Templa
 ![](assets/periodic-para-plugin-add-1-en.png)
 ![](assets/periodic-para-plugin-add-2-en.png)
 
-### Daily Record
+### Daily Record(Capture daily inspiration quickly)
 
 > [usememos](https://github.com/usememos/memos)
 
-#### [Memos Web App](https://memox.quanruzhuoxiu.repl.co)
+#### Manner 1: Through [Memos Web App](https://memox.quanruzhuoxiu.repl.co)
 
-https://github.com/quanru/obsidian-periodic-para/assets/11739753/b2dfbe07-869c-4b08-93a8-85c289755a71
+- https://github.com/quanru/obsidian-periodic-para/assets/11739753/b2dfbe07-869c-4b08-93a8-85c289755a71
 
-#### [MoeMemos App](https://memos.moe/)
+#### Manner 2: Through [MoeMemos App](https://memos.moe/)
 
-https://github.com/quanru/obsidian-periodic-para/assets/11739753/a5c24a84-1a5f-48b5-9aeb-06f95c283e78
+- https://github.com/quanru/obsidian-periodic-para/assets/11739753/a5c24a84-1a5f-48b5-9aeb-06f95c283e78
 
-#### [iOS Shortcut](https://www.icloud.com/shortcuts/1eaef307112843ed9f91d256f5ee7ad9)
+#### Manner 3: Through [iOS Shortcut](https://www.icloud.com/shortcuts/1eaef307112843ed9f91d256f5ee7ad9)
 
-https://github.com/quanru/obsidian-periodic-para/assets/11739753/3d967527-b021-4a15-acd4-f5e6b0701a99
+- https://github.com/quanru/obsidian-periodic-para/assets/11739753/3d967527-b021-4a15-acd4-f5e6b0701a99
 
 ## Installation
 
