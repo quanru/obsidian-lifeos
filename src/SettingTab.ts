@@ -111,7 +111,7 @@ export class SettingTab extends PluginSettingTab {
 
       new Setting(containerEl)
         .setName('Daily Record')
-        .setDesc('Sync daily record by remote API')
+        .setDesc('Sync daily record from usememos service')
         .addToggle((toggle) =>
           toggle
             .setValue(this.plugin.settings.useDailyRecord)
@@ -143,7 +143,10 @@ export class SettingTab extends PluginSettingTab {
           .setDesc('The daily record API')
           .addText((text) =>
             text
-              .setPlaceholder(DEFAULT_SETTINGS.dailyRecordAPI)
+              .setPlaceholder(
+                DEFAULT_SETTINGS.dailyRecordAPI ||
+                  'Usememos server + API(https://your-use-memos.com/api/v1/memo)'
+              )
               .setValue(this.plugin.settings.dailyRecordAPI)
               .onChange(
                 debounce(async (value) => {
@@ -158,7 +161,10 @@ export class SettingTab extends PluginSettingTab {
           .setDesc('The token of your API')
           .addText((text) =>
             text
-              .setPlaceholder(DEFAULT_SETTINGS.dailyRecordToken)
+              .setPlaceholder(
+                DEFAULT_SETTINGS.dailyRecordToken ||
+                  'Find token in https://your-use-memos.com/setting'
+              )
               .setValue(this.plugin.settings.dailyRecordToken)
               .onChange(
                 debounce(async (value) => {

@@ -22,13 +22,18 @@ It is recommended to work with [Templater](https://silentvoid13.github.io/Templa
 
 ### Daily Record
 
+> [usememos](https://github.com/usememos/memos)
+
 #### [Memos Web App](https://memox.quanruzhuoxiu.repl.co)
+
 https://github.com/quanru/obsidian-periodic-para/assets/11739753/b2dfbe07-869c-4b08-93a8-85c289755a71
 
 #### [MoeMemos App](https://memos.moe/)
+
 https://github.com/quanru/obsidian-periodic-para/assets/11739753/a5c24a84-1a5f-48b5-9aeb-06f95c283e78
 
 #### [iOS Shortcut](https://www.icloud.com/shortcuts/1eaef307112843ed9f91d256f5ee7ad9)
+
 https://github.com/quanru/obsidian-periodic-para/assets/11739753/3d967527-b021-4a15-acd4-f5e6b0701a99
 
 ## Installation
@@ -57,12 +62,12 @@ Go to the [releases](https://github.com/quanru/obsidian-periodic-para/releases) 
 | Area List Header        | Default is 'First Things Dimension', Set the title of the module in which the area snapshots are located in quarterly notes to collect the areas experienced in the current period in the yearly notes                         |
 | Habit List Header       | Default is 'Habit', Set the title of the module in daily notes where the habit is located, and the task query view will ignore tasks under that title                                                                          |
 
-| Daily Record Settings | Description                                                                   |
-| --------------------- | ----------------------------------------------------------------------------- |
-| Enable                | Sync daily record by remote [usememos](https://github.com/usememos/memos) API |
-| Header                | Where the Daily Record module is in a daily note                              |
-| API                   | The daily record API                                                          |
-| Token                 | The token of your API                                                         |
+| Daily Record Settings | Description                                                                         |
+| --------------------- | ----------------------------------------------------------------------------------- |
+| Enable                | Sync daily record by remote [usememos](https://github.com/usememos/memos) API       |
+| Header                | Where the Daily Record module is in a daily note                                    |
+| API                   | The daily record API, usememos server + API(https://your-use-memos.com/api/v1/memo) |
+| Token                 | The token of your API, find token in https://your-use-memos.com/setting             |
 
 | P.A.R.A Notes Settings | Description                                                                                                                                                                           |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -75,6 +80,7 @@ Go to the [releases](https://github.com/quanru/obsidian-periodic-para/releases) 
 ## Usage
 
 ### daily record
+
 > [usememos](https://github.com/usememos/memos)
 
 There are two ways to use it:
