@@ -54,8 +54,6 @@ export class DailyRecord {
         Accept: 'application/json',
       },
     });
-
-    logMessage('Start sync daily record');
   }
 
   async fetch() {
@@ -92,6 +90,7 @@ export class DailyRecord {
   };
 
   sync = async () => {
+    logMessage('Start sync daily record');
     this.offset = 0;
     this.downloadResource();
     this.insertDailyRecord();

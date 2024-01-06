@@ -59,6 +59,7 @@ export class Project extends Item {
   ) {
     const { from, to } = condition;
     const timeReg = /\d+hr(\d+)?/;
+    const totalTimeReg = /^\d+hr(\d+)?$/;
     let day = from;
     const projectList: string[] = [];
     const projectTimeConsume: Record<string, string> = {};
@@ -88,9 +89,9 @@ export class Project extends Item {
               return;
             }
 
-            if (project.match(timeReg)) {
+            if (project?.trim().match(totalTimeReg)) {
               // 特殊处理总耗时
-              todayTotalTime = project;
+              todayTotalTime = project?.trim();
             }
             // 1. [[WOT.README|分享-2023 WOT 分享会]] 4hr20
             // 1. [[1. Projects/分享-2023 WOT 分享会/README|分享-2023 WOT 分享会]]  4hr20

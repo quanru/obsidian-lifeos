@@ -30,6 +30,7 @@ export class Bullet {
     const tags = this.file.tags(filepath);
     const div = el.createEl('div');
     const component = new Markdown(div);
+    const periodicNotesPath = this.settings.periodicNotesPath;
 
     if (!tags.length) {
       return renderError(
@@ -55,7 +56,7 @@ export class Bullet {
     const result = (await this.dataview.tryQuery(
       `
 TABLE WITHOUT ID rows.L.text AS "Bullet", rows.file.link AS "File"
-FROM (${from}) AND -"Templates"
+FROM (${from}) AND -"${periodicNotesPath}/Templates"
 FLATTEN file.lists AS L
 WHERE ${where} AND !L.task AND file.path != "${filepath}"
 GROUP BY file.link

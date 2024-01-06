@@ -110,6 +110,7 @@ export class Task {
     const tags = this.file.tags(filepath);
     const div = el.createEl('div');
     const component = new Markdown(div);
+    const periodicNotesPath = this.settings.periodicNotesPath;
 
     if (!tags.length) {
       return renderError(
@@ -130,7 +131,7 @@ export class Task {
 
     const { values: tasks } = (await this.dataview.tryQuery(`
 TASK
-FROM -"Templates"
+FROM -"${periodicNotesPath}/Templates"
 WHERE ${where} AND file.path != "${filepath}"
 SORT completed ASC
     `)) as TaskResult;
