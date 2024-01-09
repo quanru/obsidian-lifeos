@@ -80,7 +80,7 @@ export const AddTemplate = () => {
     let folder = '';
     let file = '';
 
-    let year = dates.year();
+    const year = dates.year();
     let value;
 
     if (periodicActiveTab === DAILY) {
@@ -93,7 +93,7 @@ export const AddTemplate = () => {
       value = dates.format('YYYY-MM-DD');
     } else if (periodicActiveTab === WEEKLY) {
       folder = `${settings.periodicNotesPath}/${year}/${periodicActiveTab}`;
-      value = dates.format('gggg-[W]w');
+      value = dates.format('gggg-[W]ww');
     } else if (periodicActiveTab === MONTHLY) {
       folder = `${settings.periodicNotesPath}/${year}/${periodicActiveTab}`;
       value = dates.format('YYYY-MM');
