@@ -42,7 +42,7 @@ export async function createFile(
       return;
     }
 
-    let tFile = app.vault.getAbstractFileByPath(file);
+    const tFile = app.vault.getAbstractFileByPath(file);
 
     if (tFile && tFile instanceof TFile) {
       return await app.workspace.getLeaf().openFile(tFile);
