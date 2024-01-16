@@ -80,7 +80,7 @@ export const AddTemplate = () => {
     let folder = '';
     let file = '';
 
-    const year = dates.year();
+    const year = dates.format('gggg');
     let value;
 
     if (periodicActiveTab === DAILY) {
@@ -125,14 +125,11 @@ export const AddTemplate = () => {
     let file = '';
     let tag = '';
     let README = '';
-    let path;
-    let key;
-
-    path =
+    const path =
       settings[
         `${paraActiveTab.toLocaleLowerCase()}sPath` as keyof PluginSettings
       ]; // settings.archivesPath;
-    key = values[`${paraActiveTab}Folder`]; // values.archiveFolder;
+    const key = values[`${paraActiveTab}Folder`]; // values.archiveFolder;
     tag = values[`${paraActiveTab}Tag`]; // values.archiveTag;
     README = values[`${paraActiveTab}README`]; // values.archiveREADME;
 
