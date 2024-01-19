@@ -1,4 +1,6 @@
 .periodic-para {
+  overflow: hidden !important;
+
   button:not(.ant-btn) {
     background-color: unset;
     box-shadow: unset;
@@ -8,6 +10,12 @@
     color: #fff;
     background-color: var(--interactive-accent);
     box-shadow: 0 2px 0 rgba(5, 145, 255, 0.1);
+  }
+
+  .ant-tabs-nav {
+    &::before {
+      border: 0;
+    }
   }
 
   .ant-form-item {
@@ -23,19 +31,16 @@
       display: flex;
       justify-content: center;
       position: relative;
-      inset: -20px auto auto 0px !important;
-    }
-  }
+      inset: -45px auto auto 0px !important;
 
-  .ant-picker-dropdown {
-    .ant-picker-cell {
-      &::before {
-        height: 30px;
+      .ant-picker-panel-container {
+        border-radius: 0;
+        box-shadow: unset;
+        transition: unset;
       }
-      .ant-picker-cell-inner {
-        line-height: 30px;
-        min-width: 30px;
-        height: 30px;
+
+      .ant-picker-header {
+        border: 0;
       }
     }
   }

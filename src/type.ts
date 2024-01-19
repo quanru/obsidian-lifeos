@@ -41,7 +41,7 @@ export type TaskConditionType = {
   to?: string | null;
 };
 
-export type ContextType = { app: App; settings: PluginSettings };
+export type ContextType = { app: App; settings: PluginSettings, width: number };
 
 export type ResourceType = {
   id: string;

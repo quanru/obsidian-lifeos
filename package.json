@@ -8,7 +8,12 @@
     "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
     "version": "node version-bump.mjs && git add manifest.json versions.json"
   },
-  "keywords": [],
+  "keywords": [
+    "PARA",
+    "Periodic",
+    "usememos",
+    "memos"
+  ],
   "author": "",
   "license": "MIT",
   "devDependencies": {
@@ -26,11 +31,10 @@
     "typescript": "4.7.4"
   },
   "dependencies": {
-    "@ant-design/icons": "^5.2.5",
-    "antd": "^5.8.2",
-    "axios": "^1.5.1",
-    "dayjs": "^1.11.9",
-    "debounce": "^2.0.0",
+    "@ant-design/icons": "^5.2.6",
+    "antd": "^5.13.2",
+    "axios": "^1.6.5",
+    "dayjs": "^1.11.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "reduce-css-calc": "^2.1.8"

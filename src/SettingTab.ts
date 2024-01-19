@@ -1,5 +1,4 @@
-import { PluginSettingTab, Setting } from 'obsidian';
-import debounce from 'debounce';
+import { PluginSettingTab, Setting, debounce } from 'obsidian';
 import type { App } from 'obsidian';
 import type PeriodicPARA from './main';
 import type { PluginSettings } from './type';

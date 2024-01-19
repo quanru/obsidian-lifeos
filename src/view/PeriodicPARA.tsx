@@ -1,4 +1,4 @@
-import { ItemView, WorkspaceLeaf } from 'obsidian';
+import { ItemView, WorkspaceLeaf, debounce } from 'obsidian';
 import * as React from 'react';
 import { type Root, createRoot } from 'react-dom/client';
 import { AddTemplate } from '../component/AddTemplate';
@@ -23,6 +23,15 @@ export class PeriodicPARAView extends ItemView {
     return 'Periodic PARA';
   }
 
+  getIcon(): string {
+    return 'zap';
+  }
+
+  onResize = debounce(async () => {
+    this.onClose();
+    this.onOpen();
+  }, 500);
+
   async onOpen() {
     this.contentEl.empty();
     this.contentEl.addClass('periodic-para');
@@ -32,6 +41,7 @@ export class PeriodicPARAView extends ItemView {
         value={{
           app: this.app,
           settings: this.settings,
+          width: this.containerEl.innerWidth,
         }}
       >
         <AddTemplate></AddTemplate>

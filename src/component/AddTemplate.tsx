@@ -46,7 +46,7 @@ const localeMap: Record<string, any> = {
 const locale = window.localStorage.getItem('language') || 'en';
 
 export const AddTemplate = () => {
-  const { app, settings } = useApp() || {};
+  const { app, settings, width } = useApp() || {};
   const [periodicActiveTab, setPeriodicActiveTab] = useState(DAILY);
   const [paraActiveTab, setParaActiveTab] = useState(PROJECT);
   const [type, setType] = useState(PERIODIC);
@@ -160,6 +160,12 @@ export const AddTemplate = () => {
             )
           ),
         },
+        components: {
+          DatePicker: {
+            cellWidth: width ? width / 7.25 : 55,
+            cellHeight: 30,
+          },
+        },
         algorithm: isDarkTheme() ? theme.darkAlgorithm : theme.defaultAlgorithm,
       }}
     >
@@ -183,7 +189,6 @@ export const AddTemplate = () => {
         {settings?.usePARANotes && settings?.usePeriodicNotes && (
           <Radio.Group
             name="type"
-            buttonStyle="solid"
             value={type}
             onChange={(e) => setType(e.target.value)}
             style={{
@@ -202,6 +207,8 @@ export const AddTemplate = () => {
             activeKey={periodicActiveTab}
             onChange={setPeriodicActiveTab}
             centered
+            size="small"
+            indicator={{ size: 0 }}
             items={[DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY].map(
               (periodic) => {
                 const pickerMap: Record<
@@ -246,6 +253,8 @@ export const AddTemplate = () => {
               activeKey={paraActiveTab}
               onChange={setParaActiveTab}
               centered
+              size="small"
+              indicator={{ size: 0 }}
               style={{ width: '100%' }}
               items={[PROJECT, AREA, RESOURCE, ARCHIVE].map((item) => {
                 return {
@@ -273,7 +282,9 @@ export const AddTemplate = () => {
                             form.setFieldValue(`${item}Folder`, itemFolder);
                           }}
                           allowClear
-                          placeholder="PKM/LifeOS"
+                          placeholder={`${item} Tag, eg: ${
+                            item === PROJECT ? 'PKM/LifeOS' : 'PKM' // 引导用户，项目一般属于某个领域
+                          }`}
                         />
                       </Form.Item>
                       <Form.Item

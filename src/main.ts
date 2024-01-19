@@ -72,7 +72,7 @@ export default class PeriodicPARA extends Plugin {
       name: 'Create Notes',
       callback: this.initView,
     });
-
+    this.app.workspace.onLayoutReady(this.initView);
     this.loadHelpers();
     this.loadDailyRecord();
     this.loadGlobalHelpers();
@@ -227,10 +227,8 @@ export default class PeriodicPARA extends Plugin {
       return;
     }
 
-    const leaf = this.app.workspace.getLeaf(false);
+    const leaf = this.app.workspace.getLeftLeaf(false);
 
     await leaf.setViewState({ type: VIEW_TYPE, active: true });
-
-    this.app.workspace.revealLeaf(leaf);
   };
 }
