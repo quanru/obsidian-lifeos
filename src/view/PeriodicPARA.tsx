@@ -28,6 +28,10 @@ export class PeriodicPARAView extends ItemView {
   }
 
   onResize = debounce(async () => {
+    if ((this.app as any).isMobile) {
+      return;
+    }
+
     this.onClose();
     this.onOpen();
   }, 500);
