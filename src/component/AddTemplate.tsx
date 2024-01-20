@@ -162,7 +162,7 @@ export const AddTemplate = () => {
         },
         components: {
           DatePicker: {
-            cellWidth: width ? width / 7.25 : 55,
+            cellWidth: width ? width / 7.5 : 55,
             cellHeight: 30,
           },
         },
