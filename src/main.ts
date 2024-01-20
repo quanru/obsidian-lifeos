@@ -227,7 +227,12 @@ export default class PeriodicPARA extends Plugin {
       return;
     }
 
-    const leaf = this.app.workspace.getLeftLeaf(false);
+    let leaf;
+    if ((this.app as any).isMobile) {
+      leaf = this.app.workspace.getRightLeaf(false);
+    } else {
+      leaf = this.app.workspace.getLeftLeaf(false);
+    }
 
     await leaf.setViewState({ type: VIEW_TYPE, active: true });
   };
