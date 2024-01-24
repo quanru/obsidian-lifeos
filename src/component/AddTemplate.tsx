@@ -49,7 +49,8 @@ export const AddTemplate = () => {
   const { app, settings, width } = useApp() || {};
   const [periodicActiveTab, setPeriodicActiveTab] = useState(DAILY);
   const [paraActiveTab, setParaActiveTab] = useState(PROJECT);
-  const [type, setType] = useState(PERIODIC);
+  const defaultType = settings?.usePeriodicNotes ? PERIODIC : PARA;
+  const [type, setType] = useState(defaultType);
   const [form] = Form.useForm();
   const today = dayjs(new Date());
   const SubmitButton = (
