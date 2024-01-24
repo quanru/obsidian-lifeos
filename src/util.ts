@@ -81,11 +81,21 @@ export function formatDailyRecord(record: DailyRecordType) {
     .split(' ');
   const [firstLine, ...otherLine] = content.trim().split('\n');
   const isTask = /^- \[.*?\]/.test(firstLine); // 目前仅支持 task
-  const targetFirstLine = // 将标签和时间戳加到第一行
-    (isTask
-      ? `- [ ] ${time} ${firstLine.replace(/^- \[.*?\]/, '')}`
-      : `- ${time} ${firstLine.replace(/^- /, '')}`) +
-    ` #daily-record ^${timeStamp}`;
+  const isCode = /```/.test(firstLine);
+
+  let targetFirstLine = '';
+
+  if (isTask) {
+    targetFirstLine = `- [ ] ${time} ${firstLine.replace(/^- \[.*?\]/, '')}`;
+  } else if (isCode) {
+    targetFirstLine = `- ${time}`; // 首行不允许存在代码片段
+    otherLine.unshift(firstLine);
+  } else {
+    targetFirstLine = `- ${time} ${firstLine.replace(/^- /, '')}`;
+  }
+
+  targetFirstLine += ` #daily-record ^${timeStamp}`;
+
   const targetOtherLine = otherLine?.length //剩余行
     ? '\n' +
       otherLine
