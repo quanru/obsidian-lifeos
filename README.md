@@ -26,7 +26,7 @@ It is recommended to work with [Templater](https://silentvoid13.github.io/Templa
 
 > [usememos](https://github.com/usememos/memos)
 
-#### Manner 1: Through [Memos Web App](https://memox.quanruzhuoxiu.repl.co)
+#### Manner 1: Through Memos Web App
 
 - https://github.com/quanru/obsidian-periodic-para/assets/11739753/b2dfbe07-869c-4b08-93a8-85c289755a71
 
@@ -87,7 +87,7 @@ Go to the [releases](https://github.com/quanru/obsidian-periodic-para/releases) 
 
 There are two ways to use it:
 
-1. Free self-deployment mode: Integration with [usememos](https://github.com/usememos/memos), you need to deploy your own usememos(Or use the [demo](https://memox.quanruzhuoxiu.repl.co) I deployed to try it out).
+1. Free self-deployment mode: Integration with [usememos](https://github.com/usememos/memos), you need to deploy your own usememos.
 2. Subscription mode: [Contact](https://github.com/quanru/obsidian-periodic-para#support) the author to purchase or obtain a trial token
 
 Way 1 supports a full-featured [usememos](https://github.com/usememos/memos) ecosystem, includes [Mobile App](https://memos.moe/) and [Shortcuts (iOS, iPadOS or macOS)](https://www.icloud.com/shortcuts/1eaef307112843ed9f91d256f5ee7ad9);
