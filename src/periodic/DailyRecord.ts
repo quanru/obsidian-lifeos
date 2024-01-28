@@ -121,7 +121,7 @@ export class DailyRecord {
             }
 
             const { data } = await this.axios.get(
-              `${origin}/o/r/${resource.id}`,
+              `${origin}/o/r/${resource.name || resource.id}`,
               {
                 responseType: 'arraybuffer',
               }
