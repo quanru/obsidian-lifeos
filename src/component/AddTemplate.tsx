@@ -267,6 +267,16 @@ export const AddTemplate = () => {
                         labelCol={{ flex: '80px' }}
                         label="Tag"
                         name={`${item}Tag`}
+                        rules={[
+                          {
+                            required: true,
+                            message: 'Tag is required',
+                          },
+                          {
+                            pattern: /^[^\s]*$/,
+                            message: `Tag can't contain spaces`,
+                          },
+                        ]}
                       >
                         <Input
                           onChange={() => {
@@ -276,11 +286,15 @@ export const AddTemplate = () => {
                             const itemFolder = itemTag.replace(/\//g, '-');
                             const itemREADME = itemTag.split('/').reverse()[0];
 
+                            form.setFieldValue(`${item}Folder`, itemFolder);
                             form.setFieldValue(
                               `${item}README`,
-                              (itemREADME ? itemREADME + '.' : '') + 'README.md'
+                              itemREADME ? itemREADME + '.README.md' : ''
                             );
-                            form.setFieldValue(`${item}Folder`, itemFolder);
+                            form.validateFields([
+                              `${item}Folder`,
+                              `${item}README`,
+                            ]);
                           }}
                           allowClear
                           placeholder={`${item} Tag, eg: ${
@@ -292,6 +306,12 @@ export const AddTemplate = () => {
                         labelCol={{ flex: '80px' }}
                         label="Folder"
                         name={`${item}Folder`}
+                        rules={[
+                          {
+                            required: true,
+                            message: 'Folder is required',
+                          },
+                        ]}
                       >
                         <Input
                           type="text"
@@ -303,6 +323,12 @@ export const AddTemplate = () => {
                         labelCol={{ flex: '80px' }}
                         label="README"
                         name={`${item}README`}
+                        rules={[
+                          {
+                            required: true,
+                            message: 'README is required',
+                          },
+                        ]}
                       >
                         <Input allowClear placeholder="LifeOS.README.md" />
                       </Form.Item>
