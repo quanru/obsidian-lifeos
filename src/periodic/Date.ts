@@ -48,18 +48,18 @@ export class Date {
       quarter:
         quarter && year
           ? moment()
-              .year(year)
-              .quarter(quarter)
-              .endOf('quarter')
-              .format('YYYY-MM-DD')
+            .year(year)
+            .quarter(quarter)
+            .endOf('quarter')
+            .format('YYYY-MM-DD')
           : '',
       month:
         month && year
           ? moment()
-              .year(year)
-              .month(month - 1)
-              .endOf('month')
-              .format('YYYY-MM-DD')
+            .year(year)
+            .month(month - 1)
+            .endOf('month')
+            .format('YYYY-MM-DD')
           : '',
       week:
         week && year
@@ -108,17 +108,17 @@ export class Date {
     if (month) {
       const from = year
         ? moment()
-            .year(year)
-            .month(month - 1)
-            .startOf('month')
-            .format('YYYY-MM-DD')
+          .year(year)
+          .month(month - 1)
+          .startOf('month')
+          .format('YYYY-MM-DD')
         : null;
       const to = year
         ? moment()
-            .year(year)
-            .month(month - 1)
-            .endOf('month')
-            .format('YYYY-MM-DD')
+          .year(year)
+          .month(month - 1)
+          .endOf('month')
+          .format('YYYY-MM-DD')
         : null;
 
       return {
@@ -130,17 +130,17 @@ export class Date {
     if (quarter) {
       const from = year
         ? moment()
-            .year(year)
-            .quarter(quarter)
-            .startOf('quarter')
-            .format('YYYY-MM-DD')
+          .year(year)
+          .quarter(quarter)
+          .startOf('quarter')
+          .format('YYYY-MM-DD')
         : null;
       const to = year
         ? moment()
-            .year(year)
-            .quarter(quarter)
-            .endOf('quarter')
-            .format('YYYY-MM-DD')
+          .year(year)
+          .quarter(quarter)
+          .endOf('quarter')
+          .format('YYYY-MM-DD')
         : null;
 
       return {
@@ -183,7 +183,7 @@ export class Date {
     const currentDate = moment(from).clone();
 
     while (currentDate.isBefore(moment(to))) {
-      const weekLink = `${currentDate.weekYear()}/Weekly/${currentDate.weekYear()}-W${String(
+      const weekLink = `${currentDate.weekYear()}/${String(currentDate.month() + 1)}/${currentDate.weekYear()}-W${String(
         currentDate.isoWeek()
       ).padStart(2, '0')}.md`;
       const weekFile = this.file.get(
@@ -196,7 +196,7 @@ export class Date {
         weeks.add(weekFile.path);
       }
 
-      const monthLink = `${currentDate.year()}/Monthly/${currentDate.year()}-${String(
+      const monthLink = `${currentDate.year()}/${currentDate.year()}-${String(
         currentDate.month() + 1
       ).padStart(2, '0')}.md`;
       const monthFile = this.file.get(
@@ -209,7 +209,7 @@ export class Date {
         months.add(monthFile.path);
       }
 
-      const quarterLink = `${currentDate.year()}/Quarterly/${currentDate.year()}-Q${Math.ceil(
+      const quarterLink = `${currentDate.year()}/${currentDate.year()}-Q${Math.ceil(
         (currentDate.month() + 1) / 3
       )}.md`;
       const quarterFile = this.file.get(
