@@ -48,15 +48,14 @@ export class Bullet {
       .join(' ');
     const where = tags
       .map((tag: string[], index: number) => {
-        return `(contains(L.tags, "${tag}")) ${
-          index === tags.length - 1 ? '' : 'OR'
-        }`;
+        return `(contains(L.tags, "${tag}")) ${index === tags.length - 1 ? '' : 'OR'
+          }`;
       })
       .join(' ');
     const result = (await this.dataview.tryQuery(
       `
 TABLE WITHOUT ID rows.L.text AS "Bullet", rows.file.link AS "File"
-FROM (${from}) AND -"${periodicNotesPath}/Templates"
+FROM (${from}) AND -"${this.settings.periodicTemplatePath}"
 FLATTEN file.lists AS L
 WHERE ${where} AND !L.task AND file.path != "${filepath}"
 GROUP BY file.link

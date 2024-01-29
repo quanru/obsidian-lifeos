@@ -11,6 +11,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   archivesPath: '4. Archives',
   projectListHeader: 'Project List',
   areaListHeader: 'First Things Dimension',
+  periodicTemplatePath: "PeriodicNotes/Templates",
   habitHeader: 'Habit',
   dailyRecordHeader: 'Daily Record',
   dailyRecordAPI: '',
@@ -109,6 +110,21 @@ export class SettingTab extends PluginSettingTab {
         );
 
       new Setting(containerEl)
+        .setName('Periodic Notes Templates Path:')
+        .setDesc('Where the periodic notes templates Path store')
+        .addText((text) =>
+          text
+            .setPlaceholder(DEFAULT_SETTINGS.periodicTemplatePath)
+            .setValue(this.plugin.settings.periodicTemplatePath)
+            .onChange(
+              debounce(async (value) => {
+                this.plugin.settings.periodicTemplatePath = value;
+                await this.plugin.saveSettings();
+              }, 500)
+            )
+        );
+
+      new Setting(containerEl)
         .setName('Daily Record')
         .setDesc('Sync daily record from usememos service')
         .addToggle((toggle) =>
@@ -144,7 +160,7 @@ export class SettingTab extends PluginSettingTab {
             text
               .setPlaceholder(
                 DEFAULT_SETTINGS.dailyRecordAPI ||
-                  'Usememos server + API(https://your-use-memos.com/api/v1/memo)'
+                'Usememos server + API(https://your-use-memos.com/api/v1/memo)'
               )
               .setValue(this.plugin.settings.dailyRecordAPI)
               .onChange(
@@ -162,7 +178,7 @@ export class SettingTab extends PluginSettingTab {
             text
               .setPlaceholder(
                 DEFAULT_SETTINGS.dailyRecordToken ||
-                  'Find token in https://your-use-memos.com/setting'
+                'Find token in https://your-use-memos.com/setting'
               )
               .setValue(this.plugin.settings.dailyRecordToken)
               .onChange(

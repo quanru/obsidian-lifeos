@@ -8,8 +8,9 @@ export interface PluginSettings {
   archivesPath: string;
   projectListHeader: string;
   areaListHeader: string;
+  periodicTemplatePath: string;
   habitHeader: string;
-  dailyRecordHeader: string;
+  dailyRecordHeader: string
   dailyRecordAPI: string;
   dailyRecordToken: string;
   useDailyRecord: boolean;

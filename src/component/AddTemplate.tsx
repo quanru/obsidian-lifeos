@@ -85,12 +85,11 @@ export const AddTemplate = () => {
     let value;
 
     if (periodicActiveTab === DAILY) {
-      folder = `${
-        settings.periodicNotesPath
-      }/${year}/${periodicActiveTab}/${String(dates.month() + 1).padStart(
-        2,
-        '0'
-      )}`;
+      folder = `${settings.periodicNotesPath
+        }/${year}/${periodicActiveTab}/${String(dates.month() + 1).padStart(
+          2,
+          '0'
+        )}`;
       value = dates.format('YYYY-MM-DD');
     } else if (periodicActiveTab === WEEKLY) {
       folder = `${settings.periodicNotesPath}/${year}/${periodicActiveTab}`;
@@ -107,7 +106,7 @@ export const AddTemplate = () => {
     }
 
     file = `${folder}/${value}.md`;
-    templateFile = `${settings.periodicNotesPath}/Templates/${periodicActiveTab}.md`;
+    templateFile = `${settings.periodicTemplatePath}/${periodicActiveTab}.md`;
 
     await createFile(app, {
       templateFile,
@@ -128,7 +127,7 @@ export const AddTemplate = () => {
     let README = '';
     const path =
       settings[
-        `${paraActiveTab.toLocaleLowerCase()}sPath` as keyof PluginSettings
+      `${paraActiveTab.toLocaleLowerCase()}sPath` as keyof PluginSettings
       ]; // settings.archivesPath;
     const key = values[`${paraActiveTab}Folder`]; // values.archiveFolder;
     tag = values[`${paraActiveTab}Tag`]; // values.archiveTag;
@@ -297,9 +296,8 @@ export const AddTemplate = () => {
                             ]);
                           }}
                           allowClear
-                          placeholder={`${item} Tag, eg: ${
-                            item === PROJECT ? 'PKM/LifeOS' : 'PKM' // 引导用户，项目一般属于某个领域
-                          }`}
+                          placeholder={`${item} Tag, eg: ${item === PROJECT ? 'PKM/LifeOS' : 'PKM' // 引导用户，项目一般属于某个领域
+                            }`}
                         />
                       </Form.Item>
                       <Form.Item
