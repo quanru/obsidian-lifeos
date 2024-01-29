@@ -82,26 +82,24 @@ export const AddTemplate = () => {
     let file = '';
 
     const year = dates.format('gggg');
+    const monthNumber = String(dates.month() + 1).padStart(2, '0');
     let value;
 
     if (periodicActiveTab === DAILY) {
       folder = `${settings.periodicNotesPath
-        }/${year}/${periodicActiveTab}/${String(dates.month() + 1).padStart(
-          2,
-          '0'
-        )}`;
+        }/${year}/${monthNumber}`;
       value = dates.format('YYYY-MM-DD');
     } else if (periodicActiveTab === WEEKLY) {
-      folder = `${settings.periodicNotesPath}/${year}/${periodicActiveTab}`;
+      folder = `${settings.periodicNotesPath}/${year}/${monthNumber}`;
       value = dates.format('gggg-[W]ww');
     } else if (periodicActiveTab === MONTHLY) {
-      folder = `${settings.periodicNotesPath}/${year}/${periodicActiveTab}`;
+      folder = `${settings.periodicNotesPath}/${year}`;
       value = dates.format('YYYY-MM');
     } else if (periodicActiveTab === QUARTERLY) {
-      folder = `${settings.periodicNotesPath}/${year}/${periodicActiveTab}`;
+      folder = `${settings.periodicNotesPath}/${year}`;
       value = dates.format('YYYY-[Q]Q');
     } else if (periodicActiveTab === YEARLY) {
-      folder = `${settings.periodicNotesPath}/${year}`;
+      folder = `${settings.periodicNotesPath}`;
       value = year;
     }
 
