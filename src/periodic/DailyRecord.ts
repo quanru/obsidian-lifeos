@@ -92,7 +92,7 @@ export class DailyRecord {
   sync = async () => {
     logMessage('Start sync daily record');
     this.offset = 0;
-    this.downloadResource();
+    // this.downloadResource();
     this.insertDailyRecord();
   };
 
@@ -191,7 +191,7 @@ export class DailyRecord {
     await Promise.all(
       Object.keys(dailyRecordByDay).map(async (today) => {
         const momentDay = moment(today);
-        const link = `${momentDay.year()}/Daily/${String(
+        const link = `${momentDay.year()}/${String(
           momentDay.month() + 1
         ).padStart(2, '0')}/${momentDay.format('YYYY-MM-DD')}.md`;
         const targetFile = this.file.get(
@@ -265,9 +265,9 @@ export class DailyRecord {
           }
 
           const sortedRecordList = Object.entries({
-            ...dailyRecordByDay[today],
             ...remoteRecordListWithTime,
             ...localRecordListWithTime,
+            ...dailyRecordByDay[today],
           })
             .sort((a, b) => {
               const indexA = Number(a[0]);
