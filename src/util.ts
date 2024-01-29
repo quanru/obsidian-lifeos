@@ -98,18 +98,18 @@ export function formatDailyRecord(record: DailyRecordType) {
 
   const targetOtherLine = otherLine?.length //剩余行
     ? '\n' +
-      otherLine
-        .map((line: string) => (/^[ \t]/.test(line) ? line : `\t${line}`))
-        .join('\n')
-        .trimEnd()
+    otherLine
+      .map((line: string) => (/^[ \t]/.test(line) ? line : `\t${line}`))
+      .join('\n')
+      .trimEnd()
     : '';
   const targetResourceLine = resourceList?.length // 资源文件
     ? '\n' +
-      resourceList
-        ?.map(
-          (resource: ResourceType) => `\t - ![[${generateFileName(resource)}]]`
-        )
-        .join('\n')
+    resourceList
+      ?.map(
+        (resource: ResourceType) => `\t - ![[${generateFileName(resource)}]]`
+      )
+      .join('\n')
     : '';
   const finalTargetContent =
     targetFirstLine + targetOtherLine + targetResourceLine;
@@ -118,7 +118,7 @@ export function formatDailyRecord(record: DailyRecordType) {
 }
 
 export function generateFileName(resource: ResourceType): string {
-  return `${resource.id}-${resource.filename.replace(/[/\\?%*:|"<>]/g, '-')}`;
+  return `${resource.filename.replace(/[/\\?%*:|"<>]/g, '-')}`;
 }
 
 export function logMessage(message: string, level: LogLevel = LogLevel.info) {
