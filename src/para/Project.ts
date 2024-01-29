@@ -69,7 +69,7 @@ export class Project extends Item {
     // eslint-disable-next-line no-constant-condition
     while (true) {
       const momentDay = moment(day);
-      const link = `${momentDay.year()}/Daily/${String(
+      const link = `${momentDay.year()}/${String(
         momentDay.month() + 1
       ).padStart(2, '0')}/${momentDay.format('YYYY-MM-DD')}.md`;
       const file = this.file.get(link, '', this.settings.periodicNotesPath);
@@ -130,9 +130,9 @@ export class Project extends Item {
     Object.keys(projectTimeConsume).map((project) => {
       projectTimeConsume[project] = projectTimeConsume[project]
         ? `${projectTimeConsume[project]}/${totalTime}=${this.timePercent(
-            projectTimeConsume[project],
-            totalTime
-          )}`
+          projectTimeConsume[project],
+          totalTime
+        )}`
         : '';
     });
 
@@ -166,8 +166,7 @@ export class Project extends Item {
       const regMatch = project.match(/\/(.*)\//);
 
       list.push(
-        `${index + 1}. [[${project}|${regMatch?.length ? regMatch[1] : ''}]] ${
-          projectTimeConsume[project]
+        `${index + 1}. [[${project}|${regMatch?.length ? regMatch[1] : ''}]] ${projectTimeConsume[project]
         }`
       );
     });
