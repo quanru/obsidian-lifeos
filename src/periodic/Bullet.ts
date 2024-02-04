@@ -54,7 +54,7 @@ export class Bullet {
       .join(' ');
     const result = (await this.dataview.tryQuery(
       `
-TABLE WITHOUT ID rows.L.text AS "Bullet", rows.file.link AS "File"
+TABLE WITHOUT ID rows.L.text AS "Bullet", rows.L.link AS "Link"
 FROM (${from}) AND -"${this.settings.periodicTemplatePath}"
 FLATTEN file.lists AS L
 WHERE ${where} AND !L.task AND file.path != "${filepath}"

@@ -132,7 +132,7 @@ export class Task {
 TASK
 FROM -"${this.settings.periodicTemplatePath}"
 WHERE ${where} AND file.path != "${filepath}"
-SORT completed ASC
+SORT status ASC
     `)) as TaskResult;
 
     this.dataview.taskList(tasks, false, div, component);
