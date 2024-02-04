@@ -265,9 +265,9 @@ export class DailyRecord {
           }
 
           const sortedRecordList = Object.entries({
+            ...dailyRecordByDay[today],
             ...remoteRecordListWithTime,
             ...localRecordListWithTime,
-            ...dailyRecordByDay[today],
           })
             .sort((a, b) => {
               const indexA = Number(a[0]);

@@ -163,7 +163,7 @@ export default class PeriodicPARA extends Plugin {
     };
   }
 
-  onunload() {}
+  onunload() { }
 
   async loadSettings() {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
