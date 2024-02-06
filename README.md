@@ -1,7 +1,8 @@
 # Obsidian Periodic PARA
 
 - This is a plugin for [LifeOS](https://forum.obsidian.md/t/building-my-second-brain-with-obsidian/62934), which assist in practicing the PARA method with periodic notes and usememos.
-- It is recommended to download the [LifeOS-example](https://github.com/quanru/obsidian-example-LifeOS/tree/english-version) to experience it.
+- It is recommended to download the [LifeOS-example](https://github.com/quanru/obsidian-example-LifeOS/tree/main) to experience it.
+- For more tutorials, please go to [Obsidian LifeOS Official Site](https://obsidian-life-os.netlify.app/)
 
 ## Features
 
