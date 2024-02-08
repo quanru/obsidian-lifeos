@@ -137,7 +137,42 @@ export const AddTemplate = () => {
 
     folder = `${path}/${key}`;
     file = `${folder}/${README}`;
-    templateFile = `${path}/Template.md`;
+
+    const PARA_type = paraActiveTab.toLocaleLowerCase()
+    if (PARA_type == "project")
+      templateFile = `${settings.periodicTemplatePath}/ProjectTemplate.md`;
+    else if (PARA_type == "area")
+      templateFile = `${settings.periodicTemplatePath}/AreaTemplate.md`;
+    else if (PARA_type == "archive")
+      templateFile = `${settings.periodicTemplatePath}/ArchiveTemplate.md`;
+    else if (PARA_type == "resource")
+      templateFile = `${settings.periodicTemplatePath}/ResourceTemplate.md`;
+    // console.log('path', PARA_type, templateFile)
+
+    // const templateMap = {
+    //   'project': 'ProjectTemplate.md',
+    //   'area': 'AreaTemplate.md',
+    //   'archive': 'ArchiveTemplate.md',
+    //   'resource': 'ResourceTemplate.md'
+    // };
+    // templateFile = `${settings.periodicTemplatePath}/${templateMap[PARA_type] || 'DefaultTemplate.md'}`;
+
+    // switch (PARA_type) {
+    //   case 'project':
+    //     templateFile = `${settings.periodicTemplatePath}/ProjectTemplate.md`;
+    //     break;
+    //   case 'area':
+    //     templateFile = `${settings.periodicTemplatePath}/AreaTemplate.md`;
+    //     break;
+    //   case 'archive':
+    //     templateFile = `${settings.periodicTemplatePath}/ArchiveTemplate.md`;
+    //     break;
+    //   case 'resource':
+    //     templateFile = `${settings.periodicTemplatePath}/ResourceTemplate.md`;
+    //     break;
+    //   default:
+    //     templateFile = `${settings.periodicTemplatePath}/DefaultTemplate.md`;
+    // }
 
     await createFile(app, {
       templateFile,
