@@ -29,3 +29,5 @@ export const WEEKLY = 'Weekly';
 export const MONTHLY = 'Monthly';
 export const QUARTERLY = 'Quarterly';
 export const YEARLY = 'Yearly';
+
+export const LIFE_OS_OFFICIAL_SITE = 'https://obsidian-life-os.netlify.app'

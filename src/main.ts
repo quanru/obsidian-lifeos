@@ -18,7 +18,7 @@ import { DailyRecord } from './periodic/DailyRecord';
 import { SettingTab } from './SettingTab';
 import { LogLevel, type PluginSettings } from './type';
 import { DEFAULT_SETTINGS } from './SettingTab';
-import { ERROR_MESSAGES } from './constant';
+import { ERROR_MESSAGES, LIFE_OS_OFFICIAL_SITE } from './constant';
 import { logMessage, renderError } from './util';
 import { PeriodicPARAView, VIEW_TYPE } from './view/PeriodicPARA';
 
@@ -71,6 +71,11 @@ export default class PeriodicPARA extends Plugin {
       id: 'periodic-para',
       name: 'Create Notes',
       callback: this.initView,
+    });
+    this.addCommand({
+      id: 'periodic-para-life-os-guide',
+      name: 'LifeOS Guide',
+      callback: () => (window.location.href = LIFE_OS_OFFICIAL_SITE),
     });
     this.app.workspace.onLayoutReady(this.initView);
     this.loadHelpers();
