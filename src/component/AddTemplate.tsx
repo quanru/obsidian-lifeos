@@ -261,79 +261,82 @@ export const AddTemplate = () => {
                 return {
                   label: item,
                   key: item,
-                  children: (
-                    <>
-                      <Form.Item
-                        labelCol={{ flex: '80px' }}
-                        label="Tag"
-                        name={`${item}Tag`}
-                        rules={[
-                          {
-                            required: true,
-                            message: 'Tag is required',
-                          },
-                          {
-                            pattern: /^[^\s]*$/,
-                            message: `Tag can't contain spaces`,
-                          },
-                        ]}
-                      >
-                        <Input
-                          onChange={() => {
-                            const itemTag = form
-                              .getFieldValue(`${item}Tag`)
-                              .replace(/^#/, '');
-                            const itemFolder = itemTag.replace(/\//g, '-');
-                            const itemREADME = itemTag.split('/').reverse()[0];
+                  children:
+                    paraActiveTab === item ? (
+                      <>
+                        <Form.Item
+                          labelCol={{ flex: '80px' }}
+                          label="Tag"
+                          name={`${item}Tag`}
+                          rules={[
+                            {
+                              required: true,
+                              message: 'Tag is required',
+                            },
+                            {
+                              pattern: /^[^\s]*$/,
+                              message: `Tag can't contain spaces`,
+                            },
+                          ]}
+                        >
+                          <Input
+                            onChange={() => {
+                              const itemTag = form
+                                .getFieldValue(`${item}Tag`)
+                                .replace(/^#/, '');
+                              const itemFolder = itemTag.replace(/\//g, '-');
+                              const itemREADME = itemTag
+                                .split('/')
+                                .reverse()[0];
 
-                            form.setFieldValue(`${item}Folder`, itemFolder);
-                            form.setFieldValue(
-                              `${item}README`,
-                              itemREADME ? itemREADME + '.README.md' : ''
-                            );
-                            form.validateFields([
-                              `${item}Folder`,
-                              `${item}README`,
-                            ]);
-                          }}
-                          allowClear
-                          placeholder={`${item} Tag, eg: ${
-                            item === PROJECT ? 'PKM/LifeOS' : 'PKM' // 引导用户，项目一般属于某个领域
-                          }`}
-                        />
-                      </Form.Item>
-                      <Form.Item
-                        labelCol={{ flex: '80px' }}
-                        label="Folder"
-                        name={`${item}Folder`}
-                        rules={[
-                          {
-                            required: true,
-                            message: 'Folder is required',
-                          },
-                        ]}
-                      >
-                        <Input
-                          type="text"
-                          allowClear
-                          placeholder="PKM-LifeOS"
-                        />
-                      </Form.Item>
-                      <Form.Item
-                        labelCol={{ flex: '80px' }}
-                        label="README"
-                        name={`${item}README`}
-                        rules={[
-                          {
-                            required: true,
-                            message: 'README is required',
-                          },
-                        ]}
-                      >
-                        <Input allowClear placeholder="LifeOS.README.md" />
-                      </Form.Item>
-                    </>
-                  ),
+                              form.setFieldValue(`${item}Folder`, itemFolder);
+                              form.setFieldValue(
+                                `${item}README`,
+                                itemREADME ? itemREADME + '.README.md' : ''
+                              );
+                              form.validateFields([
+                                `${item}Folder`,
+                                `${item}README`,
+                              ]);
+                            }}
+                            allowClear
+                            placeholder={`${item} Tag, eg: ${
+                              item === PROJECT ? 'PKM/LifeOS' : 'PKM' // 引导用户，项目一般属于某个领域
+                            }`}
+                          />
+                        </Form.Item>
+                        <Form.Item
+                          labelCol={{ flex: '80px' }}
+                          label="Folder"
+                          name={`${item}Folder`}
+                          rules={[
+                            {
+                              required: true,
+                              message: 'Folder is required',
+                            },
+                          ]}
+                        >
+                          <Input
+                            type="text"
+                            allowClear
+                            placeholder="PKM-LifeOS"
+                          />
+                        </Form.Item>
+                        <Form.Item
+                          labelCol={{ flex: '80px' }}
+                          label="README"
+                          name={`${item}README`}
+                          rules={[
+                            {
+                              required: true,
+                              message: 'README is required',
+                            },
+                          ]}
+                        >
+                          <Input allowClear placeholder="LifeOS.README.md" />
+                        </Form.Item>
+                      </>
+                    ) : null,
                 };
               })}
             ></Tabs>
