@@ -70,7 +70,7 @@ export async function createFile(
 
 export function isDarkTheme() {
   const el = document.querySelector('body');
-  return el?.className.includes('theme-dark') ?? false;
+  return el?.className.split(' ').includes('theme-dark') ?? false;
 }
 
 export function formatDailyRecord(record: DailyRecordType) {

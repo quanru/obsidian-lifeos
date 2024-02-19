@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useApp } from 'src/hooks/useApp';
 import { Notice } from 'obsidian';
 import {
@@ -50,6 +50,7 @@ export const AddTemplate = () => {
   const [periodicActiveTab, setPeriodicActiveTab] = useState(DAILY);
   const [paraActiveTab, setParaActiveTab] = useState(PROJECT);
   const defaultType = settings?.usePeriodicNotes ? PERIODIC : PARA;
+  const [isDark, setDark] = useState(isDarkTheme());
   const [type, setType] = useState(defaultType);
   const [form] = Form.useForm();
   const today = dayjs(new Date());
@@ -152,6 +153,22 @@ export const AddTemplate = () => {
     });
   };
 
+  useEffect(() => {
+    const handleBodyClassChange = () => {
+      setDark(isDarkTheme());
+    };
+
+    const observer = new MutationObserver(handleBodyClassChange);
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   return (
     <ConfigProvider
       locale={localeMap[locale]}
@@ -169,7 +186,7 @@ export const AddTemplate = () => {
             cellHeight: 30,
           },
         },
-        algorithm: isDarkTheme() ? theme.darkAlgorithm : theme.defaultAlgorithm,
+        algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
       }}
     >
       <Form
