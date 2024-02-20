@@ -14,7 +14,7 @@ import {
 } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import reduceCSSCalc from 'reduce-css-calc';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import {
   PARA,
   PROJECT,
@@ -29,7 +29,7 @@ import {
   YEARLY,
   ERROR_MESSAGES,
 } from '../constant';
-import { createFile, isDarkTheme } from '../util';
+import { createFile, createPeriodicFile, isDarkTheme } from '../util';
 import type { PluginSettings } from '../type';
 
 import enUS from 'antd/locale/en_US';
@@ -70,54 +70,6 @@ export const AddTemplate = () => {
       ></Button>
     </Form.Item>
   );
-
-  const createPeriodicFile = async (d: Dayjs) => {
-    const dates = dayjs(d.format()).locale(locale);
-
-    if (!app || !settings) {
-      return;
-    }
-
-    let templateFile = '';
-    let folder = '';
-    let file = '';
-
-    const year = dates.format('YYYY');
-    let value;
-
-    if (periodicActiveTab === DAILY) {
-      folder = `${
-        settings.periodicNotesPath
-      }/${year}/${periodicActiveTab}/${String(dates.month() + 1).padStart(
-        2,
-        '0'
-      )}`;
-      value = dates.format('YYYY-MM-DD');
-    } else if (periodicActiveTab === WEEKLY) {
-      folder = `${settings.periodicNotesPath}/${dates.format(
-        'gggg'
-      )}/${periodicActiveTab}`;
-      value = dates.format('gggg-[W]ww');
-    } else if (periodicActiveTab === MONTHLY) {
-      folder = `${settings.periodicNotesPath}/${year}/${periodicActiveTab}`;
-      value = dates.format('YYYY-MM');
-    } else if (periodicActiveTab === QUARTERLY) {
-      folder = `${settings.periodicNotesPath}/${year}/${periodicActiveTab}`;
-      value = dates.format('YYYY-[Q]Q');
-    } else if (periodicActiveTab === YEARLY) {
-      folder = `${settings.periodicNotesPath}/${year}`;
-      value = year;
-    }
-
-    file = `${folder}/${value}.md`;
-    templateFile = `${settings.periodicNotesPath}/Templates/${periodicActiveTab}.md`;
-
-    await createFile(app, {
-      templateFile,
-      folder,
-      file,
-    });
-  };
 
   const createPARAFile = async (values: any) => {
     if (!app || !settings) {
@@ -249,7 +201,14 @@ export const AddTemplate = () => {
                   children: (
                     <Form.Item name={periodic}>
                       <DatePicker
-                        onSelect={createPeriodicFile}
+                        onSelect={(day) => {
+                          createPeriodicFile(
+                            day,
+                            periodicActiveTab,
+                            settings.periodicNotesPath,
+                            app
+                          );
+                        }}
                         picker={picker}
                         showToday={false}
                         style={{ width: 200 }}

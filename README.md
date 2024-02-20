@@ -233,7 +233,7 @@ to
 
 - [Twitter](https://twitter.com/quanruzhuoxiu)
 - [Discord](https://discord.gg/HZGanKEkuZ)
-- [Lark](https://applink.feishu.cn/client/chat/chatter/add_by_link?link_token=704oa7b2-2a6b-4861-b07f-afeb9d971a23)
+- [Lark](https://applink.feishu.cn/client/chat/chatter/add_by_link?link_token=ba8p19af-4cdf-4c94-8a59-95cea664ea61)
 - [Email](mailto:quanruzhuoxiu@gmail.com)
 
 ## Acknowledgements

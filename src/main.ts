@@ -18,11 +18,20 @@ import { DailyRecord } from './periodic/DailyRecord';
 import { SettingTab } from './SettingTab';
 import { LogLevel, type PluginSettings } from './type';
 import { DEFAULT_SETTINGS } from './SettingTab';
-import { ERROR_MESSAGES, LIFE_OS_OFFICIAL_SITE } from './constant';
-import { logMessage, renderError } from './util';
+import {
+  DAILY,
+  ERROR_MESSAGES,
+  LIFE_OS_OFFICIAL_SITE,
+  MONTHLY,
+  QUARTERLY,
+  WEEKLY,
+  YEARLY,
+} from './constant';
+import { createPeriodicFile, logMessage, renderError } from './util';
 import { PeriodicPARAView, VIEW_TYPE } from './view/PeriodicPARA';
 
 import './main.less';
+import dayjs from 'dayjs';
 
 export default class PeriodicPARA extends Plugin {
   settings: PluginSettings;
@@ -68,9 +77,23 @@ export default class PeriodicPARA extends Plugin {
     setIcon(item, 'zap');
 
     this.addCommand({
-      id: 'periodic-para',
+      id: 'periodic-para-create-notes',
       name: 'Create Notes',
       callback: this.initView,
+    });
+    [DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY].map((periodType) => {
+      this.addCommand({
+        id: `periodic-para-create-${periodType.toLocaleLowerCase()}-note`,
+        name: `Create ${periodType} Note`,
+        callback: () => {
+          createPeriodicFile(
+            dayjs(),
+            periodType,
+            this.settings.periodicNotesPath,
+            this.app
+          );
+        },
+      });
     });
     this.addCommand({
       id: 'periodic-para-life-os-guide',
@@ -125,12 +148,12 @@ export default class PeriodicPARA extends Plugin {
       this.dailyRecord = new DailyRecord(this.app, this.settings, this.file);
       this.addCommand({
         id: 'periodic-para-sync-daily-record',
-        name: 'Sync daily record',
+        name: 'Sync Daily Records',
         callback: this.dailyRecord.sync,
       });
       this.addCommand({
         id: 'periodic-para-force-sync-daily-record',
-        name: 'Force sync daily record',
+        name: 'Force Sync Daily Records',
         callback: this.dailyRecord.forceSync,
       });
 

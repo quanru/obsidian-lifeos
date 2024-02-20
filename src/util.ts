@@ -1,8 +1,16 @@
 import { Component, MarkdownRenderer, Notice, TFile, moment } from 'obsidian';
 import type { App } from 'obsidian';
+import dayjs, { Dayjs } from 'dayjs';
 import type { DailyRecordType, ResourceType } from './type';
 import { LogLevel } from './type';
-import { ERROR_MESSAGES } from './constant';
+import {
+  DAILY,
+  WEEKLY,
+  MONTHLY,
+  QUARTERLY,
+  YEARLY,
+  ERROR_MESSAGES,
+} from './constant';
 
 export function renderError(
   app: App,
@@ -141,4 +149,53 @@ export function generateHeaderRegExp(header: string) {
   const reg = new RegExp(`(${formattedHeader}[^\n]*)([\\s\\S]*?)(?=\\n##|$)`);
 
   return reg;
+}
+
+export async function createPeriodicFile(
+  day: Dayjs,
+  periodType: string,
+  periodicNotesPath: string,
+  app: App | undefined
+): Promise<void> {
+  if (!app || !periodicNotesPath) {
+    return;
+  }
+
+  const locale = window.localStorage.getItem('language') || 'en';
+  const date = dayjs(day.format()).locale(locale);
+
+  let templateFile = '';
+  let folder = '';
+  let file = '';
+
+  const year = date.format('YYYY');
+  let value;
+
+  if (periodType === DAILY) {
+    folder = `${periodicNotesPath}/${year}/${periodType}/${String(
+      date.month() + 1
+    ).padStart(2, '0')}`;
+    value = date.format('YYYY-MM-DD');
+  } else if (periodType === WEEKLY) {
+    folder = `${periodicNotesPath}/${date.format('gggg')}/${periodType}`;
+    value = date.format('gggg-[W]ww');
+  } else if (periodType === MONTHLY) {
+    folder = `${periodicNotesPath}/${year}/${periodType}`;
+    value = date.format('YYYY-MM');
+  } else if (periodType === QUARTERLY) {
+    folder = `${periodicNotesPath}/${year}/${periodType}`;
+    value = date.format('YYYY-[Q]Q');
+  } else if (periodType === YEARLY) {
+    folder = `${periodicNotesPath}/${year}`;
+    value = year;
+  }
+
+  file = `${folder}/${value}.md`;
+  templateFile = `${periodicNotesPath}/Templates/${periodType}.md`;
+
+  await createFile(app, {
+    templateFile,
+    folder,
+    file,
+  });
 }
