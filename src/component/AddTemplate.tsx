@@ -9,6 +9,7 @@ import {
   Radio,
   Tabs,
   Input,
+  AutoComplete,
   ConfigProvider,
   theme,
 } from 'antd';
@@ -120,6 +121,23 @@ export const AddTemplate = () => {
       observer.disconnect();
     };
   }, []);
+
+  // tags autocomplete
+  const tags = Object.entries(
+    (app?.metadataCache as any).getTags() as Record<string, number>
+  )
+    .sort((a, b) => b[1] - a[1])
+    .map(([tag, _]) => {
+      return { value: tag };
+    });
+  const [tagsOptions, setTagOptions] = useState<{ value: string }[]>(tags);
+  const handleTagsSearch = (value: string) => {
+    const filteredOptions = tags.filter((tag) =>
+      tag.value.toLowerCase().includes(value.toLowerCase())
+    );
+
+    setTagOptions(filteredOptions);
+  };
 
   return (
     <ConfigProvider
@@ -257,31 +275,36 @@ export const AddTemplate = () => {
                             },
                           ]}
                         >
-                          <Input
-                            onChange={() => {
-                              const itemTag = form
-                                .getFieldValue(`${item}Tag`)
-                                .replace(/^#/, '');
-                              const itemFolder = itemTag.replace(/\//g, '-');
-                              const itemREADME = itemTag
-                                .split('/')
-                                .reverse()[0];
+                          <AutoComplete
+                            options={tagsOptions}
+                            onSearch={handleTagsSearch}
+                          >
+                            <Input
+                              onChange={() => {
+                                const itemTag = form
+                                  .getFieldValue(`${item}Tag`)
+                                  .replace(/^#/, '');
+                                const itemFolder = itemTag.replace(/\//g, '-');
+                                const itemREADME = itemTag
+                                  .split('/')
+                                  .reverse()[0];
 
-                              form.setFieldValue(`${item}Folder`, itemFolder);
-                              form.setFieldValue(
-                                `${item}README`,
-                                itemREADME ? itemREADME + '.README.md' : ''
-                              );
-                              form.validateFields([
-                                `${item}Folder`,
-                                `${item}README`,
-                              ]);
-                            }}
-                            allowClear
-                            placeholder={`${item} Tag, eg: ${
-                              item === PROJECT ? 'PKM/LifeOS' : 'PKM' // 引导用户，项目一般属于某个领域
-                            }`}
-                          />
+                                form.setFieldValue(`${item}Folder`, itemFolder);
+                                form.setFieldValue(
+                                  `${item}README`,
+                                  itemREADME ? itemREADME + '.README.md' : ''
+                                );
+                                form.validateFields([
+                                  `${item}Folder`,
+                                  `${item}README`,
+                                ]);
+                              }}
+                              allowClear
+                              placeholder={`${item} Tag, eg: ${
+                                item === PROJECT ? 'PKM/LifeOS' : 'PKM' // 引导用户，项目一般属于某个领域
+                              }`}
+                            />
+                          </AutoComplete>
                         </Form.Item>
                         <Form.Item
                           labelCol={{ flex: '80px' }}
