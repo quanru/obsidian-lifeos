@@ -241,6 +241,8 @@ export default class PeriodicPARA extends Plugin {
     (window as any).PeriodicPARA = {};
     (window as any).PeriodicPARA.Project = this.project;
     (window as any).PeriodicPARA.Area = this.area;
+    (window as any).PeriodicPARA.Resource = this.resource;
+    (window as any).PeriodicPARA.Archive = this.archive;
     (window as any).PeriodicPARA.Task = this.task;
     (window as any).PeriodicPARA.File = this.file;
     (window as any).PeriodicPARA.Bullet = this.bullet;
