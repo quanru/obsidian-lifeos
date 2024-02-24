@@ -48,7 +48,7 @@ export class Bullet {
       .join(' ');
     const where = tags
       .map((tag: string[], index: number) => {
-        return `(contains(L.tags, "${tag}")) ${
+        return `(contains(L.tags, "#${tag}")) ${
           index === tags.length - 1 ? '' : 'OR'
         }`;
       })
