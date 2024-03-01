@@ -45,16 +45,21 @@ export class File {
         .filter((file) => file instanceof TFolder);
       const READMEList = subFolderList
         .map((subFolder) => {
-          // 搜索 README，不存在的话，搜索第一个形如 XXX.README 的
+          // 优先搜索同名文件，否则搜索 XXX.README
           if (subFolder instanceof TFolder) {
+            const { name } = subFolder;
             const files = subFolder.children;
-
-            const README = files.find((file) =>
-              file.path.match(/(.*\.)?README\.md/)
-            );
+            const indexFile = files.find((file) => {
+              if ((file as any).basename === name) {
+                return true;
+              }
+              if (file.path.match(/(.*\.)?README\.md/)) {
+                return true;
+              }
+            });
 
             if (condition.tags.length) {
-              const tags = this.tags(README?.path || '');
+              const tags = this.tags(indexFile?.path || '');
               // tags: #work/project-1 #work/project-2
               // condition.tags: #work
               if (!this.hasCommonPrefix(tags, condition.tags)) {
@@ -62,14 +67,19 @@ export class File {
               }
             }
 
-            if (!README) {
-              logMessage(ERROR_MESSAGES.NO_README_EXIST + subFolder.path);
+            if (!indexFile) {
+              logMessage(
+                ERROR_MESSAGES.NO_INDEX_FILE_EXIST +
+                ` ${subFolder.name}.md` +
+                  ' in folder: ' +
+                  subFolder.path
+              );
             }
 
-            if (README instanceof TFile) {
+            if (indexFile instanceof TFile) {
               const link = this.app.metadataCache.fileToLinktext(
-                README,
-                README?.path
+                indexFile,
+                indexFile?.path
               );
               return `[[${link}|${subFolder.name}]]`;
             }

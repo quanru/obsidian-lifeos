@@ -130,7 +130,7 @@ export function generateFileName(resource: ResourceType): string {
 }
 
 export function logMessage(message: string, level: LogLevel = LogLevel.info) {
-  new Notice(message);
+  new Notice(message, 5000);
 
   if (level === LogLevel.info) {
     console.info(message);

@@ -4,7 +4,7 @@ export const ERROR_MESSAGES = {
   FAILED_DATAVIEW_API: 'Dataview API enable failed!',
   NO_VIEW_PROVIDED: 'Please provide a view name!',
   NO_VIEW_EXISTED: 'There is no this view in periodic PARA plugin',
-  NO_README_EXIST: 'There is no README.md or xxx.README.md in ',
+  NO_INDEX_FILE_EXIST: 'There is no README.md or xxx.README.md or',
   NO_TEMPLATE_EXIST: 'There is no template file exist: ',
   TAGS_MUST_INPUT: 'Please input tags!',
   DAILY_RECORD_FETCH_FAILED: 'Fetch daily record failed: ',
