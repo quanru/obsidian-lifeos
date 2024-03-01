@@ -138,6 +138,18 @@ export const AddTemplate = () => {
 
     setTagOptions(filteredOptions);
   };
+  const handleTagInput = (item: string) => {
+    const itemTag = form.getFieldValue(`${item}Tag`).replace(/^#/, '');
+    const itemFolder = itemTag.replace(/\//g, '-');
+    const itemREADME = itemTag.split('/').reverse()[0];
+
+    form.setFieldValue(`${item}Folder`, itemFolder);
+    form.setFieldValue(
+      `${item}README`,
+      itemREADME ? itemREADME + '.README.md' : ''
+    );
+    form.validateFields([`${item}Folder`, `${item}README`]);
+  };
 
   return (
     <ConfigProvider
@@ -278,27 +290,10 @@ export const AddTemplate = () => {
                           <AutoComplete
                             options={tagsOptions}
                             onSearch={handleTagsSearch}
+                            onSelect={() => handleTagInput(item)}
                           >
                             <Input
-                              onChange={() => {
-                                const itemTag = form
-                                  .getFieldValue(`${item}Tag`)
-                                  .replace(/^#/, '');
-                                const itemFolder = itemTag.replace(/\//g, '-');
-                                const itemREADME = itemTag
-                                  .split('/')
-                                  .reverse()[0];
-
-                                form.setFieldValue(`${item}Folder`, itemFolder);
-                                form.setFieldValue(
-                                  `${item}README`,
-                                  itemREADME ? itemREADME + '.README.md' : ''
-                                );
-                                form.validateFields([
-                                  `${item}Folder`,
-                                  `${item}README`,
-                                ]);
-                              }}
+                              onChange={() => handleTagInput(item)}
                               allowClear
                               placeholder={`${item} Tag, eg: ${
                                 item === PROJECT ? 'PKM/LifeOS' : 'PKM' // 引导用户，项目一般属于某个领域
