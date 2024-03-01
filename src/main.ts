@@ -179,6 +179,7 @@ export default class PeriodicPARA extends Plugin {
       // views by tag -> topic context -> para
       TaskListByTag: this.task.listByTag,
       BulletListByTag: this.bullet.listByTag,
+      FileListByTag: this.file.listByTag,
       ProjectListByTag: this.project.listByTag,
       AreaListByTag: this.area.listByTag,
       ResourceListByTag: this.resource.listByTag,
