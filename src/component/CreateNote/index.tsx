@@ -29,6 +29,10 @@ import {
   QUARTERLY,
   YEARLY,
   ERROR_MESSAGES,
+  LOCALE_MAP,
+  TAG,
+  FOLDER,
+  INDEX,
 } from '../../constant';
 import { createFile, createPeriodicFile, isDarkTheme } from '../../util';
 import type { PluginSettings } from '../../type';
@@ -44,6 +48,8 @@ export const CreateNote = (props: { width: number }) => {
   const [type, setType] = useState(defaultType);
   const [form] = Form.useForm();
   const today = dayjs(new Date());
+  const localeMap =
+    LOCALE_MAP[locale?.locale || 'en-us'] || LOCALE_MAP['en-us'];
   const SubmitButton = (
     <Form.Item
       style={{
@@ -70,21 +76,21 @@ export const CreateNote = (props: { width: number }) => {
     let folder = '';
     let file = '';
     let tag = '';
-    let README = '';
+    let INDEX = '';
     const path =
       settings[
         `${paraActiveTab.toLocaleLowerCase()}sPath` as keyof PluginSettings
       ]; // settings.archivesPath;
     const key = values[`${paraActiveTab}Folder`]; // values.archiveFolder;
     tag = values[`${paraActiveTab}Tag`]; // values.archiveTag;
-    README = values[`${paraActiveTab}README`]; // values.archiveREADME;
+    INDEX = values[`${paraActiveTab}Index`]; // values.archiveIndex;
 
     if (!tag) {
       return new Notice(ERROR_MESSAGES.TAGS_MUST_INPUT);
     }
 
     folder = `${path}/${key}`;
-    file = `${folder}/${README}`;
+    file = `${folder}/${INDEX}`;
     templateFile = `${path}/Template.md`;
 
     await createFile(app, {
@@ -130,21 +136,27 @@ export const CreateNote = (props: { width: number }) => {
   const handleTagInput = (item: string) => {
     const itemTag = form.getFieldValue(`${item}Tag`).replace(/^#/, '');
     const itemFolder = itemTag.replace(/\//g, '-');
-    const itemREADME = itemTag.split('/').reverse()[0];
+    const itemIndex = itemTag.split('/').reverse()[0];
 
     form.setFieldValue(`${item}Folder`, itemFolder);
     form.setFieldValue(
-      `${item}README`,
-      itemREADME ? itemREADME + '.README.md' : ''
+      `${item}Index`,
+      itemIndex ? itemIndex + '.README.md' : ''
     );
-    form.validateFields([`${item}Folder`, `${item}README`]);
+    form.validateFields([`${item}Folder`, `${item}Index`]);
   };
+  const computedStyle = getComputedStyle(
+    document.querySelector('.app-container')!
+  );
+  const fontSize =
+    parseInt(computedStyle?.getPropertyValue('--nav-item-size')) || 13;
 
   return (
     <ConfigProvider
       locale={locale}
       theme={{
         token: {
+          fontSize: fontSize + 1,
           colorPrimary: reduceCSSCalc(
             getComputedStyle(document.body).getPropertyValue(
               '--interactive-accent'
@@ -154,7 +166,10 @@ export const CreateNote = (props: { width: number }) => {
         components: {
           DatePicker: {
             cellWidth: width ? width / 7.5 : 45,
-            cellHeight: 30,
+            fontSize: fontSize,
+          },
+          Form: {
+            fontSize,
           },
         },
         algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
@@ -182,14 +197,14 @@ export const CreateNote = (props: { width: number }) => {
             name="type"
             value={type}
             onChange={(e) => setType(e.target.value)}
+            size="small"
             style={{
               width: '100%',
               textAlign: 'center',
-              marginBottom: 5,
             }}
           >
-            <Radio.Button value={PERIODIC}>{PERIODIC}</Radio.Button>
-            <Radio.Button value={PARA}>{PARA}</Radio.Button>
+            <Radio.Button value={PERIODIC}>{localeMap[PERIODIC]}</Radio.Button>
+            <Radio.Button value={PARA}>{localeMap[PARA]}</Radio.Button>
           </Radio.Group>
         )}
         {type === PERIODIC && settings?.usePeriodicNotes && (
@@ -213,9 +228,10 @@ export const CreateNote = (props: { width: number }) => {
                   [YEARLY]: 'year',
                 };
                 const picker = pickerMap[periodic];
+                const label = localeMap[periodic];
 
                 return {
-                  label: periodic,
+                  label,
                   key: periodic,
                   children: (
                     <Form.Item name={periodic}>
@@ -254,17 +270,18 @@ export const CreateNote = (props: { width: number }) => {
               size="small"
               indicator={{ size: 0 }}
               style={{ width: '100%' }}
-              items={[PROJECT, AREA, RESOURCE, ARCHIVE].map((item) => {
+              items={[PROJECT, AREA, RESOURCE, ARCHIVE].map((para) => {
+                const label = localeMap[para];
+
                 return {
-                  label: item,
-                  key: item,
+                  label,
+                  key: para,
                   children:
-                    paraActiveTab === item ? (
+                    paraActiveTab === para ? (
                       <>
                         <Form.Item
-                          labelCol={{ flex: '80px' }}
-                          label="Tag"
-                          name={`${item}Tag`}
+                          label={localeMap[TAG]}
+                          name={`${para}Tag`}
                           rules={[
                             {
                               required: true,
@@ -279,21 +296,20 @@ export const CreateNote = (props: { width: number }) => {
                           <AutoComplete
                             options={tagsOptions}
                             onSearch={handleTagsSearch}
-                            onSelect={() => handleTagInput(item)}
+                            onSelect={() => handleTagInput(para)}
                           >
                             <Input
-                              onChange={() => handleTagInput(item)}
+                              onChange={() => handleTagInput(para)}
                               allowClear
-                              placeholder={`${item} Tag, eg: ${
-                                item === PROJECT ? 'PKM/LifeOS' : 'PKM' // 引导用户，项目一般属于某个领域
+                              placeholder={`${para} Tag, eg: ${
+                                para === PROJECT ? 'PKM/LifeOS' : 'PKM' // 引导用户，项目一般属于某个领域
                               }`}
                             />
                           </AutoComplete>
                         </Form.Item>
                         <Form.Item
-                          labelCol={{ flex: '80px' }}
-                          label="Folder"
-                          name={`${item}Folder`}
+                          label={localeMap[FOLDER]}
+                          name={`${para}Folder`}
                           rules={[
                             {
                               required: true,
@@ -308,13 +324,12 @@ export const CreateNote = (props: { width: number }) => {
                           />
                         </Form.Item>
                         <Form.Item
-                          labelCol={{ flex: '80px' }}
-                          label="README"
-                          name={`${item}README`}
+                          label={localeMap[INDEX]}
+                          name={`${para}Index`}
                           rules={[
                             {
                               required: true,
-                              message: 'README is required',
+                              message: 'Index is required',
                             },
                           ]}
                         >

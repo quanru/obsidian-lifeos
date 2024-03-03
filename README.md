@@ -75,10 +75,10 @@ Go to the [releases](https://github.com/quanru/obsidian-periodic-para/releases) 
 | P.A.R.A Notes Settings | Description                                                                                                                                                                           |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Enable                 | Whether to turn on PARA Notes                                                                                                                                                         |
-| Projects Folder        | Default is '1. Projects', Set a folder where the PARA project is located, each subdirectory is a project, and each project must have a [XXX.]README.md file as the project index      |
-| Areas Folder           | Default is '2. Areas', Set a folder where the PARA area is located, each subdirectory is a area, and each area must have a [XXX.]README.md file as the area index                     |
-| Resources Folder       | Default is '3. Resources', Set a folder where the PARA resource is located, each subdirectory is a resource, and each resource must have a [XXX.]README.md file as the resource index |
-| Archives Folder        | Default is '4. Archives', Set a folder where the PARA archive is located, each subdirectory is a archive, and each archive must have a [XXX.]README.md file as the archive index      |
+| Projects Folder        | Default is '1. Projects', Set a folder where the PARA project is located, each subdirectory is a project, and each project must have a [XXX.]README.md or a file with the same name as the folder as the project index      |
+| Areas Folder           | Default is '2. Areas', Set a folder where the PARA area is located, each subdirectory is a area, and each area must have a [XXX.]README.md or a file with the same name as the folder as the area index                     |
+| Resources Folder       | Default is '3. Resources', Set a folder where the PARA resource is located, each subdirectory is a resource, and each resource must have a [XXX.]README.md or a file with the same name as the folder as the resource index |
+| Archives Folder        | Default is '4. Archives', Set a folder where the PARA archive is located, each subdirectory is a archive, and each archive must have a [XXX.]README.md or a file with the same name as the folder as the archive index      |
 
 ## Usage
 

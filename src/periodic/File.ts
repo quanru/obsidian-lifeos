@@ -43,7 +43,7 @@ export class File {
       const subFolderList = folder.children
         .sort()
         .filter((file) => file instanceof TFolder);
-      const READMEList = subFolderList
+      const IndexList = subFolderList
         .map((subFolder) => {
           // 优先搜索同名文件，否则搜索 XXX.README
           if (subFolder instanceof TFolder) {
@@ -70,7 +70,7 @@ export class File {
             if (!indexFile) {
               logMessage(
                 ERROR_MESSAGES.NO_INDEX_FILE_EXIST +
-                ` ${subFolder.name}.md` +
+                  `${subFolder.name}.md)` +
                   ' in folder: ' +
                   subFolder.path
               );
@@ -88,7 +88,7 @@ export class File {
         .filter((link) => !!link)
         .map((link, index: number) => `${index + 1}. ${link}`);
 
-      return READMEList.join('\n');
+      return IndexList.join('\n');
     }
 
     return `No files in ${fileFolder}`;
