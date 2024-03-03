@@ -1,22 +1,25 @@
 import { ItemView, WorkspaceLeaf, debounce } from 'obsidian';
 import * as React from 'react';
 import { type Root, createRoot } from 'react-dom/client';
-import { AddTemplate } from '../component/AddTemplate';
+import type { Locale } from 'antd/es/locale';
+import { CreateNote } from '../component/CreateNote';
 import { AppContext } from '../context';
-import type { PluginSettings } from 'src/type';
+import type { PluginSettings } from '../type';
 
-export const VIEW_TYPE = 'periodic-para';
+export const CREATE_NOTE = 'periodic-para';
 
-export class PeriodicPARAView extends ItemView {
+export class CreateNoteView extends ItemView {
   settings: PluginSettings;
   root: Root;
-  constructor(leaf: WorkspaceLeaf, settings: PluginSettings) {
+  locale: Locale;
+  constructor(leaf: WorkspaceLeaf, settings: PluginSettings, locale: Locale) {
     super(leaf);
     this.settings = settings;
+    this.locale = locale;
   }
 
   getViewType() {
-    return VIEW_TYPE;
+    return CREATE_NOTE;
   }
 
   getDisplayText() {
@@ -38,17 +41,17 @@ export class PeriodicPARAView extends ItemView {
 
   async onOpen() {
     this.contentEl.empty();
-    this.contentEl.addClass('periodic-para');
+    this.contentEl.addClass('periodic-para-create-note');
     this.root = createRoot(this.containerEl.children[1]);
     this.root.render(
       <AppContext.Provider
         value={{
           app: this.app,
           settings: this.settings,
-          width: this.containerEl.innerWidth,
+          locale: this.locale,
         }}
       >
-        <AddTemplate></AddTemplate>
+        <CreateNote width={this.containerEl.innerWidth} />
       </AppContext.Provider>
     );
   }

@@ -1,3 +1,4 @@
+import type { Locale } from 'antd/es/locale';
 import type { App } from 'obsidian';
 
 export interface PluginSettings {
@@ -36,12 +37,16 @@ export enum TaskStatusType {
 }
 
 export type TaskConditionType = {
-  date?: TaskStatusType;
+  status?: TaskStatusType;
   from?: string | null;
   to?: string | null;
 };
 
-export type ContextType = { app: App; settings: PluginSettings; width: number };
+export type ContextType = {
+  app: App;
+  settings: PluginSettings;
+  locale: Locale;
+};
 
 export type ResourceType = {
   name?: string;

@@ -14,7 +14,7 @@ import {
   generateFileName,
   generateHeaderRegExp,
   logMessage,
-} from 'src/util';
+} from '../util';
 
 export class DailyRecord {
   app: App;

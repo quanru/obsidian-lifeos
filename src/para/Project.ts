@@ -5,7 +5,7 @@ import { Date } from '../periodic/Date';
 import { Markdown } from '../component/Markdown';
 import { MarkdownPostProcessorContext, MarkdownRenderer } from 'obsidian';
 import { Item } from './Item';
-import { generateHeaderRegExp } from 'src/util';
+import { generateHeaderRegExp } from '../util';
 
 export class Project extends Item {
   timeAdd(timeString1: string, timeString2: string) {

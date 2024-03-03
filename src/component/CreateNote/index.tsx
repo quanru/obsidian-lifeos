@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { useApp } from 'src/hooks/useApp';
+import { useApp } from '../../hooks/useApp';
 import { Notice } from 'obsidian';
 import {
   Form,
@@ -29,25 +29,14 @@ import {
   QUARTERLY,
   YEARLY,
   ERROR_MESSAGES,
-} from '../constant';
-import { createFile, createPeriodicFile, isDarkTheme } from '../util';
-import type { PluginSettings } from '../type';
+} from '../../constant';
+import { createFile, createPeriodicFile, isDarkTheme } from '../../util';
+import type { PluginSettings } from '../../type';
+import './index.less';
 
-import enUS from 'antd/locale/en_US';
-import zhCN from 'antd/locale/zh_CN';
-import 'dayjs/locale/zh-cn';
-import 'dayjs/locale/zh';
-
-const localeMap: Record<string, any> = {
-  en: enUS,
-  'en-us': enUS,
-  zh: zhCN,
-  'zh-cn': zhCN,
-};
-const locale = window.localStorage.getItem('language') || 'en';
-
-export const AddTemplate = () => {
-  const { app, settings, width } = useApp() || {};
+export const CreateNote = (props: { width: number }) => {
+  const { app, settings, locale } = useApp() || {};
+  const { width } = props;
   const [periodicActiveTab, setPeriodicActiveTab] = useState(DAILY);
   const [paraActiveTab, setParaActiveTab] = useState(PROJECT);
   const defaultType = settings?.usePeriodicNotes ? PERIODIC : PARA;
@@ -153,7 +142,7 @@ export const AddTemplate = () => {
 
   return (
     <ConfigProvider
-      locale={localeMap[locale]}
+      locale={locale}
       theme={{
         token: {
           colorPrimary: reduceCSSCalc(

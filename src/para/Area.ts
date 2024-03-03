@@ -4,7 +4,7 @@ import type { DateType } from '../type';
 import { MarkdownRenderer, TFile } from 'obsidian';
 import { Item } from './Item';
 import { Markdown } from '../component/Markdown';
-import { generateHeaderRegExp } from 'src/util';
+import { generateHeaderRegExp } from '../util';
 
 export class Area extends Item {
   async filter(

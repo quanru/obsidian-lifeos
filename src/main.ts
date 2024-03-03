@@ -28,10 +28,20 @@ import {
   YEARLY,
 } from './constant';
 import { createPeriodicFile, logMessage, renderError } from './util';
-import { PeriodicPARAView, VIEW_TYPE } from './view/PeriodicPARA';
-
-import './main.less';
+import { CREATE_NOTE, CreateNoteView } from './view/CreateNote';
 import dayjs from 'dayjs';
+import enUS from 'antd/locale/en_US';
+import zhCN from 'antd/locale/zh_CN';
+import 'dayjs/locale/zh-cn';
+import 'dayjs/locale/zh';
+
+const localeMap: Record<string, any> = {
+  en: enUS,
+  'en-us': enUS,
+  zh: zhCN,
+  'zh-cn': zhCN,
+};
+const locale = window.localStorage.getItem('language') || 'en';
 
 export default class PeriodicPARA extends Plugin {
   settings: PluginSettings;
@@ -69,17 +79,21 @@ export default class PeriodicPARA extends Plugin {
 
   async onload() {
     await this.loadSettings();
-    this.registerView(VIEW_TYPE, (leaf) => {
-      return new PeriodicPARAView(leaf, this.settings);
+    this.registerView(CREATE_NOTE, (leaf) => {
+      return new CreateNoteView(leaf, this.settings, localeMap[locale]);
     });
 
-    const item = this.addRibbonIcon('zap', 'Periodic PARA', this.initView);
-    setIcon(item, 'zap');
+    const item = this.addRibbonIcon(
+      'calendar',
+      'Periodic PARA',
+      this.initCreateNoteView
+    );
+    setIcon(item, 'calendar');
 
     this.addCommand({
       id: 'periodic-para-create-notes',
       name: 'Create Notes',
-      callback: this.initView,
+      callback: this.initCreateNoteView,
     });
     [DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY].map((periodType) => {
       this.addCommand({
@@ -100,7 +114,7 @@ export default class PeriodicPARA extends Plugin {
       name: 'LifeOS Guide',
       callback: () => (window.location.href = LIFE_OS_OFFICIAL_SITE),
     });
-    this.app.workspace.onLayoutReady(this.initView);
+    this.app.workspace.onLayoutReady(this.initCreateNoteView);
     this.loadHelpers();
     this.loadDailyRecord();
     this.loadGlobalHelpers();
@@ -250,8 +264,8 @@ export default class PeriodicPARA extends Plugin {
     (window as any).PeriodicPARA.Date = this.date;
   }
 
-  initView = async () => {
-    const leafs = this.app.workspace.getLeavesOfType(VIEW_TYPE);
+  initCreateNoteView = async () => {
+    const leafs = this.app.workspace.getLeavesOfType(CREATE_NOTE);
 
     if (leafs.length > 0) {
       this.app.workspace.revealLeaf(leafs[0]);
@@ -265,6 +279,6 @@ export default class PeriodicPARA extends Plugin {
       leaf = this.app.workspace.getLeftLeaf(false);
     }
 
-    await leaf.setViewState({ type: VIEW_TYPE, active: true });
+    await leaf.setViewState({ type: CREATE_NOTE, active: true });
   };
 }

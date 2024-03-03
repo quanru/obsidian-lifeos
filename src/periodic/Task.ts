@@ -43,7 +43,7 @@ export class Task {
       .pages('')
       .file.tasks.where((t: STask) =>
         this.filter(t, {
-          date: TaskStatusType.DONE,
+          status: TaskStatusType.DONE,
           ...condition,
         })
       )
@@ -74,7 +74,7 @@ export class Task {
     // 收集日期范围内的日记文件
     const dailyTasks = this.dataview.pages('').file.tasks.where((t: STask) =>
       this.filter(t, {
-        date: TaskStatusType.RECORD,
+        status: TaskStatusType.RECORD,
         ...condition,
       })
     );
@@ -149,10 +149,10 @@ SORT status ASC
   filter(
     task: STask,
     condition: TaskConditionType = {
-      date: TaskStatusType.DONE,
+      status: TaskStatusType.DONE,
     }
   ): boolean {
-    const { date = TaskStatusType.DONE, from, to } = condition;
+    const { status: date = TaskStatusType.DONE, from, to } = condition;
 
     if (!task) return false;
 
@@ -161,8 +161,9 @@ SORT status ASC
     if (
       task?.section?.type === 'header' &&
       task?.section?.subpath?.trim() === this.settings.habitHeader.trim()
-    )
+    ) {
       return false;
+    }
 
     let dateText = '';
 
