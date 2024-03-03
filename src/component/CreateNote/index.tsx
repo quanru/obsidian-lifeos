@@ -156,7 +156,7 @@ export const CreateNote = (props: { width: number }) => {
       locale={locale}
       theme={{
         token: {
-          fontSize: fontSize + 1,
+          fontSize: fontSize,
           colorPrimary: reduceCSSCalc(
             getComputedStyle(document.body).getPropertyValue(
               '--interactive-accent'
@@ -166,10 +166,6 @@ export const CreateNote = (props: { width: number }) => {
         components: {
           DatePicker: {
             cellWidth: width ? width / 7.5 : 45,
-            fontSize: fontSize,
-          },
-          Form: {
-            fontSize,
           },
         },
         algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
