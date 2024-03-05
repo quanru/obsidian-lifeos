@@ -126,7 +126,7 @@ export class File {
       tags = [tags];
     }
 
-    return tags;
+    return tags.map((tag: string) => tag.replace(/^#(.*)$/, '$1'));
   }
 
   listByTag = async (
