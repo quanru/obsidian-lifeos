@@ -12,8 +12,9 @@ import {
   AutoComplete,
   ConfigProvider,
   theme,
+  Tooltip,
 } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import reduceCSSCalc from 'reduce-css-calc';
 import dayjs from 'dayjs';
 import {
@@ -28,15 +29,20 @@ import {
   MONTHLY,
   QUARTERLY,
   YEARLY,
-  ERROR_MESSAGES,
-  LOCALE_MAP,
   TAG,
   FOLDER,
   INDEX,
+  ERROR_MESSAGE,
 } from '../../constant';
-import { createFile, createPeriodicFile, isDarkTheme } from '../../util';
+import {
+  createFile,
+  createPeriodicFile,
+  isDarkTheme,
+  openOfficialSite,
+} from '../../util';
 import type { PluginSettings } from '../../type';
 import './index.less';
+import { I18N_MAP } from '../../i18n';
 
 export const CreateNote = (props: { width: number }) => {
   const { app, settings, locale } = useApp() || {};
@@ -48,13 +54,15 @@ export const CreateNote = (props: { width: number }) => {
   const [type, setType] = useState(defaultType);
   const [form] = Form.useForm();
   const today = dayjs(new Date());
-  const localeMap =
-    LOCALE_MAP[locale?.locale || 'en-us'] || LOCALE_MAP['en-us'];
+  const localeKey = locale?.locale || 'en';
+  const localeMap = I18N_MAP[localeKey] || I18N_MAP['en'];
   const SubmitButton = (
     <Form.Item
       style={{
         width: '100%',
         textAlign: 'end',
+        position: 'relative',
+        top: -18,
       }}
     >
       <Button
@@ -86,7 +94,7 @@ export const CreateNote = (props: { width: number }) => {
     INDEX = values[`${paraActiveTab}Index`]; // values.archiveIndex;
 
     if (!tag) {
-      return new Notice(ERROR_MESSAGES.TAGS_MUST_INPUT);
+      return new Notice(localeMap[`${ERROR_MESSAGE}TAGS_MUST_INPUT`]);
     }
 
     folder = `${path}/${key}`;
@@ -94,6 +102,7 @@ export const CreateNote = (props: { width: number }) => {
     templateFile = `${path}/Template.md`;
 
     await createFile(app, {
+      locale: localeKey,
       templateFile,
       folder,
       file,
@@ -171,7 +180,14 @@ export const CreateNote = (props: { width: number }) => {
         algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
       }}
     >
+      <Tooltip title={localeMap.HELP}>
+        <QuestionCircleOutlined
+          onClick={() => openOfficialSite(localeKey)}
+          style={{ position: 'fixed', right: 16 }}
+        />
+      </Tooltip>
       <Form
+        requiredMark="optional"
         style={{
           display: 'flex',
           justifyContent: 'center',
@@ -187,6 +203,7 @@ export const CreateNote = (props: { width: number }) => {
         }}
         form={form}
         onFinish={createPARAFile}
+        layout="vertical"
       >
         {settings?.usePARANotes && settings?.usePeriodicNotes && (
           <Radio.Group
@@ -278,10 +295,11 @@ export const CreateNote = (props: { width: number }) => {
                         <Form.Item
                           label={localeMap[TAG]}
                           name={`${para}Tag`}
+                          tooltip={localeMap[`${TAG}ToolTip`]}
                           rules={[
                             {
                               required: true,
-                              message: 'Tag is required',
+                              message: localeMap[`${TAG}Required`],
                             },
                             {
                               pattern: /^[^\s]*$/,
@@ -297,19 +315,20 @@ export const CreateNote = (props: { width: number }) => {
                             <Input
                               onChange={() => handleTagInput(para)}
                               allowClear
-                              placeholder={`${para} Tag, eg: ${
+                              placeholder={
                                 para === PROJECT ? 'PKM/LifeOS' : 'PKM' // 引导用户，项目一般属于某个领域
-                              }`}
+                              }
                             />
                           </AutoComplete>
                         </Form.Item>
                         <Form.Item
                           label={localeMap[FOLDER]}
                           name={`${para}Folder`}
+                          tooltip={localeMap[`${FOLDER}ToolTip`]}
                           rules={[
                             {
                               required: true,
-                              message: 'Folder is required',
+                              message: localeMap[`${FOLDER}Required`],
                             },
                           ]}
                         >
@@ -322,10 +341,11 @@ export const CreateNote = (props: { width: number }) => {
                         <Form.Item
                           label={localeMap[INDEX]}
                           name={`${para}Index`}
+                          tooltip={localeMap[`${INDEX}ToolTip`]}
                           rules={[
                             {
                               required: true,
-                              message: 'Index is required',
+                              message: localeMap[`${INDEX}Required`],
                             },
                           ]}
                         >

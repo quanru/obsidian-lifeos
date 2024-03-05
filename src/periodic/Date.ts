@@ -8,10 +8,12 @@ export class Date {
   app: App;
   settings: PluginSettings;
   file: File;
-  constructor(app: App, settings: PluginSettings, file: File) {
+  locale: string;
+  constructor(app: App, settings: PluginSettings, file: File, locale: string) {
     this.app = app;
     this.file = file;
     this.settings = settings;
+    this.locale = locale;
   }
   parse(path = ''): DateType {
     const fileName = this.app.vault.getAbstractFileByPath(path)?.name;

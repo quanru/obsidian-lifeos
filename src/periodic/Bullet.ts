@@ -6,19 +6,27 @@ import { Markdown } from '../component/Markdown';
 import { DataviewApi } from 'obsidian-dataview';
 
 import { File } from '../periodic/File';
-import { ERROR_MESSAGES } from '../constant';
+import { ERROR_MESSAGE } from '../constant';
 import { renderError } from '../util';
+import { I18N_MAP } from '../i18n';
 
 export class Bullet {
   app: App;
   file: File;
   dataview: DataviewApi;
   settings: PluginSettings;
-  constructor(app: App, settings: PluginSettings, dataview: DataviewApi) {
+  locale: string;
+  constructor(
+    app: App,
+    settings: PluginSettings,
+    dataview: DataviewApi,
+    locale: string
+  ) {
     this.app = app;
     this.settings = settings;
     this.dataview = dataview;
-    this.file = new File(this.app, this.settings, this.dataview);
+    this.locale = locale;
+    this.file = new File(this.app, this.settings, this.dataview, locale);
   }
 
   listByTag = async (
@@ -35,7 +43,7 @@ export class Bullet {
     if (!tags.length) {
       return renderError(
         this.app,
-        ERROR_MESSAGES.NO_FRONT_MATTER_TAG,
+        I18N_MAP[this.locale][`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`],
         div,
         filepath
       );
@@ -45,7 +53,8 @@ export class Bullet {
       .map((tag: string[], index: number) => {
         return `#${tag} ${index === tags.length - 1 ? '' : 'OR'}`;
       })
-      .join(' ');
+      .join(' ')
+      .trim();
     const where = tags
       .map((tag: string[], index: number) => {
         return `(contains(L.tags, "#${tag}")) ${

@@ -8,13 +8,14 @@ import {
   type ResourceType,
   LogLevel,
 } from '../type';
-import { ERROR_MESSAGES } from '../constant';
+import { ERROR_MESSAGE, MESSAGE } from '../constant';
 import {
   formatDailyRecord,
   generateFileName,
   generateHeaderRegExp,
   logMessage,
 } from '../util';
+import { I18N_MAP } from '../i18n';
 
 export class DailyRecord {
   app: App;
@@ -24,20 +25,25 @@ export class DailyRecord {
   lastTime: string;
   offset: number;
   localKey: string;
+  locale: string;
   axios: Axios;
-  constructor(app: App, settings: PluginSettings, file: File) {
+  constructor(app: App, settings: PluginSettings, file: File, locale: string) {
     if (!settings.dailyRecordAPI) {
-      logMessage(ERROR_MESSAGES.NO_DAILY_RECORD_API);
+      logMessage(I18N_MAP[this.locale][`${ERROR_MESSAGE}NO_DAILY_RECORD_API`]);
       return;
     }
 
     if (!settings.dailyRecordToken) {
-      logMessage(ERROR_MESSAGES.NO_DAILY_RECORD_TOKEN);
+      logMessage(
+        I18N_MAP[this.locale][`${ERROR_MESSAGE}NO_DAILY_RECORD_TOKEN`]
+      );
       return;
     }
 
     if (!settings.dailyRecordHeader) {
-      logMessage(ERROR_MESSAGES.NO_DAILY_RECORD_HEADER);
+      logMessage(
+        I18N_MAP[this.locale][`${ERROR_MESSAGE}NO_DAILY_RECORD_HEADER`]
+      );
       return;
     }
 
@@ -48,6 +54,7 @@ export class DailyRecord {
     this.offset = 0;
     this.localKey = `periodic-para-daily-record-last-time-${this.settings.dailyRecordToken}`;
     this.lastTime = window.localStorage.getItem(this.localKey) || '';
+    this.locale = locale;
     this.axios = axios.create({
       headers: {
         Authorization: `Bearer ${this.settings.dailyRecordToken}`,
@@ -78,7 +85,9 @@ export class DailyRecord {
       );
     } catch (error) {
       logMessage(
-        `${ERROR_MESSAGES.DAILY_RECORD_FETCH_FAILED}: ${error}`,
+        `${
+          I18N_MAP[this.locale][`${ERROR_MESSAGE}DAILY_RECORD_FETCH_FAILED`]
+        }: ${error}`,
         LogLevel.error
       );
     }
@@ -90,7 +99,7 @@ export class DailyRecord {
   };
 
   sync = async () => {
-    logMessage('Start sync daily record');
+    logMessage(I18N_MAP[this.locale][`${MESSAGE}START_SYNC_USEMEMOS`]);
     this.offset = 0;
     this.downloadResource();
     this.insertDailyRecord();
@@ -149,7 +158,9 @@ export class DailyRecord {
         return;
       }
       logMessage(
-        `${ERROR_MESSAGES.RESOURCE_FETCH_FAILED}: ${error}`,
+        `${
+          I18N_MAP[this.locale][`${ERROR_MESSAGE}RESOURCE_FETCH_FAILED`]
+        }: ${error}`,
         LogLevel.error
       );
     }
@@ -165,7 +176,7 @@ export class DailyRecord {
 
     if (!records.length || mostRecentTimeStamp * 1000 < Number(this.lastTime)) {
       // 直到 record 返回为空，或者最新的一条记录的时间，晚于上一次同步时间
-      logMessage('End sync daily record');
+      logMessage(I18N_MAP[this.locale][`${MESSAGE}END_SYNC_USEMEMOS`]);
 
       window.localStorage.setItem(this.localKey, Date.now().toString());
 
@@ -202,7 +213,9 @@ export class DailyRecord {
 
         if (!targetFile) {
           logMessage(
-            `${ERROR_MESSAGES.NO_DAILY_FILE_EXIST} ${today}`,
+            `${
+              I18N_MAP[this.locale][`${ERROR_MESSAGE}NO_DAILY_FILE_EXIST`]
+            } ${today}`,
             LogLevel.error
           );
         }

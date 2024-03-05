@@ -5,25 +5,33 @@ import type { TaskResult } from 'obsidian-dataview/lib/api/plugin-api';
 import { TaskStatusType } from '../type';
 import { moment } from 'obsidian';
 import { DataviewApi, STask } from 'obsidian-dataview';
-import { ERROR_MESSAGES } from '../constant';
+import { ERROR_MESSAGE } from '../constant';
 
 import { File } from '../periodic/File';
 import { Date } from '../periodic/Date';
 import { Markdown } from '../component/Markdown';
 import { renderError } from '../util';
+import { I18N_MAP } from '../i18n';
 
 export class Task {
   app: App;
   date: Date;
   dataview: DataviewApi;
   settings: PluginSettings;
+  locale: string;
   file: File;
-  constructor(app: App, settings: PluginSettings, dataview: DataviewApi) {
+  constructor(
+    app: App,
+    settings: PluginSettings,
+    dataview: DataviewApi,
+    locale: string
+  ) {
     this.app = app;
     this.settings = settings;
     this.dataview = dataview;
-    this.file = new File(this.app, this.settings, this.dataview);
-    this.date = new Date(this.app, this.settings, this.file);
+    this.locale = locale;
+    this.file = new File(this.app, this.settings, this.dataview, locale);
+    this.date = new Date(this.app, this.settings, this.file, locale);
   }
 
   doneListByTime = (
@@ -115,7 +123,7 @@ export class Task {
     if (!tags.length) {
       return renderError(
         this.app,
-        ERROR_MESSAGES.NO_FRONT_MATTER_TAG,
+        I18N_MAP[this.locale][`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`],
         div,
         filepath
       );
@@ -125,7 +133,8 @@ export class Task {
       .map((tag: string[], index: number) => {
         return `#${tag} ${index === tags.length - 1 ? '' : 'OR'}`;
       })
-      .join(' ');
+      .join(' ')
+      .trim();
     const where = tags
       .map((tag: string[], index: number) => {
         return `contains(tags, "#${tag}") ${

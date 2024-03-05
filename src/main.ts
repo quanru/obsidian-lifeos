@@ -20,20 +20,25 @@ import { LogLevel, type PluginSettings } from './type';
 import { DEFAULT_SETTINGS } from './SettingTab';
 import {
   DAILY,
-  ERROR_MESSAGES,
-  LIFE_OS_OFFICIAL_SITE,
+  ERROR_MESSAGE,
   MONTHLY,
   QUARTERLY,
   WEEKLY,
   YEARLY,
 } from './constant';
-import { createPeriodicFile, logMessage, renderError } from './util';
+import {
+  createPeriodicFile,
+  logMessage,
+  openOfficialSite,
+  renderError,
+} from './util';
 import { CREATE_NOTE, CreateNoteView } from './view/CreateNote';
 import dayjs from 'dayjs';
 import enUS from 'antd/locale/en_US';
 import zhCN from 'antd/locale/zh_CN';
 import 'dayjs/locale/zh-cn';
 import 'dayjs/locale/zh';
+import { I18N_MAP } from './i18n';
 
 const localeMap: Record<string, any> = {
   en: enUS,
@@ -62,14 +67,20 @@ export default class PeriodicPARA extends Plugin {
   constructor(app: App, manifest: PluginManifest) {
     super(app, manifest);
     if (!isPluginEnabled(app)) {
-      logMessage(ERROR_MESSAGES.NO_DATAVIEW_INSTALL, LogLevel.error);
+      logMessage(
+        I18N_MAP[locale][`${ERROR_MESSAGE}NO_DATAVIEW_INSTALL`],
+        LogLevel.error
+      );
       return;
     }
 
     const dataviewApi = getAPI(app);
 
     if (!dataviewApi) {
-      logMessage(ERROR_MESSAGES.FAILED_DATAVIEW_API, LogLevel.error);
+      logMessage(
+        I18N_MAP[locale][`${ERROR_MESSAGE}FAILED_DATAVIEW_API`],
+        LogLevel.error
+      );
       return;
     }
 
@@ -112,7 +123,7 @@ export default class PeriodicPARA extends Plugin {
     this.addCommand({
       id: 'periodic-para-life-os-guide',
       name: 'LifeOS Guide',
-      callback: () => (window.location.href = LIFE_OS_OFFICIAL_SITE),
+      callback: () => openOfficialSite(locale),
     });
     this.app.workspace.onLayoutReady(this.initCreateNoteView);
     this.loadHelpers();
@@ -132,7 +143,7 @@ export default class PeriodicPARA extends Plugin {
       if (!view) {
         return renderError(
           this.app,
-          ERROR_MESSAGES.NO_VIEW_PROVIDED,
+          I18N_MAP[locale][`${ERROR_MESSAGE}NO_VIEW_PROVIDED`],
           el.createEl('div'),
           ctx.sourcePath
         );
@@ -144,7 +155,7 @@ export default class PeriodicPARA extends Plugin {
       ) {
         return renderError(
           this.app,
-          `${ERROR_MESSAGES.NO_VIEW_EXISTED}: ${view}`,
+          `${I18N_MAP[locale][`${ERROR_MESSAGE}NO_VIEW_EXISTED`]}: ${view}`,
           el.createEl('div'),
           ctx.sourcePath
         );
@@ -159,7 +170,12 @@ export default class PeriodicPARA extends Plugin {
   }
   loadDailyRecord() {
     if (this.settings.usePeriodicNotes && this.settings.useDailyRecord) {
-      this.dailyRecord = new DailyRecord(this.app, this.settings, this.file);
+      this.dailyRecord = new DailyRecord(
+        this.app,
+        this.settings,
+        this.file,
+        locale
+      );
       this.addCommand({
         id: 'periodic-para-sync-daily-record',
         name: 'Sync Daily Records',
@@ -221,34 +237,38 @@ export default class PeriodicPARA extends Plugin {
   }
 
   loadHelpers() {
-    this.task = new Task(this.app, this.settings, this.dataview);
-    this.file = new File(this.app, this.settings, this.dataview);
-    this.date = new Date(this.app, this.settings, this.file);
-    this.bullet = new Bullet(this.app, this.settings, this.dataview);
+    this.task = new Task(this.app, this.settings, this.dataview, locale);
+    this.file = new File(this.app, this.settings, this.dataview, locale);
+    this.date = new Date(this.app, this.settings, this.file, locale);
+    this.bullet = new Bullet(this.app, this.settings, this.dataview, locale);
 
     this.project = new Project(
       this.settings.projectsPath,
       this.app,
       this.settings,
-      this.file
+      this.file,
+      locale
     );
     this.area = new Area(
       this.settings.areasPath,
       this.app,
       this.settings,
-      this.file
+      this.file,
+      locale
     );
     this.resource = new Resource(
       this.settings.resourcesPath,
       this.app,
       this.settings,
-      this.file
+      this.file,
+      locale
     );
     this.archive = new Archive(
       this.settings.archivesPath,
       this.app,
       this.settings,
-      this.file
+      this.file,
+      locale
     );
   }
 

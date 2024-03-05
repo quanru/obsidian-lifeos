@@ -7,22 +7,30 @@ import {
   MONTHLY_REG,
   QUARTERLY_REG,
   YEARLY_REG,
-  ERROR_MESSAGES,
+  ERROR_MESSAGE,
 } from '../constant';
 import { DataviewApi } from 'obsidian-dataview';
 import { logMessage, renderError } from '../util';
 import { Markdown } from '../component/Markdown';
 import dayjs from 'dayjs';
+import { I18N_MAP } from '../i18n';
 
 export class File {
   app: App;
   date: Date;
   settings: PluginSettings;
   dataview: DataviewApi;
-  constructor(app: App, settings: PluginSettings, dataview: DataviewApi) {
+  locale: string;
+  constructor(
+    app: App,
+    settings: PluginSettings,
+    dataview: DataviewApi,
+    locale: string
+  ) {
     this.app = app;
     this.settings = settings;
     this.dataview = dataview;
+    this.locale = locale;
   }
 
   private hasCommonPrefix(tags1: string[], tags2: string[]) {
@@ -69,9 +77,8 @@ export class File {
 
             if (!indexFile) {
               logMessage(
-                ERROR_MESSAGES.NO_INDEX_FILE_EXIST +
-                  `${subFolder.name}.md)` +
-                  ' in folder: ' +
+                I18N_MAP[this.locale][`${ERROR_MESSAGE}}NO_INDEX_FILE_EXIST`] +
+                  ' @ ' +
                   subFolder.path
               );
             }
@@ -136,7 +143,7 @@ export class File {
     if (!tags.length) {
       return renderError(
         this.app,
-        ERROR_MESSAGES.NO_FRONT_MATTER_TAG,
+        I18N_MAP[this.locale][`${ERROR_MESSAGE}}NO_FRONT_MATTER_TAG`],
         div,
         filepath
       );

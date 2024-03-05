@@ -148,7 +148,7 @@ export class Project extends Item {
     el: HTMLElement,
     ctx: MarkdownPostProcessorContext
   ) => {
-    const date = new Date(this.app, this.settings, this.file);
+    const date = new Date(this.app, this.settings, this.file, this.locale);
     const parsed = date.days(date.parse(ctx.sourcePath));
 
     const header = this.settings.projectListHeader;

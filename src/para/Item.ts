@@ -14,13 +14,15 @@ export class Item {
   settings: PluginSettings;
   file: File;
   date: Date;
+  locale: string;
 
-  constructor(dir: string, app: App, settings: PluginSettings, file: File) {
+  constructor(dir: string, app: App, settings: PluginSettings, file: File, locale: string) {
     this.dir = dir;
     this.app = app;
     this.settings = settings;
     this.file = file;
-    this.date = new Date(this.app, this.settings, this.file);
+    this.locale = locale;
+    this.date = new Date(this.app, this.settings, this.file, locale);
   }
 
   snapshot(dir = this.dir) {
