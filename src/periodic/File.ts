@@ -168,7 +168,8 @@ export class File {
             !b.file.name?.match(WEEKLY_REG) &&
             !b.file.name?.match(DAILY_REG) &&
             !b.file.name?.match(/Template$/) &&
-            !b.file.path?.includes(`${periodicNotesPath}/Templates`)
+            !b.file.path?.includes(`${periodicNotesPath}/Templates`) &&
+            b.file.path !== filepath
         )
         .sort((b) => b.file.ctime, 'desc')
         .map((b) => [
