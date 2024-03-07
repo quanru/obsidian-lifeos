@@ -114,19 +114,25 @@ export class File {
   }
 
   tags(filePath: string) {
-    let {
-      frontmatter: { tags },
-    } = this.dataview.page(filePath)?.file || { frontmatter: {} };
+    const file = this.app.vault.getAbstractFileByPath(filePath);
 
-    if (!tags) {
-      return [];
+    if (file instanceof TFile) {
+      const { frontmatter } = this.app.metadataCache.getFileCache(file) || {
+        frontmatter: {},
+      };
+
+      let tags = frontmatter?.tags;
+
+      if (!tags) {
+        return [];
+      }
+
+      if (typeof tags === 'string') {
+        tags = [tags];
+      }
+
+      return tags.map((tag: string) => tag.replace(/^#(.*)$/, '$1'));
     }
-
-    if (typeof tags === 'string') {
-      tags = [tags];
-    }
-
-    return tags.map((tag: string) => tag.replace(/^#(.*)$/, '$1'));
   }
 
   listByTag = async (

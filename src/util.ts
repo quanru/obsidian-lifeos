@@ -14,6 +14,10 @@ import {
 } from './constant';
 import { I18N_MAP } from './i18n';
 
+export function sleep(milliseconds: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
+
 export function renderError(
   app: App,
   msg: string,
@@ -67,17 +71,16 @@ export async function createFile(
 
     const fileCreated = await app.vault.create(file, templateContent);
 
-    await Promise.all([
-      app.fileManager.processFrontMatter(fileCreated, (frontMatter) => {
-        if (!tag) {
-          return;
-        }
+    await app.fileManager.processFrontMatter(fileCreated, (frontMatter) => {
+      if (!tag) {
+        return;
+      }
 
-        frontMatter.tags = frontMatter.tags || [];
-        frontMatter.tags.push(tag.replace(/^#/, ''));
-      }),
-      app.workspace.getLeaf().openFile(fileCreated),
-    ]);
+      frontMatter.tags = frontMatter.tags || [];
+      frontMatter.tags.push(tag.replace(/^#/, ''));
+    });
+    await sleep(30); // 等待被索引，否则读取不到 frontmatter：this.app.metadataCache.getFileCache(file)
+    await app.workspace.getLeaf().openFile(fileCreated);
   }
 }
 
