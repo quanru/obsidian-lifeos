@@ -129,12 +129,12 @@ export class DailyRecord {
               return;
             }
 
-            const { data } = await this.axios.get(
-              `${origin}/o/r/${resource.name || resource.id}`,
-              {
-                responseType: 'arraybuffer',
-              }
-            );
+            const resourceURL =
+              resource.externalLink ||
+              `${origin}/o/r/${resource.name || resource.id}`;
+            const { data } = await this.axios.get(resourceURL, {
+              responseType: 'arraybuffer',
+            });
 
             if (!data) {
               return;

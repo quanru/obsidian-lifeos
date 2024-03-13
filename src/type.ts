@@ -50,6 +50,7 @@ export type ContextType = {
 
 export type ResourceType = {
   name?: string;
+  externalLink?: string;
   id: string;
   filename: string;
 };
