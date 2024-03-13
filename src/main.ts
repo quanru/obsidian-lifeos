@@ -222,7 +222,10 @@ export default class PeriodicPARA extends Plugin {
     };
   }
 
-  onunload() {}
+  onunload() {
+    clearTimeout(this.timeout);
+    clearInterval(this.interval);
+  }
 
   async loadSettings() {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
