@@ -1,9 +1,10 @@
-# Obsidian Periodic PARA
+# Obsidian LifeOS
+
+> Previously Used Name: Obsidian Periodic PARA
 
 <a href="https://www.producthunt.com/posts/lifeos-template-for-obsidian?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-lifeos&#0045;template&#0045;for&#0045;obsidian" target="_blank">
   <img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=441390&theme=light" alt="LifeOS&#0032;Template&#0032;for&#0032;Obsidian - Obsidian&#0032;LifeOS&#0032;&#0045;&#0032;Your&#0032;Life&#0032;Management&#0032;Assistant&#0033; | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" />
 </a>
-
 
 - This is a plugin for [LifeOS](https://forum.obsidian.md/t/building-my-second-brain-with-obsidian/62934), which assist in practicing the PARA method with periodic notes and usememos.
 - It is recommended to download the [LifeOS-example](https://github.com/quanru/obsidian-example-LifeOS/tree/main) to experience it.
@@ -77,9 +78,9 @@ Go to the [releases](https://github.com/quanru/obsidian-periodic-para/releases) 
 | API                   | The daily record API, usememos server + API(https://your-use-memos.com/api/v1/memo) |
 | Token                 | The token of your API, find token in https://your-use-memos.com/setting             |
 
-| P.A.R.A Notes Settings | Description                                                                                                                                                                           |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Enable                 | Whether to turn on PARA Notes                                                                                                                                                         |
+| P.A.R.A Notes Settings | Description                                                                                                                                                                                                                 |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Enable                 | Whether to turn on PARA Notes                                                                                                                                                                                               |
 | Projects Folder        | Default is '1. Projects', Set a folder where the PARA project is located, each subdirectory is a project, and each project must have a [XXX.]README.md or a file with the same name as the folder as the project index      |
 | Areas Folder           | Default is '2. Areas', Set a folder where the PARA area is located, each subdirectory is a area, and each area must have a [XXX.]README.md or a file with the same name as the folder as the area index                     |
 | Resources Folder       | Default is '3. Resources', Set a folder where the PARA resource is located, each subdirectory is a resource, and each resource must have a [XXX.]README.md or a file with the same name as the folder as the resource index |
@@ -135,7 +136,7 @@ AreaListByTime
 
 #### query by tag
 
-Tags is parsed from the frontmatter of current file, for example:
+Tags is parsed from the [Properties](https://help.obsidian.md/Editing+and+formatting/Properties) of current file, for example:
 
 ```markdown
 ---
