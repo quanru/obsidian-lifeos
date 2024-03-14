@@ -96,7 +96,7 @@ export default class PeriodicPARA extends Plugin {
 
     const item = this.addRibbonIcon(
       'calendar',
-      'Periodic PARA',
+      'LifeOS',
       this.initCreateNoteView
     );
     setIcon(item, 'calendar');

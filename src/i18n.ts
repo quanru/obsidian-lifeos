@@ -59,7 +59,7 @@ const EN = {
   [`${ERROR_MESSAGE}NO_VIEW_PROVIDED`]:
     'Please provide the name of the view you want to query!',
   [`${ERROR_MESSAGE}NO_VIEW_EXISTED`]:
-    'There is no this view in periodic PARA plugin',
+    'There is no this view in LifeOS plugin',
   [`${ERROR_MESSAGE}NO_INDEX_FILE_EXIST`]:
     'There is no Index file exists(README.md/xxx.README.md/the same as the name of the folder it resides in)',
   [`${ERROR_MESSAGE}NO_TEMPLATE_EXIST`]: 'There is no template file exist',
@@ -67,11 +67,11 @@ const EN = {
   [`${ERROR_MESSAGE}DAILY_RECORD_FETCH_FAILED`]: 'Fetch usememos failed',
   [`${ERROR_MESSAGE}RESOURCE_FETCH_FAILED`]: 'Fetch resource failed',
   [`${ERROR_MESSAGE}NO_DAILY_RECORD_HEADER`]:
-    'Please set which header the usememos need insert to in Periodic PARA plugin',
+    'Please set which header the usememos need insert to in LifeOS plugin',
   [`${ERROR_MESSAGE}NO_DAILY_RECORD_API`]:
-    'Please set daily usememos API in Periodic PARA plugin',
+    'Please set daily usememos API in LifeOS plugin',
   [`${ERROR_MESSAGE}NO_DAILY_RECORD_TOKEN`]:
-    'Please set usememos token in Periodic PARA plugin',
+    'Please set usememos token in LifeOS plugin',
   [`${ERROR_MESSAGE}NO_DAILY_FILE_EXIST`]:
     'Daily file not exists, please create it first: ',
 };
@@ -111,7 +111,7 @@ const ZH = {
   [`${ERROR_MESSAGE}NO_DATAVIEW_INSTALL`]: '请先安装 dataview！',
   [`${ERROR_MESSAGE}FAILED_DATAVIEW_API`]: 'Dataview API 开启失败！',
   [`${ERROR_MESSAGE}NO_VIEW_PROVIDED`]: '请提供所需要查询的视图名！',
-  [`${ERROR_MESSAGE}NO_VIEW_EXISTED`]: 'Periodic PARA 插件中不存在此视图',
+  [`${ERROR_MESSAGE}NO_VIEW_EXISTED`]: 'LifeOS 插件中不存在此视图',
   [`${ERROR_MESSAGE}NO_INDEX_FILE_EXIST`]:
     '索引文件不存在（README.md/xxx.README.md/所在文件夹同名文件）',
   [`${ERROR_MESSAGE}NO_TEMPLATE_EXIST`]: '模版文件不存在',
@@ -119,11 +119,11 @@ const ZH = {
   [`${ERROR_MESSAGE}DAILY_RECORD_FETCH_FAILED`]: '拉取 usememos 失败',
   [`${ERROR_MESSAGE}RESOURCE_FETCH_FAILED`]: '拉取资源失败',
   [`${ERROR_MESSAGE}NO_DAILY_RECORD_HEADER`]:
-    '请在 Periodic PARA 插件中设置 usememos 需要存储在哪个标题之下',
+    '请在 LifeOS 插件中设置 usememos 需要存储在哪个标题之下',
   [`${ERROR_MESSAGE}NO_DAILY_RECORD_API`]:
-    '请在 Periodic PARA 插件中设置 usememos 的 API',
+    '请在 LifeOS 插件中设置 usememos 的 API',
   [`${ERROR_MESSAGE}NO_DAILY_RECORD_TOKEN`]:
-    '请在 Periodic PARA 插件中设置 usememos 的 Token',
+    '请在 LifeOS 插件中设置 usememos 的 Token',
   [`${ERROR_MESSAGE}NO_DAILY_FILE_EXIST`]: '日记文件不存在，请先创建：',
 };
 

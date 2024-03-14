@@ -23,7 +23,7 @@ export class CreateNoteView extends ItemView {
   }
 
   getDisplayText() {
-    return 'Periodic PARA';
+    return 'LifeOS';
   }
 
   getIcon(): string {
