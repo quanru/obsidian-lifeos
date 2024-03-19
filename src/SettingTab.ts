@@ -186,9 +186,9 @@ export class SettingTab extends PluginSettingTab {
           toggle
             .setValue(this.plugin.settings.useDidaSync)
             .onChange(async (value) => {
-              
-              this.plugin.updateSettingField("useDidaSync",value);
-              
+
+              this.plugin.updateSettingField("useDidaSync", value);
+
               this.display();
             })
         );
@@ -196,19 +196,20 @@ export class SettingTab extends PluginSettingTab {
         new Setting(containerEl)
           .setName('UserName:')
           .setDesc('The Dida UserName')
-          .addText((text) =>
+          .addText((text) => {
             text
               .setPlaceholder(
                 'inputUserName'
               )
-              .setValue(this.plugin.settings.didaUserName)
-              .onChange(
-                debounce(async (value) => {
-                  this.plugin.updateSettingField("didaUserName", value);
-                }, 500)
-              ).inputEl.setCssStyles({
+              .setValue(this.plugin.settings.didaUserName);
+              
+              text.inputEl.onblur=debounce(async (value) => {
+                this.plugin.updateSettingField("didaUserName", text.getValue());
+              }, 500)
+              text.inputEl.setCssStyles({
                 width: "300px"
-              })
+              });
+          }
           );
         let pswInputEl: TextComponent;
         const pswSetting = new Setting(containerEl)
@@ -220,13 +221,12 @@ export class SettingTab extends PluginSettingTab {
                 'inputPassword'
               )
               .setValue(this.plugin.settings.didaPassword)
-              .onChange(
-                debounce(async (value) => {
-                  this.plugin.updateSettingField("didaPassword", value);
-                }, 500)
-              ).then((el) => {
+              .then((el) => {
                 pswInputEl = el;
               });
+            psw.inputEl.onblur = debounce(async () => {
+              this.plugin.updateSettingField("didaPassword", psw.getValue());
+            }, 500)
             psw.inputEl.setAttribute("type", "password");
             psw.inputEl.setCssStyles({
               width: "250px"
@@ -234,10 +234,12 @@ export class SettingTab extends PluginSettingTab {
           }
 
           );
-        pswSetting.addToggle((v) => {
-          v.onChange((value) => {
-            pswInputEl.inputEl.setAttribute("type", value ? "password" : "text");
-          })
+        pswSetting.addToggle((toggle) => {
+          toggle
+            .setValue(false)
+            .onChange((value) => {
+              pswInputEl.inputEl.setAttribute("type", !value ? "password" : "text");
+            })
         });
         new Setting(containerEl)
           .setName('DidaSyncDebugMode')
@@ -247,7 +249,7 @@ export class SettingTab extends PluginSettingTab {
               .setValue(this.plugin.settings.didaSyncDebugMode)
               .onChange(async (value) => {
                 this.plugin.updateSettingField("didaSyncDebugMode", value);
-                
+
               })
           );
       }
