@@ -24,4 +24,5 @@ data.json
 
 *.nosync
 .hotreload
+
 test_vault

@@ -17,6 +17,7 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@types/debug": "^4.1.12",
     "@types/node": "^16.11.6",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
@@ -35,6 +36,7 @@
     "antd": "^5.13.2",
     "axios": "^1.6.5",
     "dayjs": "^1.11.10",
+    "debug": "~4.3.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "reduce-css-calc": "^2.1.8"

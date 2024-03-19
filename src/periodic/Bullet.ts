@@ -57,18 +57,28 @@ export class Bullet {
       .trim();
     const where = tags
       .map((tag: string[], index: number) => {
-        return `(contains(L.tags, "#${tag}")) ${
-          index === tags.length - 1 ? '' : 'OR'
-        }`;
+        return `(contains(L.tags, "#${tag}")) ${index === tags.length - 1 ? '' : 'OR'
+          }`;
       })
       .join(' ');
+      // 优化尝试
+    //     const result = (await this.dataview.tryQuery(
+    //       `
+    // TABLE WITHOUT ID rows.L.text AS "Bullet", rows.L.link AS "Link"
+    // FROM (${from} AND ("${this.file.settings.periodicNotesPath}" OR "Dida/笔记.md")) AND -"${periodicNotesPath}/Templates"
+    // FLATTEN file.lists AS L
+    // WHERE ${where} AND !L.task AND file.path != "${filepath}"
+    // GROUP BY L.link
+    // SORT rows.file.link DESC
+    //     `
+    //     )) as TableResult;
     const result = (await this.dataview.tryQuery(
       `
 TABLE WITHOUT ID rows.L.text AS "Bullet", rows.L.link AS "Link"
 FROM (${from}) AND -"${periodicNotesPath}/Templates"
 FLATTEN file.lists AS L
 WHERE ${where} AND !L.task AND file.path != "${filepath}"
-GROUP BY file.link
+GROUP BY L.link
 SORT rows.file.link DESC
     `
     )) as TableResult;

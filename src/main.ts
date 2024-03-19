@@ -1,4 +1,4 @@
-import { Plugin, setIcon } from 'obsidian';
+import { Plugin, setIcon, normalizePath } from 'obsidian';
 import type {
   App,
   MarkdownPostProcessorContext,
@@ -39,6 +39,7 @@ import zhCN from 'antd/locale/zh_CN';
 import 'dayjs/locale/zh-cn';
 import 'dayjs/locale/zh';
 import { I18N_MAP } from './i18n';
+import { DiDa365API, TodoAppClientFacade } from './dida/dida';
 
 const localeMap: Record<string, any> = {
   en: enUS,
@@ -63,9 +64,11 @@ export default class PeriodicPARA extends Plugin {
   dailyRecord: DailyRecord;
   timeout: NodeJS.Timeout;
   interval: NodeJS.Timer;
+  private _dida: DiDa365API;
 
   constructor(app: App, manifest: PluginManifest) {
     super(app, manifest);
+
     if (!isPluginEnabled(app)) {
       logMessage(
         I18N_MAP[locale][`${ERROR_MESSAGE}NO_DATAVIEW_INSTALL`],
@@ -128,6 +131,7 @@ export default class PeriodicPARA extends Plugin {
     this.app.workspace.onLayoutReady(this.initCreateNoteView);
     this.loadHelpers();
     this.loadDailyRecord();
+    this.initDidaSync();
     this.loadGlobalHelpers();
     this.loadViews();
     this.addSettingTab(new SettingTab(this.app, this));
@@ -167,6 +171,30 @@ export default class PeriodicPARA extends Plugin {
     };
     this.registerMarkdownCodeBlockProcessor('PeriodicPARA', handler);
     this.registerMarkdownCodeBlockProcessor('periodic-para', handler); // for backward compatibility
+  }
+  /**
+   * 初始化滴答清单
+   */
+  initDidaSync() {
+    if (this.settings.usePeriodicNotes && this.settings.useDidaSync) {
+      // 登录
+      this._dida = new DiDa365API(
+        {
+          "username": this.settings.didaUserName,
+          "password": this.settings.didaPassword
+        }, this);
+      logMessage(`初始化登录滴答清单:${this.settings.didaUserName}`, LogLevel.info);
+      this.addCommand({
+        id: 'periodic-para-sync-dida',
+        name: 'Sync Dida',
+        callback: this._dida.writeTasksToObsidian.bind(this._dida),
+      });
+      this.addCommand({
+        id: 'periodic-para-sync-dida',
+        name: 'Force Sync Dida',
+        callback: this._dida.writeTasksToObsidian.bind(this._dida, true),
+      });
+    }
   }
   loadDailyRecord() {
     if (this.settings.usePeriodicNotes && this.settings.useDailyRecord) {
@@ -237,6 +265,7 @@ export default class PeriodicPARA extends Plugin {
     this.loadGlobalHelpers();
     this.loadViews();
     this.loadDailyRecord();
+    this.initDidaSync();
   }
 
   loadHelpers() {
@@ -304,4 +333,16 @@ export default class PeriodicPARA extends Plugin {
 
     await leaf.setViewState({ type: CREATE_NOTE, active: true });
   };
+  async updateSettingField<Key extends keyof PluginSettings, ValueType extends PluginSettings[Key]>(key: Key, value: ValueType) {
+    this.settings[key] = value;
+    await this.saveSettings();
+  }
+  readData<T>(dataFileName: string): Promise<T> {
+    let dataFilePath = normalizePath(this.manifest.dir as string + `/${dataFileName}`);
+    return (this.app.vault as any).readJson(dataFilePath);
+  }
+  writeData<T>(dataFileName: string, data: T): Promise<boolean> {
+    let dataFilePath = normalizePath(this.manifest.dir as string + `/${dataFileName}`);
+    return (this.app.vault as any).writeJson(dataFilePath, data, true);
+  }
 }

@@ -1,5 +1,6 @@
 import type { Locale } from 'antd/es/locale';
 import type { App } from 'obsidian';
+import { ITaskItem } from './dida/dida';
 
 export interface PluginSettings {
   periodicNotesPath: string;
@@ -14,8 +15,14 @@ export interface PluginSettings {
   dailyRecordAPI: string;
   dailyRecordToken: string;
   useDailyRecord: boolean;
+
   usePeriodicNotes: boolean;
   usePARANotes: boolean;
+
+  useDidaSync: boolean;
+  didaUserName: string,
+  didaPassword: string,
+  didaSyncDebugMode: boolean
 }
 
 export type DateType = {

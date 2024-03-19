@@ -137,9 +137,8 @@ export class Task {
       .trim();
     const where = tags
       .map((tag: string[], index: number) => {
-        return `contains(tags, "#${tag}") ${
-          index === tags.length - 1 ? '' : 'OR'
-        }`;
+        return `contains(tags, "#${tag}") ${index === tags.length - 1 ? '' : 'OR'
+          }`;
       })
       .join(' ');
 
@@ -183,12 +182,17 @@ SORT status ASC
       if (!ret) return false;
       dateText = ret[1];
     } else if (date === TaskStatusType.RECORD) {
+      // 匹配创建时间
+      let ret = task?.text.match(/➕ (\d\d\d\d-\d\d-\d\d)/);
       // filter by record date
-      const ret = task?.path.match(/\d\d\d\d-\d\d-\d\d/);
-
-      if (!ret) return false;
-
-      dateText = ret[0];
+      if (!ret) {
+        ret = task?.path.match(/\d\d\d\d-\d\d-\d\d/);
+        if (!ret) return false;
+        dateText = ret[0];
+      } else {
+        dateText = ret[1];
+      }
+      
     }
 
     const targetDate = moment(dateText);

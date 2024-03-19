@@ -1,5 +1,5 @@
 import { PluginSettingTab, Setting, debounce } from 'obsidian';
-import type { App } from 'obsidian';
+import type { App, TextComponent } from 'obsidian';
 import type PeriodicPARA from './main';
 import type { PluginSettings } from './type';
 
@@ -18,6 +18,10 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   useDailyRecord: false,
   usePeriodicNotes: true,
   usePARANotes: true,
+  useDidaSync: false,
+  didaUserName: '',
+  didaPassword: '',
+  didaSyncDebugMode: false
 };
 
 export class SettingTab extends PluginSettingTab {
@@ -121,6 +125,7 @@ export class SettingTab extends PluginSettingTab {
             })
         );
 
+
       if (this.plugin.settings.useDailyRecord) {
         new Setting(containerEl)
           .setName('Header:')
@@ -144,7 +149,7 @@ export class SettingTab extends PluginSettingTab {
             text
               .setPlaceholder(
                 DEFAULT_SETTINGS.dailyRecordAPI ||
-                  'Usememos server + API(https://your-use-memos.com/api/v1/memo)'
+                'Usememos server + API(https://your-use-memos.com/api/v1/memo)'
               )
               .setValue(this.plugin.settings.dailyRecordAPI)
               .onChange(
@@ -162,7 +167,7 @@ export class SettingTab extends PluginSettingTab {
             text
               .setPlaceholder(
                 DEFAULT_SETTINGS.dailyRecordToken ||
-                  'Find token in https://your-use-memos.com/setting'
+                'Find token in https://your-use-memos.com/setting'
               )
               .setValue(this.plugin.settings.dailyRecordToken)
               .onChange(
@@ -171,6 +176,79 @@ export class SettingTab extends PluginSettingTab {
                   await this.plugin.saveSettings();
                 }, 500)
               )
+          );
+      }
+      // 滴答清单同步设置
+      new Setting(containerEl)
+        .setName('Dida Sync')
+        .setDesc('Sync Dida')
+        .addToggle((toggle) =>
+          toggle
+            .setValue(this.plugin.settings.useDidaSync)
+            .onChange(async (value) => {
+              
+              this.plugin.updateSettingField("useDidaSync",value);
+              
+              this.display();
+            })
+        );
+      if (this.plugin.settings.useDidaSync) {
+        new Setting(containerEl)
+          .setName('UserName:')
+          .setDesc('The Dida UserName')
+          .addText((text) =>
+            text
+              .setPlaceholder(
+                'inputUserName'
+              )
+              .setValue(this.plugin.settings.didaUserName)
+              .onChange(
+                debounce(async (value) => {
+                  this.plugin.updateSettingField("didaUserName", value);
+                }, 500)
+              ).inputEl.setCssStyles({
+                width: "300px"
+              })
+          );
+        let pswInputEl: TextComponent;
+        const pswSetting = new Setting(containerEl)
+          .setName('Password:')
+          .setDesc('The Dida Password')
+          .addText((text) => {
+            const psw = text
+              .setPlaceholder(
+                'inputPassword'
+              )
+              .setValue(this.plugin.settings.didaPassword)
+              .onChange(
+                debounce(async (value) => {
+                  this.plugin.updateSettingField("didaPassword", value);
+                }, 500)
+              ).then((el) => {
+                pswInputEl = el;
+              });
+            psw.inputEl.setAttribute("type", "password");
+            psw.inputEl.setCssStyles({
+              width: "250px"
+            })
+          }
+
+          );
+        pswSetting.addToggle((v) => {
+          v.onChange((value) => {
+            pswInputEl.inputEl.setAttribute("type", value ? "password" : "text");
+          })
+        });
+        new Setting(containerEl)
+          .setName('DidaSyncDebugMode')
+          .setDesc('enableDidaSyncDebug')
+          .addToggle((toggle) =>
+            toggle
+              .setValue(this.plugin.settings.didaSyncDebugMode)
+              .onChange(async (value) => {
+                this.plugin.updateSettingField("didaSyncDebugMode", value);
+                
+              })
           );
       }
     }
