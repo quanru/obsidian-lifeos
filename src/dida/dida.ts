@@ -503,7 +503,7 @@ interface IDidaCacha {
 	projIdNameMap: { [key: string]: string },
 	itemMap?: { [key: string]: ITaskItem }
 }
-import type PeriodicPARA from "../main.ts"
+import type PeriodicPARA from "../main"
 export class DiDa365API implements IDiDa365API {
 	private cookies: string[] = [];
 	private cookieHeader: string;
@@ -974,14 +974,14 @@ export class TodoAppClientFacade {
 	private readonly ttClient: DiDa365API;
 	file: File;
 	constructor(private readonly options: DiDa365APIOptions, file: File) {
-		this.didaClient = new DiDa365API({
-			...options,
-		});
-		this.ttClient = new DiDa365API({
-			...options,
-			apiHost: "https://api.ticktick.com",
-			host: "https://ticktick.com",
-		});
+		// this.didaClient = new DiDa365API({
+		// 	...options,
+		// });
+		// this.ttClient = new DiDa365API({
+		// 	...options,
+		// 	apiHost: "https://api.ticktick.com",
+		// 	host: "https://ticktick.com",
+		// });
 		this.file = file;
 	}
 
