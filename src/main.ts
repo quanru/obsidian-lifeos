@@ -165,8 +165,8 @@ export default class PeriodicPARA extends Plugin {
 
       return callback(view, el, ctx);
     };
-    this.registerMarkdownCodeBlockProcessor('PeriodicPARA', handler);
-    this.registerMarkdownCodeBlockProcessor('periodic-para', handler); // for backward compatibility
+    this.registerMarkdownCodeBlockProcessor('LifeOS', handler);
+    this.registerMarkdownCodeBlockProcessor('PeriodicPARA', handler); // for backward compatibility
   }
   loadDailyRecord() {
     if (this.settings.usePeriodicNotes && this.settings.useDailyRecord) {
@@ -276,15 +276,19 @@ export default class PeriodicPARA extends Plugin {
   }
 
   loadGlobalHelpers() {
-    (window as any).PeriodicPARA = {};
-    (window as any).PeriodicPARA.Project = this.project;
-    (window as any).PeriodicPARA.Area = this.area;
-    (window as any).PeriodicPARA.Resource = this.resource;
-    (window as any).PeriodicPARA.Archive = this.archive;
-    (window as any).PeriodicPARA.Task = this.task;
-    (window as any).PeriodicPARA.File = this.file;
-    (window as any).PeriodicPARA.Bullet = this.bullet;
-    (window as any).PeriodicPARA.Date = this.date;
+    const helpers = {
+      Project: this.project,
+      Area: this.area,
+      Resource: this.resource,
+      Archive: this.archive,
+      Task: this.task,
+      File: this.file,
+      Bullet: this.bullet,
+      Date: this.date,
+    };
+
+    (window as any).PeriodicPARA = helpers;
+    (window as any).LifeOS = helpers;
   }
 
   initCreateNoteView = async () => {
