@@ -534,7 +534,7 @@ export class DiDa365API implements IDiDa365API {
 		let itemMap = this._dataCache.itemMap!;
 
 
-		if (Object.keys(itemMap).length <= 0 || force) {
+		if (!itemMap || Object.keys(itemMap).length <= 0 || force) {
 			let notInAllProjectIds = [];
 			for (let projProfile of this._allInfo.projectProfiles) {
 				if (!projProfile.inAll) {
@@ -615,7 +615,7 @@ export class DiDa365API implements IDiDa365API {
 			// 格式化笔记
 			formatedItem = `- ${item.title}${formatedCreatedTime} ${tagsStr}\n`;
 
-			formatedItem += blockContent + `\t${blockId}\n`;
+			formatedItem += blockContent + `\n\t${blockId}\n`;
 
 		} else {
 			// 格式化任务
@@ -656,7 +656,7 @@ export class DiDa365API implements IDiDa365API {
 			}
 			// 标题
 			formatedItem = `${titleTStr}- [${statusChar}] ${item.title}${formatedCreatedTime}${formatCompletedTime}  ${tagsStr}\n`;
-			formatedItem += blockContent + `${blockTStr}${blockId}\n`;
+			formatedItem += blockContent + `\n${blockTStr}${blockId}\n`;
 
 		}
 		item.formatedContent = formatedItem;
@@ -673,7 +673,7 @@ export class DiDa365API implements IDiDa365API {
 	public async writeTasksToObsidian(force?: boolean) {
 		// 
 
-		await this.initDidaDataCache();
+		await this.initDidaDataCache(force);
 		let tasksFilePath = "Dida/任务.md";
 		let memosFilePath = "Dida/笔记.md";
 		let didaTasksFile = this.plugin.file.get(tasksFilePath);

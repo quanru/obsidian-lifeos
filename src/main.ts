@@ -183,14 +183,14 @@ export default class PeriodicPARA extends Plugin {
           "username": this.settings.didaUserName,
           "password": this.settings.didaPassword
         }, this);
-      logMessage(`初始化登录滴答清单:${this.settings.didaUserName}`, LogLevel.info);
+      logMessage(`初始化滴答清单:${this.settings.didaUserName}`, LogLevel.info);
       this.addCommand({
-        id: 'periodic-para-sync-dida',
+        id: 'periodic-para-sync-dida-sync',
         name: 'Sync Dida',
         callback: this._dida.writeTasksToObsidian.bind(this._dida),
       });
       this.addCommand({
-        id: 'periodic-para-sync-dida',
+        id: 'periodic-para-sync-dida-force-sync',
         name: 'Force Sync Dida',
         callback: this._dida.writeTasksToObsidian.bind(this._dida, true),
       });
