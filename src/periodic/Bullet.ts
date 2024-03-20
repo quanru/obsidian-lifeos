@@ -3,12 +3,13 @@ import type { TableResult } from 'obsidian-dataview/lib/api/plugin-api';
 import { PluginSettings } from '../type';
 
 import { Markdown } from '../component/Markdown';
-import { DataviewApi } from 'obsidian-dataview';
+import { DataArray, DataviewApi, Link } from 'obsidian-dataview';
 
 import { File } from '../periodic/File';
 import { ERROR_MESSAGE } from '../constant';
 import { renderError } from '../util';
 import { I18N_MAP } from '../i18n';
+import { SListItem } from 'obsidian-dataview/lib/data-model/serialized/markdown';
 
 export class Bullet {
   app: App;
@@ -62,25 +63,29 @@ export class Bullet {
         }`;
       })
       .join(' ');
-    const result = (await this.dataview.tryQuery(
-      `
-TABLE WITHOUT ID rows.L.text AS "Bullet", rows.L.link AS "Link"
-FROM (${from}) AND -"${periodicNotesPath}/Templates"
-FLATTEN file.lists AS L
-WHERE ${where} AND !L.task AND file.path != "${filepath}"
-GROUP BY file.link
-SORT rows.file.link DESC
-    `
-    )) as TableResult;
-
-    this.dataview.table(
-      result.headers,
-      result.values,
-      div,
-      component,
-      filepath
-    );
-
+    // console.time("子弹检索1笔记耗时");
+    let lists: DataArray<SListItem> = await this.dataview.pages(`(${from}) and -"${periodicNotesPath}/Templates"`).file.lists;
+    let resultNew = lists.where(
+      (L) => {
+        let includeTag = false;
+        if (L.task || L.path === filepath) return false;
+        for (let tag of tags) {
+          includeTag = L.tags.includes(`#${tag}`);
+          if (includeTag) {
+            break;
+          }
+          
+        }
+        // console.log(`file:${L.path},text:${L.text}`)
+        return includeTag;
+      });
+      let groupResult = resultNew.groupBy((elem) => {
+        return elem.link;
+      })
+      let sortResult = groupResult.sort((elem) => elem.rows.link as Link)
+      let tableResult =sortResult.map(k => [k.rows.text as string, k.rows.link as Link])
+      let tableValues = tableResult.array();
+    this.dataview.table(["Bullet", "Link"], tableValues, div, component, filepath);
     ctx.addChild(component);
   };
 }
