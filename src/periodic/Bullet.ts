@@ -72,7 +72,7 @@ export class Bullet {
     const groupResult = result.groupBy((elem) => {
       return elem.link;
     });
-    const sortResult = groupResult.sort((elem) => elem.rows.link as Link);
+    const sortResult = groupResult.sort((elem) => elem.rows.link as Link, 'desc');
     const tableResult = sortResult.map((k) => [
       k.rows.text as string,
       k.rows.link as Link,
