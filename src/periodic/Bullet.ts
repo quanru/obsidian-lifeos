@@ -1,14 +1,14 @@
 import type { App, MarkdownPostProcessorContext } from 'obsidian';
-import type { TableResult } from 'obsidian-dataview/lib/api/plugin-api';
 import { PluginSettings } from '../type';
 
 import { Markdown } from '../component/Markdown';
-import { DataviewApi } from 'obsidian-dataview';
+import { DataArray, DataviewApi, Link } from 'obsidian-dataview';
 
 import { File } from '../periodic/File';
 import { ERROR_MESSAGE } from '../constant';
 import { renderError } from '../util';
 import { I18N_MAP } from '../i18n';
+import { SListItem } from 'obsidian-dataview/lib/data-model/serialized/markdown';
 
 export class Bullet {
   app: App;
@@ -55,37 +55,33 @@ export class Bullet {
       })
       .join(' ')
       .trim();
-    const where = tags
-      .map((tag: string[], index: number) => {
-        return `(contains(L.tags, "#${tag}")) ${index === tags.length - 1 ? '' : 'OR'
-          }`;
-      })
-      .join(' ');
-      // 优化尝试
-    //     const result = (await this.dataview.tryQuery(
-    //       `
-    // TABLE WITHOUT ID rows.L.text AS "Bullet", rows.L.link AS "Link"
-    // FROM (${from} AND ("${this.file.settings.periodicNotesPath}" OR "Dida/笔记.md")) AND -"${periodicNotesPath}/Templates"
-    // FLATTEN file.lists AS L
-    // WHERE ${where} AND !L.task AND file.path != "${filepath}"
-    // GROUP BY L.link
-    // SORT rows.file.link DESC
-    //     `
-    //     )) as TableResult;
-    const result = (await this.dataview.tryQuery(
-      `
-TABLE WITHOUT ID rows.L.text AS "Bullet", rows.L.link AS "Link"
-FROM (${from}) AND -"${periodicNotesPath}/Templates"
-FLATTEN file.lists AS L
-WHERE ${where} AND !L.task AND file.path != "${filepath}"
-GROUP BY L.link
-SORT rows.file.link DESC
-    `
-    )) as TableResult;
+    const lists: DataArray<SListItem> = await this.dataview.pages(
+      `(${from}) and -"${periodicNotesPath}/Templates"`
+    ).file.lists;
+    const result = lists.where((L) => {
+      let includeTag = false;
+      if (L.task || L.path === filepath) return false;
+      for (const tag of tags) {
+        includeTag = L.tags.includes(`#${tag}`);
+        if (includeTag) {
+          break;
+        }
+      }
+      return includeTag;
+    });
+    const groupResult = result.groupBy((elem) => {
+      return elem.link;
+    });
+    const sortResult = groupResult.sort((elem) => elem.rows.link as Link);
+    const tableResult = sortResult.map((k) => [
+      k.rows.text as string,
+      k.rows.link as Link,
+    ]);
+    const tableValues = tableResult.array();
 
     this.dataview.table(
-      result.headers,
-      result.values,
+      ['Bullet', 'Link'],
+      tableValues,
       div,
       component,
       filepath
