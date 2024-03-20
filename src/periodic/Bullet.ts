@@ -1,5 +1,4 @@
 import type { App, MarkdownPostProcessorContext } from 'obsidian';
-import type { TableResult } from 'obsidian-dataview/lib/api/plugin-api';
 import { PluginSettings } from '../type';
 
 import { Markdown } from '../component/Markdown';
@@ -56,36 +55,38 @@ export class Bullet {
       })
       .join(' ')
       .trim();
-    const where = tags
-      .map((tag: string[], index: number) => {
-        return `(contains(L.tags, "#${tag}")) ${
-          index === tags.length - 1 ? '' : 'OR'
-        }`;
-      })
-      .join(' ');
-    // console.time("子弹检索1笔记耗时");
-    let lists: DataArray<SListItem> = await this.dataview.pages(`(${from}) and -"${periodicNotesPath}/Templates"`).file.lists;
-    let resultNew = lists.where(
-      (L) => {
-        let includeTag = false;
-        if (L.task || L.path === filepath) return false;
-        for (let tag of tags) {
-          includeTag = L.tags.includes(`#${tag}`);
-          if (includeTag) {
-            break;
-          }
-          
+    const lists: DataArray<SListItem> = await this.dataview.pages(
+      `(${from}) and -"${periodicNotesPath}/Templates"`
+    ).file.lists;
+    const result = lists.where((L) => {
+      let includeTag = false;
+      if (L.task || L.path === filepath) return false;
+      for (const tag of tags) {
+        includeTag = L.tags.includes(`#${tag}`);
+        if (includeTag) {
+          break;
         }
-        // console.log(`file:${L.path},text:${L.text}`)
-        return includeTag;
-      });
-      let groupResult = resultNew.groupBy((elem) => {
-        return elem.link;
-      })
-      let sortResult = groupResult.sort((elem) => elem.rows.link as Link)
-      let tableResult =sortResult.map(k => [k.rows.text as string, k.rows.link as Link])
-      let tableValues = tableResult.array();
-    this.dataview.table(["Bullet", "Link"], tableValues, div, component, filepath);
+      }
+      return includeTag;
+    });
+    const groupResult = result.groupBy((elem) => {
+      return elem.link;
+    });
+    const sortResult = groupResult.sort((elem) => elem.rows.link as Link);
+    const tableResult = sortResult.map((k) => [
+      k.rows.text as string,
+      k.rows.link as Link,
+    ]);
+    const tableValues = tableResult.array();
+
+    this.dataview.table(
+      ['Bullet', 'Link'],
+      tableValues,
+      div,
+      component,
+      filepath
+    );
+
     ctx.addChild(component);
   };
 }
