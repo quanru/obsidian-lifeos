@@ -37,6 +37,7 @@ const EN = {
   [FOLDER]: 'Folder',
   [INDEX]: 'Index',
 
+  QUICK_JUMP: 'Double click to open periodic note for this ',
   [`${TAG}ToolTip`]:
     'Tags in PARA notes serve as the unique identifiers for indexing tasks, notes, and files',
   [`${FOLDER}ToolTip`]:
@@ -58,8 +59,7 @@ const EN = {
   [`${ERROR_MESSAGE}FAILED_DATAVIEW_API`]: 'Dataview API enable failed!',
   [`${ERROR_MESSAGE}NO_VIEW_PROVIDED`]:
     'Please provide the name of the view you want to query!',
-  [`${ERROR_MESSAGE}NO_VIEW_EXISTED`]:
-    'There is no this view in LifeOS plugin',
+  [`${ERROR_MESSAGE}NO_VIEW_EXISTED`]: 'There is no this view in LifeOS plugin',
   [`${ERROR_MESSAGE}NO_INDEX_FILE_EXIST`]:
     'There is no Index file exists(README.md/xxx.README.md/the same as the name of the folder it resides in)',
   [`${ERROR_MESSAGE}NO_TEMPLATE_EXIST`]: 'There is no template file exist',
@@ -95,6 +95,8 @@ const ZH = {
   [TAG]: '标签',
   [FOLDER]: '目录',
   [INDEX]: '索引',
+
+  QUICK_JUMP: '双击打开本周期的',
   [`${TAG}ToolTip`]: 'PARA 笔记的标签，作为索引任务、记录、文件的唯一标识',
   [`${FOLDER}ToolTip`]: 'PARA 笔记所在的文件夹，用于存放对应主题的笔记',
   [`${INDEX}ToolTip`]:
