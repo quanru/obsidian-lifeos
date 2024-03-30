@@ -116,6 +116,10 @@ export class DailyRecord {
       if (Array.isArray(data)) {
         await Promise.all(
           data.map(async (resource) => {
+            if (resource.externalLink) {
+              return;
+            }
+
             const folder = `${this.settings.periodicNotesPath}/Attachments`;
             const resourcePath = normalizePath(
               `${folder}/${generateFileName(resource)}`
@@ -126,10 +130,6 @@ export class DailyRecord {
             );
 
             if (isResourceExists) {
-              return;
-            }
-
-            if (resource.externalLink) {
               return;
             }
 

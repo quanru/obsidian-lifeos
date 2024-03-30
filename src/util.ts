@@ -122,9 +122,7 @@ export function formatDailyRecord(record: DailyRecordType) {
   const targetResourceLine = resourceList?.length // 资源文件
     ? '\n' +
       resourceList
-        ?.map(
-          (resource: ResourceType) => `\t - ![[${generateFileName(resource)}]]`
-        )
+        ?.map((resource: ResourceType) => `\t- ${generateFileLink(resource)}`)
         .join('\n')
     : '';
   const finalTargetContent =
@@ -133,11 +131,20 @@ export function formatDailyRecord(record: DailyRecordType) {
   return [date, timeStamp, finalTargetContent].map(String);
 }
 
+export function generateFileLink(resource: ResourceType): string {
+  if (!resource.externalLink) {
+    return `![[${generateFileName(resource)}]]`;
+  }
+
+  const prefix = resource.type?.includes('image') ? '!' : ''; // only add ! for image type
+
+  return `${prefix}[${resource.name || resource.filename}](${
+    resource.externalLink
+  })`;
+}
+
 export function generateFileName(resource: ResourceType): string {
-  return (
-    resource.externalLink ||
-    `${resource.id}-${resource.filename.replace(/[/\\?%*:|"<>]/g, '-')}`
-  );
+  return `${resource.id}-${resource.filename.replace(/[/\\?%*:|"<>]/g, '-')}`;
 }
 
 export function logMessage(message: string, level: LogLevel = LogLevel.info) {
