@@ -62,7 +62,7 @@ export class Bullet {
       let includeTag = false;
       if (L.task || L.path === filepath) return false;
       for (const tag of tags) {
-        includeTag = L.tags.includes(`#${tag}`);
+        includeTag = L.tags.join(' ').includes(`#${tag}`);
         if (includeTag) {
           break;
         }
