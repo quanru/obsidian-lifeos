@@ -52,6 +52,7 @@ export type ResourceType = {
   name?: string;
   externalLink?: string;
   type?: string;
+  uid?: string;
   id: string;
   filename: string;
 };

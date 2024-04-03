@@ -133,7 +133,7 @@ export class DailyRecord {
               return;
             }
 
-            const resourceURL = `${origin}/o/r/${resource.name || resource.id}`;
+            const resourceURL = `${origin}/o/r/${resource.uid || resource.name || resource.id}`;
             const { data } = await this.axios.get(resourceURL, {
               responseType: 'arraybuffer',
             });
