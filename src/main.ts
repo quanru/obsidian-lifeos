@@ -15,9 +15,9 @@ import { Bullet } from './periodic/Bullet';
 import { File } from './periodic/File';
 import { Date } from './periodic/Date';
 import { DailyRecord } from './periodic/DailyRecord';
-import { SettingTab } from './SettingTab';
+import { SettingTabView } from './view/SettingTab';
 import { LogLevel, type PluginSettings } from './type';
-import { DEFAULT_SETTINGS } from './SettingTab';
+import { DEFAULT_SETTINGS } from './view/SettingTab';
 import {
   DAILY,
   ERROR_MESSAGE,
@@ -130,7 +130,9 @@ export default class PeriodicPARA extends Plugin {
     this.loadDailyRecord();
     this.loadGlobalHelpers();
     this.loadViews();
-    this.addSettingTab(new SettingTab(this.app, this));
+    this.addSettingTab(
+      new SettingTabView(this.app, this.settings, this, localeMap[locale])
+    );
 
     const handler = (
       source: keyof typeof this.views,
@@ -231,8 +233,9 @@ export default class PeriodicPARA extends Plugin {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
   }
 
-  async saveSettings() {
-    await this.saveData(this.settings);
+  async saveSettings(settings: PluginSettings) {
+    await this.saveData(settings);
+    this.settings = settings;
     this.loadHelpers();
     this.loadGlobalHelpers();
     this.loadViews();

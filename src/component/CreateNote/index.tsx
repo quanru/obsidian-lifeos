@@ -1,21 +1,7 @@
-import * as React from 'react';
-import { useEffect, useRef, useState } from 'react';
-import { useApp } from '../../hooks/useApp';
+import React, { useRef, useState } from 'react';
 import { Notice } from 'obsidian';
-import {
-  Form,
-  Button,
-  DatePicker,
-  Radio,
-  Tabs,
-  Input,
-  AutoComplete,
-  ConfigProvider,
-  theme,
-  Tooltip,
-} from 'antd';
+import { Form, Button, DatePicker, Radio, Tabs, Input, Tooltip } from 'antd';
 import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import reduceCSSCalc from 'reduce-css-calc';
 import dayjs from 'dayjs';
 import {
   PARA,
@@ -34,15 +20,13 @@ import {
   INDEX,
   ERROR_MESSAGE,
 } from '../../constant';
-import {
-  createFile,
-  createPeriodicFile,
-  isDarkTheme,
-  openOfficialSite,
-} from '../../util';
+import { createFile, createPeriodicFile, openOfficialSite } from '../../util';
 import type { PluginSettings } from '../../type';
 import './index.less';
 import { I18N_MAP } from '../../i18n';
+import { useApp } from '../../hooks/useApp';
+import { ConfigProvider } from '../ConfigProvider';
+import { AutoComplete } from '../AutoComplete';
 
 export const CreateNote = (props: { width: number }) => {
   const { app, settings, locale } = useApp() || {};
@@ -50,7 +34,6 @@ export const CreateNote = (props: { width: number }) => {
   const [periodicActiveTab, setPeriodicActiveTab] = useState(DAILY);
   const [paraActiveTab, setParaActiveTab] = useState(PROJECT);
   const defaultType = settings?.usePeriodicNotes ? PERIODIC : PARA;
-  const [isDark, setDark] = useState(isDarkTheme());
   const [type, setType] = useState(defaultType);
   const [form] = Form.useForm();
   const today = dayjs(new Date());
@@ -108,40 +91,18 @@ export const CreateNote = (props: { width: number }) => {
       file,
       tag,
     });
+    form.resetFields();
   };
 
-  useEffect(() => {
-    const handleBodyClassChange = () => {
-      setDark(isDarkTheme());
-    };
-
-    const observer = new MutationObserver(handleBodyClassChange);
-    observer.observe(document.body, {
-      attributes: true,
-      attributeFilter: ['class'],
-    });
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
-
-  // tags autocomplete
+  // all tags
   const tags = Object.entries(
     (app?.metadataCache as any).getTags() as Record<string, number>
   )
     .sort((a, b) => b[1] - a[1])
     .map(([tag, _]) => {
-      return { value: tag };
+      return { value: tag, label: tag };
     });
-  const [tagsOptions, setTagOptions] = useState<{ value: string }[]>(tags);
-  const handleTagsSearch = (value: string) => {
-    const filteredOptions = tags.filter((tag) =>
-      tag.value.toLowerCase().includes(value.toLowerCase())
-    );
 
-    setTagOptions(filteredOptions);
-  };
   const singleClickRef = useRef<number | null>(null);
   const handleTagInput = (item: string) => {
     const itemTag = form.getFieldValue(`${item}Tag`).replace(/^#/, '');
@@ -155,30 +116,13 @@ export const CreateNote = (props: { width: number }) => {
     );
     form.validateFields([`${item}Folder`, `${item}Index`]);
   };
-  const computedStyle = getComputedStyle(
-    document.querySelector('.app-container')!
-  );
-  const fontSize =
-    parseInt(computedStyle?.getPropertyValue('--nav-item-size')) || 13;
 
   return (
     <ConfigProvider
-      locale={locale}
-      theme={{
-        token: {
-          fontSize: fontSize,
-          colorPrimary: reduceCSSCalc(
-            getComputedStyle(document.body).getPropertyValue(
-              '--interactive-accent'
-            )
-          ),
+      components={{
+        DatePicker: {
+          cellWidth: width ? width / 7.5 : 45,
         },
-        components: {
-          DatePicker: {
-            cellWidth: width ? width / 7.5 : 45,
-          },
-        },
-        algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
       }}
     >
       <Tooltip title={localeMap.HELP}>
@@ -334,8 +278,7 @@ export const CreateNote = (props: { width: number }) => {
                           ]}
                         >
                           <AutoComplete
-                            options={tagsOptions}
-                            onSearch={handleTagsSearch}
+                            options={tags}
                             onSelect={() => handleTagInput(para)}
                           >
                             <Input

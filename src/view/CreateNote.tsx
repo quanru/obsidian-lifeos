@@ -1,5 +1,5 @@
 import { ItemView, WorkspaceLeaf, debounce } from 'obsidian';
-import * as React from 'react';
+import React from 'react';
 import { type Root, createRoot } from 'react-dom/client';
 import type { Locale } from 'antd/es/locale';
 import { CreateNote } from '../component/CreateNote';
