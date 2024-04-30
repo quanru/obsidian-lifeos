@@ -23,6 +23,8 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   useDailyRecord: false,
   usePeriodicNotes: true,
   usePARANotes: true,
+  usePARAAdvanced: false,
+  paraIndexFilename: 'readme',
 };
 
 export class SettingTabView extends PluginSettingTab {

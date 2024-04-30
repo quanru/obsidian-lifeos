@@ -107,13 +107,13 @@ export const CreateNote = (props: { width: number }) => {
   const handleTagInput = (item: string) => {
     const itemTag = form.getFieldValue(`${item}Tag`).replace(/^#/, '');
     const itemFolder = itemTag.replace(/\//g, '-');
-    const itemIndex = itemTag.split('/').reverse()[0];
+    const itemIndex =
+      settings?.paraIndexFilename === 'readme'
+        ? `${itemTag.split('/').reverse()[0]}.README`
+        : `${itemFolder}`;
 
     form.setFieldValue(`${item}Folder`, itemFolder);
-    form.setFieldValue(
-      `${item}Index`,
-      itemIndex ? itemIndex + '.README.md' : ''
-    );
+    form.setFieldValue(`${item}Index`, itemIndex ? `${itemIndex}.md` : '');
     form.validateFields([`${item}Folder`, `${item}Index`]);
   };
 

@@ -16,6 +16,8 @@ export interface PluginSettings {
   useDailyRecord: boolean;
   usePeriodicNotes: boolean;
   usePARANotes: boolean;
+  usePARAAdvanced: boolean;
+  paraIndexFilename: 'readme' | 'foldername';
 }
 
 export type DateType = {

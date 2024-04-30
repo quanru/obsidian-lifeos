@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Switch, Form, Input, Tabs, Typography, Divider } from 'antd';
+import { Switch, Form, Input, Tabs, Typography, Divider, Select } from 'antd';
 import { PluginSettings } from '../../type';
 import { ConfigProvider } from '../ConfigProvider';
 import { DEFAULT_SETTINGS } from '../../view/SettingTab';
@@ -206,6 +206,34 @@ export const SettingTab = (props: {
                           <Input />
                         </AutoComplete>
                       </Form.Item>
+                      <Form.Item
+                        help="Advanced Settings"
+                        name="usePARAAdvanced"
+                        label="Enable"
+                      >
+                        <Switch />
+                      </Form.Item>
+                      {formValues.usePARAAdvanced && (
+                        <>
+                          <Form.Item
+                            name="paraIndexFilename"
+                            label="Index Filename:"
+                          >
+                            <Select
+                              options={[
+                                {
+                                  label: 'FolderName.md',
+                                  value: 'folderName',
+                                },
+                                {
+                                  label: '*.README.md',
+                                  value: 'readme',
+                                },
+                              ]}
+                            />
+                          </Form.Item>
+                        </>
+                      )}
                     </>
                   )}
                 </>
