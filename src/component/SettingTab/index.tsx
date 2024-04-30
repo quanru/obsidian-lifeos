@@ -18,12 +18,15 @@ export const SettingTab = (props: {
   const [form] = Form.useForm();
 
   const folders =
-    app?.vault.getAllLoadedFiles().map((file) => {
-      return {
-        label: file.path,
-        value: file.path,
-      };
-    }) || [];
+    app?.vault
+      .getAllLoadedFiles()
+      .filter((file) => !(file as { extension?: string }).extension)
+      .map((file) => {
+        return {
+          label: file.path,
+          value: file.path,
+        };
+      }) || [];
 
   useEffect(() => {
     setFormValues(settings);
