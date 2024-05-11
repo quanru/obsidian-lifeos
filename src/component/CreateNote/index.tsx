@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Notice } from 'obsidian';
+import { Notice, TFile } from 'obsidian';
 import { Form, Button, DatePicker, Radio, Tabs, Input, Tooltip } from 'antd';
 import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
@@ -27,6 +27,11 @@ import { I18N_MAP } from '../../i18n';
 import { useApp } from '../../hooks/useApp';
 import { ConfigProvider } from '../ConfigProvider';
 import { AutoComplete } from '../AutoComplete';
+
+import weekOfYear from 'dayjs/plugin/isoWeek';
+import quarterOfYear from 'dayjs/plugin/quarterOfYear';
+dayjs.extend(weekOfYear);
+dayjs.extend(quarterOfYear);
 
 export const CreateNote = (props: { width: number }) => {
   const { app, settings, locale } = useApp() || {};
@@ -57,6 +62,95 @@ export const CreateNote = (props: { width: number }) => {
       ></Button>
     </Form.Item>
   );
+  const [existsDates, setExistsDates] = useState<(string | undefined)[]>(
+    app?.vault
+      .getAllLoadedFiles()
+      .filter(
+        (file) =>
+          settings?.periodicNotesPath &&
+          file.path.indexOf(settings?.periodicNotesPath) === 0 &&
+          (file as { extension?: string }).extension === 'md'
+      )
+      .map((file) => (file as { basename?: string }).basename) || []
+  );
+  app?.vault.on('create', (file) => {
+    if (file instanceof TFile) {
+      setExistsDates([file.basename, ...existsDates]);
+    }
+  });
+  app?.vault.on('delete', (file) => {
+    if (file instanceof TFile) {
+      setExistsDates(existsDates.filter((date) => date !== file.basename));
+    }
+  });
+  app?.vault.on('rename', (file, oldPath) => {
+    if (file instanceof TFile) {
+      setExistsDates(
+        [file.basename, ...existsDates].filter((date) => date !== oldPath)
+      );
+    }
+  });
+
+  const cellRender: (value: dayjs.Dayjs, picker: string) => JSX.Element = (
+    value,
+    picker
+  ) => {
+    let formattedDate: string;
+    let badgeText: string;
+    const locale = window.localStorage.getItem('language') || 'en';
+    const date = dayjs(value.format()).locale(locale);
+
+    switch (picker) {
+      case 'date':
+        formattedDate = date.format('YYYY-MM-DD');
+        badgeText = `${date.date()}`;
+        break;
+      case 'week':
+        formattedDate = date.format('YYYY-[W]WW');
+        badgeText = `${date.date()}`;
+        break;
+      case 'month':
+        formattedDate = date.format('YYYY-MM');
+        badgeText = `${date.format('MMM')}`;
+        break;
+      case 'quarter':
+        formattedDate = date.format('YYYY-[Q]Q');
+        badgeText = `Q${date.quarter()}`;
+        break;
+      case 'year':
+        formattedDate = date.format('YYYY');
+        badgeText = `${date.year()}`;
+        break;
+      default:
+        formattedDate = date.format('YYYY-MM-DD');
+        badgeText = `${date.date()}`;
+    }
+
+    if (existsDates.includes(formattedDate)) {
+      if (picker !== 'week') {
+        return (
+          <div className="ant-picker-cell-inner">
+            <div className="cell-container">
+              <span className="dot">.</span>
+              <span>{badgeText}</span>
+            </div>
+          </div>
+        );
+      }
+
+      if (date.day() === 1) {
+        return (
+          <div className="ant-picker-cell-inner">
+            <div className="cell-container">
+              <span className="week-dot">.</span>
+              <span>{badgeText}</span>
+            </div>
+          </div>
+        );
+      }
+    }
+    return <div className="ant-picker-cell-inner">{badgeText}</div>;
+  };
 
   const createPARAFile = async (values: any) => {
     if (!app || !settings) {
@@ -219,6 +313,9 @@ export const CreateNote = (props: { width: number }) => {
                   children: (
                     <Form.Item name={periodic}>
                       <DatePicker
+                        cellRender={(value: dayjs.Dayjs, info: any) => {
+                          return cellRender(value, picker);
+                        }}
                         onSelect={(day) => {
                           createPeriodicFile(
                             day,
