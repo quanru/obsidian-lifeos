@@ -25,6 +25,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   usePARANotes: true,
   usePARAAdvanced: false,
   paraIndexFilename: 'readme',
+  weekStart: -1,
 };
 
 export class SettingTabView extends PluginSettingTab {
@@ -54,6 +55,10 @@ export class SettingTabView extends PluginSettingTab {
     const saveSettings = (newSettings: PluginSettings) => {
       this.settings = { ...this.settings, ...newSettings };
       this.plugin.saveSettings(this.settings);
+      const event = new CustomEvent('settingUpdate', {
+        detail: this.settings,
+      });
+      document.dispatchEvent(event);
     };
 
     this.root.render(

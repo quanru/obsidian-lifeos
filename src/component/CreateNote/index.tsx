@@ -30,11 +30,18 @@ import { AutoComplete } from '../AutoComplete';
 
 import weekOfYear from 'dayjs/plugin/isoWeek';
 import quarterOfYear from 'dayjs/plugin/quarterOfYear';
+import updateLocale from 'dayjs/plugin/updateLocale';
+import { useDocumentEvent } from '../../hooks/useDocumentEvent';
+
 dayjs.extend(weekOfYear);
 dayjs.extend(quarterOfYear);
+dayjs.extend(updateLocale);
 
 export const CreateNote = (props: { width: number }) => {
-  const { app, settings, locale } = useApp() || {};
+  const { app, settings: initialSettings, locale } = useApp() || {};
+  const [settings, setSettings] = useState<PluginSettings | undefined>(
+    initialSettings
+  );
   const { width } = props;
   const [periodicActiveTab, setPeriodicActiveTab] = useState(DAILY);
   const [paraActiveTab, setParaActiveTab] = useState(PROJECT);
@@ -73,6 +80,11 @@ export const CreateNote = (props: { width: number }) => {
       )
       .map((file) => (file as { basename?: string }).basename) || []
   );
+
+  useDocumentEvent('settingUpdate', (event) => {
+    setSettings(event.detail);
+  });
+
   app?.vault.on('create', (file) => {
     if (file instanceof TFile) {
       setExistsDates([file.basename, ...existsDates]);
@@ -89,6 +101,16 @@ export const CreateNote = (props: { width: number }) => {
         [file.basename, ...existsDates].filter((date) => date !== oldPath)
       );
     }
+  });
+
+  // TODO: 监听设置变动
+  dayjs.updateLocale(localeKey, {
+    weekStart:
+      settings?.weekStart === -1
+        ? locale?.locale === 'zh-cn'
+          ? 1
+          : 0
+        : settings?.weekStart,
   });
 
   const cellRender: (value: dayjs.Dayjs, picker: string) => JSX.Element = (

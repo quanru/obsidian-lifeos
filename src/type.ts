@@ -18,6 +18,7 @@ export interface PluginSettings {
   usePARANotes: boolean;
   usePARAAdvanced: boolean;
   paraIndexFilename: 'readme' | 'foldername';
+  weekStart: number;
 }
 
 export type DateType = {

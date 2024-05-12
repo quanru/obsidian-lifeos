@@ -12,11 +12,10 @@ export const SettingTab = (props: {
   settings: PluginSettings;
   saveSettings: (settings: PluginSettings) => void;
 }) => {
-  const { app } = useApp() || {};
+  const { app, locale } = useApp() || {};
   const { settings, saveSettings } = props;
   const [formValues, setFormValues] = useState(settings);
   const [form] = Form.useForm();
-
   const folders =
     app?.vault
       .getAllLoadedFiles()
@@ -169,6 +168,31 @@ export const SettingTab = (props: {
                           </Form.Item>
                         </>
                       )}
+                      <Form.Item
+                        help="The start day of the week"
+                        name="weekStart"
+                        label="Week Start:"
+                      >
+                        <Select
+                          options={[
+                            {
+                              value: -1,
+                              label:
+                                'Auto' +
+                                (locale?.locale === 'zh-cn'
+                                  ? '(Monday)'
+                                  : '(Sunday)'),
+                            },
+                            { value: 1, label: 'Monday' },
+                            { value: 2, label: 'Tuesday' },
+                            { value: 3, label: 'Wednesday' },
+                            { value: 4, label: 'Thursday' },
+                            { value: 5, label: 'Friday' },
+                            { value: 6, label: 'Saturday' },
+                            { value: 0, label: 'Sunday' },
+                          ]}
+                        />
+                      </Form.Item>
                     </>
                   )}
                 </>
