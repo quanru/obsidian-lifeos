@@ -83,6 +83,7 @@ export const CreateNote = (props: { width: number }) => {
 
   useDocumentEvent('settingUpdate', (event) => {
     setSettings(event.detail);
+    setType(event.detail.usePeriodicNotes ? PERIODIC : PARA);
   });
 
   app?.vault.on('create', (file) => {
@@ -103,7 +104,6 @@ export const CreateNote = (props: { width: number }) => {
     }
   });
 
-  // TODO: 监听设置变动
   dayjs.updateLocale(localeKey, {
     weekStart:
       settings?.weekStart === -1
@@ -198,7 +198,7 @@ export const CreateNote = (props: { width: number }) => {
 
     folder = `${path}/${key}`;
     file = `${folder}/${INDEX}`;
-    templateFile = `${path}/Template.md`;
+    templateFile = `${path}/Template.md`; // TODO: 传入设置值
 
     await createFile(app, {
       locale: localeKey,

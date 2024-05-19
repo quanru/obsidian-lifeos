@@ -166,6 +166,13 @@ export const SettingTab = (props: {
                           >
                             <Input />
                           </Form.Item>
+                          <Form.Item
+                            help="Warning While Daily Note Not Exist"
+                            name="dailyRecordWarning"
+                            label="Warning:"
+                          >
+                            <Switch />
+                          </Form.Item>
                         </>
                       )}
                       <Form.Item

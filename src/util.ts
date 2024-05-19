@@ -215,7 +215,7 @@ export async function createPeriodicFile(
   }
 
   file = `${folder}/${value}.md`;
-  templateFile = `${periodicNotesPath}/Templates/${periodType}.md`;
+  templateFile = `${periodicNotesPath}/Templates/${periodType}.md`; // TODO: 传入设置值
 
   await createFile(app, {
     locale,

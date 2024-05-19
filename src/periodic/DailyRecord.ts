@@ -133,7 +133,9 @@ export class DailyRecord {
               return;
             }
 
-            const resourceURL = `${origin}/o/r/${resource.uid || resource.name || resource.id}`;
+            const resourceURL = `${origin}/o/r/${
+              resource.uid || resource.name || resource.id
+            }`;
             const { data } = await this.axios.get(resourceURL, {
               responseType: 'arraybuffer',
             });
@@ -213,7 +215,7 @@ export class DailyRecord {
           this.settings.periodicNotesPath
         );
 
-        if (!targetFile) {
+        if (!targetFile && this.settings.dailyRecordWarning) {
           logMessage(
             `${
               I18N_MAP[this.locale][`${ERROR_MESSAGE}NO_DAILY_FILE_EXIST`]

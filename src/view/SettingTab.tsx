@@ -20,6 +20,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   dailyRecordHeader: 'Daily Record',
   dailyRecordAPI: '',
   dailyRecordToken: '',
+  dailyRecordWarning: true,
   useDailyRecord: false,
   usePeriodicNotes: true,
   usePARANotes: true,
