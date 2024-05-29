@@ -27,6 +27,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   usePARAAdvanced: false,
   paraIndexFilename: 'readme',
   weekStart: -1,
+  chineseCalendar: true
 };
 
 export class SettingTabView extends PluginSettingTab {
