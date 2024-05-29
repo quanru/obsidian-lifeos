@@ -155,8 +155,6 @@ export const CreateNote = (props: { width: number }) => {
           let lunarFestivalName = lunar.getFestival()?.toString();
           lunarFestivalName = lunarFestivalName?.split(' ')[1];
           chineseCalendarText = lunarFestivalName ? lunarFestivalName.substring(lunarFestivalName.length - 3) : chineseCalendarText;
-          console.log(`lunarFestivalName: ${lunarFestivalName}`)
-          console.log(`lunarDayText: ${chineseCalendarText}`)
           // 公历现代节日
           let solarFestivalName = solar.getFestival()?.toString();
           solarFestivalName = solarFestivalName?.split(' ')[1];
