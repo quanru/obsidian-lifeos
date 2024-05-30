@@ -202,7 +202,7 @@ export const SettingTab = (props: {
                       </Form.Item>
                       <Form.Item
                         help="Enable Chinese Calendar"
-                        name="chineseCalendar"
+                        name="useChineseCalendar"
                         label="Chinese Calendar:"
                       >
                         <Switch />

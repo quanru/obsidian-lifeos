@@ -20,7 +20,7 @@ export interface PluginSettings {
   usePARAAdvanced: boolean;
   paraIndexFilename: 'readme' | 'foldername';
   weekStart: number;
-  chineseCalendar: true;
+  useChineseCalendar: boolean;
 }
 
 export type DateType = {
