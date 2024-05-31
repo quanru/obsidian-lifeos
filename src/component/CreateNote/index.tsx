@@ -215,18 +215,10 @@ export const CreateNote = (props: { width: number }) => {
       </>
     );
 
-    const cellSize = picker == 'date' ? '100%' : 'auto';
-
     if (existsDates.includes(formattedDate)) {
       if (picker !== 'week') {
         return (
-          <div
-            className="ant-picker-cell-inner"
-            style={{
-              height: cellSize,
-              width: cellSize,
-            }}
-          >
+          <div className="ant-picker-cell-inner">
             <div className="cell-container">
               <span className="dot">•</span>
               {cell}
@@ -247,13 +239,7 @@ export const CreateNote = (props: { width: number }) => {
       }
     }
     return (
-      <div
-        className="ant-picker-cell-inner"
-        style={{
-          height: cellSize,
-          width: cellSize,
-        }}
-      >
+      <div className="ant-picker-cell-inner">
         <div className="cell-container">{cell}</div>
       </div>
     );

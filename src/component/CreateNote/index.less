@@ -10,47 +10,57 @@
     box-shadow: unset;
   }
 
-  .cell-container {
-    position: relative;
-    border-radius: 10px;
+  .ant-picker-cell-inner {
+    display: flex !important;
+    width: 100% !important;
+    height: 100% !important;
+    align-items: center;
+    justify-content: center;
 
-    .chinese-cal {
-      display: block;
-      line-height: initial;
-    }
-
-    .dot {
+    .cell-container {
       position: relative;
-      height: 2px;
-      color: var(--interactive-accent);
-      display: block;
-      margin: auto;
-      top: -15px;
-    }
-
-    .week-dot {
-      position: fixed;
-      height: 2px;
-      left: 20px;
-      color: var(--interactive-accent);
-    }
-
-    .label {
-      position: absolute;
-      top: -10px;
-      right: 0;
-      color: #fff;
-      width: 15px;
-      line-height: 15px;
       border-radius: 10px;
-      font-size: 10px;
 
-      &.workday {
-        background-color: #4e5877;
+      .chinese-cal {
+        display: block;
+        line-height: initial;
+        font-size: 11px;
+        color: rgba(0, 0, 0, 0.25);
       }
 
-      &.holiday {
-        background-color: #eb3333;
+      .dot {
+        position: relative;
+        height: 2px;
+        color: var(--interactive-accent);
+        display: block;
+        margin: auto;
+        top: -15px;
+      }
+
+      .week-dot {
+        position: fixed;
+        height: 2px;
+        left: 20px;
+        color: var(--interactive-accent);
+      }
+
+      .label {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        color: #fff;
+        width: 13px;
+        line-height: 13px;
+        border-radius: 8px;
+        font-size: 8px;
+
+        &.workday {
+          background-color: rgba(0, 0, 0, 0.25);
+        }
+
+        &.holiday {
+          background-color: var(--interactive-accent);
+        }
       }
     }
   }
