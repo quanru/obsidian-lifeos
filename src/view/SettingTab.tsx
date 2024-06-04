@@ -1,7 +1,7 @@
 import React from 'react';
 import { PluginSettingTab } from 'obsidian';
 import type { App } from 'obsidian';
-import type PeriodicPARA from '../main';
+import type LifeOS from '../main';
 import type { PluginSettings } from '../type';
 import { type Root, createRoot } from 'react-dom/client';
 import { AppContext } from '../context';
@@ -27,10 +27,11 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   usePARAAdvanced: false,
   paraIndexFilename: 'readme',
   weekStart: -1,
+  useChineseCalendar: false
 };
 
 export class SettingTabView extends PluginSettingTab {
-  plugin: PeriodicPARA;
+  plugin: LifeOS;
   root: Root;
   settings: PluginSettings;
   locale: Locale;
@@ -38,7 +39,7 @@ export class SettingTabView extends PluginSettingTab {
   constructor(
     app: App,
     settings: PluginSettings,
-    plugin: PeriodicPARA,
+    plugin: LifeOS,
     locale: Locale
   ) {
     super(app, plugin);

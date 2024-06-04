@@ -200,6 +200,13 @@ export const SettingTab = (props: {
                           ]}
                         />
                       </Form.Item>
+                      <Form.Item
+                        help="Enable Chinese Calendar"
+                        name="useChineseCalendar"
+                        label="Chinese Calendar:"
+                      >
+                        <Switch />
+                      </Form.Item>
                     </>
                   )}
                 </>

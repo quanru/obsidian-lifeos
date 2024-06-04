@@ -1,5 +1,5 @@
-export const ERROR_MESSAGE = 'ERROR_MESSAGE';
-export const MESSAGE = 'MESSAGE';
+export const ERROR_MESSAGE = 'ERROR_MESSAGE_';
+export const MESSAGE = 'MESSAGE_';
 
 export const PARA = 'PARA Notes';
 export const PROJECT = 'Project';

@@ -32,6 +32,7 @@ import weekOfYear from 'dayjs/plugin/isoWeek';
 import quarterOfYear from 'dayjs/plugin/quarterOfYear';
 import updateLocale from 'dayjs/plugin/updateLocale';
 import { useDocumentEvent } from '../../hooks/useDocumentEvent';
+import { SolarDay } from 'tyme4ts';
 
 dayjs.extend(weekOfYear);
 dayjs.extend(quarterOfYear);
@@ -121,9 +122,54 @@ export const CreateNote = (props: { width: number }) => {
     let badgeText: string;
     const locale = window.localStorage.getItem('language') || 'en';
     const date = dayjs(value.format()).locale(locale);
+    let chineseCalendarText = '';
+    let dayWorkStatus = '';
 
     switch (picker) {
       case 'date':
+        if (settings?.useChineseCalendar) {
+          const solar = SolarDay.fromYmd(
+            date.year(),
+            date.month() + 1,
+            date.date()
+          );
+          const lunar = solar.getLunarDay();
+          const [, lunarMonthDay] = lunar.toString().split('年');
+
+          chineseCalendarText = lunarMonthDay.includes('月初一')
+            ? lunarMonthDay.slice(0, 2)
+            : lunarMonthDay.slice(2, 4);
+
+          const holiday = solar.getLegalHoliday();
+          dayWorkStatus =
+            typeof holiday?.isWork !== 'function'
+              ? ''
+              : holiday?.isWork()
+              ? '班'
+              : '休';
+          const term = solar.getTerm();
+          if (
+            term.getJulianDay().getSolarDay().toString() === solar.toString()
+          ) {
+            chineseCalendarText = term.getName();
+          }
+
+          const lunarFestivalName = lunar
+            .getFestival()
+            ?.toString()
+            .split(' ')[1];
+          chineseCalendarText = lunarFestivalName
+            ? lunarFestivalName.slice(-3)
+            : chineseCalendarText;
+
+          const solarFestivalName = solar
+            .getFestival()
+            ?.toString()
+            .split(' ')[1];
+          chineseCalendarText = solarFestivalName
+            ? solarFestivalName.slice(-3)
+            : chineseCalendarText;
+        }
         formattedDate = date.format('YYYY-MM-DD');
         badgeText = `${date.date()}`;
         break;
@@ -148,13 +194,34 @@ export const CreateNote = (props: { width: number }) => {
         badgeText = `${date.date()}`;
     }
 
+    const cell = (
+      <>
+        <span style={{ lineHeight: 'initial', display: 'block' }}>
+          {badgeText}
+        </span>
+        {settings?.useChineseCalendar && (
+          <>
+            <span className="chinese-cal">{chineseCalendarText}</span>
+            <p
+              className={`label
+                          ${dayWorkStatus === '休' ? 'holiday' : ''}
+                          ${dayWorkStatus === '班' ? 'workday' : ''}
+                        `}
+            >
+              {dayWorkStatus}
+            </p>
+          </>
+        )}
+      </>
+    );
+
     if (existsDates.includes(formattedDate)) {
       if (picker !== 'week') {
         return (
           <div className="ant-picker-cell-inner">
             <div className="cell-container">
-              <span className="dot">.</span>
-              <span>{badgeText}</span>
+              <span className="dot">•</span>
+              {cell}
             </div>
           </div>
         );
@@ -164,14 +231,18 @@ export const CreateNote = (props: { width: number }) => {
         return (
           <div className="ant-picker-cell-inner">
             <div className="cell-container">
-              <span className="week-dot">.</span>
-              <span>{badgeText}</span>
+              <span className="week-dot">•</span>
+              <span style={{ lineHeight: 'initial' }}>{badgeText}</span>
             </div>
           </div>
         );
       }
     }
-    return <div className="ant-picker-cell-inner">{badgeText}</div>;
+    return (
+      <div className="ant-picker-cell-inner">
+        <div className="cell-container">{cell}</div>
+      </div>
+    );
   };
 
   const createPARAFile = async (values: any) => {

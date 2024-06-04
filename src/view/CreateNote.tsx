@@ -35,8 +35,8 @@ export class CreateNoteView extends ItemView {
       return;
     }
 
-    this.onClose();
-    this.onOpen();
+    await this.onClose();
+    await this.onOpen();
   }, 500);
 
   async onOpen() {

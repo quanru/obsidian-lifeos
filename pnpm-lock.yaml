@@ -26,6 +26,9 @@ dependencies:
   reduce-css-calc:
     specifier: ^2.1.8
     version: 2.1.8
+  tyme4ts:
+    specifier: ^1.0.5
+    version: 1.0.5
 
 devDependencies:
   '@types/node':
@@ -152,11 +155,23 @@ packages:
     resolution: {integrity: sha512-69QXtcrsc3RYtOtd+GsvczJ319udtBf1PTrr2KbLWM/e2CXUPnh0Nz9AUo8WfhSQ7GeL8dPVNUmhQVgpmuaNGA==}
     dev: true
 
+  /@codemirror/state@6.4.1:
+    resolution: {integrity: sha512-QkEyUiLhsJoZkbumGZlswmAhA7CBU02Wrz7zvH4SrcifbsqwlXShVXg65f3v/ts57W3dqyamEriMhij1Z3Zz4A==}
+    dev: true
+
   /@codemirror/view@6.11.0:
     resolution: {integrity: sha512-PRpPRkqMkAKKxEuiUBxapE0YR+wqs9At92ujbJo93PwTZ0jEJDzx9wahrDcXEhQ43Pe0RK9DdZMLWrt+QN80DA==}
     dependencies:
       '@codemirror/state': 6.2.0
       style-mod: 4.0.3
+      w3c-keyname: 2.2.6
+    dev: true
+
+  /@codemirror/view@6.26.0:
+    resolution: {integrity: sha512-nSSmzONpqsNzshPOxiKhK203R6BvABepugAe34QfQDbNDslyjkqBuKgrK5ZBvqNXpfxz5iLrlGTmEfhbQyH46A==}
+    dependencies:
+      '@codemirror/state': 6.4.1
+      style-mod: 4.1.2
       w3c-keyname: 2.2.6
     dev: true
 
@@ -1319,6 +1334,7 @@ packages:
 
   /glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
+    deprecated: Glob versions prior to v9 are no longer supported
     dependencies:
       fs.realpath: 1.0.0
       inflight: 1.0.6
@@ -1403,6 +1419,7 @@ packages:
 
   /inflight@1.0.6:
     resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
+    deprecated: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
     dependencies:
       once: 1.4.0
       wrappy: 1.0.2
@@ -1637,7 +1654,7 @@ packages:
     resolution: {integrity: sha512-REKQtAuIOKDbvNH/th1C1gWmJWCP5tRn9T/mfZGZt4Zncgko7McXK0aSKFtEInipvgbZJ2nScivvyLdiWluSMw==}
     hasBin: true
     dependencies:
-      obsidian: github.com/obsidianmd/obsidian-api/bbb696aeb8bf5126bf2ecbf84fc8284fe133bc20(@codemirror/state@6.2.0)(@codemirror/view@6.11.0)
+      obsidian: github.com/obsidianmd/obsidian-api/8b2eda0f24285636c8aa116972643e5233a23dc1(@codemirror/state@6.2.0)(@codemirror/view@6.11.0)
       tslib: 2.1.0
     transitivePeerDependencies:
       - '@codemirror/state'
@@ -1647,7 +1664,7 @@ packages:
   /obsidian-dataview@0.5.56:
     resolution: {integrity: sha512-QyXpJLDJVpLmPCiF8ht4XqeuhWaccAs/pSpP+oDmwou4uJvEO4rXosj7joYQXv1QMsxf5UHy2OO56BZoyzVGBg==}
     dependencies:
-      '@codemirror/language': github.com/lishid/cm-language/cc6a2cc30288db6be3f879ddf0e3ef64f14ed6ab
+      '@codemirror/language': github.com/lishid/cm-language/2644bfc27afda707a7e1f3aedaf3ca7120f63cd9
       '@codemirror/state': 6.2.0
       '@codemirror/view': 6.11.0
       emoji-regex: 10.2.1
@@ -2378,6 +2395,7 @@ packages:
 
   /rimraf@3.0.2:
     resolution: {integrity: sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==}
+    deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
     dependencies:
       glob: 7.2.3
@@ -2472,6 +2490,10 @@ packages:
     resolution: {integrity: sha512-78Jv8kYJdjbvRwwijtCevYADfsI0lGzYJe4mMFdceO8l75DFFDoqBhR1jVDicDRRaX4//g1u9wKeo+ztc2h1Rw==}
     dev: true
 
+  /style-mod@4.1.2:
+    resolution: {integrity: sha512-wnD1HyVqpJUI2+eKZ+eo1UwghftP6yuFheBqqe+bWCotBjC2K1YnteJILRMs3SM4V/0dLEW1SC27MWP5y+mwmw==}
+    dev: true
+
   /stylis@4.3.0:
     resolution: {integrity: sha512-E87pIogpwUsUwXw7dNyU4QDjdgVMy52m+XEOPEKUn161cCzWjjhPSQhByfd1CcNvrOLnXQ6OnnZDwnJrz/Z4YQ==}
     dev: false
@@ -2530,6 +2552,10 @@ packages:
       typescript: 4.7.4
     dev: true
 
+  /tyme4ts@1.0.5:
+    resolution: {integrity: sha512-SPgtgj7lxbvF69GQihh2KFu4gUKE8OYwi35Mv/iMCzkfKUaz4OaWdlUjnok81u34/QuxnTUhEkFeAWMUANimLA==}
+    dev: false
+
   /type-check@0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
     engines: {node: '>= 0.8.0'}
@@ -2579,26 +2605,26 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  github.com/lishid/cm-language/cc6a2cc30288db6be3f879ddf0e3ef64f14ed6ab:
-    resolution: {tarball: https://codeload.github.com/lishid/cm-language/tar.gz/cc6a2cc30288db6be3f879ddf0e3ef64f14ed6ab}
+  github.com/lishid/cm-language/2644bfc27afda707a7e1f3aedaf3ca7120f63cd9:
+    resolution: {tarball: https://codeload.github.com/lishid/cm-language/tar.gz/2644bfc27afda707a7e1f3aedaf3ca7120f63cd9}
     name: '@codemirror/language'
-    version: 6.9.2
+    version: 6.10.1
     prepare: true
     requiresBuild: true
     dependencies:
       '@codemirror/state': 6.2.0
-      '@codemirror/view': 6.11.0
+      '@codemirror/view': 6.26.0
       '@lezer/common': 1.1.1
       '@lezer/highlight': 1.1.4
       '@lezer/lr': 1.3.4
       style-mod: 4.0.3
     dev: true
 
-  github.com/obsidianmd/obsidian-api/bbb696aeb8bf5126bf2ecbf84fc8284fe133bc20(@codemirror/state@6.2.0)(@codemirror/view@6.11.0):
-    resolution: {tarball: https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/bbb696aeb8bf5126bf2ecbf84fc8284fe133bc20}
-    id: github.com/obsidianmd/obsidian-api/bbb696aeb8bf5126bf2ecbf84fc8284fe133bc20
+  github.com/obsidianmd/obsidian-api/8b2eda0f24285636c8aa116972643e5233a23dc1(@codemirror/state@6.2.0)(@codemirror/view@6.11.0):
+    resolution: {tarball: https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/8b2eda0f24285636c8aa116972643e5233a23dc1}
+    id: github.com/obsidianmd/obsidian-api/8b2eda0f24285636c8aa116972643e5233a23dc1
     name: obsidian
-    version: 1.5.1
+    version: 1.5.7
     peerDependencies:
       '@codemirror/state': ^6.0.0
       '@codemirror/view': ^6.0.0
@@ -2628,4 +2654,5 @@ time:
   /react@18.2.0: '2022-06-14T19:46:38.369Z'
   /reduce-css-calc@2.1.8: '2021-01-08T10:02:16.137Z'
   /tslib@2.4.0: '2022-04-22T00:25:01.196Z'
+  /tyme4ts@1.0.5: '2024-03-28T08:31:06.052Z'
   /typescript@4.7.4: '2022-06-17T18:21:36.833Z'
