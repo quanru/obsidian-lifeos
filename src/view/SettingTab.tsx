@@ -10,6 +10,7 @@ import { Locale } from 'antd/es/locale';
 
 export const DEFAULT_SETTINGS: PluginSettings = {
   periodicNotesPath: 'PeriodicNotes',
+  usePeriodicAdvanced: false,
   projectsPath: '1. Projects',
   areasPath: '2. Areas',
   resourcesPath: '3. Resources',
@@ -27,7 +28,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   usePARAAdvanced: false,
   paraIndexFilename: 'readme',
   weekStart: -1,
-  useChineseCalendar: false
+  useChineseCalendar: false,
 };
 
 export class SettingTabView extends PluginSettingTab {

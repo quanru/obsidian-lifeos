@@ -21,7 +21,7 @@ import {
   ERROR_MESSAGE,
 } from '../../constant';
 import { createFile, createPeriodicFile, openOfficialSite } from '../../util';
-import type { PluginSettings } from '../../type';
+import type { PeriodicNotesTemplateFilePath, PluginSettings } from '../../type';
 import './index.less';
 import { I18N_MAP } from '../../i18n';
 import { useApp } from '../../hooks/useApp';
@@ -269,7 +269,11 @@ export const CreateNote = (props: { width: number }) => {
 
     folder = `${path}/${key}`;
     file = `${folder}/${INDEX}`;
-    templateFile = settings.usePARAAdvanced ? settings[`${paraActiveTab.toLocaleLowerCase()}sTemplateFilePath`] || `${path}/Template.md` :`${path}/Template.md`;
+    templateFile = settings.usePARAAdvanced
+      ? settings[
+          `${paraActiveTab.toLocaleLowerCase()}sTemplateFilePath` as PeriodicNotesTemplateFilePath
+        ] || `${path}/Template.md`
+      : `${path}/Template.md`;
 
     await createFile(app, {
       locale: localeKey,
@@ -359,12 +363,7 @@ export const CreateNote = (props: { width: number }) => {
             onTabClick={(key) => {
               if (singleClickRef.current) {
                 clearTimeout(singleClickRef.current);
-                createPeriodicFile(
-                  dayjs(new Date()),
-                  key,
-                  settings,
-                  app
-                );
+                createPeriodicFile(dayjs(new Date()), key, settings, app);
                 singleClickRef.current = null;
               } else {
                 singleClickRef.current = window.setTimeout(() => {
@@ -414,7 +413,7 @@ export const CreateNote = (props: { width: number }) => {
                             day,
                             periodicActiveTab,
                             settings,
-                            app,
+                            app
                           );
                         }}
                         picker={picker}

@@ -13,7 +13,7 @@ import {
   WEEKLY,
   MONTHLY,
   QUARTERLY,
-  YEARLY
+  YEARLY,
 } from '../../constant';
 import './index.less';
 import { AutoComplete } from '../AutoComplete';
@@ -23,14 +23,9 @@ export const SettingTab = (props: {
   saveSettings: (settings: PluginSettings) => void;
 }) => {
   const { app, locale } = useApp() || {};
-  const { settings, saveSettings } = props;
-  const [formValues, setFormValues] = useState(settings);
+  const { settings: initialSettings, saveSettings } = props;
+  const [settings, setSetting] = useState(initialSettings);
   const [form] = Form.useForm();
-  const [periodicNotesFolderPath, setPeriodicNotesFolderPath] = useState(settings.periodicNotesPath || '');
-  const [ProjectPath, setProjectPath] = useState(settings.projectsPath || '');
-  const [AreaPath, setAreaPath] = useState(settings.areasPath || '');
-  const [ResourcePath, setResourcePath] = useState(settings.resourcesPath || '');
-  const [ArchivePath, setArchivePath] = useState(settings.archivesPath || '');
   const folders =
     app?.vault
       .getAllLoadedFiles()
@@ -44,16 +39,17 @@ export const SettingTab = (props: {
   const files =
     app?.vault
       .getAllLoadedFiles()
-      .filter((file) => ((file as { extension?: string }).extension === 'md'))
+      .filter((file) => (file as { extension?: string }).extension === 'md')
       .map((file) => {
         return {
           label: file.path,
           value: file.path,
         };
       }) || [];
+
   useEffect(() => {
-    setFormValues(settings);
-  }, [settings]);
+    setSetting(initialSettings);
+  }, [initialSettings]);
 
   return (
     <ConfigProvider>
@@ -64,25 +60,8 @@ export const SettingTab = (props: {
         style={{ maxWidth: 600 }}
         initialValues={settings}
         onValuesChange={(changedValues) => {
-          setFormValues({ ...formValues, ...changedValues });
+          setSetting({ ...settings, ...changedValues });
           saveSettings(changedValues);
-          if (changedValues.periodicNotesPath) {
-            setPeriodicNotesFolderPath(changedValues.periodicNotesPath || '')
-          }
-          if (changedValues.projectsPath) {
-            setProjectPath(changedValues.projectsPath || '')
-          }
-          if (changedValues.areasPath) {
-            setAreaPath(changedValues.areasPath || '')
-          }
-          if (changedValues.resourcesPath) {
-            setResourcePath(changedValues.resourcesPath || '')
-          }
-          if (changedValues.archivesPath) {
-            setArchivePath(changedValues.archivesPath || '')
-          }
-          
-          
         }}
       >
         <Tabs
@@ -94,15 +73,11 @@ export const SettingTab = (props: {
               label: 'Periodic Notes',
               children: (
                 <>
-                  <Form.Item
-                    help="Turn on Periodic Notes"
-                    name="usePeriodicNotes"
-                    label="Enable"
-                  >
+                  <Form.Item name="usePeriodicNotes" label="Turn on">
                     <Switch />
                   </Form.Item>
 
-                  {formValues.usePeriodicNotes && (
+                  {settings.usePeriodicNotes && (
                     <>
                       <Form.Item
                         name="periodicNotesPath"
@@ -115,16 +90,16 @@ export const SettingTab = (props: {
                         </AutoComplete>
                       </Form.Item>
                       <Form.Item
-                        help="Where the Habit module is in a daily note"
+                        help="Where the habit module is in a daily note"
                         name="habitHeader"
                         label="Habit Header:"
                       >
                         <Input placeholder={DEFAULT_SETTINGS.habitHeader} />
                       </Form.Item>
-                      {formValues.usePARANotes && (
+                      {settings.usePARANotes && (
                         <>
                           <Form.Item
-                            help="Where the Project List is in a daily note"
+                            help="Where the project list is in a daily note"
                             name="projectListHeader"
                             label="Project List Header:"
                           >
@@ -133,7 +108,7 @@ export const SettingTab = (props: {
                             />
                           </Form.Item>
                           <Form.Item
-                            help="Where the Area List is in a quarterly note"
+                            help="Where the area list is in a quarterly note"
                             name="areaListHeader"
                             label="Area List Header:"
                           >
@@ -144,27 +119,62 @@ export const SettingTab = (props: {
                         </>
                       )}
                       <Form.Item
-                        help="Advanced Template Settings"
-                        name="periodicTemplateAdvanced"
-                        label="Enable"
+                        help="The start day of the week"
+                        name="weekStart"
+                        label="Week Start:"
+                      >
+                        <Select
+                          options={[
+                            {
+                              value: -1,
+                              label:
+                                'Auto' +
+                                (locale?.locale === 'zh-cn'
+                                  ? '(Monday)'
+                                  : '(Sunday)'),
+                            },
+                            { value: 1, label: 'Monday' },
+                            { value: 2, label: 'Tuesday' },
+                            { value: 3, label: 'Wednesday' },
+                            { value: 4, label: 'Thursday' },
+                            { value: 5, label: 'Friday' },
+                            { value: 6, label: 'Saturday' },
+                            { value: 0, label: 'Sunday' },
+                          ]}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        help="Show chinese calendar and holidays"
+                        name="useChineseCalendar"
+                        label="Chinese Calendar:"
                       >
                         <Switch />
                       </Form.Item>
-                      {formValues.periodicTemplateAdvanced && (
+                      <Form.Item
+                        help="Custom template file Path"
+                        name="usePeriodicAdvanced"
+                        label="Advanced Settings"
+                      >
+                        <Switch />
+                      </Form.Item>
+                      {settings.usePeriodicAdvanced && (
                         <>
-                          {[DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY].map(item =>{
-                            return (
-                              <Form.Item
-                                name={`periodicNotesTemplateFilePath${item}`}
-                                label={`TemplateFile(${item})`}
-                              >
-                                <AutoComplete options={files}>
-                                  <Input
-                                    placeholder={`${periodicNotesFolderPath}/Templates/${item}.md`}
-                                  />
-                                </AutoComplete>
-                              </Form.Item>
-                            )})}
+                          {[DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY].map(
+                            (item) => {
+                              return (
+                                <Form.Item
+                                  name={`periodicNotesTemplateFilePath${item}`}
+                                  label={`${item} Template`}
+                                >
+                                  <AutoComplete options={files}>
+                                    <Input
+                                      placeholder={`${settings.periodicNotesPath}/Templates/${item}.md`}
+                                    />
+                                  </AutoComplete>
+                                </Form.Item>
+                              );
+                            }
+                          )}
                         </>
                       )}
                       <Divider />
@@ -184,10 +194,10 @@ export const SettingTab = (props: {
                       >
                         <Switch />
                       </Form.Item>
-                      {formValues.useDailyRecord && (
+                      {settings.useDailyRecord && (
                         <>
                           <Form.Item
-                            help="Where the Daily Record module is in a daily note"
+                            help="Where the daily record module is in a daily note"
                             name="dailyRecordHeader"
                             label="Header:"
                           >
@@ -231,7 +241,7 @@ export const SettingTab = (props: {
                             <Input />
                           </Form.Item>
                           <Form.Item
-                            help="Warning While Daily Note Not Exist"
+                            help="Warning while daily note not exist"
                             name="dailyRecordWarning"
                             label="Warning:"
                           >
@@ -239,38 +249,6 @@ export const SettingTab = (props: {
                           </Form.Item>
                         </>
                       )}
-                      <Form.Item
-                        help="The start day of the week"
-                        name="weekStart"
-                        label="Week Start:"
-                      >
-                        <Select
-                          options={[
-                            {
-                              value: -1,
-                              label:
-                                'Auto' +
-                                (locale?.locale === 'zh-cn'
-                                  ? '(Monday)'
-                                  : '(Sunday)'),
-                            },
-                            { value: 1, label: 'Monday' },
-                            { value: 2, label: 'Tuesday' },
-                            { value: 3, label: 'Wednesday' },
-                            { value: 4, label: 'Thursday' },
-                            { value: 5, label: 'Friday' },
-                            { value: 6, label: 'Saturday' },
-                            { value: 0, label: 'Sunday' },
-                          ]}
-                        />
-                      </Form.Item>
-                      <Form.Item
-                        help="Enable Chinese Calendar"
-                        name="useChineseCalendar"
-                        label="Chinese Calendar:"
-                      >
-                        <Switch />
-                      </Form.Item>
                     </>
                   )}
                 </>
@@ -281,15 +259,11 @@ export const SettingTab = (props: {
               label: 'PARA Notes',
               children: (
                 <>
-                  <Form.Item
-                    help="Turn on PARA Notes"
-                    name="usePARANotes"
-                    label="Enable"
-                  >
+                  <Form.Item name="usePARANotes" label="Turn on">
                     <Switch />
                   </Form.Item>
 
-                  {formValues.usePARANotes && (
+                  {settings.usePARANotes && (
                     <>
                       <Form.Item name="projectsPath" label="Projects Folder:">
                         <AutoComplete options={folders}>
@@ -312,13 +286,13 @@ export const SettingTab = (props: {
                         </AutoComplete>
                       </Form.Item>
                       <Form.Item
-                        help="Advanced Settings"
+                        help="Custom template file path and index filename"
                         name="usePARAAdvanced"
-                        label="Enable"
+                        label="Advanced Settings"
                       >
                         <Switch />
                       </Form.Item>
-                      {formValues.usePARAAdvanced && (
+                      {settings.usePARAAdvanced && (
                         <>
                           <Form.Item
                             name="paraIndexFilename"
@@ -339,15 +313,15 @@ export const SettingTab = (props: {
                           </Form.Item>
                           <>
                             {[
-                              [PROJECT, ProjectPath],
-                              [AREA, AreaPath],
-                              [RESOURCE, ResourcePath],
-                              [ARCHIVE, ArchivePath],
+                              [PROJECT, settings.projectsPath],
+                              [AREA, settings.areasPath],
+                              [RESOURCE, settings.resourcesPath],
+                              [ARCHIVE, settings.archivesPath],
                             ].map(([name, path]) => {
                               return (
                                 <Form.Item
                                   name={`${name.toLocaleLowerCase()}sTemplateFilePath`}
-                                  label={`${name} Template File`}
+                                  label={`${name} Template`}
                                 >
                                   <AutoComplete options={files}>
                                     <Input
@@ -357,7 +331,7 @@ export const SettingTab = (props: {
                                 </Form.Item>
                               );
                             })}
-                            </>
+                          </>
                         </>
                       )}
                     </>

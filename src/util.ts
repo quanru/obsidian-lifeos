@@ -1,8 +1,12 @@
 import { Component, MarkdownRenderer, Notice, TFile, moment } from 'obsidian';
 import type { App } from 'obsidian';
 import dayjs, { Dayjs } from 'dayjs';
-import type { DailyRecordType, ResourceType } from './type';
-import { LogLevel, PluginSettings} from './type';
+import type {
+  DailyRecordType,
+  PeriodicNotesTemplateFilePath,
+  ResourceType,
+} from './type';
+import { LogLevel, PluginSettings } from './type';
 import {
   DAILY,
   WEEKLY,
@@ -201,7 +205,9 @@ export async function createPeriodicFile(
     ).padStart(2, '0')}`;
     value = date.format('YYYY-MM-DD');
   } else if (periodType === WEEKLY) {
-    folder = `${settings.periodicNotesPath}/${date.format('gggg')}/${periodType}`;
+    folder = `${settings.periodicNotesPath}/${date.format(
+      'gggg'
+    )}/${periodType}`;
     value = date.format('gggg-[W]ww');
   } else if (periodType === MONTHLY) {
     folder = `${settings.periodicNotesPath}/${year}/${periodType}`;
@@ -215,7 +221,11 @@ export async function createPeriodicFile(
   }
 
   file = `${folder}/${value}.md`;
-  templateFile = settings.periodicTemplateAdvanced ? (settings[`periodicNotesTemplateFilePath${periodType}`] || `${settings.periodicNotesPath}/Templates/${periodType}.md`) : `${settings.periodicNotesPath}/Templates/${periodType}.md`;
+  templateFile = settings.usePeriodicAdvanced
+    ? settings[
+        `periodicNotesTemplateFilePath${periodType}` as PeriodicNotesTemplateFilePath
+      ] || `${settings.periodicNotesPath}/Templates/${periodType}.md`
+    : `${settings.periodicNotesPath}/Templates/${periodType}.md`;
   await createFile(app, {
     locale,
     templateFile,

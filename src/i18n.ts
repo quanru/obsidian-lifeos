@@ -62,7 +62,7 @@ const EN = {
   [`${ERROR_MESSAGE}NO_VIEW_EXISTED`]: 'There is no this view in LifeOS plugin',
   [`${ERROR_MESSAGE}NO_INDEX_FILE_EXIST`]:
     'There is no Index file exists(README.md/xxx.README.md/the same as the name of the folder it resides in)',
-  [`${ERROR_MESSAGE}NO_TEMPLATE_EXIST`]: 'There is no template file exist',
+  [`${ERROR_MESSAGE}NO_TEMPLATE_EXIST`]: 'There is no template file exist: ',
   [`${ERROR_MESSAGE}TAGS_MUST_INPUT`]: 'Please input tags!',
   [`${ERROR_MESSAGE}DAILY_RECORD_FETCH_FAILED`]: 'Fetch usememos failed',
   [`${ERROR_MESSAGE}RESOURCE_FETCH_FAILED`]: 'Fetch resource failed',
@@ -116,7 +116,7 @@ const ZH = {
   [`${ERROR_MESSAGE}NO_VIEW_EXISTED`]: 'LifeOS 插件中不存在此视图',
   [`${ERROR_MESSAGE}NO_INDEX_FILE_EXIST`]:
     '索引文件不存在（README.md/xxx.README.md/所在文件夹同名文件）',
-  [`${ERROR_MESSAGE}NO_TEMPLATE_EXIST`]: '模版文件不存在',
+  [`${ERROR_MESSAGE}NO_TEMPLATE_EXIST`]: '模版文件不存在：',
   [`${ERROR_MESSAGE}TAGS_MUST_INPUT`]: '请输入 tags！',
   [`${ERROR_MESSAGE}DAILY_RECORD_FETCH_FAILED`]: '拉取 usememos 失败',
   [`${ERROR_MESSAGE}RESOURCE_FETCH_FAILED`]: '拉取资源失败',
