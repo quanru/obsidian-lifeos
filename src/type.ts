@@ -1,12 +1,24 @@
 import type { Locale } from 'antd/es/locale';
 import type { App } from 'obsidian';
 
-export interface PluginSettings {
+export type PeriodicNotesTemplateFilePath =
+  | 'periodicNotesTemplateFilePathYearly'
+  | 'periodicNotesTemplateFilePathQuarterly'
+  | 'periodicNotesTemplateFilePathMonthly'
+  | 'periodicNotesTemplateFilePathWeekly'
+  | 'periodicNotesTemplateFilePathDaily';
+
+export type PluginSettings = {
   periodicNotesPath: string;
+  usePeriodicAdvanced: boolean;
   projectsPath: string;
+  projectsTemplateFilePath: string;
   areasPath: string;
+  areasTemplateFilePath: string;
   resourcesPath: string;
+  resourcesTemplateFilePath: string;
   archivesPath: string;
+  archivesTemplateFilePath: string;
   projectListHeader: string;
   areaListHeader: string;
   habitHeader: string;
@@ -21,7 +33,7 @@ export interface PluginSettings {
   paraIndexFilename: 'readme' | 'foldername';
   weekStart: number;
   useChineseCalendar: boolean;
-}
+} & Record<PeriodicNotesTemplateFilePath, string>;
 
 export type DateType = {
   year: number | null;
