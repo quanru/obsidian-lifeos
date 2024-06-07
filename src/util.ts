@@ -2,7 +2,7 @@ import { Component, MarkdownRenderer, Notice, TFile, moment } from 'obsidian';
 import type { App } from 'obsidian';
 import dayjs, { Dayjs } from 'dayjs';
 import type { DailyRecordType, ResourceType } from './type';
-import { LogLevel } from './type';
+import { LogLevel, PluginSettings} from './type';
 import {
   DAILY,
   WEEKLY,
@@ -178,10 +178,10 @@ export function generateHeaderRegExp(header: string) {
 export async function createPeriodicFile(
   day: Dayjs,
   periodType: string,
-  periodicNotesPath: string,
+  settings: PluginSettings,
   app: App | undefined
 ): Promise<void> {
-  if (!app || !periodicNotesPath) {
+  if (!app || !settings.periodicNotesPath) {
     return;
   }
 
@@ -196,27 +196,26 @@ export async function createPeriodicFile(
   let value;
 
   if (periodType === DAILY) {
-    folder = `${periodicNotesPath}/${year}/${periodType}/${String(
+    folder = `${settings.periodicNotesPath}/${year}/${periodType}/${String(
       date.month() + 1
     ).padStart(2, '0')}`;
     value = date.format('YYYY-MM-DD');
   } else if (periodType === WEEKLY) {
-    folder = `${periodicNotesPath}/${date.format('gggg')}/${periodType}`;
+    folder = `${settings.periodicNotesPath}/${date.format('gggg')}/${periodType}`;
     value = date.format('gggg-[W]ww');
   } else if (periodType === MONTHLY) {
-    folder = `${periodicNotesPath}/${year}/${periodType}`;
+    folder = `${settings.periodicNotesPath}/${year}/${periodType}`;
     value = date.format('YYYY-MM');
   } else if (periodType === QUARTERLY) {
-    folder = `${periodicNotesPath}/${year}/${periodType}`;
+    folder = `${settings.periodicNotesPath}/${year}/${periodType}`;
     value = date.format('YYYY-[Q]Q');
   } else if (periodType === YEARLY) {
-    folder = `${periodicNotesPath}/${year}`;
+    folder = `${settings.periodicNotesPath}/${year}`;
     value = year;
   }
 
   file = `${folder}/${value}.md`;
-  templateFile = `${periodicNotesPath}/Templates/${periodType}.md`; // TODO: 传入设置值
-
+  templateFile = settings.periodicTemplateAdvanced ? (settings[`periodicNotesTemplateFilePath${periodType}`] || `${settings.periodicNotesPath}/Templates/${periodType}.md`) : `${settings.periodicNotesPath}/Templates/${periodType}.md`;
   await createFile(app, {
     locale,
     templateFile,

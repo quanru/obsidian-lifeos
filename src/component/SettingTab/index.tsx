@@ -4,7 +4,17 @@ import { PluginSettings } from '../../type';
 import { ConfigProvider } from '../ConfigProvider';
 import { DEFAULT_SETTINGS } from '../../view/SettingTab';
 import { useApp } from '../../hooks/useApp';
-
+import {
+  PROJECT,
+  AREA,
+  RESOURCE,
+  ARCHIVE,
+  DAILY,
+  WEEKLY,
+  MONTHLY,
+  QUARTERLY,
+  YEARLY
+} from '../../constant';
 import './index.less';
 import { AutoComplete } from '../AutoComplete';
 
@@ -16,6 +26,11 @@ export const SettingTab = (props: {
   const { settings, saveSettings } = props;
   const [formValues, setFormValues] = useState(settings);
   const [form] = Form.useForm();
+  const [periodicNotesFolderPath, setPeriodicNotesFolderPath] = useState(settings.periodicNotesPath || '');
+  const [ProjectPath, setProjectPath] = useState(settings.projectsPath || '');
+  const [AreaPath, setAreaPath] = useState(settings.areasPath || '');
+  const [ResourcePath, setResourcePath] = useState(settings.resourcesPath || '');
+  const [ArchivePath, setArchivePath] = useState(settings.archivesPath || '');
   const folders =
     app?.vault
       .getAllLoadedFiles()
@@ -26,7 +41,16 @@ export const SettingTab = (props: {
           value: file.path,
         };
       }) || [];
-
+  const files =
+    app?.vault
+      .getAllLoadedFiles()
+      .filter((file) => ((file as { extension?: string }).extension === 'md'))
+      .map((file) => {
+        return {
+          label: file.path,
+          value: file.path,
+        };
+      }) || [];
   useEffect(() => {
     setFormValues(settings);
   }, [settings]);
@@ -42,6 +66,23 @@ export const SettingTab = (props: {
         onValuesChange={(changedValues) => {
           setFormValues({ ...formValues, ...changedValues });
           saveSettings(changedValues);
+          if (changedValues.periodicNotesPath) {
+            setPeriodicNotesFolderPath(changedValues.periodicNotesPath || '')
+          }
+          if (changedValues.projectsPath) {
+            setProjectPath(changedValues.projectsPath || '')
+          }
+          if (changedValues.areasPath) {
+            setAreaPath(changedValues.areasPath || '')
+          }
+          if (changedValues.resourcesPath) {
+            setResourcePath(changedValues.resourcesPath || '')
+          }
+          if (changedValues.archivesPath) {
+            setArchivePath(changedValues.archivesPath || '')
+          }
+          
+          
         }}
       >
         <Tabs
@@ -102,7 +143,30 @@ export const SettingTab = (props: {
                           </Form.Item>
                         </>
                       )}
-
+                      <Form.Item
+                        help="Advanced Template Settings"
+                        name="periodicTemplateAdvanced"
+                        label="Enable"
+                      >
+                        <Switch />
+                      </Form.Item>
+                      {formValues.periodicTemplateAdvanced && (
+                        <>
+                          {[DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY].map(item =>{
+                            return (
+                              <Form.Item
+                                name={`periodicNotesTemplateFilePath${item}`}
+                                label={`TemplateFile(${item})`}
+                              >
+                                <AutoComplete options={files}>
+                                  <Input
+                                    placeholder={`${periodicNotesFolderPath}/Templates/${item}.md`}
+                                  />
+                                </AutoComplete>
+                              </Form.Item>
+                            )})}
+                        </>
+                      )}
                       <Divider />
 
                       <Form.Item
@@ -273,6 +337,27 @@ export const SettingTab = (props: {
                               ]}
                             />
                           </Form.Item>
+                          <>
+                            {[
+                              [PROJECT, ProjectPath],
+                              [AREA, AreaPath],
+                              [RESOURCE, ResourcePath],
+                              [ARCHIVE, ArchivePath],
+                            ].map(([name, path]) => {
+                              return (
+                                <Form.Item
+                                  name={`${name.toLocaleLowerCase()}sTemplateFilePath`}
+                                  label={`${name} Template File`}
+                                >
+                                  <AutoComplete options={files}>
+                                    <Input
+                                      placeholder={`${path}/template.md`}
+                                    />
+                                  </AutoComplete>
+                                </Form.Item>
+                              );
+                            })}
+                            </>
                         </>
                       )}
                     </>

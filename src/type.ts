@@ -3,10 +3,20 @@ import type { App } from 'obsidian';
 
 export interface PluginSettings {
   periodicNotesPath: string;
+  periodicNotesTemplateFilePathDaily: string;
+  periodicNotesTemplateFilePathWeekly: string;
+  periodicNotesTemplateFilePathMonthly: string;
+  periodicNotesTemplateFilePathQuarterly: string;
+  periodicNotesTemplateFilePathYearly: string;
+  periodicTemplateAdvanced: boolean;
   projectsPath: string;
+  projectsTemplateFilePath: string;
   areasPath: string;
+  areasTemplateFilePath: string;
   resourcesPath: string;
+  resourcesTemplateFilePath: string;
   archivesPath: string;
+  archivesTemplateFilePath: string;
   projectListHeader: string;
   areaListHeader: string;
   habitHeader: string;

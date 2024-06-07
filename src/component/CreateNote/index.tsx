@@ -269,7 +269,7 @@ export const CreateNote = (props: { width: number }) => {
 
     folder = `${path}/${key}`;
     file = `${folder}/${INDEX}`;
-    templateFile = `${path}/Template.md`; // TODO: 传入设置值
+    templateFile = settings.usePARAAdvanced ? settings[`${paraActiveTab.toLocaleLowerCase()}sTemplateFilePath`] || `${path}/Template.md` :`${path}/Template.md`;
 
     await createFile(app, {
       locale: localeKey,
@@ -362,7 +362,7 @@ export const CreateNote = (props: { width: number }) => {
                 createPeriodicFile(
                   dayjs(new Date()),
                   key,
-                  settings.periodicNotesPath,
+                  settings,
                   app
                 );
                 singleClickRef.current = null;
@@ -413,8 +413,8 @@ export const CreateNote = (props: { width: number }) => {
                           createPeriodicFile(
                             day,
                             periodicActiveTab,
-                            settings.periodicNotesPath,
-                            app
+                            settings,
+                            app,
                           );
                         }}
                         picker={picker}
