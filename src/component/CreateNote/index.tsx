@@ -196,7 +196,7 @@ export const CreateNote = (props: { width: number }) => {
 
     const cell = (
       <>
-        <span style={{ lineHeight: 'initial', display: 'block' }}>
+        <span>
           {badgeText}
         </span>
         {settings?.useChineseCalendar && (
@@ -232,7 +232,7 @@ export const CreateNote = (props: { width: number }) => {
           <div className="ant-picker-cell-inner">
             <div className="cell-container">
               <span className="week-dot">•</span>
-              <span style={{ lineHeight: 'initial' }}>{badgeText}</span>
+              <span>{badgeText}</span>
             </div>
           </div>
         );
