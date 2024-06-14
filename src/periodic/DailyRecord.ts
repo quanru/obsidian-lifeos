@@ -58,28 +58,56 @@ export class DailyRecord {
     this.axios = axios.create({
       headers: {
         Authorization: `Bearer ${this.settings.dailyRecordToken}`,
-        Accept: 'application/json',
+        'content-type': 'application/grpc-web+proto',
+        'x-grpc-web': '1',
       },
     });
   }
-
+  
+  async getMemosVersion() {
+    const memosVersion = await this.axios.post(
+      `${this.settings.dailyRecordAPI}/memos.api.v1.WorkspaceService/GetWorkspaceProfile`,
+      "\u0000\u0000\u0000\u0000\u0000"
+    ).then(response => {
+      const data = response.data || "";
+      return data.match(/(\d+\.\d+\.\d+)/)[0].replace(" ", "");
+    }).catch(error => {
+      console.error(error);
+      return '';
+    });
+    window.localStorage.setItem('memos-version', memosVersion);
+  }
+  
   async fetch() {
+    const memosVersion = window.localStorage.getItem('memos-version') || '';
+    let config;
+    let uri;
+    if (memosVersion < '0.22.0') {
+      config ={
+        params: {
+          limit: this.limit,
+          offset: this.offset,
+          rowStatus: 'NORMAL',
+        }
+      }
+      uri = '/api/v1/memo'
+    } else {
+      config = {
+        params: {
+          page: this.offset / this.limit   + 1,
+          pageSize: this.offset
+        }
+      }
+    uri = '/api/v1/memos'}
     try {
       const { data } = await this.axios.get<DailyRecordType[] | FetchError>(
-        this.settings.dailyRecordAPI,
-        {
-          params: {
-            limit: this.limit,
-            offset: this.offset,
-            rowStatus: 'NORMAL',
-          },
-        }
+        this.settings.dailyRecordAPI+uri,
+        config
       );
-
       if (Array.isArray(data)) {
         return data;
       }
-
+      
       throw new Error(
         data.message || data.msg || data.error || JSON.stringify(data)
       );
@@ -95,24 +123,29 @@ export class DailyRecord {
 
   forceSync = async () => {
     this.lastTime = '';
-    this.sync();
+    await this.sync();
   };
 
   sync = async () => {
     logMessage(I18N_MAP[this.locale][`${MESSAGE}START_SYNC_USEMEMOS`]);
     this.offset = 0;
-    this.downloadResource();
-    this.insertDailyRecord();
+    await this.getMemosVersion();
+    await this.downloadResource();
+    await this.insertDailyRecord();
   };
 
   async downloadResource() {
     const { origin } = new URL(this.settings.dailyRecordAPI);
-
+    const memosVersion = window.localStorage.getItem('memos-version') || '';
+    let url = origin
+    if (memosVersion < '0.22.0') {
+      url += '/api/v1/resource'
+    } else {
+      url += '/api/v1/resources'
+    }
     try {
-      const { data } = await this.axios.get<ResourceType[] | FetchError>(
-        origin + '/api/v1/resource'
-      );
-
+      const { data } = await this.axios.get<ResourceType[] | FetchError>(url, {
+      });
       if (Array.isArray(data)) {
         await Promise.all(
           data.map(async (resource) => {
@@ -132,23 +165,28 @@ export class DailyRecord {
             if (isResourceExists) {
               return;
             }
-
-            const resourceURL = `${origin}/o/r/${
+            let resourceURL = ''
+            if (memosVersion < '0.22.0') {
+              resourceURL = `${origin}/o/r/${
+                resource.uid || resource.name || resource.id
+              }`;
+            } else {
+              resourceURL = `${origin}/api/v1/resources/${
               resource.uid || resource.name || resource.id
-            }`;
-            const { data } = await this.axios.get(resourceURL, {
-              responseType: 'arraybuffer',
-            });
+              }`;
+            }
+            const { data } = await this.axios.get(resourceURL, {responseType: 'arraybuffer',});
 
             if (!data) {
               return;
             }
 
             if (!this.app.vault.getAbstractFileByPath(folder)) {
-              this.app.vault.createFolder(folder);
+              await this.app.vault.createFolder(folder);
             }
 
             await this.app.vault.adapter.writeBinary(resourcePath, data);
+            console.log(`Downloaded resource: ${resourcePath}`);
           })
         );
         return data;
@@ -308,6 +346,6 @@ export class DailyRecord {
     );
 
     this.offset = this.offset + this.limit;
-    this.insertDailyRecord();
+    await this.insertDailyRecord();
   };
 }
