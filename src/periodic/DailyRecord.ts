@@ -57,9 +57,7 @@ export class DailyRecord {
     this.locale = locale;
     this.axios = axios.create({
       headers: {
-        Authorization: `Bearer ${this.settings.dailyRecordToken}`,
-        'content-type': 'application/grpc-web+proto',
-        'x-grpc-web': '1',
+        Authorization: `Bearer ${this.settings.dailyRecordToken}`
       },
     });
   }
@@ -67,7 +65,13 @@ export class DailyRecord {
   async getMemosVersion() {
     const memosVersion = await this.axios.post(
       `${this.settings.dailyRecordAPI}/memos.api.v1.WorkspaceService/GetWorkspaceProfile`,
-      "\u0000\u0000\u0000\u0000\u0000"
+      "\u0000\u0000\u0000\u0000\u0000",
+      {
+        headers:{
+          'content-type': 'application/grpc-web+proto',
+        'x-grpc-web': '1'
+        }
+      }
     ).then(response => {
       const data = response.data || "";
       return data.match(/(\d+\.\d+\.\d+)/)[0].replace(" ", "");
@@ -94,16 +98,31 @@ export class DailyRecord {
     } else {
       config = {
         params: {
-          page: this.offset / this.limit   + 1,
-          pageSize: this.offset
+          pageSize: this.limit,
+          pageToken: this.offset===0 ? '' : this.offset,
         }
       }
-    uri = '/api/v1/memos'}
+      uri = '/api/v1/memos'
+    }
     try {
-      const { data } = await this.axios.get<DailyRecordType[] | FetchError>(
+      let { data } = await this.axios.get<DailyRecordType[] | FetchError>(
         this.settings.dailyRecordAPI+uri,
         config
       );
+      if (memosVersion > "0.22.0") {
+        this.offset = data.nextPageToken;
+        data = data.memos;
+        data = data.map((item) => {
+          return {
+            updatedTs: new Date(item.updateTime).getTime() / 1000,
+            createdTs: new Date(item.createTime).getTime() / 1000,
+            createdAt: new Date(item.createTime).toISOString(),
+            updatedAt: new Date(item.updateTime).toISOString(),
+            content: item.content,
+            resourceList: item.resources
+          };
+          })
+        }
       if (Array.isArray(data)) {
         return data;
       }
@@ -143,9 +162,12 @@ export class DailyRecord {
     } else {
       url += '/api/v1/resources'
     }
+    
     try {
-      const { data } = await this.axios.get<ResourceType[] | FetchError>(url, {
-      });
+      let { data } = await this.axios.get<ResourceType[] | FetchError>(url, {});
+      if (memosVersion > "0.22.0") {
+        data = data.resources;
+      }
       if (Array.isArray(data)) {
         await Promise.all(
           data.map(async (resource) => {
@@ -171,9 +193,7 @@ export class DailyRecord {
                 resource.uid || resource.name || resource.id
               }`;
             } else {
-              resourceURL = `${origin}/api/v1/resources/${
-              resource.uid || resource.name || resource.id
-              }`;
+              resourceURL = `${origin}/file/${resource.name}/${resource.filename}`;
             }
             const { data } = await this.axios.get(resourceURL, {responseType: 'arraybuffer',});
 
@@ -209,21 +229,25 @@ export class DailyRecord {
   }
 
   insertDailyRecord = async () => {
+    const memosVersion = window.localStorage.getItem('memos-version') || '';
     const header = this.settings.dailyRecordHeader;
     const dailyRecordByDay: Record<string, Record<string, string>> = {};
     const records = (await this.fetch()) || [];
     const mostRecentTimeStamp = records[0]?.createdAt
       ? moment(records[0]?.createdAt).unix()
       : records[0]?.createdTs;
-
-    if (!records.length || mostRecentTimeStamp * 1000 < Number(this.lastTime)) {
-      // 直到 record 返回为空，或者最新的一条记录的时间，晚于上一次同步时间
-      logMessage(I18N_MAP[this.locale][`${MESSAGE}END_SYNC_USEMEMOS`]);
-
-      window.localStorage.setItem(this.localKey, Date.now().toString());
-
-      return;
+    
+    if (memosVersion< "0.22.0") {
+      if (!records.length || mostRecentTimeStamp * 1000 < Number(this.lastTime)) {
+        // 直到 record 返回为空，或者最新的一条记录的时间，晚于上一次同步时间
+        logMessage(I18N_MAP[this.locale][`${MESSAGE}END_SYNC_USEMEMOS`]);
+        
+        window.localStorage.setItem(this.localKey, Date.now().toString());
+        
+        return;
+      }
     }
+    
 
     for (const record of records) {
       if (!record.content && !record.resourceList?.length) {
@@ -344,8 +368,14 @@ export class DailyRecord {
         }
       })
     );
-
-    this.offset = this.offset + this.limit;
+    if (memosVersion < "0.22.0") {
+      this.offset = this.offset + this.limit;
+     
+    } else {
+      if (!this.offset){
+        return
+      }
+    }
     await this.insertDailyRecord();
   };
 }
