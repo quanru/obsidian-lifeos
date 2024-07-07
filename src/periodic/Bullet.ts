@@ -1,14 +1,14 @@
 import type { App, MarkdownPostProcessorContext } from 'obsidian';
-import { PluginSettings } from '../type';
+import type { PluginSettings } from '../type';
 
 import { Markdown } from '../component/Markdown';
-import { DataArray, DataviewApi, Link } from 'obsidian-dataview';
+import type { DataArray, DataviewApi, Link } from 'obsidian-dataview';
 
 import { File } from '../periodic/File';
 import { ERROR_MESSAGE } from '../constant';
 import { generateIgnoreOperator, renderError } from '../util';
 import { I18N_MAP } from '../i18n';
-import { SListItem } from 'obsidian-dataview/lib/data-model/serialized/markdown';
+import type { SListItem } from 'obsidian-dataview/lib/data-model/serialized/markdown';
 
 export class Bullet {
   app: App;
@@ -20,7 +20,7 @@ export class Bullet {
     app: App,
     settings: PluginSettings,
     dataview: DataviewApi,
-    locale: string
+    locale: string,
   ) {
     this.app = app;
     this.settings = settings;
@@ -32,7 +32,7 @@ export class Bullet {
   listByTag = async (
     source: string,
     el: HTMLElement,
-    ctx: MarkdownPostProcessorContext
+    ctx: MarkdownPostProcessorContext,
   ) => {
     const filepath = ctx.sourcePath;
     const tags = this.file.tags(filepath);
@@ -44,7 +44,7 @@ export class Bullet {
         this.app,
         I18N_MAP[this.locale][`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`],
         div,
-        filepath
+        filepath,
       );
     }
 
@@ -57,7 +57,7 @@ export class Bullet {
     const lists: DataArray<SListItem> = await this.dataview.pages(
       `(${from}) ${generateIgnoreOperator(this.settings)}`
     ).file.lists;
-    const result = lists.where((L) => {
+    const result = lists.where(L => {
       let includeTag = false;
       if (L.task || L.path === filepath) return false;
       for (const tag of tags) {
@@ -68,7 +68,7 @@ export class Bullet {
       }
       return includeTag;
     });
-    const groupResult = result.groupBy((elem) => {
+    const groupResult = result.groupBy(elem => {
       return elem.link;
     });
     const sortResult = groupResult.sort(
@@ -86,7 +86,7 @@ export class Bullet {
       tableValues,
       div,
       component,
-      filepath
+      filepath,
     );
 
     ctx.addChild(component);

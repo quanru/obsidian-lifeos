@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "node esbuild.config.mjs",
     "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
-    "version": "node version-bump.mjs && git add manifest.json versions.json"
+    "version": "node version-bump.mjs && git add manifest.json versions.json",
+    "lint": "biome lint . --diagnostic-level=warn",
+    "format": "biome format --write ./src",
+    "prepare": "husky"
   },
   "keywords": [
     "PARA",
@@ -17,6 +20,7 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@biomejs/biome": "^1.8.1",
     "@types/node": "^16.11.6",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
@@ -26,6 +30,8 @@
     "builtin-modules": "3.3.0",
     "esbuild": "0.17.3",
     "esbuild-plugin-less": "^1.2.1",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.7",
     "obsidian": "latest",
     "obsidian-dataview": "0.5.56",
     "tslib": "2.4.0",
@@ -41,5 +47,10 @@
     "reduce-css-calc": "^2.1.8",
     "semver": "^7.6.2",
     "tyme4ts": "^1.0.5"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,mjs,cjs}": [
+      "biome check . --apply --organize-imports-enabled=false --no-errors-on-unmatched"
+    ]
   }
 }

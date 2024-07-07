@@ -2,8 +2,15 @@ import { moment } from 'obsidian';
 import type { File } from './File';
 import type { App } from 'obsidian';
 import type { DateType, DateRangeType, PluginSettings } from '../type';
-import { DAILY_REG, MONTHLY_REG, QUARTERLY_REG, WEEKLY_REG, YEARLY_REG } from '../constant';
+import {
+  DAILY_REG,
+  MONTHLY_REG,
+  QUARTERLY_REG,
+  WEEKLY_REG,
+  YEARLY_REG,
+} from '../constant';
 
+// biome-ignore lint/suspicious/noShadowRestrictedNames: <explanation>
 export class Date {
   app: App;
   settings: PluginSettings;
@@ -42,7 +49,7 @@ export class Date {
       quarter: null,
       week: null,
       day: null,
-    }
+    },
   ) {
     const { year, quarter, month, week } = parsed;
 
@@ -78,15 +85,13 @@ export class Date {
       quarter: null,
       week: null,
       day: null,
-    }
+    },
   ): DateRangeType {
     // parse 之后，从 day 开始，依次判断周、月、季、年，给出 from 和 to
     const { year, quarter, month, week, day } = parsed;
 
     if (day) {
-      const today = `${year}-${String(month).padStart(2, '0')}-${String(
-        day
-      ).padStart(2, '0')}`;
+      const today = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
       return {
         from: today,
@@ -175,7 +180,7 @@ export class Date {
       quarter: null,
       week: null,
       day: null,
-    }
+    },
   ) {
     // 获取指定日期范围内的 weeks，quarters 和 months，并去重
     const { from, to } = this.days(parsed);
@@ -187,12 +192,12 @@ export class Date {
 
     while (currentDate.isBefore(moment(to))) {
       const weekLink = `${currentDate.weekYear()}/Weekly/${currentDate.weekYear()}-W${String(
-        currentDate.isoWeek()
+        currentDate.isoWeek(),
       ).padStart(2, '0')}.md`;
       const weekFile = this.file.get(
         weekLink,
         '',
-        this.settings.periodicNotesPath
+        this.settings.periodicNotesPath,
       );
 
       if (weekFile) {
@@ -200,12 +205,12 @@ export class Date {
       }
 
       const monthLink = `${currentDate.year()}/Monthly/${currentDate.year()}-${String(
-        currentDate.month() + 1
+        currentDate.month() + 1,
       ).padStart(2, '0')}.md`;
       const monthFile = this.file.get(
         monthLink,
         '',
-        this.settings.periodicNotesPath
+        this.settings.periodicNotesPath,
       );
 
       if (monthFile) {
@@ -213,12 +218,12 @@ export class Date {
       }
 
       const quarterLink = `${currentDate.year()}/Quarterly/${currentDate.year()}-Q${Math.ceil(
-        (currentDate.month() + 1) / 3
+        (currentDate.month() + 1) / 3,
       )}.md`;
       const quarterFile = this.file.get(
         quarterLink,
         '',
-        this.settings.periodicNotesPath
+        this.settings.periodicNotesPath,
       );
 
       if (quarterFile) {

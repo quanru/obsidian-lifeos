@@ -4,18 +4,18 @@ import type { TaskResult } from 'obsidian-dataview/lib/api/plugin-api';
 
 import { TaskStatusType } from '../type';
 import { moment } from 'obsidian';
-import { DataviewApi, STask } from 'obsidian-dataview';
+import type { DataviewApi, STask } from 'obsidian-dataview';
 import { ERROR_MESSAGE } from '../constant';
 
 import { File } from '../periodic/File';
-import { Date } from '../periodic/Date';
+import { Date as PeriodicDate } from '../periodic/Date';
 import { Markdown } from '../component/Markdown';
 import { generateIgnoreOperator, renderError } from '../util';
 import { I18N_MAP } from '../i18n';
 
 export class Task {
   app: App;
-  date: Date;
+  date: PeriodicDate;
   dataview: DataviewApi;
   settings: PluginSettings;
   locale: string;
@@ -24,20 +24,20 @@ export class Task {
     app: App,
     settings: PluginSettings,
     dataview: DataviewApi,
-    locale: string
+    locale: string,
   ) {
     this.app = app;
     this.settings = settings;
     this.dataview = dataview;
     this.locale = locale;
     this.file = new File(this.app, this.settings, this.dataview, locale);
-    this.date = new Date(this.app, this.settings, this.file, locale);
+    this.date = new PeriodicDate(this.app, this.settings, this.file, locale);
   }
 
   doneListByTime = (
     source: string,
     el: HTMLElement,
-    ctx: MarkdownPostProcessorContext
+    ctx: MarkdownPostProcessorContext,
   ) => {
     const filename = ctx.sourcePath;
     const parsed = this.date.parse(filename);
@@ -53,7 +53,7 @@ export class Task {
         this.filter(t, {
           status: TaskStatusType.DONE,
           ...condition,
-        })
+        }),
       )
       .sort((t: STask) => t.completion, 'asc');
 
@@ -68,7 +68,7 @@ export class Task {
   recordListByTime = (
     source: string,
     el: HTMLElement,
-    ctx: MarkdownPostProcessorContext
+    ctx: MarkdownPostProcessorContext,
   ) => {
     const filename = ctx.sourcePath;
     const parsed = this.date.parse(filename);
@@ -84,7 +84,7 @@ export class Task {
       this.filter(t, {
         status: TaskStatusType.RECORD,
         ...condition,
-      })
+      }),
     );
 
     tasks = [...dailyTasks];
@@ -112,7 +112,7 @@ export class Task {
   listByTag = async (
     source: string,
     el: HTMLElement,
-    ctx: MarkdownPostProcessorContext
+    ctx: MarkdownPostProcessorContext,
   ) => {
     const filepath = ctx.sourcePath;
     const tags = this.file.tags(filepath);
@@ -144,7 +144,7 @@ export class Task {
         this.app,
         I18N_MAP[this.locale][`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`],
         div,
-        filepath
+        filepath,
       );
     }
 
@@ -156,9 +156,7 @@ export class Task {
       .trim();
     const where = tags
       .map((tag: string[], index: number) => {
-        return `contains(tags, "#${tag}") ${
-          index === tags.length - 1 ? '' : 'OR'
-        }`;
+        return `contains(tags, "#${tag}") ${index === tags.length - 1 ? '' : 'OR'}`;
       })
       .join(' ');
 
@@ -178,7 +176,7 @@ SORT status ASC
     task: STask,
     condition: TaskConditionType = {
       status: TaskStatusType.DONE,
-    }
+    },
   ): boolean {
     const { status: date = TaskStatusType.DONE, from, to } = condition;
 

@@ -6,7 +6,7 @@ import type { PluginSettings } from '../type';
 import { type Root, createRoot } from 'react-dom/client';
 import { AppContext } from '../context';
 import { SettingTab } from '../component/SettingTab';
-import { Locale } from 'antd/es/locale';
+import type { Locale } from 'antd/es/locale';
 
 export const DEFAULT_SETTINGS: PluginSettings = {
   periodicNotesPath: 'PeriodicNotes',
@@ -50,7 +50,7 @@ export class SettingTabView extends PluginSettingTab {
     app: App,
     settings: PluginSettings,
     plugin: LifeOS,
-    locale: Locale
+    locale: Locale,
   ) {
     super(app, plugin);
     this.settings = settings;
@@ -82,7 +82,7 @@ export class SettingTabView extends PluginSettingTab {
         }}
       >
         <SettingTab settings={this.settings} saveSettings={saveSettings} />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
   }
 

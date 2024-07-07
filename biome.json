@@ -1,0 +1,75 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.8.1/schema.json",
+  "organizeImports": {
+    "enabled": true
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "trailingCommas": "all",
+      "arrowParentheses": "asNeeded"
+    }
+  },
+  "vcs": {
+    "enabled": true,
+    "defaultBranch": "main",
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "include": ["src/**/*.ts", "src/**/*.tsx"],
+    "ignore": ["*.d.ts"],
+    "ignoreUnknown": true
+  },
+  "formatter": {
+    "indentStyle": "space"
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "style": {
+        "noParameterAssign": "off",
+        "noInferrableTypes": "off",
+        "noNonNullAssertion": "off",
+        "useSelfClosingElements": "off",
+        "useDefaultParameterLast": "off"
+      },
+      "security": {
+        "noDangerouslySetInnerHtml": "off"
+      },
+      "suspicious": {
+        "noConstEnum": "off",
+        "noExplicitAny": "off",
+        "noArrayIndexKey": "off",
+        "noImplicitAnyLet": "off",
+        "noConfusingVoidType": "off",
+        "noAssignInExpressions": "off"
+      },
+      "correctness": {
+        "useExhaustiveDependencies": "off"
+      },
+      "complexity": {
+        "noForEach": "off",
+        "useFlatMap": "off",
+        "useArrowFunction": "off",
+        "noUselessSwitchCase": "off"
+      },
+      "performance": {
+        "noDelete": "off",
+        "noAccumulatingSpread": "off"
+      },
+      "a11y": {
+        "useAltText": "off",
+        "noAutofocus": "off",
+        "noBlankTarget": "off",
+        "useButtonType": "off",
+        "useIframeTitle": "off",
+        "useValidAnchor": "off",
+        "noSvgWithoutTitle": "off",
+        "useHeadingContent": "off",
+        "useKeyWithClickEvents": "off"
+      }
+    }
+  }
+}

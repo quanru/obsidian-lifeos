@@ -15,7 +15,7 @@ export class Area extends Item {
       week: null,
       day: null,
     },
-    header: string
+    header: string,
   ) {
     const { year } = condition;
     const quarterList = ['Q1', 'Q2', 'Q3', 'Q4'];
@@ -37,7 +37,7 @@ export class Area extends Item {
             const areaContent = regMatch?.length
               ? regMatch[2]?.split('\n')
               : [];
-            areaContent.map((area) => {
+            areaContent.map(area => {
               if (!area) {
                 return;
               }
@@ -53,7 +53,7 @@ export class Area extends Item {
       }
     }
 
-    await Promise.all(tasks.map((task) => task()));
+    await Promise.all(tasks.map(task => task()));
 
     return areaList;
   }
@@ -61,7 +61,7 @@ export class Area extends Item {
   listByTime = async (
     source: string,
     el: HTMLElement,
-    ctx: MarkdownPostProcessorContext
+    ctx: MarkdownPostProcessorContext,
   ) => {
     const filename = ctx.sourcePath;
     const parsed = this.date.parse(filename);
@@ -77,7 +77,7 @@ export class Area extends Item {
       const regMatch = file?.path.match(/\/(.*)\//);
 
       list.push(
-        `${index + 1}. [[${area}|${regMatch?.length ? regMatch[1] : ''}]]`
+        `${index + 1}. [[${area}|${regMatch?.length ? regMatch[1] : ''}]]`,
       );
     });
 
@@ -88,7 +88,7 @@ export class Area extends Item {
       list.join('\n'),
       div,
       ctx.sourcePath,
-      component
+      component,
     );
 
     ctx.addChild(component);

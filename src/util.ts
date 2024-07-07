@@ -1,13 +1,13 @@
 import { Component, MarkdownRenderer, Notice, TFile, moment } from 'obsidian';
 import type { App } from 'obsidian';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs, { type Dayjs } from 'dayjs';
 import type {
   DailyRecordType,
   DailyRecordTypeV2,
   PeriodicNotesTemplateFilePath,
   ResourceType,
 } from './type';
-import { LogLevel, PluginSettings } from './type';
+import { LogLevel, type PluginSettings } from './type';
 import {
   DAILY,
   WEEKLY,
@@ -20,14 +20,14 @@ import {
 import { I18N_MAP } from './i18n';
 
 export function sleep(milliseconds: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+  return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
 
 export function renderError(
   app: App,
   msg: string,
   containerEl: HTMLElement,
-  sourcePath: string
+  sourcePath: string,
 ) {
   const component = new Component();
 
@@ -42,7 +42,7 @@ export async function createFile(
     folder: string;
     file: string;
     tag?: string;
-  }
+  },
 ) {
   if (!app) {
     return;
@@ -54,7 +54,7 @@ export async function createFile(
 
   if (!templateTFile) {
     return new Notice(
-      I18N_MAP[locale][`${ERROR_MESSAGE}NO_TEMPLATE_EXIST`] + templateFile
+      I18N_MAP[locale][`${ERROR_MESSAGE}NO_TEMPLATE_EXIST`] + templateFile,
     );
   }
 
@@ -77,7 +77,7 @@ export async function createFile(
 
     const fileCreated = await app.vault.create(finalFile, templateContent);
 
-    await app.fileManager.processFrontMatter(fileCreated, (frontMatter) => {
+    await app.fileManager.processFrontMatter(fileCreated, frontMatter => {
       if (!tag) {
         return;
       }
@@ -123,18 +123,14 @@ export function formatDailyRecord(record: DailyRecordType) {
   targetFirstLine += ` #daily-record ^${timeStamp}`;
 
   const targetOtherLine = otherLine?.length //剩余行
-    ? '\n' +
-      otherLine
+    ? `\n${otherLine
         .filter((line: string) => line.trim())
         .map((line: string) => `\t${isBulletList(line) ? line : `- ${line}`}`)
         .join('\n')
-        .trimEnd()
+        .trimEnd()}`
     : '';
   const targetResourceLine = resourceList?.length // 资源文件
-    ? '\n' +
-      resourceList
-        ?.map((resource: ResourceType) => `\t- ${generateFileLink(resource)}`)
-        .join('\n')
+    ? `\n${resourceList?.map((resource: ResourceType) => `\t- ${generateFileLink(resource)}`).join('\n')}`
     : '';
   const finalTargetContent =
     targetFirstLine + targetOtherLine + targetResourceLine;
@@ -161,9 +157,7 @@ export function generateFileLink(resource: ResourceType): string {
 
   const prefix = resource.type?.includes('image') ? '!' : ''; // only add ! for image type
 
-  return `${prefix}[${resource.name || resource.filename}](${
-    resource.externalLink
-  })`;
+  return `${prefix}[${resource.name || resource.filename}](${resource.externalLink})`;
 }
 
 export function generateFileName(resource: ResourceType): string {
@@ -198,7 +192,7 @@ export async function createPeriodicFile(
   day: Dayjs,
   periodType: string,
   settings: PluginSettings,
-  app: App | undefined
+  app: App | undefined,
 ): Promise<void> {
   if (!app || !settings.periodicNotesPath) {
     return;
@@ -215,14 +209,10 @@ export async function createPeriodicFile(
   let value;
 
   if (periodType === DAILY) {
-    folder = `${settings.periodicNotesPath}/${year}/${periodType}/${String(
-      date.month() + 1
-    ).padStart(2, '0')}`;
+    folder = `${settings.periodicNotesPath}/${year}/${periodType}/${String(date.month() + 1).padStart(2, '0')}`;
     value = date.format('YYYY-MM-DD');
   } else if (periodType === WEEKLY) {
-    folder = `${settings.periodicNotesPath}/${date.format(
-      'gggg'
-    )}/${periodType}`;
+    folder = `${settings.periodicNotesPath}/${date.format('gggg')}/${periodType}`;
     value = date.format('gggg-[W]ww');
   } else if (periodType === MONTHLY) {
     folder = `${settings.periodicNotesPath}/${year}/${periodType}`;

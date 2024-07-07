@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Switch, Form, Input, Tabs, Typography, Divider, Select } from 'antd';
-import { PluginSettings } from '../../type';
+import type { PluginSettings } from '../../type';
 import { ConfigProvider } from '../ConfigProvider';
 import { DEFAULT_SETTINGS } from '../../view/SettingTab';
 import { useApp } from '../../hooks/useApp';
@@ -29,8 +29,8 @@ export const SettingTab = (props: {
   const folders =
     app?.vault
       .getAllLoadedFiles()
-      .filter((file) => !(file as { extension?: string }).extension)
-      .map((file) => {
+      .filter(file => !(file as { extension?: string }).extension)
+      .map(file => {
         return {
           label: file.path,
           value: file.path,
@@ -39,8 +39,8 @@ export const SettingTab = (props: {
   const files =
     app?.vault
       .getAllLoadedFiles()
-      .filter((file) => (file as { extension?: string }).extension === 'md')
-      .map((file) => {
+      .filter(file => (file as { extension?: string }).extension === 'md')
+      .map(file => {
         return {
           label: file.path,
           value: file.path,
@@ -59,7 +59,7 @@ export const SettingTab = (props: {
         wrapperCol={{ span: 16 }}
         style={{ maxWidth: 600 }}
         initialValues={settings}
-        onValuesChange={(changedValues) => {
+        onValuesChange={changedValues => {
           setSetting({ ...settings, ...changedValues });
           saveSettings(changedValues);
         }}
@@ -127,11 +127,7 @@ export const SettingTab = (props: {
                           options={[
                             {
                               value: -1,
-                              label:
-                                'Auto' +
-                                (locale?.locale === 'zh-cn'
-                                  ? '(Monday)'
-                                  : '(Sunday)'),
+                              label: `Auto${locale?.locale === 'zh-cn' ? '(Monday)' : '(Sunday)'}`,
                             },
                             { value: 1, label: 'Monday' },
                             { value: 2, label: 'Tuesday' },
@@ -160,9 +156,10 @@ export const SettingTab = (props: {
                       {settings.usePeriodicAdvanced && (
                         <>
                           {[DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY].map(
-                            (item) => {
+                            item => {
                               return (
                                 <Form.Item
+                                  key={item}
                                   name={`periodicNotesTemplateFilePath${item}`}
                                   label={`${item} Template`}
                                 >
@@ -173,7 +170,7 @@ export const SettingTab = (props: {
                                   </AutoComplete>
                                 </Form.Item>
                               );
-                            }
+                            },
                           )}
                         </>
                       )}
@@ -184,7 +181,7 @@ export const SettingTab = (props: {
                           <>
                             Sync daily record from
                             <Typography.Link href="https://usememos.com">
-                              {` usememos `}
+                              {' usememos '}
                             </Typography.Link>
                             service
                           </>
@@ -210,7 +207,7 @@ export const SettingTab = (props: {
                               <>
                                 The
                                 <Typography.Link href="https://usememos.com">
-                                  {` usememos `}
+                                  {' usememos '}
                                 </Typography.Link>
                                 service API
                               </>
@@ -230,7 +227,7 @@ export const SettingTab = (props: {
                               <>
                                 The
                                 <Typography.Link href="https://www.usememos.com/docs/security/access-tokens">
-                                  {` token `}
+                                  {' token '}
                                 </Typography.Link>
                                 of your API
                               </>
@@ -320,6 +317,7 @@ export const SettingTab = (props: {
                             ].map(([name, path]) => {
                               return (
                                 <Form.Item
+                                  key={name}
                                   name={`${name.toLocaleLowerCase()}sTemplateFilePath`}
                                   label={`${name} Template`}
                                 >

@@ -4,8 +4,8 @@ import {
   MarkdownRenderer,
 } from 'obsidian';
 import type { PluginSettings } from '../type';
-import { Date } from '../periodic/Date';
-import { File } from '../periodic/File';
+import { Date as PeriodicDate } from '../periodic/Date';
+import type { File } from '../periodic/File';
 import { Markdown } from '../component/Markdown';
 
 export class Item {
@@ -13,16 +13,22 @@ export class Item {
   app: App;
   settings: PluginSettings;
   file: File;
-  date: Date;
+  date: PeriodicDate;
   locale: string;
 
-  constructor(dir: string, app: App, settings: PluginSettings, file: File, locale: string) {
+  constructor(
+    dir: string,
+    app: App,
+    settings: PluginSettings,
+    file: File,
+    locale: string,
+  ) {
     this.dir = dir;
     this.app = app;
     this.settings = settings;
     this.file = file;
     this.locale = locale;
-    this.date = new Date(this.app, this.settings, this.file, locale);
+    this.date = new PeriodicDate(this.app, this.settings, this.file, locale);
   }
 
   snapshot(dir = this.dir) {
@@ -32,7 +38,7 @@ export class Item {
   listByFolder = async (
     source: string,
     el: HTMLElement,
-    ctx: MarkdownPostProcessorContext
+    ctx: MarkdownPostProcessorContext,
   ) => {
     const div = el.createEl('div');
     const markdown = this.file.list(this.dir);
@@ -43,7 +49,7 @@ export class Item {
       markdown || '- Nothing',
       div,
       ctx.sourcePath,
-      component
+      component,
     );
 
     ctx.addChild(component);
@@ -52,7 +58,7 @@ export class Item {
   listByTag = async (
     source: string,
     el: HTMLElement,
-    ctx: MarkdownPostProcessorContext
+    ctx: MarkdownPostProcessorContext,
   ) => {
     const filepath = ctx.sourcePath;
     const tags = this.file.tags(filepath);
@@ -65,7 +71,7 @@ export class Item {
       markdown || '- Nothing',
       div,
       ctx.sourcePath,
-      component
+      component,
     );
 
     ctx.addChild(component);

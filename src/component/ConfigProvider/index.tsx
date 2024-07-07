@@ -1,10 +1,14 @@
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { type ReactNode, useEffect, useState } from 'react';
 import reduceCSSCalc from 'reduce-css-calc';
 
 import { useApp } from '../../hooks/useApp';
 import { isDarkTheme } from '../../util';
 
-import { ConfigProvider as AntdConfigProvider, ThemeConfig, theme } from 'antd';
+import {
+  ConfigProvider as AntdConfigProvider,
+  type ThemeConfig,
+  theme,
+} from 'antd';
 
 export const ConfigProvider = (props: {
   children: ReactNode;
@@ -13,10 +17,10 @@ export const ConfigProvider = (props: {
   const { children, components } = props;
   const { locale } = useApp() || {};
   const computedStyle = getComputedStyle(
-    document.querySelector('.app-container')!
+    document.querySelector('.app-container')!,
   );
   const fontSize =
-    parseInt(computedStyle?.getPropertyValue('--nav-item-size')) || 13;
+    Number.parseInt(computedStyle?.getPropertyValue('--nav-item-size')) || 13;
   const [isDark, setDark] = useState(isDarkTheme());
   useEffect(() => {
     const handleBodyClassChange = () => {
@@ -41,8 +45,8 @@ export const ConfigProvider = (props: {
           fontSize,
           colorPrimary: reduceCSSCalc(
             getComputedStyle(document.body).getPropertyValue(
-              '--interactive-accent'
-            )
+              '--interactive-accent',
+            ),
           ),
         },
         components: {

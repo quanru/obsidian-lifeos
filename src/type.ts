@@ -130,7 +130,7 @@ export type FetchError = {
 };
 
 export enum LogLevel {
-  'info',
-  'warn',
-  'error',
+  info = 0,
+  warn = 1,
+  error = 2,
 }

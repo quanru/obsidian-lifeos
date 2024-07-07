@@ -42,14 +42,14 @@ export class DailyRecord {
 
     if (!settings.dailyRecordToken) {
       logMessage(
-        I18N_MAP[this.locale][`${ERROR_MESSAGE}NO_DAILY_RECORD_TOKEN`]
+        I18N_MAP[this.locale][`${ERROR_MESSAGE}NO_DAILY_RECORD_TOKEN`],
       );
       return;
     }
 
     if (!settings.dailyRecordHeader) {
       logMessage(
-        I18N_MAP[this.locale][`${ERROR_MESSAGE}NO_DAILY_RECORD_HEADER`]
+        I18N_MAP[this.locale][`${ERROR_MESSAGE}NO_DAILY_RECORD_HEADER`],
       );
       return;
     }
@@ -153,10 +153,8 @@ export class DailyRecord {
       }
     } catch (error) {
       logMessage(
-        `${
-          I18N_MAP[this.locale][`${ERROR_MESSAGE}DAILY_RECORD_FETCH_FAILED`]
-        }: ${error}`,
-        LogLevel.error
+        `${I18N_MAP[this.locale][`${ERROR_MESSAGE}DAILY_RECORD_FETCH_FAILED`]}: ${error}`,
+        LogLevel.error,
       );
     }
   }
@@ -193,10 +191,8 @@ export class DailyRecord {
         return;
       }
       logMessage(
-        `${
-          I18N_MAP[this.locale][`${ERROR_MESSAGE}RESOURCE_FETCH_FAILED`]
-        }: ${error}`,
-        LogLevel.error
+        `${I18N_MAP[this.locale][`${ERROR_MESSAGE}RESOURCE_FETCH_FAILED`]}: ${error}`,
+        LogLevel.error,
       );
     }
   }
@@ -293,23 +289,21 @@ export class DailyRecord {
     }
 
     await Promise.all(
-      Object.keys(dailyRecordByDay).map(async (today) => {
+      Object.keys(dailyRecordByDay).map(async today => {
         const momentDay = moment(today);
         const link = `${momentDay.year()}/Daily/${String(
-          momentDay.month() + 1
+          momentDay.month() + 1,
         ).padStart(2, '0')}/${momentDay.format('YYYY-MM-DD')}.md`;
         const targetFile = this.file.get(
           link,
           '',
-          this.settings.periodicNotesPath
+          this.settings.periodicNotesPath,
         );
 
         if (!targetFile && this.settings.dailyRecordWarning) {
           logMessage(
-            `${
-              I18N_MAP[this.locale][`${ERROR_MESSAGE}NO_DAILY_FILE_EXIST`]
-            } ${today}`,
-            LogLevel.error
+            `${I18N_MAP[this.locale][`${ERROR_MESSAGE}NO_DAILY_FILE_EXIST`]} ${today}`,
+            LogLevel.error,
           );
         }
         const reg = generateHeaderRegExp(header);
@@ -321,7 +315,7 @@ export class DailyRecord {
           if (!regMatch?.length || !regMatch?.index) {
             if (!this.settings.dailyRecordToken) {
               logMessage(
-                'Current daily file will not insert daily record due to no daily record header'
+                'Current daily file will not insert daily record due to no daily record header',
               );
               return;
             }
@@ -355,7 +349,7 @@ export class DailyRecord {
                 const time = regMatch[0]?.trim();
                 const timeStamp = moment(
                   `${today}-${time}`,
-                  'YYYY-MM-DD-HH:mm'
+                  'YYYY-MM-DD-HH:mm',
                 ).unix();
 
                 if (localRecordListWithTime[timeStamp]) {
@@ -380,20 +374,16 @@ export class DailyRecord {
               const indexB = Number(b[0]);
               return indexA - indexB;
             })
-            .map((item) => item[1]);
+            .map(item => item[1]);
 
           const finalRecordContent = localRecordWithoutTime
             .concat(sortedRecordList)
             .join('\n');
-          const fileContent =
-            prefix.trim() +
-            `\n${finalRecordContent}\n\n` +
-            suffix.trim() +
-            '\n';
+          const fileContent = `${prefix.trim()}\n${finalRecordContent}\n\n${suffix.trim()}\n`;
 
           await this.app.vault.modify(targetFile, fileContent);
         }
-      })
+      }),
     );
 
     if (this.memosVersion === 'v1') {

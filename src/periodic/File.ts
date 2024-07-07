@@ -1,4 +1,9 @@
-import { App, MarkdownPostProcessorContext, TFile, TFolder } from 'obsidian';
+import {
+  type App,
+  type MarkdownPostProcessorContext,
+  TFile,
+  TFolder,
+} from 'obsidian';
 import type { PluginSettings } from '../type';
 
 import {
@@ -9,7 +14,7 @@ import {
   YEARLY_REG,
   ERROR_MESSAGE,
 } from '../constant';
-import { DataviewApi } from 'obsidian-dataview';
+import type { DataviewApi } from 'obsidian-dataview';
 import { logMessage, renderError } from '../util';
 import { Markdown } from '../component/Markdown';
 import dayjs from 'dayjs';
@@ -25,7 +30,7 @@ export class File {
     app: App,
     settings: PluginSettings,
     dataview: DataviewApi,
-    locale: string
+    locale: string,
   ) {
     this.app = app;
     this.settings = settings;
@@ -50,14 +55,14 @@ export class File {
     if (folder instanceof TFolder) {
       const subFolderList = folder.children
         .sort()
-        .filter((file) => file instanceof TFolder);
+        .filter(file => file instanceof TFolder);
       const IndexList = subFolderList
-        .map((subFolder) => {
+        .map(subFolder => {
           // 优先搜索同名文件，否则搜索 XXX.README
           if (subFolder instanceof TFolder) {
             const { name } = subFolder;
             const files = subFolder.children;
-            const indexFile = files.find((file) => {
+            const indexFile = files.find(file => {
               if ((file as any).basename === name) {
                 return true;
               }
@@ -77,22 +82,20 @@ export class File {
 
             if (!indexFile) {
               logMessage(
-                I18N_MAP[this.locale][`${ERROR_MESSAGE}}NO_INDEX_FILE_EXIST`] +
-                  ' @ ' +
-                  subFolder.path
+                `${I18N_MAP[this.locale][`${ERROR_MESSAGE}}NO_INDEX_FILE_EXIST`]} @ ${subFolder.path}`,
               );
             }
 
             if (indexFile instanceof TFile) {
               const link = this.app.metadataCache.fileToLinktext(
                 indexFile,
-                indexFile?.path
+                indexFile?.path,
               );
               return `[[${link}|${subFolder.name}]]`;
             }
           }
         })
-        .filter((link) => !!link)
+        .filter(link => !!link)
         .map((link, index: number) => `${index + 1}. ${link}`);
 
       return IndexList.join('\n');
@@ -138,7 +141,7 @@ export class File {
   listByTag = async (
     source: string,
     el: HTMLElement,
-    ctx: MarkdownPostProcessorContext
+    ctx: MarkdownPostProcessorContext,
   ) => {
     const filepath = ctx.sourcePath;
     const tags = this.tags(filepath);
@@ -158,7 +161,7 @@ export class File {
         this.app,
         I18N_MAP[this.locale][`${ERROR_MESSAGE}}NO_FRONT_MATTER_TAG`],
         div,
-        filepath
+        filepath,
       );
     }
 
@@ -174,7 +177,7 @@ export class File {
       this.dataview
         .pages(from)
         .filter(
-          (b) =>
+          b =>
             !b.file.name?.match(YEARLY_REG) &&
             !b.file.name?.match(QUARTERLY_REG) &&
             !b.file.name?.match(MONTHLY_REG) &&
@@ -191,14 +194,14 @@ export class File {
               periodicNotesTemplateFilePathDaily,
             ].includes(b.file.path)
         )
-        .sort((b) => b.file.ctime, 'desc')
-        .map((b) => [
+        .sort(b => b.file.ctime, 'desc')
+        .map(b => [
           b.file.link,
           `[[${dayjs(b.file.ctime.ts).format('YYYY-MM-DD')}]]`,
         ]),
       div,
       component,
-      filepath
+      filepath,
     );
 
     ctx.addChild(component);

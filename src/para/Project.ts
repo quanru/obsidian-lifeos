@@ -1,9 +1,9 @@
 import type { TaskConditionType } from '../type';
 
 import { TFile, moment } from 'obsidian';
-import { Date } from '../periodic/Date';
+import { Date as PeriodicDate } from '../periodic/Date';
 import { Markdown } from '../component/Markdown';
-import { MarkdownPostProcessorContext, MarkdownRenderer } from 'obsidian';
+import { type MarkdownPostProcessorContext, MarkdownRenderer } from 'obsidian';
 import { Item } from './Item';
 import { generateHeaderRegExp } from '../util';
 
@@ -47,7 +47,7 @@ export class Project extends Item {
     const time1 = Number(hr1) * 60 + Number(min1);
     const time2 = Number(hr2) * 60 + Number(min2);
 
-    return ((time1 / time2) * 100).toFixed(2) + '%';
+    return `${((time1 / time2) * 100).toFixed(2)}%`;
   }
 
   async filter(
@@ -55,7 +55,7 @@ export class Project extends Item {
       from: '',
       to: '',
     },
-    header: string
+    header: string,
   ) {
     const { from, to } = condition;
     const timeReg = /\d+hr(\d+)?/;
@@ -70,7 +70,7 @@ export class Project extends Item {
     while (true) {
       const momentDay = moment(day);
       const link = `${momentDay.year()}/Daily/${String(
-        momentDay.month() + 1
+        momentDay.month() + 1,
       ).padStart(2, '0')}/${momentDay.format('YYYY-MM-DD')}.md`;
       const file = this.file.get(link, '', this.settings.periodicNotesPath);
 
@@ -84,7 +84,7 @@ export class Project extends Item {
             ? regMatch[2]?.split('\n')
             : [];
 
-          projectContent.map((project) => {
+          projectContent.map(project => {
             if (!project) {
               return;
             }
@@ -107,7 +107,7 @@ export class Project extends Item {
 
             projectTimeConsume[projectFile] = this.timeAdd(
               projectTimeConsume[projectFile],
-              projectTime
+              projectTime,
             );
 
             if (!projectList.includes(projectFile)) {
@@ -126,13 +126,10 @@ export class Project extends Item {
       day = momentDay.add(1, 'day').format('YYYY-MM-DD');
     }
 
-    await Promise.all(tasks.map((task) => task()));
-    Object.keys(projectTimeConsume).map((project) => {
+    await Promise.all(tasks.map(task => task()));
+    Object.keys(projectTimeConsume).map(project => {
       projectTimeConsume[project] = projectTimeConsume[project]
-        ? `${projectTimeConsume[project]}/${totalTime}=${this.timePercent(
-            projectTimeConsume[project],
-            totalTime
-          )}`
+        ? `${projectTimeConsume[project]}/${totalTime}=${this.timePercent(projectTimeConsume[project], totalTime)}`
         : '';
     });
 
@@ -146,15 +143,20 @@ export class Project extends Item {
   listByTime = async (
     source: string,
     el: HTMLElement,
-    ctx: MarkdownPostProcessorContext
+    ctx: MarkdownPostProcessorContext,
   ) => {
-    const date = new Date(this.app, this.settings, this.file, this.locale);
+    const date = new PeriodicDate(
+      this.app,
+      this.settings,
+      this.file,
+      this.locale,
+    );
     const parsed = date.days(date.parse(ctx.sourcePath));
 
     const header = this.settings.projectListHeader;
     const { projectList, projectTimeConsume } = await this.filter(
       parsed,
-      header
+      header,
     );
 
     const div = el.createEl('div');
@@ -166,9 +168,7 @@ export class Project extends Item {
       const regMatch = project.match(/\/(.*)\//);
 
       list.push(
-        `${index + 1}. [[${project}|${regMatch?.length ? regMatch[1] : ''}]] ${
-          projectTimeConsume[project]
-        }`
+        `${index + 1}. [[${project}|${regMatch?.length ? regMatch[1] : ''}]] ${projectTimeConsume[project]}`,
       );
     });
 
@@ -179,7 +179,7 @@ export class Project extends Item {
       list.join('\n'),
       div,
       ctx.sourcePath,
-      component
+      component,
     );
 
     ctx.addChild(component);

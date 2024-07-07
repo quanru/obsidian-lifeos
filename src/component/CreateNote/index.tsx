@@ -41,7 +41,7 @@ dayjs.extend(updateLocale);
 export const CreateNote = (props: { width: number }) => {
   const { app, settings: initialSettings, locale } = useApp() || {};
   const [settings, setSettings] = useState<PluginSettings | undefined>(
-    initialSettings
+    initialSettings,
   );
   const { width } = props;
   const [periodicActiveTab, setPeriodicActiveTab] = useState(DAILY);
@@ -51,7 +51,7 @@ export const CreateNote = (props: { width: number }) => {
   const [form] = Form.useForm();
   const today = dayjs(new Date());
   const localeKey = locale?.locale || 'en';
-  const localeMap = I18N_MAP[localeKey] || I18N_MAP['en'];
+  const localeMap = I18N_MAP[localeKey] || I18N_MAP.en;
   const SubmitButton = (
     <Form.Item
       style={{
@@ -74,33 +74,33 @@ export const CreateNote = (props: { width: number }) => {
     app?.vault
       .getAllLoadedFiles()
       .filter(
-        (file) =>
+        file =>
           settings?.periodicNotesPath &&
           file.path.indexOf(settings?.periodicNotesPath) === 0 &&
-          (file as { extension?: string }).extension === 'md'
+          (file as { extension?: string }).extension === 'md',
       )
-      .map((file) => (file as { basename?: string }).basename) || []
+      .map(file => (file as { basename?: string }).basename) || [],
   );
 
-  useDocumentEvent('settingUpdate', (event) => {
+  useDocumentEvent('settingUpdate', event => {
     setSettings(event.detail);
     setType(event.detail.usePeriodicNotes ? PERIODIC : PARA);
   });
 
-  app?.vault.on('create', (file) => {
+  app?.vault.on('create', file => {
     if (file instanceof TFile) {
       setExistsDates([file.basename, ...existsDates]);
     }
   });
-  app?.vault.on('delete', (file) => {
+  app?.vault.on('delete', file => {
     if (file instanceof TFile) {
-      setExistsDates(existsDates.filter((date) => date !== file.basename));
+      setExistsDates(existsDates.filter(date => date !== file.basename));
     }
   });
   app?.vault.on('rename', (file, oldPath) => {
     if (file instanceof TFile) {
       setExistsDates(
-        [file.basename, ...existsDates].filter((date) => date !== oldPath)
+        [file.basename, ...existsDates].filter(date => date !== oldPath),
       );
     }
   });
@@ -116,7 +116,7 @@ export const CreateNote = (props: { width: number }) => {
 
   const cellRender: (value: dayjs.Dayjs, picker: string) => JSX.Element = (
     value,
-    picker
+    picker,
   ) => {
     let formattedDate: string;
     let badgeText: string;
@@ -131,7 +131,7 @@ export const CreateNote = (props: { width: number }) => {
           const solar = SolarDay.fromYmd(
             date.year(),
             date.month() + 1,
-            date.date()
+            date.date(),
           );
           const lunar = solar.getLunarDay();
           const [, lunarMonthDay] = lunar.toString().split('年');
@@ -145,8 +145,8 @@ export const CreateNote = (props: { width: number }) => {
             typeof holiday?.isWork !== 'function'
               ? ''
               : holiday?.isWork()
-              ? '班'
-              : '休';
+                ? '班'
+                : '休';
           const term = solar.getTerm();
           if (
             term.getJulianDay().getSolarDay().toString() === solar.toString()
@@ -196,9 +196,7 @@ export const CreateNote = (props: { width: number }) => {
 
     const cell = (
       <>
-        <span>
-          {badgeText}
-        </span>
+        <span>{badgeText}</span>
         {settings?.useChineseCalendar && (
           <>
             <span className="chinese-cal">{chineseCalendarText}</span>
@@ -287,7 +285,7 @@ export const CreateNote = (props: { width: number }) => {
 
   // all tags
   const tags = Object.entries(
-    (app?.metadataCache as any).getTags() as Record<string, number>
+    (app?.metadataCache as any).getTags() as Record<string, number>,
   )
     .sort((a, b) => b[1] - a[1])
     .map(([tag, _]) => {
@@ -345,7 +343,7 @@ export const CreateNote = (props: { width: number }) => {
           <Radio.Group
             name="type"
             value={type}
-            onChange={(e) => setType(e.target.value)}
+            onChange={e => setType(e.target.value)}
             size="small"
             style={{
               width: '100%',
@@ -360,7 +358,7 @@ export const CreateNote = (props: { width: number }) => {
           <Tabs
             key={PERIODIC}
             activeKey={periodicActiveTab}
-            onTabClick={(key) => {
+            onTabClick={key => {
               if (singleClickRef.current) {
                 clearTimeout(singleClickRef.current);
                 createPeriodicFile(dayjs(new Date()), key, settings, app);
@@ -375,61 +373,57 @@ export const CreateNote = (props: { width: number }) => {
             centered
             size="small"
             indicator={{ size: 0 }}
-            items={[DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY].map(
-              (periodic) => {
-                const pickerMap: Record<
-                  string,
-                  'date' | 'week' | 'month' | 'quarter' | 'year'
-                > = {
-                  [DAILY]: 'date',
-                  [WEEKLY]: 'week',
-                  [MONTHLY]: 'month',
-                  [QUARTERLY]: 'quarter',
-                  [YEARLY]: 'year',
-                };
-                const picker = pickerMap[periodic];
-                const label = localeMap[periodic];
+            items={[DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY].map(periodic => {
+              const pickerMap: Record<
+                string,
+                'date' | 'week' | 'month' | 'quarter' | 'year'
+              > = {
+                [DAILY]: 'date',
+                [WEEKLY]: 'week',
+                [MONTHLY]: 'month',
+                [QUARTERLY]: 'quarter',
+                [YEARLY]: 'year',
+              };
+              const picker = pickerMap[periodic];
+              const label = localeMap[periodic];
 
-                return {
-                  label: (
-                    <Tooltip
-                      mouseEnterDelay={1}
-                      title={`${
-                        localeMap.QUICK_JUMP
-                      }${label.toLocaleLowerCase()}`}
-                    >
-                      {label}
-                    </Tooltip>
-                  ),
-                  key: periodic,
-                  children: (
-                    <Form.Item name={periodic}>
-                      <DatePicker
-                        cellRender={(value: dayjs.Dayjs, info: any) => {
-                          return cellRender(value, picker);
-                        }}
-                        onSelect={(day) => {
-                          createPeriodicFile(
-                            day,
-                            periodicActiveTab,
-                            settings,
-                            app
-                          );
-                        }}
-                        picker={picker}
-                        showToday={false}
-                        style={{ width: 200 }}
-                        inputReadOnly
-                        open
-                        getPopupContainer={(triggerNode: any) =>
-                          triggerNode.parentNode
-                        }
-                      />
-                    </Form.Item>
-                  ),
-                };
-              }
-            )}
+              return {
+                label: (
+                  <Tooltip
+                    mouseEnterDelay={1}
+                    title={`${localeMap.QUICK_JUMP}${label.toLocaleLowerCase()}`}
+                  >
+                    {label}
+                  </Tooltip>
+                ),
+                key: periodic,
+                children: (
+                  <Form.Item name={periodic}>
+                    <DatePicker
+                      cellRender={(value: dayjs.Dayjs, info: any) => {
+                        return cellRender(value, picker);
+                      }}
+                      onSelect={day => {
+                        createPeriodicFile(
+                          day,
+                          periodicActiveTab,
+                          settings,
+                          app,
+                        );
+                      }}
+                      picker={picker}
+                      showToday={false}
+                      style={{ width: 200 }}
+                      inputReadOnly
+                      open
+                      getPopupContainer={(triggerNode: any) =>
+                        triggerNode.parentNode
+                      }
+                    />
+                  </Form.Item>
+                ),
+              };
+            })}
           ></Tabs>
         )}
         {type === PARA && settings?.usePARANotes && (
@@ -442,7 +436,7 @@ export const CreateNote = (props: { width: number }) => {
               size="small"
               indicator={{ size: 0 }}
               style={{ width: '100%' }}
-              items={[PROJECT, AREA, RESOURCE, ARCHIVE].map((para) => {
+              items={[PROJECT, AREA, RESOURCE, ARCHIVE].map(para => {
                 const label = localeMap[para];
 
                 return {

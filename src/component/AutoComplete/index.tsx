@@ -1,5 +1,6 @@
+import type { PropsWithChildren } from 'react';
 import React, { useState } from 'react';
-import { AutoComplete as AntdAutoComplete, AutoCompleteProps } from 'antd';
+import { AutoComplete as AntdAutoComplete, type AutoCompleteProps } from 'antd';
 
 interface SelectOptionsType {
   value: string;
@@ -11,7 +12,7 @@ interface Props extends AutoCompleteProps {
   onSelect?: (value: string) => void;
 }
 
-export const AutoComplete = (props: React.PropsWithChildren<Props>) => {
+export const AutoComplete = (props: PropsWithChildren<Props>) => {
   const { options, onSelect, children, ...otherProps } = props;
   const [filteredOptions, setFilteredOptions] =
     useState<SelectOptionsType[]>(options);
@@ -19,7 +20,7 @@ export const AutoComplete = (props: React.PropsWithChildren<Props>) => {
   const onSearch = (value: string) => {
     const filteredOptions = options.filter(
       (option: { value: string; label: string }) =>
-        option.label.toString().toLowerCase().includes(value.toLowerCase())
+        option.label.toString().toLowerCase().includes(value.toLowerCase()),
     );
     setFilteredOptions(filteredOptions);
   };
