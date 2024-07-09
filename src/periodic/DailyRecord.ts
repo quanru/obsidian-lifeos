@@ -1,12 +1,16 @@
 import axios, { Axios } from 'axios';
 import { App, TFile, moment, normalizePath } from 'obsidian';
+import semver from 'semver';
 import type { File } from './File';
 import {
   type PluginSettings,
   type DailyRecordType,
   type FetchError,
   type ResourceType,
+  type ResourceTypeV2,
   LogLevel,
+  WorkspaceProfileType,
+  DailyRecordResponseTypeV2,
 } from '../type';
 import { ERROR_MESSAGE, MESSAGE } from '../constant';
 import {
@@ -14,6 +18,7 @@ import {
   generateFileName,
   generateHeaderRegExp,
   logMessage,
+  transformV2Record,
 } from '../util';
 import { I18N_MAP } from '../i18n';
 
@@ -21,12 +26,14 @@ export class DailyRecord {
   app: App;
   settings: PluginSettings;
   file: File;
-  limit: number;
   lastTime: string;
-  offset: number;
+  pageSize: number;
+  pageToken: string;
+  pageOffset: number;
   localKey: string;
   locale: string;
   axios: Axios;
+  memosVersion: string;
   constructor(app: App, settings: PluginSettings, file: File, locale: string) {
     if (!settings.dailyRecordAPI) {
       logMessage(I18N_MAP[this.locale][`${ERROR_MESSAGE}NO_DAILY_RECORD_API`]);
@@ -47,42 +54,102 @@ export class DailyRecord {
       return;
     }
 
+    const { origin: baseURL } = new URL(settings.dailyRecordAPI);
+
     this.app = app;
     this.file = file;
     this.settings = settings;
-    this.limit = 50;
-    this.offset = 0;
+    this.pageSize = 50;
+    this.pageOffset = 0;
+    this.pageToken = '';
     this.localKey = `periodic-para-daily-record-last-time-${this.settings.dailyRecordToken}`;
     this.lastTime = window.localStorage.getItem(this.localKey) || '';
     this.locale = locale;
     this.axios = axios.create({
+      baseURL,
       headers: {
         Authorization: `Bearer ${this.settings.dailyRecordToken}`,
-        Accept: 'application/json',
       },
     });
   }
 
-  async fetch() {
-    try {
-      const { data } = await this.axios.get<DailyRecordType[] | FetchError>(
-        this.settings.dailyRecordAPI,
-        {
-          params: {
-            limit: this.limit,
-            offset: this.offset,
-            rowStatus: 'NORMAL',
-          },
-        }
-      );
+  async getMemosVersion() {
+    const urls = ['/api/v1/workspace/profile', '/api/v2/workspace/profile'];
 
-      if (Array.isArray(data)) {
-        return data;
+    for (const url of urls) {
+      try {
+        const { data } = await this.axios.get<WorkspaceProfileType>(url);
+        const version = data.workspaceProfile?.version || data.version;
+        this.memosVersion = semver.lt(version, '0.22.0') ? 'v1' : 'v2';
+        return; // 成功获取版本后退出方法
+      } catch (error) {
+        console.warn(`Failed to fetch from ${url}:`, error.message || '');
       }
+    }
 
-      throw new Error(
-        data.message || data.msg || data.error || JSON.stringify(data)
+    if (!this.memosVersion) {
+      logMessage(
+        `${
+          I18N_MAP[this.locale][`${ERROR_MESSAGE}FAILED_GET_USEMEMOS_VERSION`]
+        }`,
+        LogLevel.error
       );
+    }
+
+    if (
+      semver.gt(this.memosVersion, '0.22.0') &&
+      semver.lt(this.memosVersion, '0.22.3')
+    ) {
+      logMessage(
+        `${
+          I18N_MAP[this.locale][`${ERROR_MESSAGE}UNSUPPORTED_USEMEMOS_VERSION`]
+        }: ${this.memosVersion}`,
+        LogLevel.error
+      );
+    }
+  }
+
+  async fetchMemosList() {
+    try {
+      if (this.memosVersion === 'v1') {
+        const { data } = await this.axios.get<DailyRecordType[] | FetchError>(
+          '/api/v1/memo',
+          {
+            params: {
+              limit: this.pageSize,
+              offset: this.pageOffset,
+              rowStatus: 'NORMAL',
+            },
+          }
+        );
+
+        if (Array.isArray(data)) {
+          return data;
+        }
+
+        throw new Error(
+          data.message || data.msg || data.error || JSON.stringify(data)
+        );
+      } else {
+        const { data } = await this.axios.get<DailyRecordResponseTypeV2>(
+          '/api/v1/memos',
+          {
+            params: {
+              pageSize: this.pageSize,
+              pageToken: this.pageToken,
+              filter: 'row_status=="NORMAL"',
+            },
+          }
+        );
+
+        if (data.code === 1) {
+          throw new Error(data.message);
+        }
+
+        this.pageToken = data.nextPageToken;
+
+        return data.memos?.map(transformV2Record);
+      }
     } catch (error) {
       logMessage(
         `${
@@ -93,70 +160,33 @@ export class DailyRecord {
     }
   }
 
-  forceSync = async () => {
-    this.lastTime = '';
-    this.sync();
-  };
-
-  sync = async () => {
-    logMessage(I18N_MAP[this.locale][`${MESSAGE}START_SYNC_USEMEMOS`]);
-    this.offset = 0;
-    this.downloadResource();
-    this.insertDailyRecord();
-  };
-
-  async downloadResource() {
-    const { origin } = new URL(this.settings.dailyRecordAPI);
-
+  async fetchResourceList() {
     try {
-      const { data } = await this.axios.get<ResourceType[] | FetchError>(
-        origin + '/api/v1/resource'
-      );
-
-      if (Array.isArray(data)) {
-        await Promise.all(
-          data.map(async (resource) => {
-            if (resource.externalLink) {
-              return;
-            }
-
-            const folder = `${this.settings.periodicNotesPath}/Attachments`;
-            const resourcePath = normalizePath(
-              `${folder}/${generateFileName(resource)}`
-            );
-
-            const isResourceExists = await this.app.vault.adapter.exists(
-              resourcePath
-            );
-
-            if (isResourceExists) {
-              return;
-            }
-
-            const resourceURL = `${origin}/o/r/${
-              resource.uid || resource.name || resource.id
-            }`;
-            const { data } = await this.axios.get(resourceURL, {
-              responseType: 'arraybuffer',
-            });
-
-            if (!data) {
-              return;
-            }
-
-            if (!this.app.vault.getAbstractFileByPath(folder)) {
-              this.app.vault.createFolder(folder);
-            }
-
-            await this.app.vault.adapter.writeBinary(resourcePath, data);
-          })
+      if (this.memosVersion === 'v1') {
+        const { data } = await this.axios.get<ResourceType[] | FetchError>(
+          '/api/v1/resource',
+          {}
         );
-        return data;
-      }
 
-      throw new Error(
-        data.message || data.msg || data.error || JSON.stringify(data)
-      );
+        if (Array.isArray(data)) {
+          return data;
+        }
+
+        throw new Error(
+          data.message || data.msg || data.error || JSON.stringify(data)
+        );
+      } else {
+        const { data } = await this.axios.get<ResourceTypeV2>(
+          '/api/v1/resources',
+          {}
+        );
+
+        if (data.code === 1) {
+          throw new Error(data.message);
+        }
+
+        return data?.resources;
+      }
     } catch (error) {
       if (error.response.status === 404) {
         return;
@@ -170,10 +200,68 @@ export class DailyRecord {
     }
   }
 
+  forceSync = async () => {
+    this.lastTime = '';
+    await this.sync();
+  };
+
+  sync = async () => {
+    logMessage(I18N_MAP[this.locale][`${MESSAGE}START_SYNC_USEMEMOS`]);
+    this.pageOffset = 0;
+    this.pageToken = '';
+    await this.getMemosVersion();
+    await this.downloadResource();
+    await this.insertDailyRecord();
+  };
+
+  async downloadResource() {
+    const resourceList = (await this.fetchResourceList()) || [];
+
+    await Promise.all(
+      resourceList.map(async (resource) => {
+        if (resource.externalLink) {
+          return;
+        }
+
+        const folder = `${this.settings.periodicNotesPath}/Attachments`;
+        const resourcePath = normalizePath(
+          `${folder}/${generateFileName(resource)}`
+        );
+
+        const isResourceExists = await this.app.vault.adapter.exists(
+          resourcePath
+        );
+
+        if (isResourceExists) {
+          return;
+        }
+
+        const { data } = await this.axios.get(
+          this.memosVersion === 'v1'
+            ? `${origin}/o/r/${resource.uid || resource.name || resource.id}`
+            : `${origin}/file/${resource.name}/${resource.filename}`,
+          {
+            responseType: 'arraybuffer',
+          }
+        );
+
+        if (!data) {
+          return;
+        }
+
+        if (!this.app.vault.getAbstractFileByPath(folder)) {
+          await this.app.vault.createFolder(folder);
+        }
+
+        await this.app.vault.adapter.writeBinary(resourcePath, data);
+      })
+    );
+  }
+
   insertDailyRecord = async () => {
     const header = this.settings.dailyRecordHeader;
     const dailyRecordByDay: Record<string, Record<string, string>> = {};
-    const records = (await this.fetch()) || [];
+    const records = (await this.fetchMemosList()) || [];
     const mostRecentTimeStamp = records[0]?.createdAt
       ? moment(records[0]?.createdAt).unix()
       : records[0]?.createdTs;
@@ -307,7 +395,17 @@ export class DailyRecord {
       })
     );
 
-    this.offset = this.offset + this.limit;
-    this.insertDailyRecord();
+    if (this.memosVersion === 'v1') {
+      this.pageOffset = this.pageOffset + this.pageSize;
+    } else if (!this.pageToken) {
+      // v2 没有下一页 pageToken 时
+      logMessage(I18N_MAP[this.locale][`${MESSAGE}END_SYNC_USEMEMOS`]);
+
+      window.localStorage.setItem(this.localKey, Date.now().toString());
+
+      return;
+    }
+
+    await this.insertDailyRecord();
   };
 }

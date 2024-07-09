@@ -74,6 +74,13 @@ export type ResourceType = {
   filename: string;
 };
 
+export type ResourceTypeV2 = {
+  code?: number;
+  message?: string;
+  nextPageToken: string;
+  resources: ResourceType[];
+};
+
 export type DailyRecordType = {
   rowStatus: 'ARCHIVED' | 'ACTIVE' | 'NORMAL';
   updatedTs: number;
@@ -82,6 +89,37 @@ export type DailyRecordType = {
   updatedAt: string;
   content: string;
   resourceList?: ResourceType[];
+};
+
+export type DailyRecordTypeV2 = {
+  rowStatus: 'ARCHIVED' | 'ACTIVE' | 'NORMAL';
+  content: string;
+  updateTime: number;
+  createTime: number;
+  resources?: ResourceType[];
+};
+
+export type DailyRecordResponseTypeV2 = {
+  code?: number;
+  message?: string;
+  nextPageToken: string;
+  memos: DailyRecordTypeV2[];
+};
+
+export type WorkspaceProfileType = {
+  owner: string;
+  version: string;
+  mode: string;
+  public: boolean;
+  workspaceProfile: {
+    owner: string;
+    version: string;
+    mode: string;
+    disallowSignup: boolean;
+    disablePasswordLogin: boolean;
+    additionalScript: string;
+    additionalStyle: string;
+  };
 };
 
 export type FetchError = {
