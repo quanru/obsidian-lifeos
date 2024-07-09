@@ -111,12 +111,7 @@ export default class LifeOS extends Plugin {
         id: `periodic-para-create-${periodType.toLocaleLowerCase()}-note`,
         name: `Create ${periodType} Note`,
         callback: () => {
-          createPeriodicFile(
-            dayjs(),
-            periodType,
-            this.settings,
-            this.app
-          );
+          createPeriodicFile(dayjs(), periodType, this.settings, this.app);
         },
       });
     });
@@ -309,6 +304,6 @@ export default class LifeOS extends Plugin {
       leaf = this.app.workspace.getLeftLeaf(false);
     }
 
-    await leaf.setViewState({ type: CREATE_NOTE, active: true });
+    await leaf?.setViewState({ type: CREATE_NOTE, active: true });
   };
 }
