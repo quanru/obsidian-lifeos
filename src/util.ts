@@ -3,6 +3,7 @@ import type { App } from 'obsidian';
 import dayjs, { Dayjs } from 'dayjs';
 import type {
   DailyRecordType,
+  DailyRecordTypeV2,
   PeriodicNotesTemplateFilePath,
   ResourceType,
 } from './type';
@@ -141,6 +142,18 @@ export function formatDailyRecord(record: DailyRecordType) {
   return [date, timeStamp, finalTargetContent].map(String);
 }
 
+export function transformV2Record(record: DailyRecordTypeV2) {
+  return {
+    updatedTs: new Date(record.updateTime).getTime() / 1000,
+    createdTs: new Date(record.createTime).getTime() / 1000,
+    createdAt: new Date(record.createTime).toISOString(),
+    updatedAt: new Date(record.updateTime).toISOString(),
+    content: record.content,
+    rowStatus: record.rowStatus,
+    resourceList: record.resources,
+  };
+}
+
 export function generateFileLink(resource: ResourceType): string {
   if (!resource.externalLink) {
     return `![[${generateFileName(resource)}]]`;
@@ -154,7 +167,9 @@ export function generateFileLink(resource: ResourceType): string {
 }
 
 export function generateFileName(resource: ResourceType): string {
-  return `${resource.id || resource.name?.split('/')[1]}-${resource.filename.replace(/[/\\?%*:|"<>]/g, '-')}`;
+  return `${
+    resource.id || resource.name?.split('/')[1]
+  }-${resource.filename.replace(/[/\\?%*:|"<>]/g, '-')}`;
 }
 
 export function logMessage(message: string, level: LogLevel = LogLevel.info) {
