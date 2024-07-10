@@ -6,19 +6,19 @@ import {
 } from 'obsidian';
 import type { PluginSettings } from '../type';
 
+import dayjs from 'dayjs';
+import type { DataviewApi } from 'obsidian-dataview';
+import { Markdown } from '../component/Markdown';
 import {
   DAILY_REG,
-  WEEKLY_REG,
+  ERROR_MESSAGE,
   MONTHLY_REG,
   QUARTERLY_REG,
+  WEEKLY_REG,
   YEARLY_REG,
-  ERROR_MESSAGE,
 } from '../constant';
-import type { DataviewApi } from 'obsidian-dataview';
-import { logMessage, renderError } from '../util';
-import { Markdown } from '../component/Markdown';
-import dayjs from 'dayjs';
 import { I18N_MAP } from '../i18n';
+import { logMessage, renderError } from '../util';
 
 export class File {
   app: App;
@@ -192,7 +192,7 @@ export class File {
               periodicNotesTemplateFilePathMonthly,
               periodicNotesTemplateFilePathWeekly,
               periodicNotesTemplateFilePathDaily,
-            ].includes(b.file.path)
+            ].includes(b.file.path),
         )
         .sort(b => b.file.ctime, 'desc')
         .map(b => [

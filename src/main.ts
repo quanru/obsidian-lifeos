@@ -7,18 +7,9 @@ import type {
 } from 'obsidian';
 import { type DataviewApi, getAPI, isPluginEnabled } from 'obsidian-dataview';
 
-import { Project } from './para/Project';
-import { Area } from './para/Area';
-import { Resource } from './para/Resource';
-import { Archive } from './para/Archive';
-import { Task } from './periodic/Task';
-import { Bullet } from './periodic/Bullet';
-import { File } from './periodic/File';
-import { Date as PeriodicDate } from './periodic/Date';
-import { DailyRecord } from './periodic/DailyRecord';
-import { SettingTabView } from './view/SettingTab';
-import { LogLevel, type PluginSettings } from './type';
-import { DEFAULT_SETTINGS } from './view/SettingTab';
+import enUS from 'antd/locale/en_US';
+import zhCN from 'antd/locale/zh_CN';
+import dayjs from 'dayjs';
 import {
   DAILY,
   ERROR_MESSAGE,
@@ -27,6 +18,16 @@ import {
   WEEKLY,
   YEARLY,
 } from './constant';
+import { Archive } from './para/Archive';
+import { Area } from './para/Area';
+import { Project } from './para/Project';
+import { Resource } from './para/Resource';
+import { Bullet } from './periodic/Bullet';
+import { DailyRecord } from './periodic/DailyRecord';
+import { Date as PeriodicDate } from './periodic/Date';
+import { File } from './periodic/File';
+import { Task } from './periodic/Task';
+import { LogLevel, type PluginSettings } from './type';
 import {
   createPeriodicFile,
   logMessage,
@@ -34,9 +35,8 @@ import {
   renderError,
 } from './util';
 import { CREATE_NOTE, CreateNoteView } from './view/CreateNote';
-import dayjs from 'dayjs';
-import enUS from 'antd/locale/en_US';
-import zhCN from 'antd/locale/zh_CN';
+import { SettingTabView } from './view/SettingTab';
+import { DEFAULT_SETTINGS } from './view/SettingTab';
 import 'dayjs/locale/zh-cn';
 import 'dayjs/locale/zh';
 import { I18N_MAP } from './i18n';

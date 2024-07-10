@@ -1,18 +1,18 @@
-import axios, { Axios } from 'axios';
-import { App, TFile, moment, normalizePath } from 'obsidian';
+import axios, { type Axios } from 'axios';
+import { type App, TFile, moment, normalizePath } from 'obsidian';
 import semver from 'semver';
-import type { File } from './File';
+import { ERROR_MESSAGE, MESSAGE } from '../constant';
+import { I18N_MAP } from '../i18n';
 import {
-  type PluginSettings,
+  type DailyRecordResponseTypeV2,
   type DailyRecordType,
   type FetchError,
+  LogLevel,
+  type PluginSettings,
   type ResourceType,
   type ResourceTypeV2,
-  LogLevel,
-  WorkspaceProfileType,
-  DailyRecordResponseTypeV2,
+  type WorkspaceProfileType,
 } from '../type';
-import { ERROR_MESSAGE, MESSAGE } from '../constant';
 import {
   formatDailyRecord,
   generateFileName,
@@ -20,7 +20,7 @@ import {
   logMessage,
   transformV2Record,
 } from '../util';
-import { I18N_MAP } from '../i18n';
+import type { File } from './File';
 
 export class DailyRecord {
   app: App;
@@ -93,7 +93,7 @@ export class DailyRecord {
         `${
           I18N_MAP[this.locale][`${ERROR_MESSAGE}FAILED_GET_USEMEMOS_VERSION`]
         }`,
-        LogLevel.error
+        LogLevel.error,
       );
     }
 
@@ -105,7 +105,7 @@ export class DailyRecord {
         `${
           I18N_MAP[this.locale][`${ERROR_MESSAGE}UNSUPPORTED_USEMEMOS_VERSION`]
         }: ${this.memosVersion}`,
-        LogLevel.error
+        LogLevel.error,
       );
     }
   }
@@ -121,7 +121,7 @@ export class DailyRecord {
               offset: this.pageOffset,
               rowStatus: 'NORMAL',
             },
-          }
+          },
         );
 
         if (Array.isArray(data)) {
@@ -129,28 +129,27 @@ export class DailyRecord {
         }
 
         throw new Error(
-          data.message || data.msg || data.error || JSON.stringify(data)
+          data.message || data.msg || data.error || JSON.stringify(data),
         );
-      } else {
-        const { data } = await this.axios.get<DailyRecordResponseTypeV2>(
-          '/api/v1/memos',
-          {
-            params: {
-              pageSize: this.pageSize,
-              pageToken: this.pageToken,
-              filter: 'row_status=="NORMAL"',
-            },
-          }
-        );
-
-        if (data.code === 1) {
-          throw new Error(data.message);
-        }
-
-        this.pageToken = data.nextPageToken;
-
-        return data.memos?.map(transformV2Record);
       }
+      const { data } = await this.axios.get<DailyRecordResponseTypeV2>(
+        '/api/v1/memos',
+        {
+          params: {
+            pageSize: this.pageSize,
+            pageToken: this.pageToken,
+            filter: 'row_status=="NORMAL"',
+          },
+        },
+      );
+
+      if (data.code === 1) {
+        throw new Error(data.message);
+      }
+
+      this.pageToken = data.nextPageToken;
+
+      return data.memos?.map(transformV2Record);
     } catch (error) {
       logMessage(
         `${I18N_MAP[this.locale][`${ERROR_MESSAGE}DAILY_RECORD_FETCH_FAILED`]}: ${error}`,
@@ -164,7 +163,7 @@ export class DailyRecord {
       if (this.memosVersion === 'v1') {
         const { data } = await this.axios.get<ResourceType[] | FetchError>(
           '/api/v1/resource',
-          {}
+          {},
         );
 
         if (Array.isArray(data)) {
@@ -172,20 +171,19 @@ export class DailyRecord {
         }
 
         throw new Error(
-          data.message || data.msg || data.error || JSON.stringify(data)
+          data.message || data.msg || data.error || JSON.stringify(data),
         );
-      } else {
-        const { data } = await this.axios.get<ResourceTypeV2>(
-          '/api/v1/resources',
-          {}
-        );
-
-        if (data.code === 1) {
-          throw new Error(data.message);
-        }
-
-        return data?.resources;
       }
+      const { data } = await this.axios.get<ResourceTypeV2>(
+        '/api/v1/resources',
+        {},
+      );
+
+      if (data.code === 1) {
+        throw new Error(data.message);
+      }
+
+      return data?.resources;
     } catch (error) {
       if (error.response.status === 404) {
         return;
@@ -215,19 +213,18 @@ export class DailyRecord {
     const resourceList = (await this.fetchResourceList()) || [];
 
     await Promise.all(
-      resourceList.map(async (resource) => {
+      resourceList.map(async resource => {
         if (resource.externalLink) {
           return;
         }
 
         const folder = `${this.settings.periodicNotesPath}/Attachments`;
         const resourcePath = normalizePath(
-          `${folder}/${generateFileName(resource)}`
+          `${folder}/${generateFileName(resource)}`,
         );
 
-        const isResourceExists = await this.app.vault.adapter.exists(
-          resourcePath
-        );
+        const isResourceExists =
+          await this.app.vault.adapter.exists(resourcePath);
 
         if (isResourceExists) {
           return;
@@ -239,7 +236,7 @@ export class DailyRecord {
             : `/file/${resource.name}/${resource.filename}`,
           {
             responseType: 'arraybuffer',
-          }
+          },
         );
 
         if (!data) {
@@ -251,7 +248,7 @@ export class DailyRecord {
         }
 
         await this.app.vault.adapter.writeBinary(resourcePath, data);
-      })
+      }),
     );
   }
 

@@ -1,6 +1,16 @@
+import dayjs, { type Dayjs } from 'dayjs';
 import { Component, MarkdownRenderer, Notice, TFile, moment } from 'obsidian';
 import type { App } from 'obsidian';
-import dayjs, { type Dayjs } from 'dayjs';
+import {
+  DAILY,
+  ERROR_MESSAGE,
+  LIFE_OS_OFFICIAL_SITE,
+  MONTHLY,
+  QUARTERLY,
+  WEEKLY,
+  YEARLY,
+} from './constant';
+import { I18N_MAP } from './i18n';
 import type {
   DailyRecordType,
   DailyRecordTypeV2,
@@ -8,16 +18,6 @@ import type {
   ResourceType,
 } from './type';
 import { LogLevel, type PluginSettings } from './type';
-import {
-  DAILY,
-  WEEKLY,
-  MONTHLY,
-  QUARTERLY,
-  YEARLY,
-  LIFE_OS_OFFICIAL_SITE,
-  ERROR_MESSAGE,
-} from './constant';
-import { I18N_MAP } from './i18n';
 
 export function sleep(milliseconds: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -265,7 +265,7 @@ export function generateIgnoreOperator(settings: PluginSettings) {
     periodicNotesTemplateFilePathWeekly,
     periodicNotesTemplateFilePathDaily,
   ]
-    .filter((path) => path)
-    .map((path) => `AND -"${path}"`)
+    .filter(path => path)
+    .map(path => `AND -"${path}"`)
     .join(' ');
 }

@@ -1,14 +1,14 @@
 import type { App, MarkdownPostProcessorContext } from 'obsidian';
 import type { PluginSettings } from '../type';
 
-import { Markdown } from '../component/Markdown';
 import type { DataArray, DataviewApi, Link } from 'obsidian-dataview';
+import { Markdown } from '../component/Markdown';
 
-import { File } from '../periodic/File';
-import { ERROR_MESSAGE } from '../constant';
-import { generateIgnoreOperator, renderError } from '../util';
-import { I18N_MAP } from '../i18n';
 import type { SListItem } from 'obsidian-dataview/lib/data-model/serialized/markdown';
+import { ERROR_MESSAGE } from '../constant';
+import { I18N_MAP } from '../i18n';
+import { File } from '../periodic/File';
+import { generateIgnoreOperator, renderError } from '../util';
 
 export class Bullet {
   app: App;
@@ -55,7 +55,7 @@ export class Bullet {
       .join(' ')
       .trim();
     const lists: DataArray<SListItem> = await this.dataview.pages(
-      `(${from}) ${generateIgnoreOperator(this.settings)}`
+      `(${from}) ${generateIgnoreOperator(this.settings)}`,
     ).file.lists;
     const result = lists.where(L => {
       let includeTag = false;
@@ -71,11 +71,8 @@ export class Bullet {
     const groupResult = result.groupBy(elem => {
       return elem.link;
     });
-    const sortResult = groupResult.sort(
-      (elem) => elem.rows.link as Link,
-      'desc'
-    );
-    const tableResult = sortResult.map((k) => [
+    const sortResult = groupResult.sort(elem => elem.rows.link as Link, 'desc');
+    const tableResult = sortResult.map(k => [
       k.rows.text as string,
       k.rows.link as Link,
     ]);

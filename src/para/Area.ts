@@ -2,9 +2,9 @@ import type { MarkdownPostProcessorContext } from 'obsidian';
 import type { DateType } from '../type';
 
 import { MarkdownRenderer, TFile } from 'obsidian';
-import { Item } from './Item';
 import { Markdown } from '../component/Markdown';
 import { generateHeaderRegExp } from '../util';
+import { Item } from './Item';
 
 export class Area extends Item {
   async filter(

@@ -1,17 +1,17 @@
 import type { App, MarkdownPostProcessorContext } from 'obsidian';
-import type { TaskConditionType, PluginSettings } from '../type';
 import type { TaskResult } from 'obsidian-dataview/lib/api/plugin-api';
+import type { PluginSettings, TaskConditionType } from '../type';
 
-import { TaskStatusType } from '../type';
 import { moment } from 'obsidian';
 import type { DataviewApi, STask } from 'obsidian-dataview';
 import { ERROR_MESSAGE } from '../constant';
+import { TaskStatusType } from '../type';
 
-import { File } from '../periodic/File';
-import { Date as PeriodicDate } from '../periodic/Date';
 import { Markdown } from '../component/Markdown';
-import { generateIgnoreOperator, renderError } from '../util';
 import { I18N_MAP } from '../i18n';
+import { Date as PeriodicDate } from '../periodic/Date';
+import { File } from '../periodic/File';
+import { generateIgnoreOperator, renderError } from '../util';
 
 export class Task {
   app: App;
@@ -135,8 +135,8 @@ export class Task {
       periodicNotesTemplateFilePathWeekly,
       periodicNotesTemplateFilePathDaily,
     ]
-      .filter((path) => path)
-      .map((path) => `AND -"${path}"`)
+      .filter(path => path)
+      .map(path => `AND -"${path}"`)
       .join(' ');
 
     if (!tags.length) {

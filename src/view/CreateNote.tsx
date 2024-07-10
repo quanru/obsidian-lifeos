@@ -1,7 +1,7 @@
-import React from 'react';
-import { ItemView, type WorkspaceLeaf, debounce } from 'obsidian';
-import { type Root, createRoot } from 'react-dom/client';
 import type { Locale } from 'antd/es/locale';
+import { ItemView, type WorkspaceLeaf, debounce } from 'obsidian';
+import React from 'react';
+import { type Root, createRoot } from 'react-dom/client';
 import { CreateNote } from '../component/CreateNote';
 import { AppContext } from '../context';
 import type { PluginSettings } from '../type';

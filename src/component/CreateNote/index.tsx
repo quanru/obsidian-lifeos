@@ -1,38 +1,38 @@
-import React, { useRef, useState } from 'react';
-import { Notice, TFile } from 'obsidian';
-import { Form, Button, DatePicker, Radio, Tabs, Input, Tooltip } from 'antd';
 import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { Button, DatePicker, Form, Input, Radio, Tabs, Tooltip } from 'antd';
 import dayjs from 'dayjs';
+import { Notice, TFile } from 'obsidian';
+import React, { useRef, useState } from 'react';
 import {
-  PARA,
-  PROJECT,
-  AREA,
-  RESOURCE,
   ARCHIVE,
-  PERIODIC,
+  AREA,
   DAILY,
-  WEEKLY,
-  MONTHLY,
-  QUARTERLY,
-  YEARLY,
-  TAG,
+  ERROR_MESSAGE,
   FOLDER,
   INDEX,
-  ERROR_MESSAGE,
+  MONTHLY,
+  PARA,
+  PERIODIC,
+  PROJECT,
+  QUARTERLY,
+  RESOURCE,
+  TAG,
+  WEEKLY,
+  YEARLY,
 } from '../../constant';
-import { createFile, createPeriodicFile, openOfficialSite } from '../../util';
 import type { PeriodicNotesTemplateFilePath, PluginSettings } from '../../type';
+import { createFile, createPeriodicFile, openOfficialSite } from '../../util';
 import './index.less';
-import { I18N_MAP } from '../../i18n';
 import { useApp } from '../../hooks/useApp';
-import { ConfigProvider } from '../ConfigProvider';
+import { I18N_MAP } from '../../i18n';
 import { AutoComplete } from '../AutoComplete';
+import { ConfigProvider } from '../ConfigProvider';
 
 import weekOfYear from 'dayjs/plugin/isoWeek';
 import quarterOfYear from 'dayjs/plugin/quarterOfYear';
 import updateLocale from 'dayjs/plugin/updateLocale';
-import { useDocumentEvent } from '../../hooks/useDocumentEvent';
 import { SolarDay } from 'tyme4ts';
+import { useDocumentEvent } from '../../hooks/useDocumentEvent';
 
 dayjs.extend(weekOfYear);
 dayjs.extend(quarterOfYear);

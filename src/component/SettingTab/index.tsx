@@ -1,20 +1,20 @@
+import { Divider, Form, Input, Select, Switch, Tabs, Typography } from 'antd';
 import React, { useState, useEffect } from 'react';
-import { Switch, Form, Input, Tabs, Typography, Divider, Select } from 'antd';
-import type { PluginSettings } from '../../type';
-import { ConfigProvider } from '../ConfigProvider';
-import { DEFAULT_SETTINGS } from '../../view/SettingTab';
-import { useApp } from '../../hooks/useApp';
 import {
-  PROJECT,
-  AREA,
-  RESOURCE,
   ARCHIVE,
+  AREA,
   DAILY,
-  WEEKLY,
   MONTHLY,
+  PROJECT,
   QUARTERLY,
+  RESOURCE,
+  WEEKLY,
   YEARLY,
 } from '../../constant';
+import { useApp } from '../../hooks/useApp';
+import type { PluginSettings } from '../../type';
+import { DEFAULT_SETTINGS } from '../../view/SettingTab';
+import { ConfigProvider } from '../ConfigProvider';
 import './index.less';
 import { AutoComplete } from '../AutoComplete';
 

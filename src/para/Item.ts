@@ -3,10 +3,10 @@ import {
   type MarkdownPostProcessorContext,
   MarkdownRenderer,
 } from 'obsidian';
-import type { PluginSettings } from '../type';
+import { Markdown } from '../component/Markdown';
 import { Date as PeriodicDate } from '../periodic/Date';
 import type { File } from '../periodic/File';
-import { Markdown } from '../component/Markdown';
+import type { PluginSettings } from '../type';
 
 export class Item {
   dir: string;

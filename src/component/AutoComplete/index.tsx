@@ -1,6 +1,6 @@
+import { AutoComplete as AntdAutoComplete, type AutoCompleteProps } from 'antd';
 import type { PropsWithChildren } from 'react';
 import React, { useState } from 'react';
-import { AutoComplete as AntdAutoComplete, type AutoCompleteProps } from 'antd';
 
 interface SelectOptionsType {
   value: string;

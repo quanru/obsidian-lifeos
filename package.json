@@ -50,7 +50,7 @@
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,mjs,cjs}": [
-      "biome check . --apply --organize-imports-enabled=false --no-errors-on-unmatched"
+      "biome check . --fix --unsafe --no-errors-on-unmatched"
     ]
   }
 }

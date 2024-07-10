@@ -1,11 +1,11 @@
 import type { TaskConditionType } from '../type';
 
 import { TFile, moment } from 'obsidian';
-import { Date as PeriodicDate } from '../periodic/Date';
-import { Markdown } from '../component/Markdown';
 import { type MarkdownPostProcessorContext, MarkdownRenderer } from 'obsidian';
-import { Item } from './Item';
+import { Markdown } from '../component/Markdown';
+import { Date as PeriodicDate } from '../periodic/Date';
 import { generateHeaderRegExp } from '../util';
+import { Item } from './Item';
 
 export class Project extends Item {
   timeAdd(timeString1: string, timeString2: string) {

@@ -1,12 +1,12 @@
-import React from 'react';
+import type { Locale } from 'antd/es/locale';
 import { PluginSettingTab } from 'obsidian';
 import type { App } from 'obsidian';
+import React from 'react';
+import { type Root, createRoot } from 'react-dom/client';
+import { SettingTab } from '../component/SettingTab';
+import { AppContext } from '../context';
 import type LifeOS from '../main';
 import type { PluginSettings } from '../type';
-import { type Root, createRoot } from 'react-dom/client';
-import { AppContext } from '../context';
-import { SettingTab } from '../component/SettingTab';
-import type { Locale } from 'antd/es/locale';
 
 export const DEFAULT_SETTINGS: PluginSettings = {
   periodicNotesPath: 'PeriodicNotes',

@@ -1,7 +1,5 @@
 import { moment } from 'obsidian';
-import type { File } from './File';
 import type { App } from 'obsidian';
-import type { DateType, DateRangeType, PluginSettings } from '../type';
 import {
   DAILY_REG,
   MONTHLY_REG,
@@ -9,6 +7,8 @@ import {
   WEEKLY_REG,
   YEARLY_REG,
 } from '../constant';
+import type { DateRangeType, DateType, PluginSettings } from '../type';
+import type { File } from './File';
 
 // biome-ignore lint/suspicious/noShadowRestrictedNames: <explanation>
 export class Date {
