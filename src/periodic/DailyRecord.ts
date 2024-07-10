@@ -70,6 +70,7 @@ export class DailyRecord {
       headers: {
         Authorization: `Bearer ${this.settings.dailyRecordToken}`,
       },
+      timeout: 20 * 1000,
     });
   }
 
@@ -210,8 +211,8 @@ export class DailyRecord {
     this.pageOffset = 0;
     this.pageToken = '';
     await this.getMemosVersion();
-    await this.downloadResource();
     await this.insertDailyRecord();
+    await this.downloadResource();
   };
 
   async downloadResource() {
@@ -238,8 +239,8 @@ export class DailyRecord {
 
         const { data } = await this.axios.get(
           this.memosVersion === 'v1'
-            ? `${origin}/o/r/${resource.uid || resource.name || resource.id}`
-            : `${origin}/file/${resource.name}/${resource.filename}`,
+            ? `/o/r/${resource.uid || resource.name || resource.id}`
+            : `/file/${resource.name}/${resource.filename}`,
           {
             responseType: 'arraybuffer',
           }
