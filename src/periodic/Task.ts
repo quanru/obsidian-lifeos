@@ -10,7 +10,7 @@ import { ERROR_MESSAGE } from '../constant';
 import { File } from '../periodic/File';
 import { Date } from '../periodic/Date';
 import { Markdown } from '../component/Markdown';
-import { renderError } from '../util';
+import { generateIgnoreOperator, renderError } from '../util';
 import { I18N_MAP } from '../i18n';
 
 export class Task {
@@ -118,7 +118,26 @@ export class Task {
     const tags = this.file.tags(filepath);
     const div = el.createEl('div');
     const component = new Markdown(div);
-    const periodicNotesPath = this.settings.periodicNotesPath;
+    const {
+      periodicNotesPath,
+      periodicNotesTemplateFilePathYearly,
+      periodicNotesTemplateFilePathQuarterly,
+      periodicNotesTemplateFilePathMonthly,
+      periodicNotesTemplateFilePathWeekly,
+      periodicNotesTemplateFilePathDaily,
+    } = this.settings;
+
+    const ignoreFiles = [
+      `${periodicNotesPath}/Templates`,
+      periodicNotesTemplateFilePathYearly,
+      periodicNotesTemplateFilePathQuarterly,
+      periodicNotesTemplateFilePathMonthly,
+      periodicNotesTemplateFilePathWeekly,
+      periodicNotesTemplateFilePathDaily,
+    ]
+      .filter((path) => path)
+      .map((path) => `AND -"${path}"`)
+      .join(' ');
 
     if (!tags.length) {
       return renderError(
@@ -145,7 +164,7 @@ export class Task {
 
     const { values: tasks } = (await this.dataview.tryQuery(`
 TASK
-FROM (${from}) AND -"${periodicNotesPath}/Templates"
+FROM (${from}) ${generateIgnoreOperator(this.settings)}
 WHERE ${where} AND file.path != "${filepath}"
 SORT status ASC
     `)) as TaskResult;

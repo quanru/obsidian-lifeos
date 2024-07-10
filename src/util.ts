@@ -256,3 +256,26 @@ export function openOfficialSite(locale: string) {
 
   return (window.location.href = LIFE_OS_OFFICIAL_SITE);
 }
+
+export function generateIgnoreOperator(settings: PluginSettings) {
+  const {
+    periodicNotesPath,
+    periodicNotesTemplateFilePathYearly,
+    periodicNotesTemplateFilePathQuarterly,
+    periodicNotesTemplateFilePathMonthly,
+    periodicNotesTemplateFilePathWeekly,
+    periodicNotesTemplateFilePathDaily,
+  } = settings;
+
+  return [
+    `${periodicNotesPath}/Templates`,
+    periodicNotesTemplateFilePathYearly,
+    periodicNotesTemplateFilePathQuarterly,
+    periodicNotesTemplateFilePathMonthly,
+    periodicNotesTemplateFilePathWeekly,
+    periodicNotesTemplateFilePathDaily,
+  ]
+    .filter((path) => path)
+    .map((path) => `AND -"${path}"`)
+    .join(' ');
+}

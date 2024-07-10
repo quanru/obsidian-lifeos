@@ -144,7 +144,14 @@ export class File {
     const tags = this.tags(filepath);
     const div = el.createEl('div');
     const component = new Markdown(div);
-    const periodicNotesPath = this.settings.periodicNotesPath;
+    const {
+      periodicNotesPath,
+      periodicNotesTemplateFilePathYearly,
+      periodicNotesTemplateFilePathQuarterly,
+      periodicNotesTemplateFilePathMonthly,
+      periodicNotesTemplateFilePathWeekly,
+      periodicNotesTemplateFilePathDaily,
+    } = this.settings;
 
     if (!tags.length) {
       return renderError(
@@ -175,7 +182,14 @@ export class File {
             !b.file.name?.match(DAILY_REG) &&
             !b.file.name?.match(/Template$/) &&
             !b.file.path?.includes(`${periodicNotesPath}/Templates`) &&
-            b.file.path !== filepath
+            ![
+              filepath,
+              periodicNotesTemplateFilePathYearly,
+              periodicNotesTemplateFilePathQuarterly,
+              periodicNotesTemplateFilePathMonthly,
+              periodicNotesTemplateFilePathWeekly,
+              periodicNotesTemplateFilePathDaily,
+            ].includes(b.file.path)
         )
         .sort((b) => b.file.ctime, 'desc')
         .map((b) => [

@@ -6,7 +6,7 @@ import { DataArray, DataviewApi, Link } from 'obsidian-dataview';
 
 import { File } from '../periodic/File';
 import { ERROR_MESSAGE } from '../constant';
-import { renderError } from '../util';
+import { generateIgnoreOperator, renderError } from '../util';
 import { I18N_MAP } from '../i18n';
 import { SListItem } from 'obsidian-dataview/lib/data-model/serialized/markdown';
 
@@ -38,7 +38,6 @@ export class Bullet {
     const tags = this.file.tags(filepath);
     const div = el.createEl('div');
     const component = new Markdown(div);
-    const periodicNotesPath = this.settings.periodicNotesPath;
 
     if (!tags.length) {
       return renderError(
@@ -56,7 +55,7 @@ export class Bullet {
       .join(' ')
       .trim();
     const lists: DataArray<SListItem> = await this.dataview.pages(
-      `(${from}) and -"${periodicNotesPath}/Templates"`
+      `(${from}) ${generateIgnoreOperator(this.settings)}`
     ).file.lists;
     const result = lists.where((L) => {
       let includeTag = false;
@@ -72,7 +71,10 @@ export class Bullet {
     const groupResult = result.groupBy((elem) => {
       return elem.link;
     });
-    const sortResult = groupResult.sort((elem) => elem.rows.link as Link, 'desc');
+    const sortResult = groupResult.sort(
+      (elem) => elem.rows.link as Link,
+      'desc'
+    );
     const tableResult = sortResult.map((k) => [
       k.rows.text as string,
       k.rows.link as Link,
