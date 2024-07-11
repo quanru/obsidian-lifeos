@@ -70,7 +70,7 @@ export default class LifeOS extends Plugin {
     if (!isPluginEnabled(app)) {
       logMessage(
         I18N_MAP[locale][`${ERROR_MESSAGE}NO_DATAVIEW_INSTALL`],
-        LogLevel.error,
+        LogLevel.error
       );
       return;
     }
@@ -80,7 +80,7 @@ export default class LifeOS extends Plugin {
     if (!dataviewApi) {
       logMessage(
         I18N_MAP[locale][`${ERROR_MESSAGE}FAILED_DATAVIEW_API`],
-        LogLevel.error,
+        LogLevel.error
       );
       return;
     }
@@ -91,14 +91,14 @@ export default class LifeOS extends Plugin {
 
   async onload() {
     await this.loadSettings();
-    this.registerView(CREATE_NOTE, leaf => {
+    this.registerView(CREATE_NOTE, (leaf) => {
       return new CreateNoteView(leaf, this.settings, localeMap[locale]);
     });
 
     const item = this.addRibbonIcon(
       'calendar',
       'LifeOS',
-      this.initCreateNoteView,
+      this.initCreateNoteView
     );
     setIcon(item, 'calendar');
 
@@ -107,7 +107,7 @@ export default class LifeOS extends Plugin {
       name: 'Create Notes',
       callback: this.initCreateNoteView,
     });
-    [DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY].map(periodType => {
+    [DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY].map((periodType) => {
       this.addCommand({
         id: `periodic-para-create-${periodType.toLocaleLowerCase()}-note`,
         name: `Create ${periodType} Note`,
@@ -127,13 +127,13 @@ export default class LifeOS extends Plugin {
     this.loadGlobalHelpers();
     this.loadViews();
     this.addSettingTab(
-      new SettingTabView(this.app, this.settings, this, localeMap[locale]),
+      new SettingTabView(this.app, this.settings, this, localeMap[locale])
     );
 
     const handler = (
       source: keyof typeof this.views,
       el: HTMLElement,
-      ctx: MarkdownPostProcessorContext,
+      ctx: MarkdownPostProcessorContext
     ) => {
       const view = source.trim() as keyof typeof this.views;
       const legacyView = `${view}ByTime` as keyof typeof this.views;
@@ -143,7 +143,7 @@ export default class LifeOS extends Plugin {
           this.app,
           I18N_MAP[locale][`${ERROR_MESSAGE}NO_VIEW_PROVIDED`],
           el.createEl('div'),
-          ctx.sourcePath,
+          ctx.sourcePath
         );
       }
 
@@ -155,7 +155,7 @@ export default class LifeOS extends Plugin {
           this.app,
           `${I18N_MAP[locale][`${ERROR_MESSAGE}NO_VIEW_EXISTED`]}: ${view}`,
           el.createEl('div'),
-          ctx.sourcePath,
+          ctx.sourcePath
         );
       }
 
@@ -172,7 +172,7 @@ export default class LifeOS extends Plugin {
         this.app,
         this.settings,
         this.file,
-        locale,
+        locale
       );
       this.addCommand({
         id: 'periodic-para-sync-daily-record',
@@ -193,7 +193,7 @@ export default class LifeOS extends Plugin {
       // sync every 0.5 hour
       this.interval = setInterval(
         () => this.dailyRecord.sync(),
-        0.5 * 60 * 60 * 1000,
+        0.5 * 60 * 60 * 1000
       );
     }
   }
@@ -249,28 +249,28 @@ export default class LifeOS extends Plugin {
       this.app,
       this.settings,
       this.file,
-      locale,
+      locale
     );
     this.area = new Area(
       this.settings.areasPath,
       this.app,
       this.settings,
       this.file,
-      locale,
+      locale
     );
     this.resource = new Resource(
       this.settings.resourcesPath,
       this.app,
       this.settings,
       this.file,
-      locale,
+      locale
     );
     this.archive = new Archive(
       this.settings.archivesPath,
       this.app,
       this.settings,
       this.file,
-      locale,
+      locale
     );
   }
 
@@ -298,7 +298,7 @@ export default class LifeOS extends Plugin {
       return;
     }
 
-    let leaf: WorkspaceLeaf;
+    let leaf: WorkspaceLeaf | null;
     if ((this.app as any).isMobile) {
       leaf = this.app.workspace.getRightLeaf(false);
     } else {
