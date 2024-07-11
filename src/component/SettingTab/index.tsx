@@ -127,7 +127,11 @@ export const SettingTab = (props: {
                           options={[
                             {
                               value: -1,
-                              label: `Auto${locale?.locale === 'zh-cn' ? '(Monday)' : '(Sunday)'}`,
+                              label: `Auto${
+                                locale?.locale === 'zh-cn'
+                                  ? '(Monday)'
+                                  : '(Sunday)'
+                              }`,
                             },
                             { value: 1, label: 'Monday' },
                             { value: 2, label: 'Tuesday' },
@@ -209,7 +213,7 @@ export const SettingTab = (props: {
                                 <Typography.Link href="https://usememos.com">
                                   {' usememos '}
                                 </Typography.Link>
-                                service API
+                                {'service URL, < 0.22.0 or >= 0.22.3'}
                               </>
                             }
                             name="dailyRecordAPI"

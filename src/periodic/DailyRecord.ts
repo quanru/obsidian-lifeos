@@ -96,18 +96,6 @@ export class DailyRecord {
         LogLevel.error,
       );
     }
-
-    if (
-      semver.gt(this.memosVersion, '0.22.0') &&
-      semver.lt(this.memosVersion, '0.22.3')
-    ) {
-      logMessage(
-        `${
-          I18N_MAP[this.locale][`${ERROR_MESSAGE}UNSUPPORTED_USEMEMOS_VERSION`]
-        }: ${this.memosVersion}`,
-        LogLevel.error,
-      );
-    }
   }
 
   async fetchMemosList() {
