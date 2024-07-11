@@ -156,7 +156,9 @@ export class Task {
       .trim();
     const where = tags
       .map((tag: string[], index: number) => {
-        return `contains(tags, "#${tag}") ${index === tags.length - 1 ? '' : 'OR'}`;
+        return `contains(tags, "#${tag}") ${
+          index === tags.length - 1 ? '' : 'OR'
+        }`;
       })
       .join(' ');
 

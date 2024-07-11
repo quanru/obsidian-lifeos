@@ -82,7 +82,9 @@ export class File {
 
             if (!indexFile) {
               logMessage(
-                `${I18N_MAP[this.locale][`${ERROR_MESSAGE}}NO_INDEX_FILE_EXIST`]} @ ${subFolder.path}`,
+                `${
+                  I18N_MAP[this.locale][`${ERROR_MESSAGE}}NO_INDEX_FILE_EXIST`]
+                } @ ${subFolder.path}`,
               );
             }
 
