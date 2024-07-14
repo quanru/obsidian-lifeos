@@ -1,24 +1,29 @@
 import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, DatePicker, Form, Input, Radio, Tabs, Tooltip } from 'antd';
 import dayjs from 'dayjs';
-import { Notice, TFile } from 'obsidian';
-import React, { useRef, useState } from 'react';
+import { Notice, TFile, type WorkspaceLeaf } from 'obsidian';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   ARCHIVE,
   AREA,
   DAILY,
+  DAILY_REG,
   ERROR_MESSAGE,
   FOLDER,
   INDEX,
   MONTHLY,
+  MONTHLY_REG,
   PARA,
   PERIODIC,
   PROJECT,
   QUARTERLY,
+  QUARTERLY_REG,
   RESOURCE,
   TAG,
   WEEKLY,
+  WEEKLY_REG,
   YEARLY,
+  YEARLY_REG,
 } from '../../constant';
 import type { PeriodicNotesTemplateFilePath, PluginSettings } from '../../type';
 import { createFile, createPeriodicFile, openOfficialSite } from '../../util';
@@ -87,23 +92,101 @@ export const CreateNote = (props: { width: number }) => {
     setType(event.detail.usePeriodicNotes ? PERIODIC : PARA);
   });
 
-  app?.vault.on('create', file => {
-    if (file instanceof TFile) {
-      setExistsDates([file.basename, ...existsDates]);
-    }
-  });
-  app?.vault.on('delete', file => {
-    if (file instanceof TFile) {
-      setExistsDates(existsDates.filter(date => date !== file.basename));
-    }
-  });
-  app?.vault.on('rename', (file, oldPath) => {
-    if (file instanceof TFile) {
-      setExistsDates(
-        [file.basename, ...existsDates].filter(date => date !== oldPath),
-      );
-    }
-  });
+  useEffect(() => {
+    // 已存在的日记高亮
+    const createHandler = (file: TFile) => {
+      if (file instanceof TFile) {
+        setExistsDates(prevDates => [file.basename, ...prevDates]);
+      }
+    };
+
+    const deleteHandler = (file: TFile) => {
+      if (file instanceof TFile) {
+        setExistsDates(prevDates =>
+          prevDates.filter(date => date !== file.basename),
+        );
+      }
+    };
+
+    const renameHandler = (file: TFile, oldPath: string) => {
+      if (file instanceof TFile) {
+        setExistsDates(prevDates => [
+          file.basename,
+          ...prevDates.filter(date => date !== oldPath),
+        ]);
+      }
+    };
+
+    app?.vault.on('create', createHandler);
+    app?.vault.on('delete', deleteHandler);
+    app?.vault.on('rename', renameHandler);
+
+    return () => {
+      app?.vault.off('create', createHandler);
+      app?.vault.off('delete', deleteHandler);
+      app?.vault.off('rename', renameHandler);
+    };
+  }, []);
+
+  useEffect(() => {
+    // 切换文件时，切换表单
+    const leafChangeHandler = (leaf: WorkspaceLeaf) => {
+      const { path, basename } = (leaf?.view as any).file || {};
+
+      if (!path || path.indexOf(settings?.periodicNotesPath) !== 0) {
+        return;
+      }
+
+      if (basename) {
+        const regexMap = {
+          [DAILY]: DAILY_REG,
+          [WEEKLY]: WEEKLY_REG,
+          [MONTHLY]: MONTHLY_REG,
+          [QUARTERLY]: QUARTERLY_REG,
+          [YEARLY]: YEARLY_REG,
+        };
+
+        for (const [periodicType, regex] of Object.entries(regexMap)) {
+          const match = basename.match(regex);
+
+          if (match?.[0]) {
+            const dateValue = match[0];
+
+            if (periodicType === DAILY) {
+              form.setFieldsValue({
+                [DAILY]: dayjs(dateValue, 'YYYY-MM-DD'),
+              });
+            } else if (periodicType === WEEKLY) {
+              form.setFieldsValue({
+                [WEEKLY]: dayjs(dateValue, 'YYYY-[W]WW'),
+              });
+            } else if (periodicType === MONTHLY) {
+              form.setFieldsValue({
+                [MONTHLY]: dayjs(dateValue, 'YYYY-MM'),
+              });
+            } else if (periodicType === QUARTERLY) {
+              form.setFieldsValue({
+                [QUARTERLY]: dayjs(dateValue, 'YYYY-[Q]Q'),
+              });
+            } else if (periodicType === YEARLY) {
+              form.setFieldsValue({
+                [YEARLY]: dayjs(dateValue, 'YYYY'),
+              });
+            }
+
+            setPeriodicActiveTab(periodicType);
+
+            break;
+          }
+        }
+      }
+    };
+    app?.workspace.on('active-leaf-change', leafChangeHandler);
+
+    return () => {
+      app?.workspace.off('active-leaf-change', leafChangeHandler);
+    };
+  }, []);
 
   dayjs.updateLocale(localeKey, {
     weekStart:
@@ -391,7 +474,9 @@ export const CreateNote = (props: { width: number }) => {
                 label: (
                   <Tooltip
                     mouseEnterDelay={1}
-                    title={`${localeMap.QUICK_JUMP}${label.toLocaleLowerCase()}`}
+                    title={`${
+                      localeMap.QUICK_JUMP
+                    }${label.toLocaleLowerCase()}`}
                   >
                     {label}
                   </Tooltip>
