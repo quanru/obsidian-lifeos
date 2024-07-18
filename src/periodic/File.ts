@@ -180,11 +180,11 @@ export class File {
         .pages(from)
         .filter(
           b =>
-            !b.file.name?.match(YEARLY_REG) &&
-            !b.file.name?.match(QUARTERLY_REG) &&
-            !b.file.name?.match(MONTHLY_REG) &&
-            !b.file.name?.match(WEEKLY_REG) &&
-            !b.file.name?.match(DAILY_REG) &&
+            !b.file.path?.match(YEARLY_REG) &&
+            !b.file.path?.match(QUARTERLY_REG) &&
+            !b.file.path?.match(MONTHLY_REG) &&
+            !b.file.path?.match(WEEKLY_REG) &&
+            !b.file.path?.match(DAILY_REG) &&
             !b.file.name?.match(/Template$/) &&
             !b.file.path?.includes(`${periodicNotesPath}/Templates`) &&
             ![
