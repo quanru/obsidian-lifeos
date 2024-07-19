@@ -1,7 +1,8 @@
 import axios, { type Axios } from 'axios';
+import dayjs from 'dayjs';
 import { type App, TFile, moment, normalizePath } from 'obsidian';
 import semver from 'semver';
-import { ERROR_MESSAGE, MESSAGE } from '../constant';
+import { DAILY, ERROR_MESSAGE, MESSAGE } from '../constant';
 import { I18N_MAP } from '../i18n';
 import {
   type DailyRecordResponseTypeV2,
@@ -14,6 +15,7 @@ import {
   type WorkspaceProfileType,
 } from '../type';
 import {
+  createPeriodicFile,
   formatDailyRecord,
   generateFileName,
   generateHeaderRegExp,
@@ -140,7 +142,9 @@ export class DailyRecord {
       return data.memos?.map(transformV2Record);
     } catch (error) {
       logMessage(
-        `${I18N_MAP[this.locale][`${ERROR_MESSAGE}DAILY_RECORD_FETCH_FAILED`]}: ${error}`,
+        `${
+          I18N_MAP[this.locale][`${ERROR_MESSAGE}DAILY_RECORD_FETCH_FAILED`]
+        }: ${error}`,
         LogLevel.error,
       );
     }
@@ -177,7 +181,9 @@ export class DailyRecord {
         return;
       }
       logMessage(
-        `${I18N_MAP[this.locale][`${ERROR_MESSAGE}RESOURCE_FETCH_FAILED`]}: ${error}`,
+        `${
+          I18N_MAP[this.locale][`${ERROR_MESSAGE}RESOURCE_FETCH_FAILED`]
+        }: ${error}`,
         LogLevel.error,
       );
     }
@@ -279,17 +285,39 @@ export class DailyRecord {
         const link = `${momentDay.year()}/Daily/${String(
           momentDay.month() + 1,
         ).padStart(2, '0')}/${momentDay.format('YYYY-MM-DD')}.md`;
-        const targetFile = this.file.get(
+        let targetFile = this.file.get(
           link,
           '',
           this.settings.periodicNotesPath,
         );
 
-        if (!targetFile && this.settings.dailyRecordWarning) {
-          logMessage(
-            `${I18N_MAP[this.locale][`${ERROR_MESSAGE}NO_DAILY_FILE_EXIST`]} ${today}`,
-            LogLevel.error,
-          );
+        if (!targetFile) {
+          if (this.settings.dailyRecordCreating) {
+            logMessage(
+              `${
+                I18N_MAP[this.locale][`${ERROR_MESSAGE}CREATING_DAILY_FILE`]
+              } ${today}`,
+            );
+            await createPeriodicFile(
+              dayjs(today),
+              DAILY,
+              this.settings,
+              this.app,
+            );
+            await sleep(500); // 等待 templater 创建完成
+            targetFile = this.file.get(
+              link,
+              '',
+              this.settings.periodicNotesPath,
+            );
+          } else if (this.settings.dailyRecordWarning) {
+            logMessage(
+              `${
+                I18N_MAP[this.locale][`${ERROR_MESSAGE}NO_DAILY_FILE_EXIST`]
+              } ${today}`,
+              LogLevel.error,
+            );
+          }
         }
         const reg = generateHeaderRegExp(header);
 

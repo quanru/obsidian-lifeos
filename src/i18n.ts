@@ -76,6 +76,8 @@ const EN = {
     'Please set usememos token in LifeOS plugin',
   [`${ERROR_MESSAGE}NO_DAILY_FILE_EXIST`]:
     'Daily file not exists, please create it first: ',
+  [`${ERROR_MESSAGE}CREATING_DAILY_FILE`]:
+    'Daily file not exists, creating now! ',
 };
 
 const ZH = {
@@ -131,6 +133,7 @@ const ZH = {
   [`${ERROR_MESSAGE}NO_DAILY_RECORD_TOKEN`]:
     '请在 LifeOS 插件中设置 usememos 的 Token',
   [`${ERROR_MESSAGE}NO_DAILY_FILE_EXIST`]: '日记文件不存在，请先创建：',
+  [`${ERROR_MESSAGE}CREATING_DAILY_FILE`]: '日记文件不存在，正在创建中！',
 };
 
 export const I18N_MAP: Record<string, Record<string, string>> = {

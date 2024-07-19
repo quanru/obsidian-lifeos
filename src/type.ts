@@ -26,6 +26,7 @@ export type PluginSettings = {
   dailyRecordAPI: string;
   dailyRecordToken: string;
   dailyRecordWarning: boolean;
+  dailyRecordCreating: boolean;
   useDailyRecord: boolean;
   usePeriodicNotes: boolean;
   usePARANotes: boolean;
