@@ -91,7 +91,9 @@ export class Date {
     const { year, quarter, month, week, day } = parsed;
 
     if (day) {
-      const today = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      const today = `${year}-${String(month).padStart(2, '0')}-${String(
+        day,
+      ).padStart(2, '0')}`;
 
       return {
         from: today,

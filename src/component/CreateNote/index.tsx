@@ -145,32 +145,42 @@ export const CreateNote = (props: { width: number }) => {
           [QUARTERLY]: QUARTERLY_REG,
           [YEARLY]: YEARLY_REG,
         };
+        const locale = window.localStorage.getItem('language') || 'en';
 
         for (const [periodicType, regex] of Object.entries(regexMap)) {
           const match = basename.match(regex);
 
           if (match?.[0]) {
             const dateValue = match[0];
-
             if (periodicType === DAILY) {
               form.setFieldsValue({
-                [DAILY]: dayjs(dateValue, 'YYYY-MM-DD'),
+                [DAILY]: dayjs(dateValue, 'YYYY-MM-DD').locale(locale),
               });
             } else if (periodicType === WEEKLY) {
+              const [year, week] = dateValue.split('-W');
+              const weeklyDate = dayjs()
+                .year(Number.parseInt(year))
+                .isoWeek(Number.parseInt(week))
+                .startOf('isoWeek');
               form.setFieldsValue({
-                [WEEKLY]: dayjs(dateValue, 'YYYY-[W]WW'),
+                [WEEKLY]: weeklyDate.locale(locale),
               });
             } else if (periodicType === MONTHLY) {
               form.setFieldsValue({
-                [MONTHLY]: dayjs(dateValue, 'YYYY-MM'),
+                [MONTHLY]: dayjs(dateValue, 'YYYY-MM').locale(locale),
               });
             } else if (periodicType === QUARTERLY) {
+              const [year, quarter] = dateValue.split('-Q');
+              const quarterlyDate = dayjs()
+                .year(Number.parseInt(year))
+                .quarter(Number.parseInt(quarter))
+                .startOf('quarter');
               form.setFieldsValue({
-                [QUARTERLY]: dayjs(dateValue, 'YYYY-[Q]Q'),
+                [QUARTERLY]: quarterlyDate.locale(locale),
               });
             } else if (periodicType === YEARLY) {
               form.setFieldsValue({
-                [YEARLY]: dayjs(dateValue, 'YYYY'),
+                [YEARLY]: dayjs(dateValue, 'YYYY').locale(locale),
               });
             }
 
