@@ -7,6 +7,9 @@ import { Date as PeriodicDate } from '../periodic/Date';
 import { generateHeaderRegExp } from '../util';
 import { Item } from './Item';
 
+const timeReg = /(\d+)hr?(\d+)?/;
+const totalTimeReg = /^\d+hr?(\d+)?$/;
+
 export class Project extends Item {
   timeAdd(timeString1: string, timeString2: string) {
     if (!timeString1) {
@@ -17,9 +20,8 @@ export class Project extends Item {
       return timeString1;
     }
 
-    const reg = /(\d+)hr(\d+)?/;
-    const [, hr1 = 0, min1 = 0] = timeString1.match(reg) || [];
-    const [, hr2 = 0, min2 = 0] = timeString2.match(reg) || [];
+    const [, hr1 = 0, min1 = 0] = timeString1.match(timeReg) || [];
+    const [, hr2 = 0, min2 = 0] = timeString2.match(timeReg) || [];
     let carry = 0;
     const hr = Number(hr1) + Number(hr2);
     let min = Number(min1) + Number(min2);
@@ -41,9 +43,8 @@ export class Project extends Item {
       return '';
     }
 
-    const reg = /(\d+)hr(\d+)?/;
-    const [, hr1 = 0, min1 = 0] = timeString1.match(reg) || [];
-    const [, hr2 = 0, min2 = 0] = timeString2.match(reg) || [];
+    const [, hr1 = 0, min1 = 0] = timeString1.match(timeReg) || [];
+    const [, hr2 = 0, min2 = 0] = timeString2.match(timeReg) || [];
     const time1 = Number(hr1) * 60 + Number(min1);
     const time2 = Number(hr2) * 60 + Number(min2);
 
@@ -58,8 +59,6 @@ export class Project extends Item {
     header: string,
   ) {
     const { from, to } = condition;
-    const timeReg = /\d+hr(\d+)?/;
-    const totalTimeReg = /^\d+hr(\d+)?$/;
     let day = from;
     const projectList: string[] = [];
     const projectTimeConsume: Record<string, string> = {};
@@ -129,7 +128,10 @@ export class Project extends Item {
     await Promise.all(tasks.map(task => task()));
     Object.keys(projectTimeConsume).map(project => {
       projectTimeConsume[project] = projectTimeConsume[project]
-        ? `${projectTimeConsume[project]}/${totalTime}=${this.timePercent(projectTimeConsume[project], totalTime)}`
+        ? `${projectTimeConsume[project]}/${totalTime}=${this.timePercent(
+            projectTimeConsume[project],
+            totalTime,
+          )}`
         : '';
     });
 
@@ -168,7 +170,9 @@ export class Project extends Item {
       const regMatch = project.match(/\/(.*)\//);
 
       list.push(
-        `${index + 1}. [[${project}|${regMatch?.length ? regMatch[1] : ''}]] ${projectTimeConsume[project]}`,
+        `${index + 1}. [[${project}|${regMatch?.length ? regMatch[1] : ''}]] ${
+          projectTimeConsume[project]
+        }`,
       );
     });
 
