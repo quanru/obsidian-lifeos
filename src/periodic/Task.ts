@@ -118,26 +118,6 @@ export class Task {
     const tags = this.file.tags(filepath);
     const div = el.createEl('div');
     const component = new Markdown(div);
-    const {
-      periodicNotesPath,
-      periodicNotesTemplateFilePathYearly,
-      periodicNotesTemplateFilePathQuarterly,
-      periodicNotesTemplateFilePathMonthly,
-      periodicNotesTemplateFilePathWeekly,
-      periodicNotesTemplateFilePathDaily,
-    } = this.settings;
-
-    const ignoreFiles = [
-      `${periodicNotesPath}/Templates`,
-      periodicNotesTemplateFilePathYearly,
-      periodicNotesTemplateFilePathQuarterly,
-      periodicNotesTemplateFilePathMonthly,
-      periodicNotesTemplateFilePathWeekly,
-      periodicNotesTemplateFilePathDaily,
-    ]
-      .filter(path => path)
-      .map(path => `AND -"${path}"`)
-      .join(' ');
 
     if (!tags.length) {
       return renderError(
