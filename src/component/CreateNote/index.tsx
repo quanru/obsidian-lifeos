@@ -498,7 +498,7 @@ export const CreateNote = (props: { width: number }) => {
                       cellRender={(value: dayjs.Dayjs, info: any) => {
                         return cellRender(value, picker);
                       }}
-                      onSelect={day => {
+                      onChange={day => {
                         createPeriodicFile(
                           day,
                           periodicActiveTab,

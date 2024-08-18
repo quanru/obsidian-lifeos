@@ -53,9 +53,9 @@ export class File {
     const folder = this.app.vault.getAbstractFileByPath(fileFolder);
 
     if (folder instanceof TFolder) {
-      const subFolderList = folder.children
-        .sort()
-        .filter(file => file instanceof TFolder);
+      const subFolderList = folder.children.filter(
+        file => file instanceof TFolder,
+      );
       const IndexList = subFolderList
         .map(subFolder => {
           // 优先搜索同名文件，否则搜索 XXX.README
@@ -98,6 +98,18 @@ export class File {
           }
         })
         .filter(link => !!link)
+        .sort((a, b) => {
+          const getCategory = (item: string) =>
+            item.split('|')[1].replace(']]', '');
+
+          const categoryA = getCategory(a as string);
+          const categoryB = getCategory(b as string);
+
+          if (categoryA < categoryB) return -1;
+          if (categoryA > categoryB) return 1;
+
+          return 0;
+        })
         .map((link, index: number) => `${index + 1}. ${link}`);
 
       return IndexList.join('\n');
