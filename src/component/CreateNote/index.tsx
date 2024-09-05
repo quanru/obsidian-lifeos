@@ -217,6 +217,9 @@ export const CreateNote = (props: { width: number }) => {
     const date = dayjs(value.format()).locale(locale);
     let chineseCalendarText = '';
     let dayWorkStatus = '';
+    const onClick = (day: dayjs.Dayjs) => {
+      createPeriodicFile(day, periodicActiveTab, settings!, app);
+    };
 
     switch (picker) {
       case 'date':
@@ -309,7 +312,7 @@ export const CreateNote = (props: { width: number }) => {
     if (existsDates.includes(formattedDate)) {
       if (picker !== 'week') {
         return (
-          <div className="ant-picker-cell-inner">
+          <div className="ant-picker-cell-inner" onClick={() => onClick(value)}>
             <div className="cell-container">
               <span className="dot">•</span>
               {cell}
@@ -320,7 +323,7 @@ export const CreateNote = (props: { width: number }) => {
 
       if (date.day() === 1) {
         return (
-          <div className="ant-picker-cell-inner">
+          <div className="ant-picker-cell-inner" onClick={() => onClick(value)}>
             <div className="cell-container">
               <span className="week-dot">•</span>
               <span>{badgeText}</span>
@@ -330,7 +333,7 @@ export const CreateNote = (props: { width: number }) => {
       }
     }
     return (
-      <div className="ant-picker-cell-inner">
+      <div className="ant-picker-cell-inner" onClick={() => onClick(value)}>
         <div className="cell-container">{cell}</div>
       </div>
     );
@@ -498,16 +501,8 @@ export const CreateNote = (props: { width: number }) => {
                       cellRender={(value: dayjs.Dayjs, info: any) => {
                         return cellRender(value, picker);
                       }}
-                      onChange={day => {
-                        createPeriodicFile(
-                          day,
-                          periodicActiveTab,
-                          settings,
-                          app,
-                        );
-                      }}
                       picker={picker}
-                      showToday={false}
+                      showNow={false}
                       style={{ width: 200 }}
                       inputReadOnly
                       open
