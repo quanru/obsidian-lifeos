@@ -51,9 +51,9 @@ const EN = {
 
   [`${MESSAGE}START_SYNC_USEMEMOS`]: 'Start sync usememos',
   [`${MESSAGE}END_SYNC_USEMEMOS`]: 'End sync usememos',
-  [`${MESSAGE}FAILED_GET_USEMEMOS_VERSION`]:
-    'Failed to fetch usememos workspace profile',
 
+  [`${ERROR_MESSAGE}FAILED_GET_USEMEMOS_VERSION`]:
+    'Failed to fetch usememos workspace profile',
   [`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`]:
     'Please add the tags field for properties !',
   [`${ERROR_MESSAGE}NO_DATAVIEW_INSTALL`]:
@@ -112,9 +112,9 @@ const ZH = {
 
   [`${MESSAGE}START_SYNC_USEMEMOS`]: '开始同步 usememos',
   [`${MESSAGE}END_SYNC_USEMEMOS`]: '结束同步 usememos',
-  [`${MESSAGE}FAILED_GET_USEMEMOS_VERSION`]:
-    '获取 usememos workspace profile 失败',
 
+  [`${ERROR_MESSAGE}FAILED_GET_USEMEMOS_VERSION`]:
+    '获取 usememos workspace profile 失败',
   [`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`]: '请为 Properties 添加 tags 字段！',
   [`${ERROR_MESSAGE}NO_DATAVIEW_INSTALL`]: '请先安装 dataview！',
   [`${ERROR_MESSAGE}FAILED_DATAVIEW_API`]: 'Dataview API 开启失败！',
