@@ -29,7 +29,7 @@ import type { PeriodicNotesTemplateFilePath, PluginSettings } from '../../type';
 import { createFile, createPeriodicFile, openOfficialSite } from '../../util';
 import './index.less';
 import { useApp } from '../../hooks/useApp';
-import { I18N_MAP } from '../../i18n';
+import { getI18n } from '../../i18n';
 import { AutoComplete } from '../AutoComplete';
 import { ConfigProvider } from '../ConfigProvider';
 
@@ -56,7 +56,7 @@ export const CreateNote = (props: { width: number }) => {
   const [form] = Form.useForm();
   const today = dayjs(new Date());
   const localeKey = locale?.locale || 'en';
-  const localeMap = I18N_MAP[localeKey] || I18N_MAP.en;
+  const localeMap = getI18n(localeKey);
   const SubmitButton = (
     <Form.Item
       style={{

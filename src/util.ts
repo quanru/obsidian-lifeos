@@ -10,7 +10,7 @@ import {
   WEEKLY,
   YEARLY,
 } from './constant';
-import { I18N_MAP } from './i18n';
+import { getI18n } from './i18n';
 import type {
   DailyRecordType,
   DailyRecordTypeV2,
@@ -54,7 +54,7 @@ export async function createFile(
 
   if (!templateTFile) {
     return new Notice(
-      I18N_MAP[locale][`${ERROR_MESSAGE}NO_TEMPLATE_EXIST`] + templateFile,
+      getI18n(locale)[`${ERROR_MESSAGE}NO_TEMPLATE_EXIST`] + templateFile,
     );
   }
 
@@ -130,7 +130,9 @@ export function formatDailyRecord(record: DailyRecordType) {
         .trimEnd()}`
     : '';
   const targetResourceLine = resourceList?.length // 资源文件
-    ? `\n${resourceList?.map((resource: ResourceType) => `\t- ${generateFileLink(resource)}`).join('\n')}`
+    ? `\n${resourceList
+        ?.map((resource: ResourceType) => `\t- ${generateFileLink(resource)}`)
+        .join('\n')}`
     : '';
   const finalTargetContent =
     targetFirstLine + targetOtherLine + targetResourceLine;
@@ -157,7 +159,9 @@ export function generateFileLink(resource: ResourceType): string {
 
   const prefix = resource.type?.includes('image') ? '!' : ''; // only add ! for image type
 
-  return `${prefix}[${resource.name || resource.filename}](${resource.externalLink})`;
+  return `${prefix}[${resource.name || resource.filename}](${
+    resource.externalLink
+  })`;
 }
 
 export function generateFileName(resource: ResourceType): string {
@@ -209,10 +213,14 @@ export async function createPeriodicFile(
   let value;
 
   if (periodType === DAILY) {
-    folder = `${settings.periodicNotesPath}/${year}/${periodType}/${String(date.month() + 1).padStart(2, '0')}`;
+    folder = `${settings.periodicNotesPath}/${year}/${periodType}/${String(
+      date.month() + 1,
+    ).padStart(2, '0')}`;
     value = date.format('YYYY-MM-DD');
   } else if (periodType === WEEKLY) {
-    folder = `${settings.periodicNotesPath}/${date.format('gggg')}/${periodType}`;
+    folder = `${settings.periodicNotesPath}/${date.format(
+      'gggg',
+    )}/${periodType}`;
     value = date.format('gggg-[W]ww');
   } else if (periodType === MONTHLY) {
     folder = `${settings.periodicNotesPath}/${year}/${periodType}`;

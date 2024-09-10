@@ -17,7 +17,7 @@ import {
   WEEKLY_REG,
   YEARLY_REG,
 } from '../constant';
-import { I18N_MAP } from '../i18n';
+import { getI18n } from '../i18n';
 import { logMessage, renderError } from '../util';
 
 export class File {
@@ -83,7 +83,7 @@ export class File {
             if (!indexFile) {
               logMessage(
                 `${
-                  I18N_MAP[this.locale][`${ERROR_MESSAGE}}NO_INDEX_FILE_EXIST`]
+                  getI18n(this.locale)[`${ERROR_MESSAGE}}NO_INDEX_FILE_EXIST`]
                 } @ ${subFolder.path}`,
               );
             }
@@ -173,7 +173,7 @@ export class File {
     if (!tags.length) {
       return renderError(
         this.app,
-        I18N_MAP[this.locale][`${ERROR_MESSAGE}}NO_FRONT_MATTER_TAG`],
+        getI18n(this.locale)[`${ERROR_MESSAGE}}NO_FRONT_MATTER_TAG`],
         div,
         filepath,
       );
@@ -191,7 +191,7 @@ export class File {
       this.dataview
         .pages(from)
         .filter(
-          b =>
+          (b: { file: TFile }) =>
             !b.file.name?.match(YEARLY_REG) &&
             !b.file.name?.match(QUARTERLY_REG) &&
             !b.file.name?.match(MONTHLY_REG) &&
@@ -208,8 +208,11 @@ export class File {
               periodicNotesTemplateFilePathDaily,
             ].includes(b.file.path),
         )
-        .sort(b => b.file.ctime, 'desc')
-        .map(b => [
+        .sort(
+          (b: { file: { ctime: { ts: number } } }) => b.file.ctime.ts,
+          'desc',
+        )
+        .map((b: { file: { link: string; ctime: { ts: number } } }) => [
           b.file.link,
           `[[${dayjs(b.file.ctime.ts).format('YYYY-MM-DD')}]]`,
         ]),

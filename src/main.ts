@@ -39,7 +39,7 @@ import { SettingTabView } from './view/SettingTab';
 import { DEFAULT_SETTINGS } from './view/SettingTab';
 import 'dayjs/locale/zh-cn';
 import 'dayjs/locale/zh';
-import { I18N_MAP } from './i18n';
+import { getI18n } from './i18n';
 
 const localeMap: Record<string, any> = {
   en: enUS,
@@ -69,7 +69,7 @@ export default class LifeOS extends Plugin {
     super(app, manifest);
     if (!isPluginEnabled(app)) {
       logMessage(
-        I18N_MAP[locale][`${ERROR_MESSAGE}NO_DATAVIEW_INSTALL`],
+        getI18n(locale)[`${ERROR_MESSAGE}NO_DATAVIEW_INSTALL`],
         LogLevel.error,
       );
       return;
@@ -79,7 +79,7 @@ export default class LifeOS extends Plugin {
 
     if (!dataviewApi) {
       logMessage(
-        I18N_MAP[locale][`${ERROR_MESSAGE}FAILED_DATAVIEW_API`],
+        getI18n(locale)[`${ERROR_MESSAGE}FAILED_DATAVIEW_API`],
         LogLevel.error,
       );
       return;
@@ -141,7 +141,7 @@ export default class LifeOS extends Plugin {
       if (!view) {
         return renderError(
           this.app,
-          I18N_MAP[locale][`${ERROR_MESSAGE}NO_VIEW_PROVIDED`],
+          getI18n(locale)[`${ERROR_MESSAGE}NO_VIEW_PROVIDED`],
           el.createEl('div'),
           ctx.sourcePath,
         );
@@ -153,7 +153,7 @@ export default class LifeOS extends Plugin {
       ) {
         return renderError(
           this.app,
-          `${I18N_MAP[locale][`${ERROR_MESSAGE}NO_VIEW_EXISTED`]}: ${view}`,
+          `${getI18n(locale)[`${ERROR_MESSAGE}NO_VIEW_EXISTED`]}: ${view}`,
           el.createEl('div'),
           ctx.sourcePath,
         );

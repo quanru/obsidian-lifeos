@@ -1,14 +1,15 @@
 import type { App, MarkdownPostProcessorContext } from 'obsidian';
 import type { PluginSettings } from '../type';
 
-import type { DataArray, DataviewApi, Link } from 'obsidian-dataview';
+import type { DataviewApi, Link, STask } from 'obsidian-dataview';
 import { Markdown } from '../component/Markdown';
 
-import type { SListItem } from 'obsidian-dataview/lib/data-model/serialized/markdown';
 import { ERROR_MESSAGE } from '../constant';
-import { I18N_MAP } from '../i18n';
+import { getI18n } from '../i18n';
 import { File } from '../periodic/File';
 import { generateIgnoreOperator, renderError } from '../util';
+
+type Element = { text: string; link: Link };
 
 export class Bullet {
   app: App;
@@ -42,7 +43,7 @@ export class Bullet {
     if (!tags.length) {
       return renderError(
         this.app,
-        I18N_MAP[this.locale][`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`],
+        getI18n(this.locale)[`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`],
         div,
         filepath,
       );
@@ -54,25 +55,30 @@ export class Bullet {
       })
       .join(' ')
       .trim();
-    const lists: DataArray<SListItem> = await this.dataview.pages(
+    const lists = await this.dataview.pages(
       `(${from}) ${generateIgnoreOperator(this.settings)}`,
     ).file.lists;
-    const result = lists.where(L => {
-      let includeTag = false;
-      if (L.task || L.path === filepath) return false;
-      for (const tag of tags) {
-        includeTag = L.tags.join(' ').includes(`#${tag}`);
-        if (includeTag) {
-          break;
+    const result = lists.where(
+      (L: { task: STask; path: string; tags: string[] }) => {
+        let includeTag = false;
+        if (L.task || L.path === filepath) return false;
+        for (const tag of tags) {
+          includeTag = L.tags.join(' ').includes(`#${tag}`);
+          if (includeTag) {
+            break;
+          }
         }
-      }
-      return includeTag;
-    });
-    const groupResult = result.groupBy(elem => {
+        return includeTag;
+      },
+    );
+    const groupResult = result.groupBy((elem: Element) => {
       return elem.link;
     });
-    const sortResult = groupResult.sort(elem => elem.rows.link as Link, 'desc');
-    const tableResult = sortResult.map(k => [
+    const sortResult = groupResult.sort(
+      (elem: { rows: Element }) => elem.rows.link,
+      'desc',
+    );
+    const tableResult = sortResult.map((k: { rows: Element }) => [
       k.rows.text as string,
       k.rows.link as Link,
     ]);

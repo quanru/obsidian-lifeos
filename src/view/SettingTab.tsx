@@ -66,7 +66,16 @@ export class SettingTabView extends PluginSettingTab {
 
     // 保存设置的函数
     const saveSettings = (newSettings: PluginSettings) => {
-      this.settings = { ...this.settings, ...newSettings };
+      this.settings = {
+        ...this.settings,
+        ...Object.entries(newSettings).reduce(
+          (acc: Record<string, any>, [key, value]) => {
+            acc[key] = typeof value === 'string' ? value.trim() : value;
+            return acc;
+          },
+          {},
+        ),
+      };
       this.plugin.saveSettings(this.settings);
       const event = new CustomEvent('settingUpdate', {
         detail: this.settings,

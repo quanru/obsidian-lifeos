@@ -8,7 +8,7 @@ import { ERROR_MESSAGE } from '../constant';
 import { TaskStatusType } from '../type';
 
 import { Markdown } from '../component/Markdown';
-import { I18N_MAP } from '../i18n';
+import { getI18n } from '../i18n';
 import { Date as PeriodicDate } from '../periodic/Date';
 import { File } from '../periodic/File';
 import { generateIgnoreOperator, renderError } from '../util';
@@ -122,7 +122,7 @@ export class Task {
     if (!tags.length) {
       return renderError(
         this.app,
-        I18N_MAP[this.locale][`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`],
+        getI18n(this.locale)[`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`],
         div,
         filepath,
       );

@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import { type App, TFile, moment, normalizePath } from 'obsidian';
 import semver from 'semver';
 import { DAILY, ERROR_MESSAGE, MESSAGE } from '../constant';
-import { I18N_MAP } from '../i18n';
+import { getI18n } from '../i18n';
 import {
   type DailyRecordResponseTypeV2,
   type DailyRecordType,
@@ -38,20 +38,18 @@ export class DailyRecord {
   memosVersion: string;
   constructor(app: App, settings: PluginSettings, file: File, locale: string) {
     if (!settings.dailyRecordAPI) {
-      logMessage(I18N_MAP[this.locale][`${ERROR_MESSAGE}NO_DAILY_RECORD_API`]);
+      logMessage(getI18n(this.locale)[`${ERROR_MESSAGE}NO_DAILY_RECORD_API`]);
       return;
     }
 
     if (!settings.dailyRecordToken) {
-      logMessage(
-        I18N_MAP[this.locale][`${ERROR_MESSAGE}NO_DAILY_RECORD_TOKEN`],
-      );
+      logMessage(getI18n(this.locale)[`${ERROR_MESSAGE}NO_DAILY_RECORD_TOKEN`]);
       return;
     }
 
     if (!settings.dailyRecordHeader) {
       logMessage(
-        I18N_MAP[this.locale][`${ERROR_MESSAGE}NO_DAILY_RECORD_HEADER`],
+        getI18n(this.locale)[`${ERROR_MESSAGE}NO_DAILY_RECORD_HEADER`],
       );
       return;
     }
@@ -93,7 +91,7 @@ export class DailyRecord {
     if (!this.memosVersion) {
       logMessage(
         `${
-          I18N_MAP[this.locale][`${ERROR_MESSAGE}FAILED_GET_USEMEMOS_VERSION`]
+          getI18n(this.locale)[`${ERROR_MESSAGE}FAILED_GET_USEMEMOS_VERSION`]
         }`,
         LogLevel.error,
       );
@@ -143,7 +141,7 @@ export class DailyRecord {
     } catch (error) {
       logMessage(
         `${
-          I18N_MAP[this.locale][`${ERROR_MESSAGE}DAILY_RECORD_FETCH_FAILED`]
+          getI18n(this.locale)[`${ERROR_MESSAGE}DAILY_RECORD_FETCH_FAILED`]
         }: ${error}`,
         LogLevel.error,
       );
@@ -182,7 +180,7 @@ export class DailyRecord {
       }
       logMessage(
         `${
-          I18N_MAP[this.locale][`${ERROR_MESSAGE}RESOURCE_FETCH_FAILED`]
+          getI18n(this.locale)[`${ERROR_MESSAGE}RESOURCE_FETCH_FAILED`]
         }: ${error}`,
         LogLevel.error,
       );
@@ -195,7 +193,7 @@ export class DailyRecord {
   };
 
   sync = async () => {
-    logMessage(I18N_MAP[this.locale][`${MESSAGE}START_SYNC_USEMEMOS`]);
+    logMessage(getI18n(this.locale)[`${MESSAGE}START_SYNC_USEMEMOS`]);
     this.pageOffset = 0;
     this.pageToken = '';
     await this.getMemosVersion();
@@ -256,7 +254,7 @@ export class DailyRecord {
 
     if (!records.length || mostRecentTimeStamp * 1000 < Number(this.lastTime)) {
       // 直到 record 返回为空，或者最新的一条记录的时间，晚于上一次同步时间
-      logMessage(I18N_MAP[this.locale][`${MESSAGE}END_SYNC_USEMEMOS`]);
+      logMessage(getI18n(this.locale)[`${MESSAGE}END_SYNC_USEMEMOS`]);
 
       window.localStorage.setItem(this.localKey, Date.now().toString());
 
@@ -295,7 +293,7 @@ export class DailyRecord {
           if (this.settings.dailyRecordCreating) {
             logMessage(
               `${
-                I18N_MAP[this.locale][`${ERROR_MESSAGE}CREATING_DAILY_FILE`]
+                getI18n(this.locale)[`${ERROR_MESSAGE}CREATING_DAILY_FILE`]
               } ${today}`,
             );
             await createPeriodicFile(
@@ -313,7 +311,7 @@ export class DailyRecord {
           } else if (this.settings.dailyRecordWarning) {
             logMessage(
               `${
-                I18N_MAP[this.locale][`${ERROR_MESSAGE}NO_DAILY_FILE_EXIST`]
+                getI18n(this.locale)[`${ERROR_MESSAGE}NO_DAILY_FILE_EXIST`]
               } ${today}`,
               LogLevel.error,
             );
@@ -403,7 +401,7 @@ export class DailyRecord {
       this.pageOffset = this.pageOffset + this.pageSize;
     } else if (!this.pageToken) {
       // v2 没有下一页 pageToken 时
-      logMessage(I18N_MAP[this.locale][`${MESSAGE}END_SYNC_USEMEMOS`]);
+      logMessage(getI18n(this.locale)[`${MESSAGE}END_SYNC_USEMEMOS`]);
 
       window.localStorage.setItem(this.localKey, Date.now().toString());
 

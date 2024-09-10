@@ -58,7 +58,8 @@ const EN = {
     'Please add the tags field for properties !',
   [`${ERROR_MESSAGE}NO_DATAVIEW_INSTALL`]:
     'You need to install dataview first!',
-  [`${ERROR_MESSAGE}FAILED_DATAVIEW_API`]: 'Dataview API enable failed!',
+  [`${ERROR_MESSAGE}FAILED_DATAVIEW_API`]:
+    'Dataview API enable failed! Please disable the LifeOS plugin and enable it again!',
   [`${ERROR_MESSAGE}NO_VIEW_PROVIDED`]:
     'Please provide the name of the view you want to query!',
   [`${ERROR_MESSAGE}NO_VIEW_EXISTED`]: 'There is no this view in LifeOS plugin',
@@ -117,7 +118,8 @@ const ZH = {
     '获取 usememos workspace profile 失败',
   [`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`]: '请为 Properties 添加 tags 字段！',
   [`${ERROR_MESSAGE}NO_DATAVIEW_INSTALL`]: '请先安装 dataview！',
-  [`${ERROR_MESSAGE}FAILED_DATAVIEW_API`]: 'Dataview API 开启失败！',
+  [`${ERROR_MESSAGE}FAILED_DATAVIEW_API`]:
+    'Dataview API 开启失败！请关闭 LifeOS 插件后重新打开！',
   [`${ERROR_MESSAGE}NO_VIEW_PROVIDED`]: '请提供所需要查询的视图名！',
   [`${ERROR_MESSAGE}NO_VIEW_EXISTED`]: 'LifeOS 插件中不存在此视图',
   [`${ERROR_MESSAGE}NO_INDEX_FILE_EXIST`]:
@@ -136,9 +138,13 @@ const ZH = {
   [`${ERROR_MESSAGE}CREATING_DAILY_FILE`]: '日记文件不存在，正在创建中！',
 };
 
-export const I18N_MAP: Record<string, Record<string, string>> = {
+const I18N_MAP: Record<string, Record<string, string>> = {
   'en-us': EN,
   en: EN,
   'zh-cn': ZH,
   zh: ZH,
 };
+
+export function getI18n(lang: string) {
+  return I18N_MAP[lang] || EN;
+}
