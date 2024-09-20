@@ -10,11 +10,11 @@
 
 - This is a plugin for [LifeOS](https://quanru.github.io/2023/07/08/Building%20my%20second%20brain%20%F0%9F%A7%A0%20with%20Obsidian/), which assist in practicing the PARA method with periodic notes and [usememos](https://www.usememos.com/).
 - It is recommended to download the [LifeOS-example](https://github.com/quanru/obsidian-example-LifeOS/tree/main) to experience it.
-- For more tutorials, please go to [LifeOS for Obsidian Official Site](https://obsidian-life-os.netlify.app/)
+- For more tutorials, please go to [LifeOS for Obsidian Official Site](https://lifeos.vip/)
 
 ## Features
 
-Please visit the official doc: https://obsidian-life-os.netlify.app/plugin/life-os
+Please visit the official doc: https://lifeos.vip/plugin/life-os
 
 ## Support
 

@@ -24,4 +24,4 @@ export const MONTHLY_REG = /^\d{4}-(\d{1,2})/;
 export const QUARTERLY_REG = /^\d{4}-Q(\d{1,2})/;
 export const YEARLY_REG = /(^\d{4})/;
 
-export const LIFE_OS_OFFICIAL_SITE = 'https://obsidian-life-os.netlify.app';
+export const LIFE_OS_OFFICIAL_SITE = 'https://lifeos.vip';

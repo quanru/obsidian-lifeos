@@ -10,11 +10,11 @@
 
 - 这是一个专为 [LifeOS](https://quanru.github.io/2023/06/18/%E4%B8%80%E7%A7%8D%E5%AE%9E%E7%94%A8%E6%96%B0%E5%9E%8B%20Obsidian%20%E5%AE%9E%E8%B7%B5%E4%B9%8B%E6%9E%84%E5%BB%BA%E6%88%91%E7%9A%84%E7%AC%AC%E4%BA%8C%E5%A4%A7%E8%84%91%20%F0%9F%A7%A0/) 开发的 Obsidian 插件，可通过『周期笔记』和『[usememos](https://www.usememos.com/)』来实践 PARA 方法。
 - 强烈推荐下载 [LifeOS-example](https://github.com/quanru/obsidian-example-LifeOS/tree/chinese-version) 示例仓库来体验本插件。
-- 更多教程，请访问[Obsidian LifeOS 官网](https://obsidian-life-os.netlify.app/zh)查看
+- 更多教程，请访问[Obsidian LifeOS 官网](https://lifeos.vip/zh)查看
 
 ## 特性
 
-请前往官方网站：https://obsidian-life-os.netlify.app/zh/plugin/life-os
+请前往官方网站：https://lifeos.vip/zh/plugin/life-os
 
 ## 用户支持
 
