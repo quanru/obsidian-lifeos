@@ -102,6 +102,11 @@ export class Project extends Item {
             }
 
             const projectFile = this.file.get(realProject)?.path || '';
+
+            if (!projectFile) {
+              return;
+            }
+
             const [projectTime = ''] = project.match(timeReg) || [];
 
             projectTimeConsume[projectFile] = this.timeAdd(
