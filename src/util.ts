@@ -4,6 +4,11 @@ import type { App } from 'obsidian';
 import {
   DAILY,
   ERROR_MESSAGE,
+  FULL_DAILY_REG,
+  FULL_MONTHLY_REG,
+  FULL_QUARTERLY_REG,
+  FULL_WEEKLY_REG,
+  FULL_YEARLY_REG,
   LIFE_OS_OFFICIAL_SITE,
   MONTHLY,
   QUARTERLY,
@@ -276,4 +281,60 @@ export function generateIgnoreOperator(settings: PluginSettings) {
     .filter(path => path)
     .map(path => `AND -"${path}"`)
     .join(' ');
+}
+
+export function getAllTemplateFiles(settings: PluginSettings) {
+  // TODO: settings 应该统一初始化为实际的设置
+  const {
+    projectsTemplateFilePath,
+    areasTemplateFilePath,
+    resourcesTemplateFilePath,
+    archivesTemplateFilePath,
+    periodicNotesPath,
+    periodicNotesTemplateFilePathYearly,
+    periodicNotesTemplateFilePathQuarterly,
+    periodicNotesTemplateFilePathMonthly,
+    periodicNotesTemplateFilePathWeekly,
+    periodicNotesTemplateFilePathDaily,
+  } = settings;
+
+  return [
+    'Template.md',
+    `${periodicNotesPath}/Templates/`,
+    projectsTemplateFilePath,
+    areasTemplateFilePath,
+    resourcesTemplateFilePath,
+    archivesTemplateFilePath,
+    periodicNotesTemplateFilePathYearly,
+    periodicNotesTemplateFilePathQuarterly,
+    periodicNotesTemplateFilePathMonthly,
+    periodicNotesTemplateFilePathWeekly,
+    periodicNotesTemplateFilePathDaily,
+  ].filter(path => path);
+}
+
+export function isInTemplateNote(path: string, settings: PluginSettings) {
+  return getAllTemplateFiles(settings).some(template =>
+    path.includes(template),
+  );
+}
+
+export function isInPeriodicNote(path: string, settings: PluginSettings) {
+  return (
+    path?.match(
+      new RegExp(`${settings.periodicNotesPath}/${FULL_YEARLY_REG.source}`),
+    ) ||
+    path?.match(
+      new RegExp(`${settings.periodicNotesPath}/${FULL_QUARTERLY_REG.source}`),
+    ) ||
+    path?.match(
+      new RegExp(`${settings.periodicNotesPath}/${FULL_MONTHLY_REG.source}`),
+    ) ||
+    path?.match(
+      new RegExp(`${settings.periodicNotesPath}/${FULL_WEEKLY_REG.source}`),
+    ) ||
+    path?.match(
+      new RegExp(`${settings.periodicNotesPath}/${FULL_DAILY_REG.source}`),
+    )
+  );
 }

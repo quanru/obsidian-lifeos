@@ -9,16 +9,14 @@ import type { PluginSettings } from '../type';
 import dayjs from 'dayjs';
 import type { DataviewApi } from 'obsidian-dataview';
 import { Markdown } from '../component/Markdown';
-import {
-  DAILY_REG,
-  ERROR_MESSAGE,
-  MONTHLY_REG,
-  QUARTERLY_REG,
-  WEEKLY_REG,
-  YEARLY_REG,
-} from '../constant';
+import { ERROR_MESSAGE } from '../constant';
 import { getI18n } from '../i18n';
-import { logMessage, renderError } from '../util';
+import {
+  isInPeriodicNote,
+  isInTemplateNote,
+  logMessage,
+  renderError,
+} from '../util';
 
 export class File {
   app: App;
@@ -192,21 +190,8 @@ export class File {
         .pages(from)
         .filter(
           (b: { file: TFile }) =>
-            !b.file.name?.match(YEARLY_REG) &&
-            !b.file.name?.match(QUARTERLY_REG) &&
-            !b.file.name?.match(MONTHLY_REG) &&
-            !b.file.name?.match(WEEKLY_REG) &&
-            !b.file.name?.match(DAILY_REG) &&
-            !b.file.name?.match(/Template$/) &&
-            !b.file.path?.includes(`${periodicNotesPath}/Templates`) &&
-            ![
-              filepath,
-              periodicNotesTemplateFilePathYearly,
-              periodicNotesTemplateFilePathQuarterly,
-              periodicNotesTemplateFilePathMonthly,
-              periodicNotesTemplateFilePathWeekly,
-              periodicNotesTemplateFilePathDaily,
-            ].includes(b.file.path),
+            !isInPeriodicNote(b.file.path, this.settings) &&
+            !isInTemplateNote(filepath, this.settings),
         )
         .sort(
           (b: { file: { ctime: { ts: number } } }) => b.file.ctime.ts,
