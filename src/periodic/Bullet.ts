@@ -50,7 +50,7 @@ export class Bullet {
     }
 
     const from = tags
-      .map((tag: string[], index: number) => {
+      .map((tag: string, index: number) => {
         return `#${tag} ${index === tags.length - 1 ? '' : 'OR'}`;
       })
       .join(' ')
@@ -63,7 +63,10 @@ export class Bullet {
         let includeTag = false;
         if (L.task || L.path === filepath) return false;
         for (const tag of tags) {
-          includeTag = L.tags.join(' ').includes(`#${tag}`);
+          includeTag = L.tags
+            .join(' ')
+            .toLowerCase()
+            .includes(`#${tag.toLowerCase()}`);
           if (includeTag) {
             break;
           }

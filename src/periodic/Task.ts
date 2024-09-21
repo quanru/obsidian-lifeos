@@ -129,14 +129,14 @@ export class Task {
     }
 
     const from = tags
-      .map((tag: string[], index: number) => {
+      .map((tag: string, index: number) => {
         return `#${tag} ${index === tags.length - 1 ? '' : 'OR'}`;
       })
       .join(' ')
       .trim();
     const where = tags
-      .map((tag: string[], index: number) => {
-        return `contains(tags, "#${tag}") ${
+      .map((tag: string, index: number) => {
+        return `contains(lower(tags), "#${tag.toLowerCase()}") ${
           index === tags.length - 1 ? '' : 'OR'
         }`;
       })
