@@ -73,6 +73,14 @@ export class File {
               const tags = this.tags(indexFile?.path || '');
               // tags: #work/project-1 #work/project-2
               // condition.tags: #work
+              if (!tags) {
+                return '';
+              }
+
+              if (!condition.tags) {
+                return '';
+              }
+
               if (!this.hasCommonPrefix(tags, condition.tags)) {
                 return '';
               }
@@ -81,7 +89,7 @@ export class File {
             if (!indexFile) {
               logMessage(
                 `${
-                  getI18n(this.locale)[`${ERROR_MESSAGE}}NO_INDEX_FILE_EXIST`]
+                  getI18n(this.locale)[`${ERROR_MESSAGE}NO_INDEX_FILE_EXIST`]
                 } @ ${subFolder.path}`,
               );
             }
@@ -159,19 +167,11 @@ export class File {
     const tags = this.tags(filepath);
     const div = el.createEl('div');
     const component = new Markdown(div);
-    const {
-      periodicNotesPath,
-      periodicNotesTemplateFilePathYearly,
-      periodicNotesTemplateFilePathQuarterly,
-      periodicNotesTemplateFilePathMonthly,
-      periodicNotesTemplateFilePathWeekly,
-      periodicNotesTemplateFilePathDaily,
-    } = this.settings;
 
     if (!tags.length) {
       return renderError(
         this.app,
-        getI18n(this.locale)[`${ERROR_MESSAGE}}NO_FRONT_MATTER_TAG`],
+        getI18n(this.locale)[`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`],
         div,
         filepath,
       );
