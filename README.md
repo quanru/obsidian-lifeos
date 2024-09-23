@@ -14,7 +14,7 @@
 
 ## Features
 
-Please visit the official doc: https://lifeos.vip/plugin/life-os
+Please visit the official doc: https://lifeos.vip/guide/readme/free.html
 
 ## Support
 

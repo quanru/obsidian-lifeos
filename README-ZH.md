@@ -14,7 +14,7 @@
 
 ## 特性
 
-请前往官方网站：https://lifeos.vip/zh/plugin/life-os
+请前往官方网站：https://lifeos.vip/zh/guide/readme/free.html
 
 ## 用户支持
 
