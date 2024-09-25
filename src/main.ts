@@ -121,7 +121,6 @@ export default class LifeOS extends Plugin {
       name: 'LifeOS Guide',
       callback: () => openOfficialSite(locale),
     });
-    this.app.workspace.onLayoutReady(this.initCreateNoteView);
     this.loadHelpers();
     this.loadDailyRecord();
     this.loadGlobalHelpers();
