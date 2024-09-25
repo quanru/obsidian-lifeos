@@ -1,20 +1,23 @@
 .periodic-para-create-note {
-  overflow: hidden !important;
-
-  * {
-    font-family: var(--font-interface);
-  }
-
   button:not(.ant-btn) {
     background-color: unset;
     box-shadow: unset;
+  }
+
+  overflow: hidden !important;
+
+  .periodic-form {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-content: flex-start;
   }
 
   .ant-picker-cell-selected {
     .ant-picker-cell-inner {
       .cell-container {
         .chinese-cal {
-          color: #fff;
+          color: var(--text-on-accent);
         }
       }
     }
@@ -29,13 +32,13 @@
 
     .cell-container {
       position: relative;
-      border-radius: 10px;
+      border-radius: var(--radius-s);
 
       .chinese-cal {
         display: block;
         line-height: initial;
-        font-size: 11px;
-        color: rgba(153, 153, 153, 0.45);
+        font-size: var(--font-smallest);
+        color: var(--text-muted);
       }
 
       .dot {
@@ -56,16 +59,16 @@
 
       .label {
         position: absolute;
-        top: -5px;
-        right: -8px;
-        color: #fff;
-        width: 13px;
-        line-height: 13px;
-        border-radius: 8px;
-        font-size: 8px;
+        top: calc(var(--size-4-1) * -1.5);
+        right: calc(var(--size-4-1) * -2.5);
+        color: var(--text-on-accent);
+        width: calc(var(--size-4-1) * 3);
+        line-height: calc(var(--size-4-1) * 3);
+        border-radius: calc(var(--size-4-1) * 3);
+        font-size: var(--font-smallest);
 
         &.workday {
-          background-color: rgba(153, 153, 153, 0.45);
+          background-color: var(--text-muted);
         }
 
         &.holiday {
@@ -76,13 +79,14 @@
   }
 
   .ant-btn-primary {
-    color: #fff;
+    color: var(--text-on-accent);
     background-color: var(--interactive-accent);
-    box-shadow: 0 2px 0 rgba(5, 145, 255, 0.1);
+    box-shadow: 0 2px 0 var(--background-modifier-box-shadow);
   }
 
   .ant-tabs-nav {
-    margin: 8px 0;
+    margin: var(--size-4-1) 0;
+
     &::before {
       border: 0;
     }
@@ -103,6 +107,7 @@
         border-radius: 0;
         box-shadow: unset;
         transition: unset;
+        background-color: transparent !important;
       }
 
       .ant-picker-header {
@@ -110,16 +115,16 @@
       }
 
       .ant-picker-body {
-        padding: 0 18px;
+        padding: 0 var(--size-4-3);
       }
 
       .ant-picker-header-view {
-        line-height: 30px;
+        line-height: var(--line-height-normal);
       }
     }
 
     .ant-input-affix-wrapper {
-      padding: 0 11px;
+      padding: 0 var(--size-4-2);
     }
   }
 }
@@ -130,8 +135,8 @@
       width: unset;
     }
 
-    .ant-tabs-tab + .ant-tabs-tab {
-      margin: 0 0 0 24px;
+    .ant-tabs-tab+.ant-tabs-tab {
+      margin: 0 0 0 var(--size-4-6);
     }
   }
 }
