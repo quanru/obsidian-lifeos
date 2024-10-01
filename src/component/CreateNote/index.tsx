@@ -499,7 +499,7 @@ export const CreateNote = (props: { width: number }) => {
                   <Form.Item name={periodic}>
                     <DatePicker
                       cellRender={(value: dayjs.Dayjs, info: any) => {
-                        return cellRender(value, picker);
+                        return cellRender(value, info.type);
                       }}
                       picker={picker}
                       showNow={false}
