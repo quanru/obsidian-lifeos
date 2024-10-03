@@ -1,5 +1,11 @@
 import type { Locale } from 'antd/es/locale';
-import { ItemView, type WorkspaceLeaf, debounce } from 'obsidian';
+import {
+  type App,
+  ItemView,
+  Scope,
+  type WorkspaceLeaf,
+  debounce,
+} from 'obsidian';
 import React from 'react';
 import { type Root, createRoot } from 'react-dom/client';
 import { CreateNote } from '../component/CreateNote';
@@ -7,7 +13,11 @@ import { AppContext } from '../context';
 import type { PluginSettings } from '../type';
 
 export const CREATE_NOTE = 'periodic-para';
-
+let app: App = undefined as any;
+let isOpenInNew = false;
+function getIsOpenInNewF() {
+  return isOpenInNew;
+}
 export class CreateNoteView extends ItemView {
   settings: PluginSettings;
   root: Root;
@@ -16,6 +26,20 @@ export class CreateNoteView extends ItemView {
     super(leaf);
     this.settings = settings;
     this.locale = locale;
+    this.scope = new Scope(this.app.scope);
+    const appBodyDom =
+      this.app.workspace.containerEl.parentElement?.parentElement
+        ?.parentElement;
+
+    appBodyDom?.addEventListener('keydown', e => {
+      if (e.ctrlKey) {
+        isOpenInNew = true;
+      }
+    });
+    appBodyDom?.addEventListener('keyup', e => {
+      isOpenInNew = false;
+    });
+    app = this.app;
   }
 
   getViewType() {
@@ -51,11 +75,13 @@ export class CreateNoteView extends ItemView {
           locale: this.locale,
         }}
       >
-        <CreateNote width={this.containerEl.innerWidth} />
+        <CreateNote
+          width={this.containerEl.innerWidth}
+          getIsOpenInNew={getIsOpenInNewF}
+        />
       </AppContext.Provider>,
     );
   }
-
   async onClose() {
     this.root.unmount();
   }

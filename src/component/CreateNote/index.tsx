@@ -43,12 +43,16 @@ dayjs.extend(weekOfYear);
 dayjs.extend(quarterOfYear);
 dayjs.extend(updateLocale);
 
-export const CreateNote = (props: { width: number }) => {
+export const CreateNote = (props: {
+  width: number;
+  getIsOpenInNew: () => boolean;
+}) => {
   const { app, settings: initialSettings, locale } = useApp() || {};
+
   const [settings, setSettings] = useState<PluginSettings | undefined>(
     initialSettings,
   );
-  const { width } = props;
+  const { width, getIsOpenInNew } = props;
   const [periodicActiveTab, setPeriodicActiveTab] = useState(DAILY);
   const [paraActiveTab, setParaActiveTab] = useState(PROJECT);
   const defaultType = settings?.usePeriodicNotes ? PERIODIC : PARA;
@@ -218,7 +222,13 @@ export const CreateNote = (props: { width: number }) => {
     let chineseCalendarText = '';
     let dayWorkStatus = '';
     const onClick = (day: dayjs.Dayjs) => {
-      createPeriodicFile(day, periodicActiveTab, settings!, app);
+      createPeriodicFile(
+        day,
+        periodicActiveTab,
+        settings!,
+        app,
+        getIsOpenInNew(),
+      );
     };
 
     switch (picker) {

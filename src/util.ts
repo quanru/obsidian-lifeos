@@ -1,5 +1,12 @@
 import dayjs, { type Dayjs } from 'dayjs';
-import { Component, MarkdownRenderer, Notice, TFile, moment } from 'obsidian';
+import {
+  Component,
+  MarkdownRenderer,
+  Notice,
+  OpenViewState,
+  TFile,
+  moment,
+} from 'obsidian';
 import type { App } from 'obsidian';
 import {
   DAILY,
@@ -47,13 +54,14 @@ export async function createFile(
     folder: string;
     file: string;
     tag?: string;
+    openInNewPanel?: boolean;
   },
 ) {
   if (!app) {
     return;
   }
 
-  const { templateFile, folder, file, tag, locale } = options;
+  const { templateFile, folder, file, tag, locale, openInNewPanel } = options;
   const templateTFile = app.vault.getAbstractFileByPath(templateFile!);
   const finalFile = file.match(/\.md$/) ? file : `${file}.md`;
 
@@ -73,7 +81,7 @@ export async function createFile(
     const tFile = app.vault.getAbstractFileByPath(finalFile);
 
     if (tFile && tFile instanceof TFile) {
-      return await app.workspace.getLeaf().openFile(tFile);
+      return await app.workspace.getLeaf(openInNewPanel).openFile(tFile);
     }
 
     if (!app.vault.getAbstractFileByPath(folder)) {
@@ -91,7 +99,7 @@ export async function createFile(
       frontMatter.tags.push(tag.replace(/^#/, ''));
     });
     await sleep(30); // 等待被索引，否则读取不到 frontmatter：this.app.metadataCache.getFileCache(file)
-    await app.workspace.getLeaf().openFile(fileCreated);
+    await app.workspace.getLeaf(openInNewPanel).openFile(fileCreated);
   }
 }
 
@@ -202,6 +210,7 @@ export async function createPeriodicFile(
   periodType: string,
   settings: PluginSettings,
   app: App | undefined,
+  openInNewPanel: boolean = false,
 ): Promise<void> {
   if (!app || !settings.periodicNotesPath) {
     return;
@@ -249,6 +258,7 @@ export async function createPeriodicFile(
     templateFile,
     folder,
     file,
+    openInNewPanel,
   });
 }
 
