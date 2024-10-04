@@ -14,7 +14,9 @@
 
 ## Features
 
-Please visit the official doc: https://lifeos.vip/guide/readme/free.html
+- Basic: https://lifeos.vip/guide/readme/free.html
+- **Pro** : https://lifeos.vip/guide/readme/pro.html
+
 
 ## Support
 

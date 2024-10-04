@@ -14,7 +14,8 @@
 
 ## 特性
 
-请前往官方网站：https://lifeos.vip/zh/guide/readme/free.html
+- 免费版：https://lifeos.vip/zh/guide/readme/free.html
+- **专业版** ：https://lifeos.vip/zh/guide/readme/pro.html
 
 ## 用户支持
 
