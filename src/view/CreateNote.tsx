@@ -7,11 +7,7 @@ import { AppContext } from '../context';
 import type { PluginSettings } from '../type';
 
 export const CREATE_NOTE = 'periodic-para';
-let app: App = undefined as any;
-let isOpenInNew = false;
-function getIsOpenInNewF() {
-  return isOpenInNew;
-}
+
 export class CreateNoteView extends ItemView {
   settings: PluginSettings;
   root: Root;
@@ -20,19 +16,6 @@ export class CreateNoteView extends ItemView {
     super(leaf);
     this.settings = settings;
     this.locale = locale;
-    const appBodyDom =
-      this.app.workspace.containerEl.parentElement?.parentElement
-        ?.parentElement;
-
-    appBodyDom?.addEventListener('keydown', e => {
-      if (e.ctrlKey) {
-        isOpenInNew = true;
-      }
-    });
-    appBodyDom?.addEventListener('keyup', e => {
-      isOpenInNew = false;
-    });
-    app = this.app;
   }
 
   getViewType() {
@@ -68,10 +51,7 @@ export class CreateNoteView extends ItemView {
           locale: this.locale,
         }}
       >
-        <CreateNote
-          width={this.containerEl.innerWidth}
-          getIsOpenInNew={getIsOpenInNewF}
-        />
+        <CreateNote width={this.containerEl.innerWidth} />
       </AppContext.Provider>,
     );
   }

@@ -2,7 +2,8 @@ import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, DatePicker, Form, Input, Radio, Tabs, Tooltip } from 'antd';
 import dayjs from 'dayjs';
 import { Notice, TFile, type WorkspaceLeaf } from 'obsidian';
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   ARCHIVE,
   AREA,
@@ -45,14 +46,13 @@ dayjs.extend(updateLocale);
 
 export const CreateNote = (props: {
   width: number;
-  getIsOpenInNew: () => boolean;
 }) => {
   const { app, settings: initialSettings, locale } = useApp() || {};
 
   const [settings, setSettings] = useState<PluginSettings | undefined>(
     initialSettings,
   );
-  const { width, getIsOpenInNew } = props;
+  const { width } = props;
   const [periodicActiveTab, setPeriodicActiveTab] = useState(DAILY);
   const [paraActiveTab, setParaActiveTab] = useState(PROJECT);
   const defaultType = settings?.usePeriodicNotes ? PERIODIC : PARA;
@@ -221,14 +221,13 @@ export const CreateNote = (props: {
     const date = dayjs(value.format()).locale(locale);
     let chineseCalendarText = '';
     let dayWorkStatus = '';
-    const onClick = (day: dayjs.Dayjs) => {
-      createPeriodicFile(
-        day,
-        periodicActiveTab,
-        settings!,
-        app,
-        getIsOpenInNew(),
-      );
+    const onClick = (
+      day: dayjs.Dayjs,
+      event: React.MouseEvent<HTMLDivElement>,
+    ) => {
+      const newLeaf = event.ctrlKey || event.metaKey || event.altKey;
+
+      createPeriodicFile(day, periodicActiveTab, settings!, app, newLeaf);
     };
 
     switch (picker) {
@@ -322,7 +321,10 @@ export const CreateNote = (props: {
     if (existsDates.includes(formattedDate)) {
       if (picker !== 'week') {
         return (
-          <div className="ant-picker-cell-inner" onClick={() => onClick(value)}>
+          <div
+            className="ant-picker-cell-inner"
+            onClick={e => onClick(value, e)}
+          >
             <div className="cell-container">
               <span className="dot">•</span>
               {cell}
@@ -333,7 +335,10 @@ export const CreateNote = (props: {
 
       if (date.day() === 1) {
         return (
-          <div className="ant-picker-cell-inner" onClick={() => onClick(value)}>
+          <div
+            className="ant-picker-cell-inner"
+            onClick={e => onClick(value, e)}
+          >
             <div className="cell-container">
               <span className="week-dot">•</span>
               <span>{badgeText}</span>
@@ -343,7 +348,7 @@ export const CreateNote = (props: {
       }
     }
     return (
-      <div className="ant-picker-cell-inner" onClick={() => onClick(value)}>
+      <div className="ant-picker-cell-inner" onClick={e => onClick(value, e)}>
         <div className="cell-container">{cell}</div>
       </div>
     );
