@@ -1,5 +1,5 @@
 import type { Locale } from 'antd/es/locale';
-import { ItemView, type WorkspaceLeaf, debounce } from 'obsidian';
+import { type App, ItemView, type WorkspaceLeaf, debounce } from 'obsidian';
 import React from 'react';
 import { type Root, createRoot } from 'react-dom/client';
 import { CreateNote } from '../component/CreateNote';
@@ -55,7 +55,6 @@ export class CreateNoteView extends ItemView {
       </AppContext.Provider>,
     );
   }
-
   async onClose() {
     this.root.unmount();
   }
