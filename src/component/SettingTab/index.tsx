@@ -16,6 +16,7 @@ import type { PluginSettings } from '../../type';
 import { DEFAULT_SETTINGS } from '../../view/SettingTab';
 import { ConfigProvider } from '../ConfigProvider';
 import './index.less';
+import { getI18n } from '../../i18n';
 import { AutoComplete } from '../AutoComplete';
 
 export const SettingTab = (props: {
@@ -51,6 +52,9 @@ export const SettingTab = (props: {
     setSetting(initialSettings);
   }, [initialSettings]);
 
+  const localeKey = locale?.locale || 'en';
+  const localeMap = getI18n(localeKey);
+
   return (
     <ConfigProvider>
       <Form
@@ -70,10 +74,13 @@ export const SettingTab = (props: {
           items={[
             {
               key: 'periodic',
-              label: 'Periodic Notes',
+              label: localeMap.SETTING_PERIODIC_NOTES,
               children: (
                 <>
-                  <Form.Item name="usePeriodicNotes" label="Turn on">
+                  <Form.Item
+                    name="usePeriodicNotes"
+                    label={localeMap.SETTING_TURN_ON}
+                  >
                     <Switch />
                   </Form.Item>
 
@@ -81,7 +88,7 @@ export const SettingTab = (props: {
                     <>
                       <Form.Item
                         name="periodicNotesPath"
-                        label="Periodic Notes Folder"
+                        label={localeMap.SETTING_PERIODIC_NOTES_FOLDER}
                       >
                         <AutoComplete options={folders}>
                           <Input
@@ -90,27 +97,27 @@ export const SettingTab = (props: {
                         </AutoComplete>
                       </Form.Item>
                       <Form.Item
-                        help="Where the habit module is in a daily note"
+                        help={localeMap.SETTING_HABIT_HEADER_HELP}
                         name="habitHeader"
-                        label="Habit Header:"
+                        label={localeMap.SETTING_HABIT_HEADER}
                       >
                         <Input placeholder={DEFAULT_SETTINGS.habitHeader} />
                       </Form.Item>
                       {settings.usePARANotes && (
                         <>
                           <Form.Item
-                            help="Where the project list is in a daily note"
+                            help={localeMap.SETTING_PROJECT_LIST_HEADER_HELP}
                             name="projectListHeader"
-                            label="Project List Header:"
+                            label={localeMap.SETTING_PROJECT_LIST_HEADER}
                           >
                             <Input
                               placeholder={DEFAULT_SETTINGS.projectListHeader}
                             />
                           </Form.Item>
                           <Form.Item
-                            help="Where the area list is in a quarterly note"
+                            help={localeMap.SETTING_AREA_LIST_HEADER_HELP}
                             name="areaListHeader"
-                            label="Area List Header:"
+                            label={localeMap.SETTING_AREA_LIST_HEADER}
                           >
                             <Input
                               placeholder={DEFAULT_SETTINGS.areaListHeader}
@@ -119,41 +126,62 @@ export const SettingTab = (props: {
                         </>
                       )}
                       <Form.Item
-                        help="The start day of the week"
+                        help={localeMap.SETTING_WEEK_START_HELP}
                         name="weekStart"
-                        label="Week Start:"
+                        label={localeMap.SETTING_WEEK_START}
                       >
                         <Select
                           options={[
                             {
                               value: -1,
-                              label: `Auto${
+                              label: `${localeMap.SETTING_WEEK_START_AUTO}${
                                 locale?.locale === 'zh-cn'
-                                  ? '(Monday)'
-                                  : '(Sunday)'
+                                  ? `(${localeMap.SETTING_WEEK_START_MONDAY})`
+                                  : `(${localeMap.SETTING_WEEK_START_SUNDAY})`
                               }`,
                             },
-                            { value: 1, label: 'Monday' },
-                            { value: 2, label: 'Tuesday' },
-                            { value: 3, label: 'Wednesday' },
-                            { value: 4, label: 'Thursday' },
-                            { value: 5, label: 'Friday' },
-                            { value: 6, label: 'Saturday' },
-                            { value: 0, label: 'Sunday' },
+                            {
+                              value: 1,
+                              label: localeMap.SETTING_WEEK_START_MONDAY,
+                            },
+                            {
+                              value: 2,
+                              label: localeMap.SETTING_WEEK_START_TUESDAY,
+                            },
+                            {
+                              value: 3,
+                              label: localeMap.SETTING_WEEK_START_WEDNESDAY,
+                            },
+                            {
+                              value: 4,
+                              label: localeMap.SETTING_WEEK_START_THURSDAY,
+                            },
+                            {
+                              value: 5,
+                              label: localeMap.SETTING_WEEK_START_FRIDAY,
+                            },
+                            {
+                              value: 6,
+                              label: localeMap.SETTING_WEEK_START_SATURDAY,
+                            },
+                            {
+                              value: 0,
+                              label: localeMap.SETTING_WEEK_START_SUNDAY,
+                            },
                           ]}
                         />
                       </Form.Item>
                       <Form.Item
-                        help="Show chinese calendar and holidays"
+                        help={localeMap.SETTING_CHINESE_CALENDAR_HELP}
                         name="useChineseCalendar"
-                        label="Chinese Calendar:"
+                        label={localeMap.SETTING_CHINESE_CALENDAR}
                       >
                         <Switch />
                       </Form.Item>
                       <Form.Item
-                        help="Custom template file Path"
+                        help={localeMap.SETTING_ADVANCED_SETTINGS_HELP}
                         name="usePeriodicAdvanced"
-                        label="Advanced Settings"
+                        label={localeMap.SETTING_ADVANCED_SETTINGS}
                       >
                         <Switch />
                       </Form.Item>
@@ -165,7 +193,7 @@ export const SettingTab = (props: {
                                 <Form.Item
                                   key={item}
                                   name={`periodicNotesTemplateFilePath${item}`}
-                                  label={`${item} Template`}
+                                  label={`${localeMap[item]}${localeMap.SETTING_TEMPLATE}`}
                                 >
                                   <AutoComplete options={files}>
                                     <Input
@@ -183,24 +211,23 @@ export const SettingTab = (props: {
                       <Form.Item
                         help={
                           <>
-                            Sync daily record from
+                            {localeMap.SETTING_DAILY_RECORD_HELP}
                             <Typography.Link href="https://usememos.com">
                               {' usememos '}
                             </Typography.Link>
-                            service
                           </>
                         }
                         name="useDailyRecord"
-                        label="Daily Record"
+                        label={localeMap.SETTING_DAILY_RECORD}
                       >
                         <Switch />
                       </Form.Item>
                       {settings.useDailyRecord && (
                         <>
                           <Form.Item
-                            help="Where the daily record module is in a daily note"
+                            help={localeMap.SETTING_DAILY_RECORD_HEADER_HELP}
                             name="dailyRecordHeader"
-                            label="Header:"
+                            label={localeMap.SETTING_DAILY_RECORD_HEADER}
                           >
                             <Input
                               placeholder={DEFAULT_SETTINGS.dailyRecordHeader}
@@ -208,16 +235,10 @@ export const SettingTab = (props: {
                           </Form.Item>
                           <Form.Item
                             help={
-                              <>
-                                The
-                                <Typography.Link href="https://usememos.com">
-                                  {' usememos '}
-                                </Typography.Link>
-                                {'service URL, < 0.22.0 or >= 0.22.3'}
-                              </>
+                              <>{localeMap.SETTING_DAILY_RECORD_API_HELP}</>
                             }
                             name="dailyRecordAPI"
-                            label="API:"
+                            label={localeMap.SETTING_DAILY_RECORD_API}
                           >
                             <Input
                               placeholder={
@@ -229,29 +250,28 @@ export const SettingTab = (props: {
                           <Form.Item
                             help={
                               <>
-                                The
+                                {localeMap.SETTING_DAILY_RECORD_TOKEN_HELP}
                                 <Typography.Link href="https://www.usememos.com/docs/security/access-tokens">
                                   {' token '}
                                 </Typography.Link>
-                                of your API
                               </>
                             }
                             name="dailyRecordToken"
-                            label="Token:"
+                            label={localeMap.SETTING_DAILY_RECORD_TOKEN}
                           >
-                            <Input />
+                            <Input.TextArea autoSize={{ minRows: 2 }} />
                           </Form.Item>
                           <Form.Item
-                            help="Creating while daily note not exist"
+                            help={localeMap.SETTING_DAILY_RECORD_CREATING_HELP}
                             name="dailyRecordCreating"
-                            label="Creating:"
+                            label={localeMap.SETTING_DAILY_RECORD_CREATING}
                           >
                             <Switch />
                           </Form.Item>
                           <Form.Item
-                            help="Warning while daily note not exist"
+                            help={localeMap.SETTING_DAILY_RECORD_WARNING_HELP}
                             name="dailyRecordWarning"
-                            label="Warning:"
+                            label={localeMap.SETTING_DAILY_RECORD_WARNING}
                           >
                             <Switch />
                           </Form.Item>
@@ -264,39 +284,54 @@ export const SettingTab = (props: {
             },
             {
               key: 'para',
-              label: 'PARA Notes',
+              label: localeMap.SETTING_PARA_NOTES,
               children: (
                 <>
-                  <Form.Item name="usePARANotes" label="Turn on">
+                  <Form.Item
+                    name="usePARANotes"
+                    label={localeMap.SETTING_TURN_ON}
+                  >
                     <Switch />
                   </Form.Item>
 
                   {settings.usePARANotes && (
                     <>
-                      <Form.Item name="projectsPath" label="Projects Folder:">
-                        <AutoComplete options={folders}>
-                          <Input />
-                        </AutoComplete>
-                      </Form.Item>
-                      <Form.Item name="areasPath" label="Areas Folder:">
-                        <AutoComplete options={folders}>
-                          <Input />
-                        </AutoComplete>
-                      </Form.Item>
-                      <Form.Item name="resourcesPath" label="Resources Folder:">
-                        <AutoComplete options={folders}>
-                          <Input />
-                        </AutoComplete>
-                      </Form.Item>
-                      <Form.Item name="archivesPath" label="Archives Folder:">
+                      <Form.Item
+                        name="projectsPath"
+                        label={localeMap.SETTING_PROJECTS_FOLDER}
+                      >
                         <AutoComplete options={folders}>
                           <Input />
                         </AutoComplete>
                       </Form.Item>
                       <Form.Item
-                        help="Custom template file path and index filename"
+                        name="areasPath"
+                        label={localeMap.SETTING_AREAS_FOLDER}
+                      >
+                        <AutoComplete options={folders}>
+                          <Input />
+                        </AutoComplete>
+                      </Form.Item>
+                      <Form.Item
+                        name="resourcesPath"
+                        label={localeMap.SETTING_RESOURCES_FOLDER}
+                      >
+                        <AutoComplete options={folders}>
+                          <Input />
+                        </AutoComplete>
+                      </Form.Item>
+                      <Form.Item
+                        name="archivesPath"
+                        label={localeMap.SETTING_ARCHIVES_FOLDER}
+                      >
+                        <AutoComplete options={folders}>
+                          <Input />
+                        </AutoComplete>
+                      </Form.Item>
+                      <Form.Item
+                        help={localeMap.SETTING_ADVANCED_SETTINGS_HELP}
                         name="usePARAAdvanced"
-                        label="Advanced Settings"
+                        label={localeMap.SETTING_ADVANCED_SETTINGS}
                       >
                         <Switch />
                       </Form.Item>
@@ -304,16 +339,18 @@ export const SettingTab = (props: {
                         <>
                           <Form.Item
                             name="paraIndexFilename"
-                            label="Index Filename:"
+                            label={localeMap.SETTING_INDEX_FILENAME}
                           >
                             <Select
                               options={[
                                 {
-                                  label: 'FolderName.md',
+                                  label:
+                                    localeMap.SETTING_INDEX_FILENAME_FOLDER,
                                   value: 'folderName',
                                 },
                                 {
-                                  label: '*.README.md',
+                                  label:
+                                    localeMap.SETTING_INDEX_FILENAME_README,
                                   value: 'readme',
                                 },
                               ]}
@@ -330,11 +367,11 @@ export const SettingTab = (props: {
                                 <Form.Item
                                   key={name}
                                   name={`${name.toLocaleLowerCase()}sTemplateFilePath`}
-                                  label={`${name} Template`}
+                                  label={`${localeMap[name]}${localeMap.SETTING_TEMPLATE}`}
                                 >
                                   <AutoComplete options={files}>
                                     <Input
-                                      placeholder={`${path}/template.md`}
+                                      placeholder={`${path}/Template.md`}
                                     />
                                   </AutoComplete>
                                 </Form.Item>
