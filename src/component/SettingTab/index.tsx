@@ -18,6 +18,7 @@ import { ConfigProvider } from '../ConfigProvider';
 import './index.less';
 import { getI18n } from '../../i18n';
 import { AutoComplete } from '../AutoComplete';
+import { TopBanner } from '../TopBanner';
 
 export const SettingTab = (props: {
   settings: PluginSettings;
@@ -57,6 +58,7 @@ export const SettingTab = (props: {
 
   return (
     <ConfigProvider>
+      <TopBanner locale={localeKey} />
       <Form
         form={form}
         labelCol={{ span: 8 }}
@@ -234,9 +236,7 @@ export const SettingTab = (props: {
                             />
                           </Form.Item>
                           <Form.Item
-                            help={
-                              <>{localeMap.SETTING_DAILY_RECORD_API_HELP}</>
-                            }
+                            help={localeMap.SETTING_DAILY_RECORD_API_HELP}
                             name="dailyRecordAPI"
                             label={localeMap.SETTING_DAILY_RECORD_API}
                           >

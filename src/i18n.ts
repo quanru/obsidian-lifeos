@@ -131,7 +131,7 @@ const EN = {
   SETTING_INDEX_FILENAME_FOLDER: 'FolderName.md',
   SETTING_INDEX_FILENAME_README: '*.README.md',
 
-  // 新增的键值对
+  // command and ribbon
   COMMAND_CREATE_NOTES: 'LifeOS Creation',
   COMMAND_CREATE_DAILY_NOTE: 'Create Daily Note',
   COMMAND_CREATE_WEEKLY_NOTE: 'Create Weekly Note',
@@ -141,6 +141,19 @@ const EN = {
   COMMAND_LIFEOS_GUIDE: 'LifeOS Guide',
   COMMAND_SYNC_DAILY_RECORDS: 'Sync Memos',
   COMMAND_FORCE_SYNC_DAILY_RECORDS: 'Force Sync Memos',
+
+  // TopBanner
+  TOPBANNER_BUGS_FEATURES: 'Bugs & Feature Requests',
+  TOPBANNER_BUGS_FEATURES_HREF:
+    'https://github.com/quanru/obsidian-lifeos/issues',
+  TOPBANNER_VIDEO: 'LifeOS on YouTube',
+  TOPBANNER_VIDEO_HREF: 'https://www.youtube.com/@lifeos-pro',
+  TOPBANNER_CONTACT: 'Contact us',
+  TOPBANNER_CONTACT_HREF: 'https://lifeos.vip/contact/index.html',
+  TOPBANNER_SOCIAL: 'Follow me on Twitter',
+  TOPBANNER_SOCIAL_HREF: 'https://x.com/quan_ru',
+  TOPBANNER_LIFEOS_PRO: 'LifeOS Pro',
+  TOPBANNER_LIFEOS_PRO_HREF: 'https://lifeos.vip/plugin/life-os-pro.html',
 };
 
 const ZH = {
@@ -178,7 +191,7 @@ const ZH = {
 
   [`${ERROR_MESSAGE}FAILED_GET_USEMEMOS_VERSION`]:
     '获取 usememos workspace profile 失败',
-  [`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`]: '请为 Properties 添加 tags 字段！',
+  [`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`]: '请为 Properties 加 tags 字段！',
   [`${ERROR_MESSAGE}NO_DATAVIEW_INSTALL`]: '请先安装 dataview！',
   [`${ERROR_MESSAGE}FAILED_DATAVIEW_API`]:
     'Dataview API 开启失败！请关闭 LifeOS 插件后重新打开！',
@@ -200,7 +213,7 @@ const ZH = {
   [`${ERROR_MESSAGE}CREATING_DAILY_FILE`]: '日记文件不存在，正在创建中！',
 
   // 添加 SettingTab 相关的翻译
-  SETTING_PERIODIC_NOTES: '周期笔记',
+  SETTING_PERIODIC_NOTES: '周期笔',
   SETTING_PARA_NOTES: 'PARA 笔记',
   SETTING_TURN_ON: '开启',
   SETTING_PERIODIC_NOTES_FOLDER: '周期笔记目录',
@@ -247,7 +260,7 @@ const ZH = {
   SETTING_INDEX_FILENAME_FOLDER: '文件夹名.md',
   SETTING_INDEX_FILENAME_README: '*.README.md',
 
-  // 新增的键值对
+  // command and ribbon
   COMMAND_CREATE_NOTES: 'LifeOS 创建',
   COMMAND_CREATE_DAILY_NOTE: '创建日记',
   COMMAND_CREATE_WEEKLY_NOTE: '创建周记',
@@ -257,6 +270,20 @@ const ZH = {
   COMMAND_LIFEOS_GUIDE: 'LifeOS 指南',
   COMMAND_SYNC_DAILY_RECORDS: '同步 memos',
   COMMAND_FORCE_SYNC_DAILY_RECORDS: '强制同步 memos',
+
+  // TopBanner
+  TOPBANNER_BUGS_FEATURES: '问题反馈和功能请求',
+  TOPBANNER_BUGS_FEATURES_HREF:
+    'https://github.com/quanru/obsidian-lifeos/issues',
+  TOPBANNER_VIDEO: 'LifeOS 哔哩哔哩',
+  TOPBANNER_VIDEO_HREF: 'https://space.bilibili.com/437191204',
+  TOPBANNER_CONTACT: '联系我们',
+  TOPBANNER_CONTACT_HREF: 'https://lifeos.vip/zh/contact/index.html',
+  TOPBANNER_SOCIAL: 'LifeOS 小红书',
+  TOPBANNER_SOCIAL_HREF:
+    'https://www.xiaohongshu.com/user/profile/5b06db60f7e8b974ec6ff7fc',
+  TOPBANNER_LIFEOS_PRO: 'LifeOS Pro',
+  TOPBANNER_LIFEOS_PRO_HREF: 'https://lifeos.vip/zh/plugin/life-os-pro.html',
 };
 
 const I18N_MAP: Record<string, Record<string, string>> = {
