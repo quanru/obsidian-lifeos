@@ -97,6 +97,7 @@ export async function createFile(
 
       frontMatter.tags = frontMatter.tags || [];
       frontMatter.tags.push(tag.replace(/^#/, ''));
+      frontMatter.aliases = tag;
     });
     await sleep(30); // 等待被索引，否则读取不到 frontmatter：this.app.metadataCache.getFileCache(file)
     await app.workspace.getLeaf(newLeaf).openFile(fileCreated);
