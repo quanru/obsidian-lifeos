@@ -95,22 +95,23 @@ export default class LifeOS extends Plugin {
       return new CreateNoteView(leaf, this.settings, localeMap[locale]);
     });
 
+    const i18n = getI18n(locale);
     const item = this.addRibbonIcon(
-      'calendar',
-      'LifeOS',
+      'file-plus',
+      i18n.COMMAND_CREATE_NOTES,
       this.initCreateNoteView,
     );
-    setIcon(item, 'calendar');
+    setIcon(item, 'file-plus');
 
     this.addCommand({
       id: 'periodic-para-create-notes',
-      name: 'Create Notes',
+      name: i18n.COMMAND_CREATE_NOTES,
       callback: this.initCreateNoteView,
     });
     [DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY].map(periodType => {
       this.addCommand({
         id: `periodic-para-create-${periodType.toLocaleLowerCase()}-note`,
-        name: `Create ${periodType} Note`,
+        name: i18n[`COMMAND_CREATE_${periodType.toUpperCase()}_NOTE`],
         callback: () => {
           createPeriodicFile(dayjs(), periodType, this.settings, this.app);
         },
@@ -118,7 +119,7 @@ export default class LifeOS extends Plugin {
     });
     this.addCommand({
       id: 'periodic-para-life-os-guide',
-      name: 'LifeOS Guide',
+      name: i18n.COMMAND_LIFEOS_GUIDE,
       callback: () => openOfficialSite(locale),
     });
     this.loadHelpers();
@@ -175,12 +176,12 @@ export default class LifeOS extends Plugin {
       );
       this.addCommand({
         id: 'periodic-para-sync-daily-record',
-        name: 'Sync Daily Records',
+        name: getI18n(locale).COMMAND_SYNC_DAILY_RECORDS,
         callback: this.dailyRecord.sync,
       });
       this.addCommand({
         id: 'periodic-para-force-sync-daily-record',
-        name: 'Force Sync Daily Records',
+        name: getI18n(locale).COMMAND_FORCE_SYNC_DAILY_RECORDS,
         callback: this.dailyRecord.forceSync,
       });
 

@@ -130,6 +130,17 @@ const EN = {
 
   SETTING_INDEX_FILENAME_FOLDER: 'FolderName.md',
   SETTING_INDEX_FILENAME_README: '*.README.md',
+
+  // 新增的键值对
+  COMMAND_CREATE_NOTES: 'LifeOS Creation',
+  COMMAND_CREATE_DAILY_NOTE: 'Create Daily Note',
+  COMMAND_CREATE_WEEKLY_NOTE: 'Create Weekly Note',
+  COMMAND_CREATE_MONTHLY_NOTE: 'Create Monthly Note',
+  COMMAND_CREATE_QUARTERLY_NOTE: 'Create Quarterly Note',
+  COMMAND_CREATE_YEARLY_NOTE: 'Create Yearly Note',
+  COMMAND_LIFEOS_GUIDE: 'LifeOS Guide',
+  COMMAND_SYNC_DAILY_RECORDS: 'Sync Memos',
+  COMMAND_FORCE_SYNC_DAILY_RECORDS: 'Force Sync Memos',
 };
 
 const ZH = {
@@ -235,6 +246,17 @@ const ZH = {
 
   SETTING_INDEX_FILENAME_FOLDER: '文件夹名.md',
   SETTING_INDEX_FILENAME_README: '*.README.md',
+
+  // 新增的键值对
+  COMMAND_CREATE_NOTES: 'LifeOS 创建',
+  COMMAND_CREATE_DAILY_NOTE: '创建日记',
+  COMMAND_CREATE_WEEKLY_NOTE: '创建周记',
+  COMMAND_CREATE_MONTHLY_NOTE: '创建月记',
+  COMMAND_CREATE_QUARTERLY_NOTE: '创建季记',
+  COMMAND_CREATE_YEARLY_NOTE: '创建年记',
+  COMMAND_LIFEOS_GUIDE: 'LifeOS 指南',
+  COMMAND_SYNC_DAILY_RECORDS: '同步 memos',
+  COMMAND_FORCE_SYNC_DAILY_RECORDS: '强制同步 memos',
 };
 
 const I18N_MAP: Record<string, Record<string, string>> = {
