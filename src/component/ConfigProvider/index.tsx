@@ -48,9 +48,29 @@ export const ConfigProvider = (props: {
               '--interactive-accent',
             ),
           ),
+          colorBgContainer: reduceCSSCalc(
+            getComputedStyle(document.body).getPropertyValue(
+              '--background-secondary-alt',
+            ),
+          ),
+          colorLink: reduceCSSCalc(
+            getComputedStyle(document.body).getPropertyValue(
+              '--interactive-accent',
+            ),
+          ),
         },
         components: {
           ...components,
+          Tag: {
+            defaultBg: reduceCSSCalc(
+              getComputedStyle(document.body).getPropertyValue(
+                '--tag-background',
+              ),
+            ),
+            defaultColor: reduceCSSCalc(
+              getComputedStyle(document.body).getPropertyValue('--tag-color'),
+            ),
+          },
         },
         algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
       }}
