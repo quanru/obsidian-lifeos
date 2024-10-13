@@ -33,7 +33,8 @@
         "noInferrableTypes": "off",
         "noNonNullAssertion": "off",
         "useSelfClosingElements": "off",
-        "useDefaultParameterLast": "off"
+        "useDefaultParameterLast": "off",
+        "useImportType": "off"
       },
       "security": {
         "noDangerouslySetInnerHtml": "off"
