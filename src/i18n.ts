@@ -143,14 +143,14 @@ const EN = {
   COMMAND_FORCE_SYNC_DAILY_RECORDS: 'Force Sync Memos',
 
   // TopBanner
-  TOPBANNER_BUGS_FEATURES: 'Bugs & Feature Requests',
+  TOPBANNER_BUGS_FEATURES: 'GitHub',
   TOPBANNER_BUGS_FEATURES_HREF:
     'https://github.com/quanru/obsidian-lifeos/issues',
-  TOPBANNER_VIDEO: 'LifeOS on YouTube',
+  TOPBANNER_VIDEO: 'YouTube',
   TOPBANNER_VIDEO_HREF: 'https://www.youtube.com/@lifeos-pro',
-  TOPBANNER_CONTACT: 'Contact us',
+  TOPBANNER_CONTACT: 'Contact',
   TOPBANNER_CONTACT_HREF: 'https://lifeos.vip/contact/index.html',
-  TOPBANNER_SOCIAL: 'Follow me on Twitter',
+  TOPBANNER_SOCIAL: 'Twitter',
   TOPBANNER_SOCIAL_HREF: 'https://x.com/quan_ru',
   TOPBANNER_LIFEOS_PRO: 'LifeOS Pro',
   TOPBANNER_LIFEOS_PRO_HREF: 'https://lifeos.vip/plugin/life-os-pro.html',
@@ -272,14 +272,14 @@ const ZH = {
   COMMAND_FORCE_SYNC_DAILY_RECORDS: '强制同步 memos',
 
   // TopBanner
-  TOPBANNER_BUGS_FEATURES: '问题反馈和功能请求',
+  TOPBANNER_BUGS_FEATURES: 'GitHub',
   TOPBANNER_BUGS_FEATURES_HREF:
     'https://github.com/quanru/obsidian-lifeos/issues',
-  TOPBANNER_VIDEO: 'LifeOS 哔哩哔哩',
+  TOPBANNER_VIDEO: '哔哩哔哩',
   TOPBANNER_VIDEO_HREF: 'https://space.bilibili.com/437191204',
   TOPBANNER_CONTACT: '联系我们',
   TOPBANNER_CONTACT_HREF: 'https://lifeos.vip/zh/contact/index.html',
-  TOPBANNER_SOCIAL: 'LifeOS 小红书',
+  TOPBANNER_SOCIAL: '小红书',
   TOPBANNER_SOCIAL_HREF:
     'https://www.xiaohongshu.com/user/profile/5b06db60f7e8b974ec6ff7fc',
   TOPBANNER_LIFEOS_PRO: 'LifeOS Pro',
