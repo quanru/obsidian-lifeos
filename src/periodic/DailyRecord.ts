@@ -93,7 +93,7 @@ export class DailyRecord {
         `${
           getI18n(this.locale)[`${ERROR_MESSAGE}FAILED_GET_USEMEMOS_VERSION`]
         }`,
-        LogLevel.error,
+        LogLevel.warn,
       );
     }
   }
@@ -143,7 +143,7 @@ export class DailyRecord {
         `${
           getI18n(this.locale)[`${ERROR_MESSAGE}DAILY_RECORD_FETCH_FAILED`]
         }: ${error}`,
-        LogLevel.error,
+        LogLevel.warn,
       );
     }
   }
@@ -182,7 +182,7 @@ export class DailyRecord {
         `${
           getI18n(this.locale)[`${ERROR_MESSAGE}RESOURCE_FETCH_FAILED`]
         }: ${error}`,
-        LogLevel.error,
+        LogLevel.warn,
       );
     }
   }
@@ -313,7 +313,7 @@ export class DailyRecord {
               `${
                 getI18n(this.locale)[`${ERROR_MESSAGE}NO_DAILY_FILE_EXIST`]
               } ${today}`,
-              LogLevel.error,
+              LogLevel.warn,
             );
           }
         }
