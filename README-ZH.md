@@ -26,9 +26,10 @@
 
 ## 致谢
 
-此外，我还借鉴了以下优秀插件的代码：
+此外，我还借鉴了以下优秀插件的代码、模版库和灵感：
 
 - [PARA](https://fortelabs.com/blog/para/)。感谢 Tiago Forte 发明了如此出色的 PARA 组织法。
+- [PARA Starter Kit](https://forum.obsidian.md/t/para-starter-kit/223)。感谢 cotemaxime 创建了如此出色的入门模版库。
 - [obsidian-periodic-notes](https://github.com/liamcain/obsidian-periodic-notes)。这个插件给了我开发本插件的灵感。
 - [obsidian-dataview](https://github.com/blacksmithgu/obsidian-dataview)。底层插件使用了 dataview 的查询接口。
 - [Templater](https://github.com/SilentVoid13/Templater)。提供了解耦的模板创建，让很多插件能够利用它来创建文件。

@@ -27,9 +27,10 @@
 
 ## Acknowledgements
 
-Also, I relied on the code from these excellent plugins:
+Also, I relied on the code from these excellent plugins, vault, and inspirations:
 
 - [PARA](https://fortelabs.com/blog/para/). Thanks to Tiago Forte for inventing such a great organizational method.
+- [PARA Starter Kit](https://forum.obsidian.md/t/para-starter-kit/223). Thanks to cotemaxime for creating such a great starter vault.
 - [obsidian-periodic-notes](https://github.com/liamcain/obsidian-periodic-notes). Gave me the inspiration to develop this plugin.
 - [obsidian-dataview](https://github.com/blacksmithgu/obsidian-dataview). The underlying plugin uses dataview's query interface.
 - [Templater](https://github.com/SilentVoid13/Templater). Provides decoupled template creation, allowing a very large number of plugins to create files with the help of it.
