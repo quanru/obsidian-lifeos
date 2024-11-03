@@ -63,7 +63,6 @@ export const SettingTab = (props: {
         form={form}
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
-        style={{ maxWidth: 600 }}
         initialValues={settings}
         onValuesChange={changedValues => {
           setSetting({ ...settings, ...changedValues });
