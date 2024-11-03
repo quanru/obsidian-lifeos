@@ -19,10 +19,15 @@
 
 ## 用户支持
 
-- [Twitter](https://twitter.com/quanruzhuoxiu)
-- [Discord](https://discord.gg/HZGanKEkuZ)
-- [Lark](https://applink.feishu.cn/client/chat/chatter/add_by_link?link_token=ba8p19af-4cdf-4c94-8a59-95cea664ea61)
-- [Email](mailto:quanruzhuoxiu@gmail.com)
+- [🎮 Discord](https://discord.gg/HZGanKEkuZ)
+- [💬 Telegram](https://t.me/+OLTasChvEEthMjBl)
+- [LifeOS for Obsidian](https://twitter.com/quan_ru)
+- [📕 小红书](https://www.xiaohongshu.com/user/profile/5b06db60f7e8b974ec6ff7fc)
+- [📺 哔哩哔哩](https://space.bilibili.com/437191204)
+- [🐦 Twitter](https://twitter.com/quanruzhuoxiu)
+- [📧 Email](mailto:quanruzhuoxiu@gmail.com)
+- [🧑‍🔧 Bento](https://bento.me/leyang)
+- 👥 微信 - 添加微信 `zhuoxiu_` 并备注 LifeOS
 
 ## 致谢
 
@@ -37,6 +42,8 @@
 ## 捐赠
 
 如果这个插件对您有帮助，请在[buymeacoffee](https://www.buymeacoffee.com/leyang)上给我买杯咖啡。
+
+此外，你也可以通过购买 [LifeOS Pro](https://lifeos.vip/zh/plugin/life-os-pro.html) 版本的插件来支持我进一步开发更棒的 LifeOS！
 
 <a href="https://www.buymeacoffee.com/leyang"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=leyang&button_colour=40DCA5&font_colour=ffffff&font_family=Cookie&outline_colour=000000&coffee_colour=FFDD00" /></a>
 

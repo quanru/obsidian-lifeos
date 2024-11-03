@@ -20,10 +20,14 @@
 
 ## Support
 
-- [Twitter](https://twitter.com/quanruzhuoxiu)
-- [Discord](https://discord.gg/HZGanKEkuZ)
-- [Lark](https://applink.feishu.cn/client/chat/chatter/add_by_link?link_token=ba8p19af-4cdf-4c94-8a59-95cea664ea61)
-- [Email](mailto:quanruzhuoxiu@gmail.com)
+- [🎮 Discord](https://discord.gg/HZGanKEkuZ)
+- [💬 Telegram](https://t.me/+OLTasChvEEthMjBl)
+- [🐦 LifeOS for Obsidian](https://twitter.com/quan_ru)
+- [🐦 Twitter](https://twitter.com/quanruzhuoxiu)
+- [📺 Youtub](https://www.youtube.com/@LeYangLin)
+- [🧑‍🔧 Bento](https://bento.me/leyang)
+- [📧 Email](mailto:quanruzhuoxiu@gmail.com)
+
 
 ## Acknowledgements
 
@@ -38,6 +42,8 @@ Also, I relied on the code from these excellent plugins, vault, and inspirations
 ## Donations
 
 If this plugin do help you, please buy me a cup of coffee on [buymeacoffee](https://www.buymeacoffee.com/leyang).
+
+In addition, you can also support me in further developing a better LifeOS by purchasing the [LifeOS Pro](https://lifeos.vip/plugin/life-os-pro.html)!
 
 <a href="https://www.buymeacoffee.com/leyang"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=leyang&button_colour=40DCA5&font_colour=ffffff&font_family=Cookie&outline_colour=000000&coffee_colour=FFDD00" /></a>
 
