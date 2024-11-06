@@ -1,9 +1,9 @@
-import axios, { type Axios } from 'axios';
 import dayjs from 'dayjs';
 import { type App, TFile, moment, normalizePath } from 'obsidian';
 import semver from 'semver';
 import { DAILY, ERROR_MESSAGE, MESSAGE } from '../constant';
 import { getI18n } from '../i18n';
+import { customRequest } from '../request';
 import {
   type DailyRecordResponseTypeV2,
   type DailyRecordType,
@@ -34,27 +34,25 @@ export class DailyRecord {
   pageOffset: number;
   localKey: string;
   locale: string;
-  axios: Axios;
+  baseURL: string;
   memosVersion: string;
   constructor(app: App, settings: PluginSettings, file: File, locale: string) {
     if (!settings.dailyRecordAPI) {
-      logMessage(getI18n(this.locale)[`${ERROR_MESSAGE}NO_DAILY_RECORD_API`]);
+      logMessage(getI18n(locale)[`${ERROR_MESSAGE}NO_DAILY_RECORD_API`]);
       return;
     }
 
     if (!settings.dailyRecordToken) {
-      logMessage(getI18n(this.locale)[`${ERROR_MESSAGE}NO_DAILY_RECORD_TOKEN`]);
+      logMessage(getI18n(locale)[`${ERROR_MESSAGE}NO_DAILY_RECORD_TOKEN`]);
       return;
     }
 
     if (!settings.dailyRecordHeader) {
-      logMessage(
-        getI18n(this.locale)[`${ERROR_MESSAGE}NO_DAILY_RECORD_HEADER`],
-      );
+      logMessage(getI18n(locale)[`${ERROR_MESSAGE}NO_DAILY_RECORD_HEADER`]);
       return;
     }
 
-    const { origin: baseURL } = new URL(settings.dailyRecordAPI);
+    const { origin } = new URL(settings.dailyRecordAPI);
 
     this.app = app;
     this.file = file;
@@ -62,16 +60,10 @@ export class DailyRecord {
     this.pageSize = 50;
     this.pageOffset = 0;
     this.pageToken = '';
-    this.localKey = `periodic-para-daily-record-last-time-${this.settings.dailyRecordToken}`;
+    this.localKey = `lifeos-daily-record-last-time-${this.settings.dailyRecordToken}`;
     this.lastTime = window.localStorage.getItem(this.localKey) || '';
     this.locale = locale;
-    this.axios = axios.create({
-      baseURL,
-      headers: {
-        Authorization: `Bearer ${this.settings.dailyRecordToken}`,
-      },
-      timeout: 20 * 1000,
-    });
+    this.baseURL = origin;
   }
 
   async getMemosVersion() {
@@ -79,7 +71,12 @@ export class DailyRecord {
 
     for (const url of urls) {
       try {
-        const { data } = await this.axios.get<WorkspaceProfileType>(url);
+        const { json: data } = await customRequest<WorkspaceProfileType>({
+          url: `${this.baseURL}${url}`,
+          headers: {
+            Authorization: `Bearer ${this.settings.dailyRecordToken}`,
+          },
+        });
         const version = data.workspaceProfile?.version || data.version;
         this.memosVersion = semver.lt(version, '0.22.0') ? 'v1' : 'v2';
         return; // 成功获取版本后退出方法
@@ -101,16 +98,19 @@ export class DailyRecord {
   async fetchMemosList() {
     try {
       if (this.memosVersion === 'v1') {
-        const { data } = await this.axios.get<DailyRecordType[] | FetchError>(
-          '/api/v1/memo',
-          {
-            params: {
-              limit: this.pageSize,
-              offset: this.pageOffset,
-              rowStatus: 'NORMAL',
-            },
+        const { json: data } = await customRequest<
+          DailyRecordType[] | FetchError
+        >({
+          url: `${this.baseURL}/api/v1/memo`,
+          headers: {
+            Authorization: `Bearer ${this.settings.dailyRecordToken}`,
           },
-        );
+          params: {
+            limit: this.pageSize.toString(),
+            offset: this.pageOffset.toString(),
+            rowStatus: 'NORMAL',
+          },
+        });
 
         if (Array.isArray(data)) {
           return data;
@@ -120,16 +120,18 @@ export class DailyRecord {
           data.message || data.msg || data.error || JSON.stringify(data),
         );
       }
-      const { data } = await this.axios.get<DailyRecordResponseTypeV2>(
-        '/api/v1/memos',
-        {
-          params: {
-            pageSize: this.pageSize,
-            pageToken: this.pageToken,
-            filter: 'row_status=="NORMAL"',
-          },
+
+      const { json: data } = await customRequest<DailyRecordResponseTypeV2>({
+        url: `${this.baseURL}/api/v1/memos`,
+        headers: {
+          Authorization: `Bearer ${this.settings.dailyRecordToken}`,
         },
-      );
+        params: {
+          pageSize: this.pageSize.toString(),
+          pageToken: this.pageToken,
+          filter: 'row_status=="NORMAL"',
+        },
+      });
 
       if (data.code === 1) {
         throw new Error(data.message);
@@ -151,9 +153,13 @@ export class DailyRecord {
   async fetchResourceList() {
     try {
       if (this.memosVersion === 'v1') {
-        const { data } = await this.axios.get<ResourceType[] | FetchError>(
-          '/api/v1/resource',
-          {},
+        const { json: data } = await customRequest<ResourceType[] | FetchError>(
+          {
+            url: `${this.baseURL}/api/v1/resource`,
+            headers: {
+              Authorization: `Bearer ${this.settings.dailyRecordToken}`,
+            },
+          },
         );
 
         if (Array.isArray(data)) {
@@ -164,10 +170,13 @@ export class DailyRecord {
           data.message || data.msg || data.error || JSON.stringify(data),
         );
       }
-      const { data } = await this.axios.get<ResourceTypeV2>(
-        '/api/v1/resources',
-        {},
-      );
+
+      const { json: data } = await customRequest<ResourceTypeV2>({
+        url: `${this.baseURL}/api/v1/resources`,
+        headers: {
+          Authorization: `Bearer ${this.settings.dailyRecordToken}`,
+        },
+      });
 
       if (data.code === 1) {
         throw new Error(data.message);
@@ -205,7 +214,7 @@ export class DailyRecord {
     const resourceList = (await this.fetchResourceList()) || [];
 
     await Promise.all(
-      resourceList.map(async resource => {
+      resourceList.map(async (resource: ResourceType) => {
         if (resource.externalLink) {
           return;
         }
@@ -222,20 +231,22 @@ export class DailyRecord {
           return;
         }
 
-        const { data } = await this.axios.get(
-          this.memosVersion === 'v1'
-            ? `/o/r/${resource.uid || resource.name || resource.id}`
-            : `/file/${resource.name}/${resource.filename}`,
-          {
-            responseType: 'arraybuffer',
+        const { arrayBuffer: data } = await customRequest({
+          url: `${this.baseURL}${
+            this.memosVersion === 'v1'
+              ? `/o/r/${resource.uid || resource.name || resource.id}`
+              : `/file/${resource.name}/${resource.filename}`
+          }`,
+          headers: {
+            Authorization: `Bearer ${this.settings.dailyRecordToken}`,
           },
-        );
+        });
 
         if (!data) {
           return;
         }
 
-        if (!this.app.vault.getAbstractFileByPath(folder)) {
+        if (!this.app.vault.getFolderByPath(folder)) {
           await this.app.vault.createFolder(folder);
         }
 
