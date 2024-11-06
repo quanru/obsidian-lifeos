@@ -39,9 +39,10 @@ import { SettingTabView } from './view/SettingTab';
 import { DEFAULT_SETTINGS } from './view/SettingTab';
 import 'dayjs/locale/zh-cn';
 import 'dayjs/locale/zh';
+import type { Locale } from 'antd/es/locale';
 import { getI18n } from './i18n';
 
-const localeMap: Record<string, any> = {
+const localeMap: Record<string, Locale> = {
   en: enUS,
   'en-us': enUS,
   zh: zhCN,
@@ -60,7 +61,15 @@ export default class LifeOS extends Plugin {
   bullet: Bullet;
   date: PeriodicDate;
   dataview: DataviewApi;
-  views: Record<string, any>;
+  views: Record<
+    string,
+    (
+      source: string,
+      el: HTMLElement,
+      ctx: MarkdownPostProcessorContext,
+      folder?: string,
+    ) => void
+  >;
   dailyRecord: DailyRecord;
   timeout: NodeJS.Timeout;
   interval: NodeJS.Timer;

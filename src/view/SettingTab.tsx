@@ -69,7 +69,10 @@ export class SettingTabView extends PluginSettingTab {
       this.settings = {
         ...this.settings,
         ...Object.entries(newSettings).reduce(
-          (acc: Record<string, any>, [key, value]) => {
+          (
+            acc: Record<string, PluginSettings[keyof PluginSettings]>,
+            [key, value],
+          ) => {
             acc[key] = typeof value === 'string' ? value.trim() : value;
             return acc;
           },
