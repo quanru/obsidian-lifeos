@@ -44,9 +44,7 @@ dayjs.extend(weekOfYear);
 dayjs.extend(quarterOfYear);
 dayjs.extend(updateLocale);
 
-export const CreateNote = (props: {
-  width: number;
-}) => {
+export const CreateNote = (props: { width: number }) => {
   const { app, settings: initialSettings, locale } = useApp() || {};
 
   const [settings, setSettings] = useState<PluginSettings | undefined>(
@@ -291,6 +289,10 @@ export const CreateNote = (props: {
         badgeText = `Q${date.quarter()}`;
         break;
       case 'year':
+        formattedDate = date.format('YYYY');
+        badgeText = `${date.year()}`;
+        break;
+      case 'decade':
         formattedDate = date.format('YYYY');
         badgeText = `${date.year()}`;
         break;
