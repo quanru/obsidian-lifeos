@@ -42,6 +42,7 @@ export const ConfigProvider = (props: {
       locale={locale}
       theme={{
         token: {
+          fontFamily: 'var(--font-interface)',
           fontSize,
           colorPrimary: reduceCSSCalc(
             getComputedStyle(document.body).getPropertyValue(
