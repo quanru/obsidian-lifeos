@@ -26,6 +26,7 @@ import { getI18n } from './i18n';
 import type {
   DailyRecordType,
   DailyRecordTypeV2,
+  IndexType,
   PeriodicNotesTemplateFilePath,
   ResourceType,
 } from './type';

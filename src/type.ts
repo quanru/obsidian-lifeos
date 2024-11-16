@@ -8,6 +8,8 @@ export type PeriodicNotesTemplateFilePath =
   | 'periodicNotesTemplateFilePathWeekly'
   | 'periodicNotesTemplateFilePathDaily';
 
+export type IndexType = 'readme' | 'foldername';
+
 export type PluginSettings = {
   periodicNotesPath: string;
   usePeriodicAdvanced: boolean;
@@ -31,7 +33,7 @@ export type PluginSettings = {
   usePeriodicNotes: boolean;
   usePARANotes: boolean;
   usePARAAdvanced: boolean;
-  paraIndexFilename: 'readme' | 'foldername';
+  paraIndexFilename: IndexType;
   weekStart: number;
   useChineseCalendar: boolean;
 } & Record<PeriodicNotesTemplateFilePath, string>;

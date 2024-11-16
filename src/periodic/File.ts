@@ -4,7 +4,7 @@ import {
   TFile,
   TFolder,
 } from 'obsidian';
-import type { PluginSettings } from '../type';
+import type { IndexType, PluginSettings } from '../type';
 
 import dayjs from 'dayjs';
 import type { DataviewApi } from 'obsidian-dataview';
@@ -61,12 +61,23 @@ export class File {
             const { name } = subFolder;
             const files = subFolder.children;
             const indexFile = files.find(file => {
-              if ((file as any).basename === name) {
-                return true;
+              const indexType: IndexType = this.settings.usePARAAdvanced
+                ? this.settings.paraIndexFilename
+                : 'readme';
+
+              if (indexType === 'readme') {
+                if (file.path.match(/(.*\.)?README\.md/)) {
+                  return true;
+                }
               }
-              if (file.path.match(/(.*\.)?README\.md/)) {
-                return true;
+
+              if (indexType === 'foldername') {
+                if ((file as any).basename === name) {
+                  return true;
+                }
               }
+
+              return false;
             });
 
             if (condition.tags.length) {
