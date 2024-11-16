@@ -1,4 +1,4 @@
-import { Plugin, setIcon } from 'obsidian';
+import { Platform, Plugin, setIcon } from 'obsidian';
 import type {
   App,
   MarkdownPostProcessorContext,
@@ -308,7 +308,7 @@ export default class LifeOS extends Plugin {
     }
 
     let leaf: WorkspaceLeaf | null;
-    if ((this.app as any).isMobile) {
+    if (Platform.isMobile) {
       leaf = this.app.workspace.getRightLeaf(false);
     } else {
       leaf = this.app.workspace.getLeftLeaf(false);
