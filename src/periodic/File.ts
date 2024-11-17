@@ -71,7 +71,7 @@ export class File {
                 }
               }
 
-              if (indexType === 'foldername') {
+              if (indexType === 'folderName') {
                 if ((file as any).basename === name) {
                   return true;
                 }

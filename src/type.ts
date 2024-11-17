@@ -8,7 +8,7 @@ export type PeriodicNotesTemplateFilePath =
   | 'periodicNotesTemplateFilePathWeekly'
   | 'periodicNotesTemplateFilePathDaily';
 
-export type IndexType = 'readme' | 'foldername';
+export type IndexType = 'readme' | 'folderName';
 
 export type PluginSettings = {
   periodicNotesPath: string;
