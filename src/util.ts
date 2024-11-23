@@ -1,12 +1,5 @@
 import dayjs, { type Dayjs } from 'dayjs';
-import {
-  Component,
-  MarkdownRenderer,
-  Notice,
-  OpenViewState,
-  TFile,
-  moment,
-} from 'obsidian';
+import { Component, MarkdownRenderer, Notice, TFile, moment } from 'obsidian';
 import type { App } from 'obsidian';
 import {
   DAILY,
@@ -127,12 +120,12 @@ export function formatDailyRecord(record: DailyRecordType) {
   let targetFirstLine = '';
 
   if (isTask) {
-    targetFirstLine = `- [ ] ${time} ${firstLine.replace(/^- \[.*?\]/, '')}`;
+    targetFirstLine = `- [ ] ${time} ${firstLine.replace(/^- \[.*?\] /, '')}`;
   } else if (isCode) {
     targetFirstLine = `- ${time}`; // 首行不允许存在代码片段
     otherLine.unshift(firstLine);
   } else {
-    targetFirstLine = `- ${time} ${firstLine.replace(/^- /, '')}`;
+    targetFirstLine = `- ${time} ${firstLine.replace(/^- /, '').trim()}`;
   }
 
   targetFirstLine += ` #daily-record ^${timeStamp}`;
