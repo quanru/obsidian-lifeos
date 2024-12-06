@@ -1,5 +1,5 @@
 import type { Locale } from 'antd/es/locale';
-import { PluginSettingTab } from 'obsidian';
+import { PluginSettingTab, debounce } from 'obsidian';
 import type { App } from 'obsidian';
 import React from 'react';
 import { type Root, createRoot } from 'react-dom/client';
@@ -65,7 +65,7 @@ export class SettingTabView extends PluginSettingTab {
     this.root = createRoot(this.containerEl);
 
     // 保存设置的函数
-    const saveSettings = (newSettings: PluginSettings) => {
+    const saveSettings = debounce((newSettings: PluginSettings) => {
       this.settings = {
         ...this.settings,
         ...Object.entries(newSettings).reduce(
@@ -84,7 +84,7 @@ export class SettingTabView extends PluginSettingTab {
         detail: this.settings,
       });
       document.dispatchEvent(event);
-    };
+    }, 500);
 
     this.root.render(
       <AppContext.Provider
