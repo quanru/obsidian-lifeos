@@ -45,7 +45,7 @@
     "react-dom": "^18.2.0",
     "reduce-css-calc": "^2.1.8",
     "semver": "^7.6.2",
-    "tyme4ts": "^1.0.5"
+    "tyme4ts": "^1.1.7"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,mjs,cjs}": [
