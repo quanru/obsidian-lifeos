@@ -37,12 +37,16 @@ import { ConfigProvider } from '../ConfigProvider';
 import weekOfYear from 'dayjs/plugin/isoWeek';
 import quarterOfYear from 'dayjs/plugin/quarterOfYear';
 import updateLocale from 'dayjs/plugin/updateLocale';
-import { SolarDay } from 'tyme4ts';
+import { type LunarFestival, SolarDay, type SolarFestival } from 'tyme4ts';
 import { useDocumentEvent } from '../../hooks/useDocumentEvent';
 
 dayjs.extend(weekOfYear);
 dayjs.extend(quarterOfYear);
 dayjs.extend(updateLocale);
+
+const getFestivalName = (festival: LunarFestival | SolarFestival | null) => {
+  return festival?.toString().split(' ')[1]?.slice(-3) || '';
+};
 
 export const CreateNote = (props: { width: number }) => {
   const { app, settings: initialSettings, locale } = useApp() || {};
@@ -236,13 +240,6 @@ export const CreateNote = (props: { width: number }) => {
             date.month() + 1,
             date.date(),
           );
-          const lunar = solar.getLunarDay();
-          const [, lunarMonthDay] = lunar.toString().split('年');
-
-          chineseCalendarText = lunarMonthDay.includes('月初一')
-            ? lunarMonthDay.slice(0, 2)
-            : lunarMonthDay.slice(2, 4);
-
           const holiday = solar.getLegalHoliday();
           dayWorkStatus =
             typeof holiday?.isWork !== 'function'
@@ -250,28 +247,25 @@ export const CreateNote = (props: { width: number }) => {
               : holiday?.isWork()
                 ? '班'
                 : '休';
-          const term = solar.getTerm();
-          if (
-            term.getJulianDay().getSolarDay().toString() === solar.toString()
+
+          const lunar = solar.getLunarDay();
+
+          if (getFestivalName(solar.getFestival())) {
+            chineseCalendarText = getFestivalName(solar.getFestival());
+          } else if (getFestivalName(lunar.getFestival())) {
+            chineseCalendarText = getFestivalName(lunar.getFestival());
+          } else if (
+            solar.getTerm().getJulianDay().getSolarDay().toString() ===
+            solar.toString()
           ) {
-            chineseCalendarText = term.getName();
+            const solarTerm = solar.getTerm().getName();
+
+            chineseCalendarText = solarTerm;
+          } else {
+            const lunarDate = lunar.toString().slice(-2);
+
+            chineseCalendarText = lunarDate;
           }
-
-          const lunarFestivalName = lunar
-            .getFestival()
-            ?.toString()
-            .split(' ')[1];
-          chineseCalendarText = lunarFestivalName
-            ? lunarFestivalName.slice(-3)
-            : chineseCalendarText;
-
-          const solarFestivalName = solar
-            .getFestival()
-            ?.toString()
-            .split(' ')[1];
-          chineseCalendarText = solarFestivalName
-            ? solarFestivalName.slice(-3)
-            : chineseCalendarText;
         }
         formattedDate = date.format('YYYY-MM-DD');
         badgeText = `${date.date()}`;
