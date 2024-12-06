@@ -128,7 +128,7 @@ export function formatDailyRecord(record: DailyRecordType) {
     targetFirstLine = `- ${time} ${firstLine.replace(/^- /, '').trim()}`;
   }
 
-  targetFirstLine += ` #daily-record ^${timeStamp}`;
+  targetFirstLine += `${firstLine ? ' ' : ''}#daily-record ^${timeStamp}`;
 
   const targetOtherLine = otherLine?.length //剩余行
     ? `\n${otherLine
