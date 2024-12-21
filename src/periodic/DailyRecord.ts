@@ -36,6 +36,7 @@ export class DailyRecord {
   locale: string;
   baseURL: string;
   memosVersion: string;
+  memosProfile: WorkspaceProfileType;
   constructor(app: App, settings: PluginSettings, file: File, locale: string) {
     if (!settings.dailyRecordAPI) {
       logMessage(getI18n(locale)[`${ERROR_MESSAGE}NO_DAILY_RECORD_API`]);
@@ -77,8 +78,10 @@ export class DailyRecord {
             Authorization: `Bearer ${this.settings.dailyRecordToken}`,
           },
         });
-        const version = data.workspaceProfile?.version || data.version;
-        this.memosVersion = semver.lt(version, '0.22.0') ? 'v1' : 'v2';
+        this.memosProfile = data.workspaceProfile || data;
+        this.memosVersion = semver.lt(this.memosProfile.version, '0.22.0')
+          ? 'v1'
+          : 'v2';
         return; // 成功获取版本后退出方法
       } catch (error) {
         console.warn(`Failed to fetch from ${url}:`, error.message || '');
@@ -129,7 +132,14 @@ export class DailyRecord {
         params: {
           pageSize: this.pageSize.toString(),
           pageToken: this.pageToken,
-          filter: 'row_status=="NORMAL"',
+          ...(semver.gte(this.memosProfile.version, '0.23.0')
+            ? {
+                view: 'MEMO_VIEW_FULL',
+                filter: `creator == '${this.memosProfile.owner}' && visibilities == ['PRIVATE', 'PUBLIC', 'PROTECTED']`,
+              }
+            : {
+                filter: 'row_status=="NORMAL"',
+              }),
         },
       });
 

@@ -113,15 +113,12 @@ export type WorkspaceProfileType = {
   owner: string;
   version: string;
   mode: string;
-  public: boolean;
-  workspaceProfile: {
+  instanceUrl: boolean;
+  workspaceProfile?: {
     owner: string;
     version: string;
     mode: string;
-    disallowSignup: boolean;
-    disablePasswordLogin: boolean;
-    additionalScript: string;
-    additionalStyle: string;
+    instanceUrl: boolean;
   };
 };
 

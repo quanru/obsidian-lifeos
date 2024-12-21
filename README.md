@@ -24,7 +24,7 @@
 - [💬 Telegram](https://t.me/+OLTasChvEEthMjBl)
 - [🐦 LifeOS for Obsidian](https://twitter.com/quan_ru)
 - [🐦 Twitter](https://twitter.com/quanruzhuoxiu)
-- [📺 Youtub](https://www.youtube.com/@LeYangLin)
+- [📺 Youtube](https://www.youtube.com/@LeYangLin)
 - [🧑‍🔧 Bento](https://bento.me/leyang)
 - [📧 Email](mailto:quanruzhuoxiu@gmail.com)
 
