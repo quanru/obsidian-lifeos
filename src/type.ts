@@ -122,6 +122,21 @@ export type WorkspaceProfileType = {
   };
 };
 
+export type UserType = {
+  name: string;
+  id: number;
+  role: string;
+  username: string;
+  email: string;
+  nickname: string;
+  avatarUrl: string;
+  description: string;
+  password: string;
+  rowStatus: string;
+  createTime: string;
+  updateTime: string;
+};
+
 export type FetchError = {
   code: number;
   message: string;

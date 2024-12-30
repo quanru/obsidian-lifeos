@@ -12,6 +12,7 @@ import {
   type PluginSettings,
   type ResourceType,
   type ResourceTypeV2,
+  type UserType,
   type WorkspaceProfileType,
 } from '../type';
 import {
@@ -37,6 +38,7 @@ export class DailyRecord {
   baseURL: string;
   memosVersion: string;
   memosProfile: WorkspaceProfileType;
+  memosUserName: string;
   constructor(app: App, settings: PluginSettings, file: File, locale: string) {
     if (!settings.dailyRecordAPI) {
       logMessage(getI18n(locale)[`${ERROR_MESSAGE}NO_DAILY_RECORD_API`]);
@@ -65,6 +67,17 @@ export class DailyRecord {
     this.lastTime = window.localStorage.getItem(this.localKey) || '';
     this.locale = locale;
     this.baseURL = origin;
+  }
+
+  async getMemosUserName() {
+    const { json: data } = await customRequest<UserType>({
+      url: `${this.baseURL}/api/v1/auth/status`,
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${this.settings.dailyRecordToken}`,
+      },
+    });
+    this.memosUserName = data.name || '';
   }
 
   async getMemosVersion() {
@@ -135,7 +148,7 @@ export class DailyRecord {
           ...(semver.gte(this.memosProfile.version, '0.23.0')
             ? {
                 view: 'MEMO_VIEW_FULL',
-                filter: `creator == '${this.memosProfile.owner}' && visibilities == ['PRIVATE', 'PUBLIC', 'PROTECTED']`,
+                filter: `creator == '${this.memosUserName}' && visibilities == ['PRIVATE', 'PUBLIC', 'PROTECTED']`,
               }
             : {
                 filter: 'row_status=="NORMAL"',
@@ -215,9 +228,8 @@ export class DailyRecord {
     logMessage(getI18n(this.locale)[`${MESSAGE}START_SYNC_USEMEMOS`]);
     this.pageOffset = 0;
     this.pageToken = '';
-    await this.getMemosVersion();
-    await this.insertDailyRecord();
-    await this.downloadResource();
+    await Promise.all([this.getMemosVersion(), this.getMemosUserName()]);
+    await Promise.all([this.insertDailyRecord(), this.downloadResource()]);
   };
 
   async downloadResource() {
