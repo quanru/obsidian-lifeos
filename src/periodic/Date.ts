@@ -42,42 +42,6 @@ export class Date {
     };
   }
 
-  lastDay(
-    parsed: DateType = {
-      year: null,
-      month: null,
-      quarter: null,
-      week: null,
-      day: null,
-    },
-  ) {
-    const { year, quarter, month, week } = parsed;
-
-    return {
-      year: year ? moment().year(year).endOf('year').format('YYYY-MM-DD') : '',
-      quarter:
-        quarter && year
-          ? moment()
-              .year(year)
-              .quarter(quarter)
-              .endOf('quarter')
-              .format('YYYY-MM-DD')
-          : '',
-      month:
-        month && year
-          ? moment()
-              .year(year)
-              .month(month - 1)
-              .endOf('month')
-              .format('YYYY-MM-DD')
-          : '',
-      week:
-        week && year
-          ? moment().year(year).week(week).endOf('week').format('YYYY-MM-DD')
-          : '',
-    };
-  }
-
   days(
     parsed: DateType = {
       year: null,
@@ -89,6 +53,7 @@ export class Date {
   ): DateRangeType {
     // parse 之后，从 day 开始，依次判断周、月、季、年，给出 from 和 to
     const { year, quarter, month, week, day } = parsed;
+    const baseDate = year ? moment().year(year).startOf('year').clone() : null;
 
     if (day) {
       const today = `${year}-${String(month).padStart(2, '0')}-${String(
@@ -102,12 +67,10 @@ export class Date {
     }
 
     if (week) {
-      const from = year
-        ? moment().year(year).week(week).startOf('week').format('YYYY-MM-DD')
-        : null;
-      const to = year
-        ? moment().year(year).week(week).endOf('week').format('YYYY-MM-DD')
-        : null;
+      const from =
+        baseDate?.week(week).startOf('week')?.format('YYYY-MM-DD') || null;
+      const to =
+        baseDate?.week(week).endOf('week')?.format('YYYY-MM-DD') || null;
 
       return {
         from,
@@ -116,20 +79,16 @@ export class Date {
     }
 
     if (month) {
-      const from = year
-        ? moment()
-            .year(year)
-            .month(month - 1)
-            .startOf('month')
-            .format('YYYY-MM-DD')
-        : null;
-      const to = year
-        ? moment()
-            .year(year)
-            .month(month - 1)
-            .endOf('month')
-            .format('YYYY-MM-DD')
-        : null;
+      const from =
+        baseDate
+          ?.month(month - 1)
+          .startOf('month')
+          ?.format('YYYY-MM-DD') || null;
+      const to =
+        baseDate
+          ?.month(month - 1)
+          .endOf('month')
+          ?.format('YYYY-MM-DD') || null;
 
       return {
         from,
@@ -138,20 +97,12 @@ export class Date {
     }
 
     if (quarter) {
-      const from = year
-        ? moment()
-            .year(year)
-            .quarter(quarter)
-            .startOf('quarter')
-            .format('YYYY-MM-DD')
-        : null;
-      const to = year
-        ? moment()
-            .year(year)
-            .quarter(quarter)
-            .endOf('quarter')
-            .format('YYYY-MM-DD')
-        : null;
+      const from =
+        baseDate?.quarter(quarter).startOf('quarter')?.format('YYYY-MM-DD') ||
+        null;
+      const to =
+        baseDate?.quarter(quarter).endOf('quarter')?.format('YYYY-MM-DD') ||
+        null;
 
       return {
         from,
@@ -160,8 +111,8 @@ export class Date {
     }
 
     if (year) {
-      const from = moment().year(year).startOf('year').format('YYYY-MM-DD');
-      const to = moment().year(year).endOf('year').format('YYYY-MM-DD');
+      const from = baseDate?.startOf('year')?.format('YYYY-MM-DD') || null;
+      const to = baseDate?.endOf('year')?.format('YYYY-MM-DD') || null;
 
       return {
         from,
