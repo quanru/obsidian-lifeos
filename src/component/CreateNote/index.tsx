@@ -166,6 +166,7 @@ export const CreateNote = (props: { width: number }) => {
               const [year, week] = dateValue.split('-W');
               const weeklyDate = dayjs()
                 .year(Number.parseInt(year))
+                .startOf('year')
                 .isoWeek(Number.parseInt(week))
                 .startOf('isoWeek');
               form.setFieldsValue({
@@ -179,6 +180,7 @@ export const CreateNote = (props: { width: number }) => {
               const [year, quarter] = dateValue.split('-Q');
               const quarterlyDate = dayjs()
                 .year(Number.parseInt(year))
+                .startOf('year')
                 .quarter(Number.parseInt(quarter))
                 .startOf('quarter');
               form.setFieldsValue({
