@@ -42,6 +42,8 @@ import 'dayjs/locale/zh';
 import type { Locale } from 'antd/es/locale';
 import { getI18n } from './i18n';
 
+import './index.less';
+
 const localeMap: Record<string, Locale> = {
   en: enUS,
   'en-us': enUS,
