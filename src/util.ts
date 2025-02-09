@@ -305,7 +305,7 @@ export function getAllTemplateFiles(settings: PluginSettings) {
 
   return [
     'Template.md',
-    `${periodicNotesPath}/Templates/`,
+    `${periodicNotesPath}/Templates`,
     projectsTemplateFilePath,
     areasTemplateFilePath,
     resourcesTemplateFilePath,
