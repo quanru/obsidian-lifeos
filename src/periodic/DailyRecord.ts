@@ -137,6 +137,24 @@ export class DailyRecord {
         );
       }
 
+      let filterParams = {};
+
+      if (semver.gte(this.memosProfile.version, '0.24.0')) {
+        filterParams = {
+          parent: this.memosUserName,
+          state: 'NORMAL',
+        };
+      } else if (semver.gte(this.memosProfile.version, '0.23.0')) {
+        filterParams = {
+          view: 'MEMO_VIEW_FULL',
+          filter: `creator == '${this.memosUserName}' && visibilities == ['PRIVATE', 'PUBLIC', 'PROTECTED']`,
+        };
+      } else {
+        filterParams = {
+          filter: 'row_status=="NORMAL"',
+        };
+      }
+
       const { json: data } = await customRequest<DailyRecordResponseTypeV2>({
         url: `${this.baseURL}/api/v1/memos`,
         headers: {
@@ -145,14 +163,7 @@ export class DailyRecord {
         params: {
           pageSize: this.pageSize.toString(),
           pageToken: this.pageToken,
-          ...(semver.gte(this.memosProfile.version, '0.23.0')
-            ? {
-                view: 'MEMO_VIEW_FULL',
-                filter: `creator == '${this.memosUserName}' && visibilities == ['PRIVATE', 'PUBLIC', 'PROTECTED']`,
-              }
-            : {
-                filter: 'row_status=="NORMAL"',
-              }),
+          ...filterParams,
         },
       });
 
