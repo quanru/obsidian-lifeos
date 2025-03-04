@@ -213,7 +213,7 @@ const ZH = {
   [`${ERROR_MESSAGE}CREATING_DAILY_FILE`]: '日记文件不存在，正在创建中！',
 
   // 添加 SettingTab 相关的翻译
-  SETTING_PERIODIC_NOTES: '周期笔',
+  SETTING_PERIODIC_NOTES: '周期笔记',
   SETTING_PARA_NOTES: 'PARA 笔记',
   SETTING_TURN_ON: '开启',
   SETTING_PERIODIC_NOTES_FOLDER: '周期笔记目录',
