@@ -1,11 +1,5 @@
 import type { Locale } from 'antd/es/locale';
-import {
-  type App,
-  ItemView,
-  Platform,
-  type WorkspaceLeaf,
-  debounce,
-} from 'obsidian';
+import { ItemView, Platform, type WorkspaceLeaf, debounce } from 'obsidian';
 import React from 'react';
 import { type Root, createRoot } from 'react-dom/client';
 import { CreateNote } from '../component/CreateNote';
@@ -33,7 +27,7 @@ export class CreateNoteView extends ItemView {
   }
 
   getIcon(): string {
-    return 'zap';
+    return 'file-plus';
   }
 
   onResize = debounce(async () => {
