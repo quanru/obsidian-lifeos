@@ -559,7 +559,11 @@ export const CreateNote = (props: { width: number }) => {
                             },
                             {
                               pattern: /^[^\s]*$/,
-                              message: `Tag can't contain spaces`,
+                              message: localeMap[`${TAG}Required2`],
+                            },
+                            {
+                              pattern: /^#/,
+                              message: localeMap[`${TAG}Required3`],
                             },
                           ]}
                         >

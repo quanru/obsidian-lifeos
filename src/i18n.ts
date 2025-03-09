@@ -46,6 +46,7 @@ const EN = {
     'The index filename of PARA notes is used to index tasks, records, and files scattered across various locations. The required formats are LifeOS.README.md/README.md, or the same as the name of the folder it resides in',
   [`${TAG}Required`]: 'A unique id tag is required',
   [`${TAG}Required2`]: `The unique id can't contain spaces`,
+  [`${TAG}Required3`]: 'The unique id must start with #',
   [`${FOLDER}Required`]: 'The folder is required',
   [`${INDEX}Required`]: 'The index file name is required',
 
@@ -183,6 +184,7 @@ const ZH = {
     'PARA 笔记的索引文件名，用于索引散落在各处的任务、记录、文件，要求格式为 LifeOS.README.md/README.md，或与所在目录同名',
   [`${TAG}Required`]: '唯一标识标签为必填项',
   [`${TAG}Required2`]: '唯一标识标签不允许存在空格符',
+  [`${TAG}Required3`]: '唯一标识标签必须以 # 开头',
   [`${FOLDER}Required`]: '所在目录为必填项',
   [`${INDEX}Required`]: '索引文件名为必填项',
 
