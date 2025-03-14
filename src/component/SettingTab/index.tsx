@@ -186,27 +186,24 @@ export const SettingTab = (props: {
                       >
                         <Switch />
                       </Form.Item>
-                      {settings.usePeriodicAdvanced && (
-                        <>
-                          {[DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY].map(
-                            item => {
-                              return (
-                                <Form.Item
-                                  key={item}
-                                  name={`periodicNotesTemplateFilePath${item}`}
-                                  label={`${localeMap[item]}${localeMap.SETTING_TEMPLATE}`}
-                                >
-                                  <AutoComplete options={files}>
-                                    <Input
-                                      placeholder={`${settings.periodicNotesPath}/Templates/${item}.md`}
-                                    />
-                                  </AutoComplete>
-                                </Form.Item>
-                              );
-                            },
-                          )}
-                        </>
-                      )}
+                      {settings.usePeriodicAdvanced &&
+                        [DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY].map(
+                          item => {
+                            return (
+                              <Form.Item
+                                key={item}
+                                name={`periodicNotesTemplateFilePath${item}`}
+                                label={`${localeMap[item]}${localeMap.SETTING_TEMPLATE}`}
+                              >
+                                <AutoComplete options={files}>
+                                  <Input
+                                    placeholder={`${settings.periodicNotesPath}/Templates/${item}.md`}
+                                  />
+                                </AutoComplete>
+                              </Form.Item>
+                            );
+                          },
+                        )}
                       <Divider />
 
                       <Form.Item
@@ -355,28 +352,24 @@ export const SettingTab = (props: {
                               ]}
                             />
                           </Form.Item>
-                          <>
-                            {[
-                              [PROJECT, settings.projectsPath],
-                              [AREA, settings.areasPath],
-                              [RESOURCE, settings.resourcesPath],
-                              [ARCHIVE, settings.archivesPath],
-                            ].map(([name, path]) => {
-                              return (
-                                <Form.Item
-                                  key={name}
-                                  name={`${name.toLocaleLowerCase()}sTemplateFilePath`}
-                                  label={`${localeMap[name]}${localeMap.SETTING_TEMPLATE}`}
-                                >
-                                  <AutoComplete options={files}>
-                                    <Input
-                                      placeholder={`${path}/Template.md`}
-                                    />
-                                  </AutoComplete>
-                                </Form.Item>
-                              );
-                            })}
-                          </>
+                          {[
+                            [PROJECT, settings.projectsPath],
+                            [AREA, settings.areasPath],
+                            [RESOURCE, settings.resourcesPath],
+                            [ARCHIVE, settings.archivesPath],
+                          ].map(([name, path]) => {
+                            return (
+                              <Form.Item
+                                key={name}
+                                name={`${name.toLocaleLowerCase()}sTemplateFilePath`}
+                                label={`${localeMap[name]}${localeMap.SETTING_TEMPLATE}`}
+                              >
+                                <AutoComplete options={files}>
+                                  <Input placeholder={`${path}/Template.md`} />
+                                </AutoComplete>
+                              </Form.Item>
+                            );
+                          })}
                         </>
                       )}
                     </>
