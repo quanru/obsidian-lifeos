@@ -39,6 +39,8 @@ export class DailyRecord {
   memosVersion: string;
   memosProfile: WorkspaceProfileType;
   memosUserName: string;
+  hasCreatedNewFile: boolean;
+
   constructor(app: App, settings: PluginSettings, file: File, locale: string) {
     if (!settings.dailyRecordAPI) {
       logMessage(getI18n(locale)[`${ERROR_MESSAGE}NO_DAILY_RECORD_API`]);
@@ -67,6 +69,7 @@ export class DailyRecord {
     this.lastTime = window.localStorage.getItem(this.localKey) || '';
     this.locale = locale;
     this.baseURL = origin;
+    this.hasCreatedNewFile = false;
   }
 
   async getMemosUserName() {
@@ -300,7 +303,7 @@ export class DailyRecord {
       // 直到 record 返回为空，或者最新的一条记录的时间，晚于上一次同步时间
       logMessage(getI18n(this.locale)[`${MESSAGE}END_SYNC_USEMEMOS`]);
 
-      window.localStorage.setItem(this.localKey, Date.now().toString());
+      this.updateRecentTimestamp();
 
       return;
     }
@@ -346,7 +349,11 @@ export class DailyRecord {
               this.settings,
               this.app,
             );
-            await sleep(500); // 等待 templater 创建完成
+
+            // 标记为已创建新文件
+            this.hasCreatedNewFile = true;
+
+            await sleep(1000); // 等待 templater 创建完成
             targetFile = this.file.get(
               link,
               '',
@@ -447,11 +454,18 @@ export class DailyRecord {
       // v2 没有下一页 pageToken 时
       logMessage(getI18n(this.locale)[`${MESSAGE}END_SYNC_USEMEMOS`]);
 
-      window.localStorage.setItem(this.localKey, Date.now().toString());
+      this.updateRecentTimestamp();
 
       return;
     }
 
     await this.insertDailyRecord();
+  };
+
+  updateRecentTimestamp = () => {
+    // 只有当没有创建新文件时才更新 localStorage，避免在这种情况下，存在没有把 memos 同步到本地的情况
+    if (!this.hasCreatedNewFile) {
+      window.localStorage.setItem(this.localKey, Date.now().toString());
+    }
   };
 }
