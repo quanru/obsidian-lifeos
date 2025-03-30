@@ -1,10 +1,4 @@
-import {
-  DollarOutlined,
-  GithubOutlined,
-  TeamOutlined,
-  UserAddOutlined,
-  YoutubeOutlined,
-} from '@ant-design/icons';
+import { DollarOutlined, GithubOutlined, TeamOutlined, UserAddOutlined, YoutubeOutlined } from '@ant-design/icons';
 import { Space } from 'antd';
 import React from 'react';
 import { ConfigProvider } from '../ConfigProvider';
@@ -45,11 +39,7 @@ export const TopBanner: React.FC<TopBannerProps> = ({ locale }) => {
     <ConfigProvider>
       <div className="m-top-banner">
         <div className="pro-link">
-          <a
-            href={i18n.TOPBANNER_LIFEOS_PRO_HREF}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href={i18n.TOPBANNER_LIFEOS_PRO_HREF} target="_blank" rel="noopener noreferrer">
             <Space align="center">
               <DollarOutlined />
               <span>{i18n.TOPBANNER_LIFEOS_PRO}</span>
@@ -59,13 +49,7 @@ export const TopBanner: React.FC<TopBannerProps> = ({ locale }) => {
         <div className="icon-links">
           <Space align="center" size="large">
             {iconLinks.map(({ icon, href, text }) => (
-              <a
-                key={href}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={text}
-              >
+              <a key={href} href={href} target="_blank" rel="noopener noreferrer" aria-label={text}>
                 <Space align="center">
                   {icon}
                   <span>{text}</span>

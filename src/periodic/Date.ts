@@ -1,12 +1,6 @@
 import { moment } from 'obsidian';
 import type { App } from 'obsidian';
-import {
-  DAILY_REG,
-  MONTHLY_REG,
-  QUARTERLY_REG,
-  WEEKLY_REG,
-  YEARLY_REG,
-} from '../constant';
+import { DAILY_REG, MONTHLY_REG, QUARTERLY_REG, WEEKLY_REG, YEARLY_REG } from '../constant';
 import type { DateRangeType, DateType, PluginSettings } from '../type';
 import type { File } from './File';
 
@@ -56,9 +50,7 @@ export class Date {
     const baseDate = year ? moment().year(year).startOf('year').clone() : null;
 
     if (day) {
-      const today = `${year}-${String(month).padStart(2, '0')}-${String(
-        day,
-      ).padStart(2, '0')}`;
+      const today = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
       return {
         from: today,
@@ -67,10 +59,8 @@ export class Date {
     }
 
     if (week) {
-      const from =
-        baseDate?.week(week).startOf('week')?.format('YYYY-MM-DD') || null;
-      const to =
-        baseDate?.week(week).endOf('week')?.format('YYYY-MM-DD') || null;
+      const from = baseDate?.week(week).startOf('week')?.format('YYYY-MM-DD') || null;
+      const to = baseDate?.week(week).endOf('week')?.format('YYYY-MM-DD') || null;
 
       return {
         from,
@@ -97,12 +87,8 @@ export class Date {
     }
 
     if (quarter) {
-      const from =
-        baseDate?.quarter(quarter).startOf('quarter')?.format('YYYY-MM-DD') ||
-        null;
-      const to =
-        baseDate?.quarter(quarter).endOf('quarter')?.format('YYYY-MM-DD') ||
-        null;
+      const from = baseDate?.quarter(quarter).startOf('quarter')?.format('YYYY-MM-DD') || null;
+      const to = baseDate?.quarter(quarter).endOf('quarter')?.format('YYYY-MM-DD') || null;
 
       return {
         from,
@@ -147,24 +133,17 @@ export class Date {
       const weekLink = `${currentDate.weekYear()}/Weekly/${currentDate.weekYear()}-W${String(
         currentDate.isoWeek(),
       ).padStart(2, '0')}.md`;
-      const weekFile = this.file.get(
-        weekLink,
-        '',
-        this.settings.periodicNotesPath,
-      );
+      const weekFile = this.file.get(weekLink, '', this.settings.periodicNotesPath);
 
       if (weekFile) {
         weeks.add(weekFile.path);
       }
 
-      const monthLink = `${currentDate.year()}/Monthly/${currentDate.year()}-${String(
-        currentDate.month() + 1,
-      ).padStart(2, '0')}.md`;
-      const monthFile = this.file.get(
-        monthLink,
-        '',
-        this.settings.periodicNotesPath,
-      );
+      const monthLink = `${currentDate.year()}/Monthly/${currentDate.year()}-${String(currentDate.month() + 1).padStart(
+        2,
+        '0',
+      )}.md`;
+      const monthFile = this.file.get(monthLink, '', this.settings.periodicNotesPath);
 
       if (monthFile) {
         months.add(monthFile.path);
@@ -173,11 +152,7 @@ export class Date {
       const quarterLink = `${currentDate.year()}/Quarterly/${currentDate.year()}-Q${Math.ceil(
         (currentDate.month() + 1) / 3,
       )}.md`;
-      const quarterFile = this.file.get(
-        quarterLink,
-        '',
-        this.settings.periodicNotesPath,
-      );
+      const quarterFile = this.file.get(quarterLink, '', this.settings.periodicNotesPath);
 
       if (quarterFile) {
         quarters.add(quarterFile.path);
@@ -189,10 +164,7 @@ export class Date {
     return {
       weeks: parsed.month ? Array.from(weeks) : [],
       months: parsed.quarter ? Array.from(months) : [],
-      quarters:
-        parsed.year && !parsed.month && !parsed.quarter && !parsed.week
-          ? Array.from(quarters)
-          : [],
+      quarters: parsed.year && !parsed.month && !parsed.quarter && !parsed.week ? Array.from(quarters) : [],
     };
   }
 }

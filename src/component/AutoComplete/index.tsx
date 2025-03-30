@@ -14,24 +14,17 @@ interface Props extends AutoCompleteProps {
 
 export const AutoComplete = (props: PropsWithChildren<Props>) => {
   const { options, onSelect, children, ...otherProps } = props;
-  const [filteredOptions, setFilteredOptions] =
-    useState<SelectOptionsType[]>(options);
+  const [filteredOptions, setFilteredOptions] = useState<SelectOptionsType[]>(options);
 
   const onSearch = (value: string) => {
-    const filteredOptions = options.filter(
-      (option: { value: string; label: string }) =>
-        option.label.toString().toLowerCase().includes(value.toLowerCase()),
+    const filteredOptions = options.filter((option: { value: string; label: string }) =>
+      option.label.toString().toLowerCase().includes(value.toLowerCase()),
     );
     setFilteredOptions(filteredOptions);
   };
 
   return (
-    <AntdAutoComplete
-      options={filteredOptions}
-      onSearch={onSearch}
-      onSelect={onSelect}
-      {...otherProps}
-    >
+    <AntdAutoComplete options={filteredOptions} onSearch={onSearch} onSelect={onSelect} {...otherProps}>
       {children}
     </AntdAutoComplete>
   );

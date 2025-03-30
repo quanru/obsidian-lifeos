@@ -17,12 +17,7 @@ export class Bullet {
   dataview: DataviewApi;
   settings: PluginSettings;
   locale: string;
-  constructor(
-    app: App,
-    settings: PluginSettings,
-    dataview: DataviewApi,
-    locale: string,
-  ) {
+  constructor(app: App, settings: PluginSettings, dataview: DataviewApi, locale: string) {
     this.app = app;
     this.settings = settings;
     this.dataview = dataview;
@@ -30,23 +25,14 @@ export class Bullet {
     this.file = new File(this.app, this.settings, this.dataview, locale);
   }
 
-  listByTag = async (
-    source: string,
-    el: HTMLElement,
-    ctx: MarkdownPostProcessorContext,
-  ) => {
+  listByTag = async (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
     const filepath = ctx.sourcePath;
     const tags = this.file.tags(filepath);
     const div = el.createEl('div');
     const component = new Markdown(div);
 
     if (!tags.length) {
-      return renderError(
-        this.app,
-        getI18n(this.locale)[`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`],
-        div,
-        filepath,
-      );
+      return renderError(this.app, getI18n(this.locale)[`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`], div, filepath);
     }
 
     const from = tags
@@ -55,45 +41,26 @@ export class Bullet {
       })
       .join(' ')
       .trim();
-    const lists = await this.dataview.pages(
-      `(${from}) ${generateIgnoreOperator(this.settings)}`,
-    ).file.lists;
-    const result = lists.where(
-      (L: { task: STask; path: string; tags: string[] }) => {
-        let includeTag = false;
-        if (L.task || L.path === filepath) return false;
-        for (const tag of tags) {
-          includeTag = L.tags
-            .join(' ')
-            .toLowerCase()
-            .includes(`#${tag.toLowerCase()}`);
-          if (includeTag) {
-            break;
-          }
+    const lists = await this.dataview.pages(`(${from}) ${generateIgnoreOperator(this.settings)}`).file.lists;
+    const result = lists.where((L: { task: STask; path: string; tags: string[] }) => {
+      let includeTag = false;
+      if (L.task || L.path === filepath) return false;
+      for (const tag of tags) {
+        includeTag = L.tags.join(' ').toLowerCase().includes(`#${tag.toLowerCase()}`);
+        if (includeTag) {
+          break;
         }
-        return includeTag;
-      },
-    );
+      }
+      return includeTag;
+    });
     const groupResult = result.groupBy((elem: Element) => {
       return elem.link;
     });
-    const sortResult = groupResult.sort(
-      (elem: { rows: Element }) => elem.rows.link,
-      'desc',
-    );
-    const tableResult = sortResult.map((k: { rows: Element }) => [
-      k.rows.text as string,
-      k.rows.link as Link,
-    ]);
+    const sortResult = groupResult.sort((elem: { rows: Element }) => elem.rows.link, 'desc');
+    const tableResult = sortResult.map((k: { rows: Element }) => [k.rows.text as string, k.rows.link as Link]);
     const tableValues = tableResult.array();
 
-    this.dataview.table(
-      ['Bullet', 'Link'],
-      tableValues,
-      div,
-      component,
-      filepath,
-    );
+    this.dataview.table(['Bullet', 'Link'], tableValues, div, component, filepath);
 
     ctx.addChild(component);
   };

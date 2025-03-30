@@ -19,7 +19,6 @@
 - Basic: https://lifeos.vip/guide/readme/free.html
 - **Pro** : https://lifeos.vip/guide/readme/pro.html
 
-
 ## Support
 
 - [🎮 Discord](https://discord.gg/HZGanKEkuZ)
@@ -29,7 +28,6 @@
 - [📺 Youtube](https://www.youtube.com/@LeYangLin)
 - [🧑‍🔧 Bento](https://bento.me/leyang)
 - [📧 Email](mailto:quanruzhuoxiu@gmail.com)
-
 
 ## Acknowledgements
 

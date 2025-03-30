@@ -1,9 +1,6 @@
 import React from 'react';
 
-export const useDocumentEvent = (
-  eventName: string,
-  handler: (event: CustomEvent) => void,
-) => {
+export const useDocumentEvent = (eventName: string, handler: (event: CustomEvent) => void) => {
   React.useEffect(() => {
     document.addEventListener(eventName, handler);
 

@@ -1,9 +1,4 @@
-import {
-  type App,
-  type MarkdownPostProcessorContext,
-  TFile,
-  TFolder,
-} from 'obsidian';
+import { type App, type MarkdownPostProcessorContext, TFile, TFolder } from 'obsidian';
 import type { IndexType, PluginSettings } from '../type';
 
 import dayjs from 'dayjs';
@@ -11,12 +6,7 @@ import type { DataviewApi } from 'obsidian-dataview';
 import { Markdown } from '../component/Markdown';
 import { ERROR_MESSAGE } from '../constant';
 import { getI18n } from '../i18n';
-import {
-  isInPeriodicNote,
-  isInTemplateNote,
-  logMessage,
-  renderError,
-} from '../util';
+import { isInPeriodicNote, isInTemplateNote, logMessage, renderError } from '../util';
 
 export class File {
   app: App;
@@ -24,12 +14,7 @@ export class File {
   settings: PluginSettings;
   dataview: DataviewApi;
   locale: string;
-  constructor(
-    app: App,
-    settings: PluginSettings,
-    dataview: DataviewApi,
-    locale: string,
-  ) {
+  constructor(app: App, settings: PluginSettings, dataview: DataviewApi, locale: string) {
     this.app = app;
     this.settings = settings;
     this.dataview = dataview;
@@ -51,19 +36,15 @@ export class File {
     const folder = this.app.vault.getAbstractFileByPath(fileFolder);
 
     if (folder instanceof TFolder) {
-      const subFolderList = folder.children.filter(
-        file => file instanceof TFolder,
-      );
+      const subFolderList = folder.children.filter((file) => file instanceof TFolder);
       const IndexList = subFolderList
-        .map(subFolder => {
+        .map((subFolder) => {
           // 优先搜索同名文件，否则搜索 XXX.README
           if (subFolder instanceof TFolder) {
             const { name } = subFolder;
             const files = subFolder.children;
-            const indexFile = files.find(file => {
-              const indexType: IndexType = this.settings.usePARAAdvanced
-                ? this.settings.paraIndexFilename
-                : 'readme';
+            const indexFile = files.find((file) => {
+              const indexType: IndexType = this.settings.usePARAAdvanced ? this.settings.paraIndexFilename : 'readme';
 
               if (indexType === 'readme') {
                 if (file.path.match(/(.*\.)?README\.md/)) {
@@ -98,26 +79,18 @@ export class File {
             }
 
             if (!indexFile) {
-              logMessage(
-                `${
-                  getI18n(this.locale)[`${ERROR_MESSAGE}NO_INDEX_FILE_EXIST`]
-                } @ ${subFolder.path}`,
-              );
+              logMessage(`${getI18n(this.locale)[`${ERROR_MESSAGE}NO_INDEX_FILE_EXIST`]} @ ${subFolder.path}`);
             }
 
             if (indexFile instanceof TFile) {
-              const link = this.app.metadataCache.fileToLinktext(
-                indexFile,
-                indexFile?.path,
-              );
+              const link = this.app.metadataCache.fileToLinktext(indexFile, indexFile?.path);
               return `[[${link}|${subFolder.name}]]`;
             }
           }
         })
-        .filter(link => !!link)
+        .filter((link) => !!link)
         .sort((a, b) => {
-          const getCategory = (item: string) =>
-            item.split('|')[1].replace(']]', '');
+          const getCategory = (item: string) => item.split('|')[1].replace(']]', '');
 
           const categoryA = getCategory(a as string);
           const categoryB = getCategory(b as string);
@@ -169,23 +142,14 @@ export class File {
     }
   }
 
-  listByTag = async (
-    source: string,
-    el: HTMLElement,
-    ctx: MarkdownPostProcessorContext,
-  ) => {
+  listByTag = async (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
     const filepath = ctx.sourcePath;
     const tags = this.tags(filepath);
     const div = el.createEl('div');
     const component = new Markdown(div);
 
     if (!tags.length) {
-      return renderError(
-        this.app,
-        getI18n(this.locale)[`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`],
-        div,
-        filepath,
-      );
+      return renderError(this.app, getI18n(this.locale)[`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`], div, filepath);
     }
 
     const from = tags
@@ -205,10 +169,7 @@ export class File {
             !isInTemplateNote(filepath, this.settings) &&
             b.file.path !== filepath,
         )
-        .sort(
-          (b: { file: { ctime: { ts: number } } }) => b.file.ctime.ts,
-          'desc',
-        )
+        .sort((b: { file: { ctime: { ts: number } } }) => b.file.ctime.ts, 'desc')
         .map((b: { file: { link: string; ctime: { ts: number } } }) => [
           b.file.link,
           `[[${dayjs(b.file.ctime.ts).format('YYYY-MM-DD')}]]`,

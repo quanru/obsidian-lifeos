@@ -3,13 +3,6 @@
   "organizeImports": {
     "enabled": true
   },
-  "javascript": {
-    "formatter": {
-      "quoteStyle": "single",
-      "trailingCommas": "all",
-      "arrowParentheses": "asNeeded"
-    }
-  },
   "vcs": {
     "enabled": true,
     "defaultBranch": "main",
@@ -22,7 +15,7 @@
     "ignoreUnknown": true
   },
   "formatter": {
-    "indentStyle": "space"
+    "enabled": false
   },
   "linter": {
     "enabled": true,

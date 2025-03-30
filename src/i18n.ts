@@ -38,8 +38,7 @@ const EN = {
   [INDEX]: 'Index',
 
   QUICK_JUMP: 'Double click to open periodic note for this ',
-  [`${TAG}ToolTip`]:
-    'Tags in PARA notes serve as the unique identifiers for indexing tasks, notes, and files',
+  [`${TAG}ToolTip`]: 'Tags in PARA notes serve as the unique identifiers for indexing tasks, notes, and files',
   [`${FOLDER}ToolTip`]:
     'The folder where PARA notes are located, is used to store notes related to the corresponding theme',
   [`${INDEX}ToolTip`]:
@@ -53,16 +52,12 @@ const EN = {
   [`${MESSAGE}START_SYNC_USEMEMOS`]: 'Start sync usememos',
   [`${MESSAGE}END_SYNC_USEMEMOS`]: 'End sync usememos',
 
-  [`${ERROR_MESSAGE}FAILED_GET_USEMEMOS_VERSION`]:
-    'Failed to fetch usememos workspace profile',
-  [`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`]:
-    'Please add the tags field for properties !',
-  [`${ERROR_MESSAGE}NO_DATAVIEW_INSTALL`]:
-    'You need to install dataview first!',
+  [`${ERROR_MESSAGE}FAILED_GET_USEMEMOS_VERSION`]: 'Failed to fetch usememos workspace profile',
+  [`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`]: 'Please add the tags field for properties !',
+  [`${ERROR_MESSAGE}NO_DATAVIEW_INSTALL`]: 'You need to install dataview first!',
   [`${ERROR_MESSAGE}FAILED_DATAVIEW_API`]:
     'Dataview API enable failed! Please disable the LifeOS plugin and enable it again!',
-  [`${ERROR_MESSAGE}NO_VIEW_PROVIDED`]:
-    'Please provide the name of the view you want to query!',
+  [`${ERROR_MESSAGE}NO_VIEW_PROVIDED`]: 'Please provide the name of the view you want to query!',
   [`${ERROR_MESSAGE}NO_VIEW_EXISTED`]: 'There is no this view in LifeOS plugin',
   [`${ERROR_MESSAGE}NO_INDEX_FILE_EXIST`]:
     'There is no Index file exists(README.md/xxx.README.md/the same as the name of the folder it resides in)',
@@ -70,16 +65,11 @@ const EN = {
   [`${ERROR_MESSAGE}TAGS_MUST_INPUT`]: 'Please input tags!',
   [`${ERROR_MESSAGE}DAILY_RECORD_FETCH_FAILED`]: 'Fetch usememos failed',
   [`${ERROR_MESSAGE}RESOURCE_FETCH_FAILED`]: 'Fetch resource failed',
-  [`${ERROR_MESSAGE}NO_DAILY_RECORD_HEADER`]:
-    'Please set which header the usememos need insert to in LifeOS plugin',
-  [`${ERROR_MESSAGE}NO_DAILY_RECORD_API`]:
-    'Please set daily usememos API in LifeOS plugin',
-  [`${ERROR_MESSAGE}NO_DAILY_RECORD_TOKEN`]:
-    'Please set usememos token in LifeOS plugin',
-  [`${ERROR_MESSAGE}NO_DAILY_FILE_EXIST`]:
-    'Daily file not exists, please create it first: ',
-  [`${ERROR_MESSAGE}CREATING_DAILY_FILE`]:
-    'Daily file not exists, creating now! ',
+  [`${ERROR_MESSAGE}NO_DAILY_RECORD_HEADER`]: 'Please set which header the usememos need insert to in LifeOS plugin',
+  [`${ERROR_MESSAGE}NO_DAILY_RECORD_API`]: 'Please set daily usememos API in LifeOS plugin',
+  [`${ERROR_MESSAGE}NO_DAILY_RECORD_TOKEN`]: 'Please set usememos token in LifeOS plugin',
+  [`${ERROR_MESSAGE}NO_DAILY_FILE_EXIST`]: 'Daily file not exists, please create it first: ',
+  [`${ERROR_MESSAGE}CREATING_DAILY_FILE`]: 'Daily file not exists, creating now! ',
 
   // 添加 SettingTab 相关的翻译
   SETTING_PERIODIC_NOTES: 'Periodic Notes',
@@ -102,16 +92,13 @@ const EN = {
   SETTING_DAILY_RECORD: 'Daily Record',
   SETTING_DAILY_RECORD_HELP: 'Sync daily record from ',
   SETTING_DAILY_RECORD_HEADER: 'Header:',
-  SETTING_DAILY_RECORD_HEADER_HELP:
-    'Where the daily record module is in a daily note',
+  SETTING_DAILY_RECORD_HEADER_HELP: 'Where the daily record module is in a daily note',
   SETTING_DAILY_RECORD_API: 'API:',
-  SETTING_DAILY_RECORD_API_HELP:
-    'The usememos service URL, < 0.22.0 or >= 0.22.3',
+  SETTING_DAILY_RECORD_API_HELP: 'The usememos service URL, < 0.22.0 or >= 0.22.3',
   SETTING_DAILY_RECORD_TOKEN: 'Token:',
   SETTING_DAILY_RECORD_TOKEN_HELP: 'The token of your API ',
   SETTING_DAILY_RECORD_CREATING: 'Auto Creating:',
-  SETTING_DAILY_RECORD_CREATING_HELP:
-    'Auto creating while daily note not exist',
+  SETTING_DAILY_RECORD_CREATING_HELP: 'Auto creating while daily note not exist',
   SETTING_DAILY_RECORD_WARNING: 'Warning:',
   SETTING_DAILY_RECORD_WARNING_HELP: 'Warning while daily note not exist',
   SETTING_PROJECTS_FOLDER: 'Projects Folder:',
@@ -145,8 +132,7 @@ const EN = {
 
   // TopBanner
   TOPBANNER_BUGS_FEATURES: 'GitHub',
-  TOPBANNER_BUGS_FEATURES_HREF:
-    'https://github.com/quanru/obsidian-lifeos/issues',
+  TOPBANNER_BUGS_FEATURES_HREF: 'https://github.com/quanru/obsidian-lifeos/issues',
   TOPBANNER_VIDEO: 'YouTube',
   TOPBANNER_VIDEO_HREF: 'https://www.youtube.com/@lifeos-pro',
   TOPBANNER_CONTACT: 'Contact',
@@ -191,26 +177,20 @@ const ZH = {
   [`${MESSAGE}START_SYNC_USEMEMOS`]: '开始同步 usememos',
   [`${MESSAGE}END_SYNC_USEMEMOS`]: '结束同步 usememos',
 
-  [`${ERROR_MESSAGE}FAILED_GET_USEMEMOS_VERSION`]:
-    '获取 usememos workspace profile 失败',
+  [`${ERROR_MESSAGE}FAILED_GET_USEMEMOS_VERSION`]: '获取 usememos workspace profile 失败',
   [`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`]: '请为 Properties 加 tags 字段！',
   [`${ERROR_MESSAGE}NO_DATAVIEW_INSTALL`]: '请先安装 dataview！',
-  [`${ERROR_MESSAGE}FAILED_DATAVIEW_API`]:
-    'Dataview API 开启失败！请关闭 LifeOS 插件后重新打开！',
+  [`${ERROR_MESSAGE}FAILED_DATAVIEW_API`]: 'Dataview API 开启失败！请关闭 LifeOS 插件后重新打开！',
   [`${ERROR_MESSAGE}NO_VIEW_PROVIDED`]: '请提供所需要查询的视图名！',
   [`${ERROR_MESSAGE}NO_VIEW_EXISTED`]: 'LifeOS 插件中不存在此视图',
-  [`${ERROR_MESSAGE}NO_INDEX_FILE_EXIST`]:
-    '索引文件不存在（README.md/xxx.README.md/所在目录同名文件）',
+  [`${ERROR_MESSAGE}NO_INDEX_FILE_EXIST`]: '索引文件不存在（README.md/xxx.README.md/所在目录同名文件）',
   [`${ERROR_MESSAGE}NO_TEMPLATE_EXIST`]: '模版文件不存在：',
   [`${ERROR_MESSAGE}TAGS_MUST_INPUT`]: '请输入 tags！',
   [`${ERROR_MESSAGE}DAILY_RECORD_FETCH_FAILED`]: '拉取 usememos 失败',
   [`${ERROR_MESSAGE}RESOURCE_FETCH_FAILED`]: '拉取资源失败',
-  [`${ERROR_MESSAGE}NO_DAILY_RECORD_HEADER`]:
-    '请在 LifeOS 插件中设置 usememos 需要存储在哪个标题之下',
-  [`${ERROR_MESSAGE}NO_DAILY_RECORD_API`]:
-    '请在 LifeOS 插件中设置 usememos 的 API',
-  [`${ERROR_MESSAGE}NO_DAILY_RECORD_TOKEN`]:
-    '请在 LifeOS 插件中设置 usememos 的 Token',
+  [`${ERROR_MESSAGE}NO_DAILY_RECORD_HEADER`]: '请在 LifeOS 插件中设置 usememos 需要存储在哪个标题之下',
+  [`${ERROR_MESSAGE}NO_DAILY_RECORD_API`]: '请在 LifeOS 插件中设置 usememos 的 API',
+  [`${ERROR_MESSAGE}NO_DAILY_RECORD_TOKEN`]: '请在 LifeOS 插件中设置 usememos 的 Token',
   [`${ERROR_MESSAGE}NO_DAILY_FILE_EXIST`]: '日记文件不存在，请先创建：',
   [`${ERROR_MESSAGE}CREATING_DAILY_FILE`]: '日记文件不存在，正在创建中！',
 
@@ -275,15 +255,13 @@ const ZH = {
 
   // TopBanner
   TOPBANNER_BUGS_FEATURES: 'GitHub',
-  TOPBANNER_BUGS_FEATURES_HREF:
-    'https://github.com/quanru/obsidian-lifeos/issues',
+  TOPBANNER_BUGS_FEATURES_HREF: 'https://github.com/quanru/obsidian-lifeos/issues',
   TOPBANNER_VIDEO: '哔哩哔哩',
   TOPBANNER_VIDEO_HREF: 'https://space.bilibili.com/437191204',
   TOPBANNER_CONTACT: '联系我们',
   TOPBANNER_CONTACT_HREF: 'https://lifeos.vip/zh/contact/index.html',
   TOPBANNER_SOCIAL: '小红书',
-  TOPBANNER_SOCIAL_HREF:
-    'https://www.xiaohongshu.com/user/profile/5b06db60f7e8b974ec6ff7fc',
+  TOPBANNER_SOCIAL_HREF: 'https://www.xiaohongshu.com/user/profile/5b06db60f7e8b974ec6ff7fc',
   TOPBANNER_LIFEOS_PRO: 'LifeOS Pro',
   TOPBANNER_LIFEOS_PRO_HREF: 'https://lifeos.vip/zh/plugin/life-os-pro.html',
 };

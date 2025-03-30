@@ -68,7 +68,7 @@ const moveAssetsPlugin = {
           const srcPath = path.join(__dirname, srcFile);
           const targetPath = path.join(targetDir, srcFile);
           return moveFile(srcPath, targetPath);
-        })
+        }),
       );
       console.log('Assets moved to Obsidian plugin directory');
     });

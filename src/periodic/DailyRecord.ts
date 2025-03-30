@@ -95,9 +95,7 @@ export class DailyRecord {
           },
         });
         this.memosProfile = data.workspaceProfile || data;
-        this.memosVersion = semver.lt(this.memosProfile.version, '0.22.0')
-          ? 'v1'
-          : 'v2';
+        this.memosVersion = semver.lt(this.memosProfile.version, '0.22.0') ? 'v1' : 'v2';
         return; // 成功获取版本后退出方法
       } catch (error) {
         console.warn(`Failed to fetch from ${url}:`, error.message || '');
@@ -105,21 +103,14 @@ export class DailyRecord {
     }
 
     if (!this.memosVersion) {
-      logMessage(
-        `${
-          getI18n(this.locale)[`${ERROR_MESSAGE}FAILED_GET_USEMEMOS_VERSION`]
-        }`,
-        LogLevel.error,
-      );
+      logMessage(`${getI18n(this.locale)[`${ERROR_MESSAGE}FAILED_GET_USEMEMOS_VERSION`]}`, LogLevel.error);
     }
   }
 
   async fetchMemosList() {
     try {
       if (this.memosVersion === 'v1') {
-        const { json: data } = await customRequest<
-          DailyRecordType[] | FetchError
-        >({
+        const { json: data } = await customRequest<DailyRecordType[] | FetchError>({
           url: `${this.baseURL}/api/v1/memo`,
           headers: {
             Authorization: `Bearer ${this.settings.dailyRecordToken}`,
@@ -135,9 +126,7 @@ export class DailyRecord {
           return data;
         }
 
-        throw new Error(
-          data.message || data.msg || data.error || JSON.stringify(data),
-        );
+        throw new Error(data.message || data.msg || data.error || JSON.stringify(data));
       }
 
       let filterParams = {};
@@ -178,34 +167,25 @@ export class DailyRecord {
 
       return data.memos?.map(transformV2Record);
     } catch (error) {
-      logMessage(
-        `${
-          getI18n(this.locale)[`${ERROR_MESSAGE}DAILY_RECORD_FETCH_FAILED`]
-        }: ${error}`,
-        LogLevel.error,
-      );
+      logMessage(`${getI18n(this.locale)[`${ERROR_MESSAGE}DAILY_RECORD_FETCH_FAILED`]}: ${error}`, LogLevel.error);
     }
   }
 
   async fetchResourceList() {
     try {
       if (this.memosVersion === 'v1') {
-        const { json: data } = await customRequest<ResourceType[] | FetchError>(
-          {
-            url: `${this.baseURL}/api/v1/resource`,
-            headers: {
-              Authorization: `Bearer ${this.settings.dailyRecordToken}`,
-            },
+        const { json: data } = await customRequest<ResourceType[] | FetchError>({
+          url: `${this.baseURL}/api/v1/resource`,
+          headers: {
+            Authorization: `Bearer ${this.settings.dailyRecordToken}`,
           },
-        );
+        });
 
         if (Array.isArray(data)) {
           return data;
         }
 
-        throw new Error(
-          data.message || data.msg || data.error || JSON.stringify(data),
-        );
+        throw new Error(data.message || data.msg || data.error || JSON.stringify(data));
       }
 
       const { json: data } = await customRequest<ResourceTypeV2>({
@@ -224,12 +204,7 @@ export class DailyRecord {
       if (error.response.status === 404) {
         return;
       }
-      logMessage(
-        `${
-          getI18n(this.locale)[`${ERROR_MESSAGE}RESOURCE_FETCH_FAILED`]
-        }: ${error}`,
-        LogLevel.error,
-      );
+      logMessage(`${getI18n(this.locale)[`${ERROR_MESSAGE}RESOURCE_FETCH_FAILED`]}: ${error}`, LogLevel.error);
     }
   }
 
@@ -256,12 +231,9 @@ export class DailyRecord {
         }
 
         const folder = `${this.settings.periodicNotesPath}/Attachments`;
-        const resourcePath = normalizePath(
-          `${folder}/${generateFileName(resource)}`,
-        );
+        const resourcePath = normalizePath(`${folder}/${generateFileName(resource)}`);
 
-        const isResourceExists =
-          await this.app.vault.adapter.exists(resourcePath);
+        const isResourceExists = await this.app.vault.adapter.exists(resourcePath);
 
         if (isResourceExists) {
           return;
@@ -295,9 +267,7 @@ export class DailyRecord {
     const header = this.settings.dailyRecordHeader;
     const dailyRecordByDay: Record<string, Record<string, string>> = {};
     const records = (await this.fetchMemosList()) || [];
-    const mostRecentTimeStamp = records[0]?.createdAt
-      ? moment(records[0]?.createdAt).unix()
-      : records[0]?.createdTs;
+    const mostRecentTimeStamp = records[0]?.createdAt ? moment(records[0]?.createdAt).unix() : records[0]?.createdTs;
 
     if (!records.length || mostRecentTimeStamp * 1000 < Number(this.lastTime)) {
       // 直到 record 返回为空，或者最新的一条记录的时间，晚于上一次同步时间
@@ -325,47 +295,26 @@ export class DailyRecord {
     }
 
     await Promise.all(
-      Object.keys(dailyRecordByDay).map(async today => {
+      Object.keys(dailyRecordByDay).map(async (today) => {
         const momentDay = moment(today);
-        const link = `${momentDay.year()}/Daily/${String(
-          momentDay.month() + 1,
-        ).padStart(2, '0')}/${momentDay.format('YYYY-MM-DD')}.md`;
-        let targetFile = this.file.get(
-          link,
-          '',
-          this.settings.periodicNotesPath,
-        );
+        const link = `${momentDay.year()}/Daily/${String(momentDay.month() + 1).padStart(
+          2,
+          '0',
+        )}/${momentDay.format('YYYY-MM-DD')}.md`;
+        let targetFile = this.file.get(link, '', this.settings.periodicNotesPath);
 
         if (!targetFile) {
           if (this.settings.dailyRecordCreating) {
-            logMessage(
-              `${
-                getI18n(this.locale)[`${ERROR_MESSAGE}CREATING_DAILY_FILE`]
-              } ${today}`,
-            );
-            await createPeriodicFile(
-              dayjs(today),
-              DAILY,
-              this.settings,
-              this.app,
-            );
+            logMessage(`${getI18n(this.locale)[`${ERROR_MESSAGE}CREATING_DAILY_FILE`]} ${today}`);
+            await createPeriodicFile(dayjs(today), DAILY, this.settings, this.app);
 
             // 标记为已创建新文件
             this.hasCreatedNewFile = true;
 
             await sleep(1000); // 等待 templater 创建完成
-            targetFile = this.file.get(
-              link,
-              '',
-              this.settings.periodicNotesPath,
-            );
+            targetFile = this.file.get(link, '', this.settings.periodicNotesPath);
           } else if (this.settings.dailyRecordWarning) {
-            logMessage(
-              `${
-                getI18n(this.locale)[`${ERROR_MESSAGE}NO_DAILY_FILE_EXIST`]
-              } ${today}`,
-              LogLevel.error,
-            );
+            logMessage(`${getI18n(this.locale)[`${ERROR_MESSAGE}NO_DAILY_FILE_EXIST`]} ${today}`, LogLevel.error);
           }
         }
         const reg = generateHeaderRegExp(header);
@@ -376,9 +325,7 @@ export class DailyRecord {
 
           if (!regMatch?.length || !regMatch?.index) {
             if (!this.settings.dailyRecordToken) {
-              logMessage(
-                'Current daily file will not insert daily record due to no daily record header',
-              );
+              logMessage('Current daily file will not insert daily record due to no daily record header');
               return;
             }
 
@@ -390,9 +337,7 @@ export class DailyRecord {
           const to = from + localRecordContent.length;
           const prefix = originFileContent.slice(0, from);
           const suffix = originFileContent.slice(to);
-          const localRecordList = localRecordContent
-            ? localRecordContent.split(/\n(?=- )/g)
-            : [];
+          const localRecordList = localRecordContent ? localRecordContent.split(/\n(?=- )/g) : [];
           const remoteRecordListWithTime: Record<string, string> = {};
           const localRecordListWithTime: Record<string, string> = {};
           const localRecordWithoutTime: string[] = [];
@@ -409,10 +354,7 @@ export class DailyRecord {
 
               if (regMatch) {
                 const time = regMatch[0]?.trim();
-                const timeStamp = moment(
-                  `${today}-${time}`,
-                  'YYYY-MM-DD-HH:mm',
-                ).unix();
+                const timeStamp = moment(`${today}-${time}`, 'YYYY-MM-DD-HH:mm').unix();
 
                 if (localRecordListWithTime[timeStamp]) {
                   // 避免时间戳重复，导致相互覆盖
@@ -436,11 +378,9 @@ export class DailyRecord {
               const indexB = Number(b[0]);
               return indexA - indexB;
             })
-            .map(item => item[1]);
+            .map((item) => item[1]);
 
-          const finalRecordContent = localRecordWithoutTime
-            .concat(sortedRecordList)
-            .join('\n');
+          const finalRecordContent = localRecordWithoutTime.concat(sortedRecordList).join('\n');
           const fileContent = `${prefix.trim()}\n${finalRecordContent}\n\n${suffix.trim()}\n`;
 
           await this.app.vault.modify(targetFile, fileContent);

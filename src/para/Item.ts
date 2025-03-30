@@ -1,8 +1,4 @@
-import {
-  type App,
-  type MarkdownPostProcessorContext,
-  MarkdownRenderer,
-} from 'obsidian';
+import { type App, type MarkdownPostProcessorContext, MarkdownRenderer } from 'obsidian';
 import { Markdown } from '../component/Markdown';
 import { Date as PeriodicDate } from '../periodic/Date';
 import type { File } from '../periodic/File';
@@ -16,13 +12,7 @@ export class Item {
   date: PeriodicDate;
   locale: string;
 
-  constructor(
-    dir: string,
-    app: App,
-    settings: PluginSettings,
-    file: File,
-    locale: string,
-  ) {
+  constructor(dir: string, app: App, settings: PluginSettings, file: File, locale: string) {
     this.dir = dir;
     this.app = app;
     this.settings = settings;
@@ -35,44 +25,24 @@ export class Item {
     return this.file.list(dir);
   }
 
-  listByFolder = async (
-    source: string,
-    el: HTMLElement,
-    ctx: MarkdownPostProcessorContext,
-  ) => {
+  listByFolder = async (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
     const div = el.createEl('div');
     const markdown = this.file.list(this.dir);
     const component = new Markdown(div);
 
-    MarkdownRenderer.render(
-      this.app,
-      markdown || '- Nothing',
-      div,
-      ctx.sourcePath,
-      component,
-    );
+    MarkdownRenderer.render(this.app, markdown || '- Nothing', div, ctx.sourcePath, component);
 
     ctx.addChild(component);
   };
 
-  listByTag = async (
-    source: string,
-    el: HTMLElement,
-    ctx: MarkdownPostProcessorContext,
-  ) => {
+  listByTag = async (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
     const filepath = ctx.sourcePath;
     const tags = this.file.tags(filepath);
     const div = el.createEl('div');
     const markdown = this.file.list(this.dir, { tags });
     const component = new Markdown(div);
 
-    MarkdownRenderer.render(
-      this.app,
-      markdown || '- Nothing',
-      div,
-      ctx.sourcePath,
-      component,
-    );
+    MarkdownRenderer.render(this.app, markdown || '- Nothing', div, ctx.sourcePath, component);
 
     ctx.addChild(component);
   };

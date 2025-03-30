@@ -47,12 +47,7 @@ export class SettingTabView extends PluginSettingTab {
   settings: PluginSettings;
   locale: Locale;
 
-  constructor(
-    app: App,
-    settings: PluginSettings,
-    plugin: LifeOS,
-    locale: Locale,
-  ) {
+  constructor(app: App, settings: PluginSettings, plugin: LifeOS, locale: Locale) {
     super(app, plugin);
     this.settings = settings;
     this.plugin = plugin;
@@ -69,10 +64,7 @@ export class SettingTabView extends PluginSettingTab {
       this.settings = {
         ...this.settings,
         ...Object.entries(newSettings).reduce(
-          (
-            acc: Record<string, PluginSettings[keyof PluginSettings]>,
-            [key, value],
-          ) => {
+          (acc: Record<string, PluginSettings[keyof PluginSettings]>, [key, value]) => {
             acc[key] = typeof value === 'string' ? value.trim() : value;
             return acc;
           },

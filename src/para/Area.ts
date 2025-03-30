@@ -34,16 +34,13 @@ export class Area extends Item {
           tasks.push(async () => {
             const fileContent = await this.app.vault.cachedRead(file);
             const regMatch = fileContent.match(reg);
-            const areaContent = regMatch?.length
-              ? regMatch[2]?.split('\n')
-              : [];
-            areaContent.map(area => {
+            const areaContent = regMatch?.length ? regMatch[2]?.split('\n') : [];
+            areaContent.map((area) => {
               if (!area) {
                 return;
               }
 
-              const realArea = (area.match(/\d+\. \[\[(.*)\|?(.*)\]\]/) ||
-                [])[1]?.replace(/\|.*/, '');
+              const realArea = (area.match(/\d+\. \[\[(.*)\|?(.*)\]\]/) || [])[1]?.replace(/\|.*/, '');
               if (realArea && !areaList.includes(realArea)) {
                 areaList.push(realArea);
               }
@@ -53,16 +50,12 @@ export class Area extends Item {
       }
     }
 
-    await Promise.all(tasks.map(task => task()));
+    await Promise.all(tasks.map((task) => task()));
 
     return areaList;
   }
 
-  listByTime = async (
-    source: string,
-    el: HTMLElement,
-    ctx: MarkdownPostProcessorContext,
-  ) => {
+  listByTime = async (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
     const filename = ctx.sourcePath;
     const parsed = this.date.parse(filename);
 
@@ -76,20 +69,12 @@ export class Area extends Item {
 
       const regMatch = file?.path.match(/\/(.*)\//);
 
-      list.push(
-        `${index + 1}. [[${area}|${regMatch?.length ? regMatch[1] : ''}]]`,
-      );
+      list.push(`${index + 1}. [[${area}|${regMatch?.length ? regMatch[1] : ''}]]`);
     });
 
     const component = new Markdown(div);
 
-    MarkdownRenderer.render(
-      this.app,
-      list.join('\n'),
-      div,
-      ctx.sourcePath,
-      component,
-    );
+    MarkdownRenderer.render(this.app, list.join('\n'), div, ctx.sourcePath, component);
 
     ctx.addChild(component);
   };

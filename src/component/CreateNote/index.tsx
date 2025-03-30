@@ -51,9 +51,7 @@ const getFestivalName = (festival: LunarFestival | SolarFestival | null) => {
 export const CreateNote = (props: { width: number }) => {
   const { app, settings: initialSettings, locale } = useApp() || {};
 
-  const [settings, setSettings] = useState<PluginSettings | undefined>(
-    initialSettings,
-  );
+  const [settings, setSettings] = useState<PluginSettings | undefined>(initialSettings);
   const { width } = props;
   const [periodicActiveTab, setPeriodicActiveTab] = useState(DAILY);
   const [paraActiveTab, setParaActiveTab] = useState(PROJECT);
@@ -72,28 +70,22 @@ export const CreateNote = (props: { width: number }) => {
         top: -18,
       }}
     >
-      <Button
-        htmlType="submit"
-        type="primary"
-        shape="circle"
-        size="large"
-        icon={<PlusOutlined />}
-      ></Button>
+      <Button htmlType="submit" type="primary" shape="circle" size="large" icon={<PlusOutlined />}></Button>
     </Form.Item>
   );
   const [existsDates, setExistsDates] = useState<(string | undefined)[]>(
     app?.vault
       .getAllLoadedFiles()
       .filter(
-        file =>
+        (file) =>
           settings?.periodicNotesPath &&
           file.path.indexOf(settings?.periodicNotesPath) === 0 &&
           (file as { extension?: string }).extension === 'md',
       )
-      .map(file => (file as { basename?: string }).basename) || [],
+      .map((file) => (file as { basename?: string }).basename) || [],
   );
 
-  useDocumentEvent('settingUpdate', event => {
+  useDocumentEvent('settingUpdate', (event) => {
     setSettings(event.detail);
     setType(event.detail.usePeriodicNotes ? PERIODIC : PARA);
   });
@@ -102,24 +94,19 @@ export const CreateNote = (props: { width: number }) => {
     // 已存在的日记高亮
     const createHandler = (file: TFile) => {
       if (file instanceof TFile) {
-        setExistsDates(prevDates => [file.basename, ...prevDates]);
+        setExistsDates((prevDates) => [file.basename, ...prevDates]);
       }
     };
 
     const deleteHandler = (file: TFile) => {
       if (file instanceof TFile) {
-        setExistsDates(prevDates =>
-          prevDates.filter(date => date !== file.basename),
-        );
+        setExistsDates((prevDates) => prevDates.filter((date) => date !== file.basename));
       }
     };
 
     const renameHandler = (file: TFile, oldPath: string) => {
       if (file instanceof TFile) {
-        setExistsDates(prevDates => [
-          file.basename,
-          ...prevDates.filter(date => date !== oldPath),
-        ]);
+        setExistsDates((prevDates) => [file.basename, ...prevDates.filter((date) => date !== oldPath)]);
       }
     };
 
@@ -207,28 +194,17 @@ export const CreateNote = (props: { width: number }) => {
   }, []);
 
   dayjs.updateLocale(localeKey, {
-    weekStart:
-      settings?.weekStart === -1
-        ? locale?.locale === 'zh-cn'
-          ? 1
-          : 0
-        : settings?.weekStart,
+    weekStart: settings?.weekStart === -1 ? (locale?.locale === 'zh-cn' ? 1 : 0) : settings?.weekStart,
   });
 
-  const cellRender: (value: dayjs.Dayjs, picker: string) => JSX.Element = (
-    value,
-    picker,
-  ) => {
+  const cellRender: (value: dayjs.Dayjs, picker: string) => JSX.Element = (value, picker) => {
     let formattedDate: string;
     let badgeText: string;
     const locale = window.localStorage.getItem('language') || 'en';
     const date = dayjs(value.format()).locale(locale);
     let chineseCalendarText = '';
     let dayWorkStatus = '';
-    const onClick = (
-      day: dayjs.Dayjs,
-      event: React.MouseEvent<HTMLDivElement>,
-    ) => {
+    const onClick = (day: dayjs.Dayjs, event: React.MouseEvent<HTMLDivElement>) => {
       const newLeaf = event.ctrlKey || event.metaKey || event.altKey;
 
       createPeriodicFile(day, periodicActiveTab, settings!, app, newLeaf);
@@ -237,18 +213,9 @@ export const CreateNote = (props: { width: number }) => {
     switch (picker) {
       case 'date':
         if (settings?.useChineseCalendar) {
-          const solar = SolarDay.fromYmd(
-            date.year(),
-            date.month() + 1,
-            date.date(),
-          );
+          const solar = SolarDay.fromYmd(date.year(), date.month() + 1, date.date());
           const holiday = solar.getLegalHoliday();
-          dayWorkStatus =
-            typeof holiday?.isWork !== 'function'
-              ? ''
-              : holiday?.isWork()
-                ? '班'
-                : '休';
+          dayWorkStatus = typeof holiday?.isWork !== 'function' ? '' : holiday?.isWork() ? '班' : '休';
 
           const lunar = solar.getLunarDay();
 
@@ -256,10 +223,7 @@ export const CreateNote = (props: { width: number }) => {
             chineseCalendarText = getFestivalName(solar.getFestival());
           } else if (getFestivalName(lunar.getFestival())) {
             chineseCalendarText = getFestivalName(lunar.getFestival());
-          } else if (
-            solar.getTerm().getJulianDay().getSolarDay().toString() ===
-            solar.toString()
-          ) {
+          } else if (solar.getTerm().getJulianDay().getSolarDay().toString() === solar.toString()) {
             const solarTerm = solar.getTerm().getName();
 
             chineseCalendarText = solarTerm;
@@ -319,10 +283,7 @@ export const CreateNote = (props: { width: number }) => {
     if (existsDates.includes(formattedDate)) {
       if (picker !== 'week') {
         return (
-          <div
-            className="ant-picker-cell-inner"
-            onClick={e => onClick(value, e)}
-          >
+          <div className="ant-picker-cell-inner" onClick={(e) => onClick(value, e)}>
             <div className="cell-container">
               <span className="dot">•</span>
               {cell}
@@ -333,10 +294,7 @@ export const CreateNote = (props: { width: number }) => {
 
       if (date.day() === 1) {
         return (
-          <div
-            className="ant-picker-cell-inner"
-            onClick={e => onClick(value, e)}
-          >
+          <div className="ant-picker-cell-inner" onClick={(e) => onClick(value, e)}>
             <div className="cell-container">
               <span className="week-dot">•</span>
               <span>{badgeText}</span>
@@ -346,7 +304,7 @@ export const CreateNote = (props: { width: number }) => {
       }
     }
     return (
-      <div className="ant-picker-cell-inner" onClick={e => onClick(value, e)}>
+      <div className="ant-picker-cell-inner" onClick={(e) => onClick(value, e)}>
         <div className="cell-container">{cell}</div>
       </div>
     );
@@ -362,10 +320,7 @@ export const CreateNote = (props: { width: number }) => {
     let file = '';
     let tag = '';
     let INDEX = '';
-    const path =
-      settings[
-        `${paraActiveTab.toLocaleLowerCase()}sPath` as keyof PluginSettings
-      ]; // settings.archivesPath;
+    const path = settings[`${paraActiveTab.toLocaleLowerCase()}sPath` as keyof PluginSettings]; // settings.archivesPath;
     const key = values[`${paraActiveTab}Folder`]; // values.archiveFolder;
     tag = values[`${paraActiveTab}Tag`]; // values.archiveTag;
     INDEX = values[`${paraActiveTab}Index`]; // values.archiveIndex;
@@ -377,9 +332,8 @@ export const CreateNote = (props: { width: number }) => {
     folder = `${path}/${key}`;
     file = `${folder}/${INDEX}`;
     templateFile = settings.usePARAAdvanced
-      ? settings[
-          `${paraActiveTab.toLocaleLowerCase()}sTemplateFilePath` as PeriodicNotesTemplateFilePath
-        ] || `${path}/Template.md`
+      ? settings[`${paraActiveTab.toLocaleLowerCase()}sTemplateFilePath` as PeriodicNotesTemplateFilePath] ||
+        `${path}/Template.md`
       : `${path}/Template.md`;
 
     await createFile(app, {
@@ -393,9 +347,7 @@ export const CreateNote = (props: { width: number }) => {
   };
 
   // all tags
-  const tags = Object.entries(
-    (app?.metadataCache as any).getTags() as Record<string, number>,
-  )
+  const tags = Object.entries((app?.metadataCache as any).getTags() as Record<string, number>)
     .sort((a, b) => b[1] - a[1])
     .map(([tag, _]) => {
       return { value: tag, label: tag };
@@ -406,9 +358,7 @@ export const CreateNote = (props: { width: number }) => {
     const itemTag = form.getFieldValue(`${item}Tag`).replace(/^#/, '');
     const itemFolder = itemTag.replace(/\//g, '-');
     const itemIndex =
-      settings?.paraIndexFilename === 'readme'
-        ? `${itemTag.split('/').reverse()[0]}.README`
-        : `${itemFolder}`;
+      settings?.paraIndexFilename === 'readme' ? `${itemTag.split('/').reverse()[0]}.README` : `${itemFolder}`;
 
     form.setFieldValue(`${item}Folder`, itemFolder);
     form.setFieldValue(`${item}Index`, itemIndex ? `${itemIndex}.md` : '');
@@ -424,10 +374,7 @@ export const CreateNote = (props: { width: number }) => {
       }}
     >
       <Tooltip title={localeMap.HELP}>
-        <QuestionCircleOutlined
-          onClick={() => openOfficialSite(localeKey)}
-          style={{ position: 'fixed', right: 16 }}
-        />
+        <QuestionCircleOutlined onClick={() => openOfficialSite(localeKey)} style={{ position: 'fixed', right: 16 }} />
       </Tooltip>
       <Form
         requiredMark="optional"
@@ -452,7 +399,7 @@ export const CreateNote = (props: { width: number }) => {
           <Radio.Group
             name="type"
             value={type}
-            onChange={e => setType(e.target.value)}
+            onChange={(e) => setType(e.target.value)}
             size="small"
             style={{
               width: '100%',
@@ -467,7 +414,7 @@ export const CreateNote = (props: { width: number }) => {
           <Tabs
             key={PERIODIC}
             activeKey={periodicActiveTab}
-            onTabClick={key => {
+            onTabClick={(key) => {
               if (singleClickRef.current) {
                 clearTimeout(singleClickRef.current);
                 createPeriodicFile(dayjs(new Date()), key, settings, app);
@@ -482,11 +429,8 @@ export const CreateNote = (props: { width: number }) => {
             centered
             size="small"
             indicator={{ size: 0 }}
-            items={[DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY].map(periodic => {
-              const pickerMap: Record<
-                string,
-                'date' | 'week' | 'month' | 'quarter' | 'year'
-              > = {
+            items={[DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY].map((periodic) => {
+              const pickerMap: Record<string, 'date' | 'week' | 'month' | 'quarter' | 'year'> = {
                 [DAILY]: 'date',
                 [WEEKLY]: 'week',
                 [MONTHLY]: 'month',
@@ -498,12 +442,7 @@ export const CreateNote = (props: { width: number }) => {
 
               return {
                 label: (
-                  <Tooltip
-                    mouseEnterDelay={1}
-                    title={`${
-                      localeMap.QUICK_JUMP
-                    }${label.toLocaleLowerCase()}`}
-                  >
+                  <Tooltip mouseEnterDelay={1} title={`${localeMap.QUICK_JUMP}${label.toLocaleLowerCase()}`}>
                     {label}
                   </Tooltip>
                 ),
@@ -511,10 +450,7 @@ export const CreateNote = (props: { width: number }) => {
                 children: (
                   <Form.Item name={periodic}>
                     <DatePicker
-                      cellRender={(
-                        value: dayjs.Dayjs,
-                        info: { type: string },
-                      ) => {
+                      cellRender={(value: dayjs.Dayjs, info: { type: string }) => {
                         return cellRender(value, info.type);
                       }}
                       picker={picker}
@@ -522,9 +458,7 @@ export const CreateNote = (props: { width: number }) => {
                       style={{ width: 200 }}
                       inputReadOnly
                       open
-                      getPopupContainer={(triggerNode: any) =>
-                        triggerNode.parentNode
-                      }
+                      getPopupContainer={(triggerNode: any) => triggerNode.parentNode}
                     />
                   </Form.Item>
                 ),
@@ -542,7 +476,7 @@ export const CreateNote = (props: { width: number }) => {
               size="small"
               indicator={{ size: 0 }}
               style={{ width: '100%' }}
-              items={[PROJECT, AREA, RESOURCE, ARCHIVE].map(para => {
+              items={[PROJECT, AREA, RESOURCE, ARCHIVE].map((para) => {
                 const label = localeMap[para];
 
                 return {
@@ -570,10 +504,7 @@ export const CreateNote = (props: { width: number }) => {
                             },
                           ]}
                         >
-                          <AutoComplete
-                            options={tags}
-                            onSelect={() => handleTagInput(para)}
-                          >
+                          <AutoComplete options={tags} onSelect={() => handleTagInput(para)}>
                             <Input
                               onChange={() => handleTagInput(para)}
                               allowClear
@@ -594,11 +525,7 @@ export const CreateNote = (props: { width: number }) => {
                             },
                           ]}
                         >
-                          <Input
-                            type="text"
-                            allowClear
-                            placeholder="PKM-LifeOS"
-                          />
+                          <Input type="text" allowClear placeholder="PKM-LifeOS" />
                         </Form.Item>
                         <Form.Item
                           label={localeMap[INDEX]}

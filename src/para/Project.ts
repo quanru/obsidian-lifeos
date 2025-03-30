@@ -68,9 +68,10 @@ export class Project extends Item {
     // eslint-disable-next-line no-constant-condition
     while (true) {
       const momentDay = moment(day);
-      const link = `${momentDay.year()}/Daily/${String(
-        momentDay.month() + 1,
-      ).padStart(2, '0')}/${momentDay.format('YYYY-MM-DD')}.md`;
+      const link = `${momentDay.year()}/Daily/${String(momentDay.month() + 1).padStart(
+        2,
+        '0',
+      )}/${momentDay.format('YYYY-MM-DD')}.md`;
       const file = this.file.get(link, '', this.settings.periodicNotesPath);
 
       if (file instanceof TFile) {
@@ -79,11 +80,9 @@ export class Project extends Item {
         tasks.push(async () => {
           const fileContent = await this.app.vault.cachedRead(file);
           const regMatch = fileContent.match(reg);
-          const projectContent = regMatch?.length
-            ? regMatch[2]?.split('\n')
-            : [];
+          const projectContent = regMatch?.length ? regMatch[2]?.split('\n') : [];
 
-          projectContent.map(project => {
+          projectContent.map((project) => {
             if (!project) {
               return;
             }
@@ -94,8 +93,7 @@ export class Project extends Item {
             }
             // 1. [[WOT.README|分享-2023 WOT 分享会]] 4hr20
             // 1. [[1. Projects/分享-2023 WOT 分享会/README|分享-2023 WOT 分享会]]  4hr20
-            const realProject = (project.match(/\d+\. \[\[(.*)\|?(.*)\]\]/) ||
-              [])[1]?.replace(/\|.*/, '');
+            const realProject = (project.match(/\d+\. \[\[(.*)\|?(.*)\]\]/) || [])[1]?.replace(/\|.*/, '');
 
             if (!realProject) {
               return;
@@ -109,10 +107,7 @@ export class Project extends Item {
 
             const [projectTime = ''] = project.match(timeReg) || [];
 
-            projectTimeConsume[projectFile] = this.timeAdd(
-              projectTimeConsume[projectFile],
-              projectTime,
-            );
+            projectTimeConsume[projectFile] = this.timeAdd(projectTimeConsume[projectFile], projectTime);
 
             if (!projectList.includes(projectFile)) {
               projectList.push(projectFile);
@@ -130,13 +125,10 @@ export class Project extends Item {
       day = momentDay.add(1, 'day').format('YYYY-MM-DD');
     }
 
-    await Promise.all(tasks.map(task => task()));
-    Object.keys(projectTimeConsume).map(project => {
+    await Promise.all(tasks.map((task) => task()));
+    Object.keys(projectTimeConsume).map((project) => {
       projectTimeConsume[project] = projectTimeConsume[project]
-        ? `${projectTimeConsume[project]}/${totalTime}=${this.timePercent(
-            projectTimeConsume[project],
-            totalTime,
-          )}`
+        ? `${projectTimeConsume[project]}/${totalTime}=${this.timePercent(projectTimeConsume[project], totalTime)}`
         : '';
     });
 
@@ -147,24 +139,12 @@ export class Project extends Item {
     };
   }
 
-  listByTime = async (
-    source: string,
-    el: HTMLElement,
-    ctx: MarkdownPostProcessorContext,
-  ) => {
-    const date = new PeriodicDate(
-      this.app,
-      this.settings,
-      this.file,
-      this.locale,
-    );
+  listByTime = async (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
+    const date = new PeriodicDate(this.app, this.settings, this.file, this.locale);
     const parsed = date.days(date.parse(ctx.sourcePath));
 
     const header = this.settings.projectListHeader;
-    const { projectList, projectTimeConsume } = await this.filter(
-      parsed,
-      header,
-    );
+    const { projectList, projectTimeConsume } = await this.filter(parsed, header);
 
     const div = el.createEl('div');
     const list: string[] = [];
@@ -174,22 +154,12 @@ export class Project extends Item {
       // 1. Projects/分享-2023 WOT 分享会/README
       const regMatch = project.match(/\/(.*)\//);
 
-      list.push(
-        `${index + 1}. [[${project}|${regMatch?.length ? regMatch[1] : ''}]] ${
-          projectTimeConsume[project]
-        }`,
-      );
+      list.push(`${index + 1}. [[${project}|${regMatch?.length ? regMatch[1] : ''}]] ${projectTimeConsume[project]}`);
     });
 
     const component = new Markdown(div);
 
-    MarkdownRenderer.render(
-      this.app,
-      list.join('\n'),
-      div,
-      ctx.sourcePath,
-      component,
-    );
+    MarkdownRenderer.render(this.app, list.join('\n'), div, ctx.sourcePath, component);
 
     ctx.addChild(component);
   };

@@ -26,15 +26,10 @@ import type {
 import { LogLevel, type PluginSettings } from './type';
 
 export function sleep(milliseconds: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, milliseconds));
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
-export function renderError(
-  app: App,
-  msg: string,
-  containerEl: HTMLElement,
-  sourcePath: string,
-) {
+export function renderError(app: App, msg: string, containerEl: HTMLElement, sourcePath: string) {
   const component = new Component();
 
   return MarkdownRenderer.render(app, msg, containerEl, sourcePath, component);
@@ -60,9 +55,7 @@ export async function createFile(
   const finalFile = file.match(/\.md$/) ? file : `${file}.md`;
 
   if (!templateTFile) {
-    return new Notice(
-      getI18n(locale)[`${ERROR_MESSAGE}NO_TEMPLATE_EXIST`] + templateFile,
-    );
+    return new Notice(getI18n(locale)[`${ERROR_MESSAGE}NO_TEMPLATE_EXIST`] + templateFile);
   }
 
   if (templateTFile instanceof TFile) {
@@ -84,7 +77,7 @@ export async function createFile(
 
     const fileCreated = await app.vault.create(finalFile, templateContent);
 
-    await app.fileManager.processFrontMatter(fileCreated, frontMatter => {
+    await app.fileManager.processFrontMatter(fileCreated, (frontMatter) => {
       if (!tag) {
         return;
       }
@@ -138,12 +131,9 @@ export function formatDailyRecord(record: DailyRecordType) {
         .trimEnd()}`
     : '';
   const targetResourceLine = resourceList?.length // 资源文件
-    ? `\n${resourceList
-        ?.map((resource: ResourceType) => `\t- ${generateFileLink(resource)}`)
-        .join('\n')}`
+    ? `\n${resourceList?.map((resource: ResourceType) => `\t- ${generateFileLink(resource)}`).join('\n')}`
     : '';
-  const finalTargetContent =
-    targetFirstLine + targetOtherLine + targetResourceLine;
+  const finalTargetContent = targetFirstLine + targetOtherLine + targetResourceLine;
 
   return [date, timeStamp, finalTargetContent].map(String);
 }
@@ -167,15 +157,11 @@ export function generateFileLink(resource: ResourceType): string {
 
   const prefix = resource.type?.includes('image') ? '!' : ''; // only add ! for image type
 
-  return `${prefix}[${resource.name || resource.filename}](${
-    resource.externalLink
-  })`;
+  return `${prefix}[${resource.name || resource.filename}](${resource.externalLink})`;
 }
 
 export function generateFileName(resource: ResourceType): string {
-  return `${
-    resource.id || resource.name?.split('/')[1]
-  }-${resource.filename.replace(/[/\\?%*:|"<>]/g, '-')}`;
+  return `${resource.id || resource.name?.split('/')[1]}-${resource.filename.replace(/[/\\?%*:|"<>]/g, '-')}`;
 }
 
 export function logMessage(message: string, level: LogLevel = LogLevel.info) {
@@ -192,9 +178,7 @@ export function logMessage(message: string, level: LogLevel = LogLevel.info) {
 }
 
 export function generateHeaderRegExp(header: string) {
-  const formattedHeader = /^#+/.test(header.trim())
-    ? header.trim()
-    : `# ${header.trim()}`;
+  const formattedHeader = /^#+/.test(header.trim()) ? header.trim() : `# ${header.trim()}`;
   const reg = new RegExp(`(${formattedHeader}[^\n]*)([\\s\\S]*?)(?=\\n##|$)`);
 
   return reg;
@@ -222,14 +206,10 @@ export async function createPeriodicFile(
   let value;
 
   if (periodType === DAILY) {
-    folder = `${settings.periodicNotesPath}/${year}/${periodType}/${String(
-      date.month() + 1,
-    ).padStart(2, '0')}`;
+    folder = `${settings.periodicNotesPath}/${year}/${periodType}/${String(date.month() + 1).padStart(2, '0')}`;
     value = date.format('YYYY-MM-DD');
   } else if (periodType === WEEKLY) {
-    folder = `${settings.periodicNotesPath}/${date.format(
-      'gggg',
-    )}/${periodType}`;
+    folder = `${settings.periodicNotesPath}/${date.format('gggg')}/${periodType}`;
     value = date.format('gggg-[W]ww');
   } else if (periodType === MONTHLY) {
     folder = `${settings.periodicNotesPath}/${year}/${periodType}`;
@@ -244,9 +224,8 @@ export async function createPeriodicFile(
 
   file = `${folder}/${value}.md`;
   templateFile = settings.usePeriodicAdvanced
-    ? settings[
-        `periodicNotesTemplateFilePath${periodType}` as PeriodicNotesTemplateFilePath
-      ] || `${settings.periodicNotesPath}/Templates/${periodType}.md`
+    ? settings[`periodicNotesTemplateFilePath${periodType}` as PeriodicNotesTemplateFilePath] ||
+      `${settings.periodicNotesPath}/Templates/${periodType}.md`
     : `${settings.periodicNotesPath}/Templates/${periodType}.md`;
   await createFile(app, {
     locale,
@@ -283,8 +262,8 @@ export function generateIgnoreOperator(settings: PluginSettings) {
     periodicNotesTemplateFilePathWeekly,
     periodicNotesTemplateFilePathDaily,
   ]
-    .filter(path => path)
-    .map(path => `AND -"${path}"`)
+    .filter((path) => path)
+    .map((path) => `AND -"${path}"`)
     .join(' ');
 }
 
@@ -315,31 +294,19 @@ export function getAllTemplateFiles(settings: PluginSettings) {
     periodicNotesTemplateFilePathMonthly,
     periodicNotesTemplateFilePathWeekly,
     periodicNotesTemplateFilePathDaily,
-  ].filter(path => path);
+  ].filter((path) => path);
 }
 
 export function isInTemplateNote(path: string, settings: PluginSettings) {
-  return getAllTemplateFiles(settings).some(template =>
-    path.includes(template),
-  );
+  return getAllTemplateFiles(settings).some((template) => path.includes(template));
 }
 
 export function isInPeriodicNote(path: string, settings: PluginSettings) {
   return (
-    path?.match(
-      new RegExp(`${settings.periodicNotesPath}/${FULL_YEARLY_REG.source}`),
-    ) ||
-    path?.match(
-      new RegExp(`${settings.periodicNotesPath}/${FULL_QUARTERLY_REG.source}`),
-    ) ||
-    path?.match(
-      new RegExp(`${settings.periodicNotesPath}/${FULL_MONTHLY_REG.source}`),
-    ) ||
-    path?.match(
-      new RegExp(`${settings.periodicNotesPath}/${FULL_WEEKLY_REG.source}`),
-    ) ||
-    path?.match(
-      new RegExp(`${settings.periodicNotesPath}/${FULL_DAILY_REG.source}`),
-    )
+    path?.match(new RegExp(`${settings.periodicNotesPath}/${FULL_YEARLY_REG.source}`)) ||
+    path?.match(new RegExp(`${settings.periodicNotesPath}/${FULL_QUARTERLY_REG.source}`)) ||
+    path?.match(new RegExp(`${settings.periodicNotesPath}/${FULL_MONTHLY_REG.source}`)) ||
+    path?.match(new RegExp(`${settings.periodicNotesPath}/${FULL_WEEKLY_REG.source}`)) ||
+    path?.match(new RegExp(`${settings.periodicNotesPath}/${FULL_DAILY_REG.source}`))
   );
 }

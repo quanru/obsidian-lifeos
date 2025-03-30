@@ -1,16 +1,6 @@
 import { Divider, Form, Input, Select, Switch, Tabs, Typography } from 'antd';
 import React, { useState, useEffect } from 'react';
-import {
-  ARCHIVE,
-  AREA,
-  DAILY,
-  MONTHLY,
-  PROJECT,
-  QUARTERLY,
-  RESOURCE,
-  WEEKLY,
-  YEARLY,
-} from '../../constant';
+import { ARCHIVE, AREA, DAILY, MONTHLY, PROJECT, QUARTERLY, RESOURCE, WEEKLY, YEARLY } from '../../constant';
 import { useApp } from '../../hooks/useApp';
 import type { PluginSettings } from '../../type';
 import { DEFAULT_SETTINGS } from '../../view/SettingTab';
@@ -20,10 +10,7 @@ import { getI18n } from '../../i18n';
 import { AutoComplete } from '../AutoComplete';
 import { TopBanner } from '../TopBanner';
 
-export const SettingTab = (props: {
-  settings: PluginSettings;
-  saveSettings: (settings: PluginSettings) => void;
-}) => {
+export const SettingTab = (props: { settings: PluginSettings; saveSettings: (settings: PluginSettings) => void }) => {
   const { app, locale } = useApp() || {};
   const { settings: initialSettings, saveSettings } = props;
   const [settings, setSetting] = useState(initialSettings);
@@ -31,8 +18,8 @@ export const SettingTab = (props: {
   const folders =
     app?.vault
       .getAllLoadedFiles()
-      .filter(file => !(file as { extension?: string }).extension)
-      .map(file => {
+      .filter((file) => !(file as { extension?: string }).extension)
+      .map((file) => {
         return {
           label: file.path,
           value: file.path,
@@ -41,8 +28,8 @@ export const SettingTab = (props: {
   const files =
     app?.vault
       .getAllLoadedFiles()
-      .filter(file => (file as { extension?: string }).extension === 'md')
-      .map(file => {
+      .filter((file) => (file as { extension?: string }).extension === 'md')
+      .map((file) => {
         return {
           label: file.path,
           value: file.path,
@@ -64,7 +51,7 @@ export const SettingTab = (props: {
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
         initialValues={settings}
-        onValuesChange={changedValues => {
+        onValuesChange={(changedValues) => {
           setSetting({ ...settings, ...changedValues });
           saveSettings(changedValues);
         }}
@@ -78,23 +65,15 @@ export const SettingTab = (props: {
               label: localeMap.SETTING_PERIODIC_NOTES,
               children: (
                 <>
-                  <Form.Item
-                    name="usePeriodicNotes"
-                    label={localeMap.SETTING_TURN_ON}
-                  >
+                  <Form.Item name="usePeriodicNotes" label={localeMap.SETTING_TURN_ON}>
                     <Switch />
                   </Form.Item>
 
                   {settings.usePeriodicNotes && (
                     <>
-                      <Form.Item
-                        name="periodicNotesPath"
-                        label={localeMap.SETTING_PERIODIC_NOTES_FOLDER}
-                      >
+                      <Form.Item name="periodicNotesPath" label={localeMap.SETTING_PERIODIC_NOTES_FOLDER}>
                         <AutoComplete options={folders}>
-                          <Input
-                            placeholder={DEFAULT_SETTINGS.periodicNotesPath}
-                          />
+                          <Input placeholder={DEFAULT_SETTINGS.periodicNotesPath} />
                         </AutoComplete>
                       </Form.Item>
                       <Form.Item
@@ -111,18 +90,14 @@ export const SettingTab = (props: {
                             name="projectListHeader"
                             label={localeMap.SETTING_PROJECT_LIST_HEADER}
                           >
-                            <Input
-                              placeholder={DEFAULT_SETTINGS.projectListHeader}
-                            />
+                            <Input placeholder={DEFAULT_SETTINGS.projectListHeader} />
                           </Form.Item>
                           <Form.Item
                             help={localeMap.SETTING_AREA_LIST_HEADER_HELP}
                             name="areaListHeader"
                             label={localeMap.SETTING_AREA_LIST_HEADER}
                           >
-                            <Input
-                              placeholder={DEFAULT_SETTINGS.areaListHeader}
-                            />
+                            <Input placeholder={DEFAULT_SETTINGS.areaListHeader} />
                           </Form.Item>
                         </>
                       )}
@@ -187,32 +162,26 @@ export const SettingTab = (props: {
                         <Switch />
                       </Form.Item>
                       {settings.usePeriodicAdvanced &&
-                        [DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY].map(
-                          item => {
-                            return (
-                              <Form.Item
-                                key={item}
-                                name={`periodicNotesTemplateFilePath${item}`}
-                                label={`${localeMap[item]}${localeMap.SETTING_TEMPLATE}`}
-                              >
-                                <AutoComplete options={files}>
-                                  <Input
-                                    placeholder={`${settings.periodicNotesPath}/Templates/${item}.md`}
-                                  />
-                                </AutoComplete>
-                              </Form.Item>
-                            );
-                          },
-                        )}
+                        [DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY].map((item) => {
+                          return (
+                            <Form.Item
+                              key={item}
+                              name={`periodicNotesTemplateFilePath${item}`}
+                              label={`${localeMap[item]}${localeMap.SETTING_TEMPLATE}`}
+                            >
+                              <AutoComplete options={files}>
+                                <Input placeholder={`${settings.periodicNotesPath}/Templates/${item}.md`} />
+                              </AutoComplete>
+                            </Form.Item>
+                          );
+                        })}
                       <Divider />
 
                       <Form.Item
                         help={
                           <>
                             {localeMap.SETTING_DAILY_RECORD_HELP}
-                            <Typography.Link href="https://usememos.com">
-                              {' usememos '}
-                            </Typography.Link>
+                            <Typography.Link href="https://usememos.com">{' usememos '}</Typography.Link>
                           </>
                         }
                         name="useDailyRecord"
@@ -227,21 +196,14 @@ export const SettingTab = (props: {
                             name="dailyRecordHeader"
                             label={localeMap.SETTING_DAILY_RECORD_HEADER}
                           >
-                            <Input
-                              placeholder={DEFAULT_SETTINGS.dailyRecordHeader}
-                            />
+                            <Input placeholder={DEFAULT_SETTINGS.dailyRecordHeader} />
                           </Form.Item>
                           <Form.Item
                             help={localeMap.SETTING_DAILY_RECORD_API_HELP}
                             name="dailyRecordAPI"
                             label={localeMap.SETTING_DAILY_RECORD_API}
                           >
-                            <Input
-                              placeholder={
-                                DEFAULT_SETTINGS.dailyRecordAPI ||
-                                'https://your-use-memos.com'
-                              }
-                            />
+                            <Input placeholder={DEFAULT_SETTINGS.dailyRecordAPI || 'https://your-use-memos.com'} />
                           </Form.Item>
                           <Form.Item
                             help={
@@ -283,43 +245,28 @@ export const SettingTab = (props: {
               label: localeMap.SETTING_PARA_NOTES,
               children: (
                 <>
-                  <Form.Item
-                    name="usePARANotes"
-                    label={localeMap.SETTING_TURN_ON}
-                  >
+                  <Form.Item name="usePARANotes" label={localeMap.SETTING_TURN_ON}>
                     <Switch />
                   </Form.Item>
 
                   {settings.usePARANotes && (
                     <>
-                      <Form.Item
-                        name="projectsPath"
-                        label={localeMap.SETTING_PROJECTS_FOLDER}
-                      >
+                      <Form.Item name="projectsPath" label={localeMap.SETTING_PROJECTS_FOLDER}>
                         <AutoComplete options={folders}>
                           <Input />
                         </AutoComplete>
                       </Form.Item>
-                      <Form.Item
-                        name="areasPath"
-                        label={localeMap.SETTING_AREAS_FOLDER}
-                      >
+                      <Form.Item name="areasPath" label={localeMap.SETTING_AREAS_FOLDER}>
                         <AutoComplete options={folders}>
                           <Input />
                         </AutoComplete>
                       </Form.Item>
-                      <Form.Item
-                        name="resourcesPath"
-                        label={localeMap.SETTING_RESOURCES_FOLDER}
-                      >
+                      <Form.Item name="resourcesPath" label={localeMap.SETTING_RESOURCES_FOLDER}>
                         <AutoComplete options={folders}>
                           <Input />
                         </AutoComplete>
                       </Form.Item>
-                      <Form.Item
-                        name="archivesPath"
-                        label={localeMap.SETTING_ARCHIVES_FOLDER}
-                      >
+                      <Form.Item name="archivesPath" label={localeMap.SETTING_ARCHIVES_FOLDER}>
                         <AutoComplete options={folders}>
                           <Input />
                         </AutoComplete>
@@ -333,20 +280,15 @@ export const SettingTab = (props: {
                       </Form.Item>
                       {settings.usePARAAdvanced && (
                         <>
-                          <Form.Item
-                            name="paraIndexFilename"
-                            label={localeMap.SETTING_INDEX_FILENAME}
-                          >
+                          <Form.Item name="paraIndexFilename" label={localeMap.SETTING_INDEX_FILENAME}>
                             <Select
                               options={[
                                 {
-                                  label:
-                                    localeMap.SETTING_INDEX_FILENAME_FOLDER,
+                                  label: localeMap.SETTING_INDEX_FILENAME_FOLDER,
                                   value: 'folderName',
                                 },
                                 {
-                                  label:
-                                    localeMap.SETTING_INDEX_FILENAME_README,
+                                  label: localeMap.SETTING_INDEX_FILENAME_README,
                                   value: 'readme',
                                 },
                               ]}

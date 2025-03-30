@@ -20,12 +20,7 @@ export class Task {
   settings: PluginSettings;
   locale: string;
   file: File;
-  constructor(
-    app: App,
-    settings: PluginSettings,
-    dataview: DataviewApi,
-    locale: string,
-  ) {
+  constructor(app: App, settings: PluginSettings, dataview: DataviewApi, locale: string) {
     this.app = app;
     this.settings = settings;
     this.dataview = dataview;
@@ -34,11 +29,7 @@ export class Task {
     this.date = new PeriodicDate(this.app, this.settings, this.file, locale);
   }
 
-  doneListByTime = (
-    source: string,
-    el: HTMLElement,
-    ctx: MarkdownPostProcessorContext,
-  ) => {
+  doneListByTime = (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
     const filename = ctx.sourcePath;
     const parsed = this.date.parse(filename);
     const condition = this.date.days(parsed);
@@ -65,11 +56,7 @@ export class Task {
     ctx.addChild(component);
   };
 
-  recordListByTime = (
-    source: string,
-    el: HTMLElement,
-    ctx: MarkdownPostProcessorContext,
-  ) => {
+  recordListByTime = (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
     const filename = ctx.sourcePath;
     const parsed = this.date.parse(filename);
     const condition = this.date.days(parsed);
@@ -94,9 +81,7 @@ export class Task {
     const pages = Object.values(files).flat();
 
     if (pages.length) {
-      const nonDailyTasks = this.dataview
-        .pages(`"${pages.join('" or "')}"`)
-        .file.tasks.where((task: STask) => task);
+      const nonDailyTasks = this.dataview.pages(`"${pages.join('" or "')}"`).file.tasks.where((task: STask) => task);
 
       tasks = [...dailyTasks, ...nonDailyTasks];
     }
@@ -109,23 +94,14 @@ export class Task {
     ctx.addChild(component);
   };
 
-  listByTag = async (
-    source: string,
-    el: HTMLElement,
-    ctx: MarkdownPostProcessorContext,
-  ) => {
+  listByTag = async (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
     const filepath = ctx.sourcePath;
     const tags = this.file.tags(filepath);
     const div = el.createEl('div');
     const component = new Markdown(div);
 
     if (!tags.length) {
-      return renderError(
-        this.app,
-        getI18n(this.locale)[`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`],
-        div,
-        filepath,
-      );
+      return renderError(this.app, getI18n(this.locale)[`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`], div, filepath);
     }
 
     const from = tags
@@ -136,9 +112,7 @@ export class Task {
       .trim();
     const where = tags
       .map((tag: string, index: number) => {
-        return `contains(lower(tags), "#${tag.toLowerCase()}") ${
-          index === tags.length - 1 ? '' : 'OR'
-        }`;
+        return `contains(lower(tags), "#${tag.toLowerCase()}") ${index === tags.length - 1 ? '' : 'OR'}`;
       })
       .join(' ');
 
@@ -166,10 +140,7 @@ SORT status ASC
 
     if (!from && !to) return false;
 
-    if (
-      task?.section?.type === 'header' &&
-      task?.section?.subpath?.trim() === this.settings.habitHeader.trim()
-    ) {
+    if (task?.section?.type === 'header' && task?.section?.subpath?.trim() === this.settings.habitHeader.trim()) {
       return false;
     }
 
@@ -198,12 +169,9 @@ SORT status ASC
     const isToFullfil = to ? targetDate.isSameOrBefore(moment(to)) : true;
 
     const isFullfil =
-      task.children
-        .map((subtask: STask) => this.filter(subtask, condition))
-        .includes(true) ||
+      task.children.map((subtask: STask) => this.filter(subtask, condition)).includes(true) ||
       (task.text.length > 1 &&
-        ((date === TaskStatusType.DONE && task.completed) ||
-          date === TaskStatusType.RECORD) &&
+        ((date === TaskStatusType.DONE && task.completed) || date === TaskStatusType.RECORD) &&
         isFromFullfil &&
         isToFullfil);
 

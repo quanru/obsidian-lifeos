@@ -1,23 +1,11 @@
 import { Platform, Plugin, setIcon } from 'obsidian';
-import type {
-  App,
-  MarkdownPostProcessorContext,
-  PluginManifest,
-  WorkspaceLeaf,
-} from 'obsidian';
+import type { App, MarkdownPostProcessorContext, PluginManifest, WorkspaceLeaf } from 'obsidian';
 import { type DataviewApi, getAPI, isPluginEnabled } from 'obsidian-dataview';
 
 import enUS from 'antd/locale/en_US';
 import zhCN from 'antd/locale/zh_CN';
 import dayjs from 'dayjs';
-import {
-  DAILY,
-  ERROR_MESSAGE,
-  MONTHLY,
-  QUARTERLY,
-  WEEKLY,
-  YEARLY,
-} from './constant';
+import { DAILY, ERROR_MESSAGE, MONTHLY, QUARTERLY, WEEKLY, YEARLY } from './constant';
 import { Archive } from './para/Archive';
 import { Area } from './para/Area';
 import { Project } from './para/Project';
@@ -28,12 +16,7 @@ import { Date as PeriodicDate } from './periodic/Date';
 import { File } from './periodic/File';
 import { Task } from './periodic/Task';
 import { LogLevel, type PluginSettings } from './type';
-import {
-  createPeriodicFile,
-  logMessage,
-  openOfficialSite,
-  renderError,
-} from './util';
+import { createPeriodicFile, logMessage, openOfficialSite, renderError } from './util';
 import { CREATE_NOTE, CreateNoteView } from './view/CreateNote';
 import { SettingTabView } from './view/SettingTab';
 import { DEFAULT_SETTINGS } from './view/SettingTab';
@@ -63,15 +46,7 @@ export default class LifeOS extends Plugin {
   bullet: Bullet;
   date: PeriodicDate;
   dataview: DataviewApi;
-  views: Record<
-    string,
-    (
-      source: string,
-      el: HTMLElement,
-      ctx: MarkdownPostProcessorContext,
-      folder?: string,
-    ) => void
-  >;
+  views: Record<string, (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext, folder?: string) => void>;
   dailyRecord: DailyRecord;
   timeout: NodeJS.Timeout;
   interval: NodeJS.Timer;
@@ -79,20 +54,14 @@ export default class LifeOS extends Plugin {
   constructor(app: App, manifest: PluginManifest) {
     super(app, manifest);
     if (!isPluginEnabled(app)) {
-      logMessage(
-        getI18n(locale)[`${ERROR_MESSAGE}NO_DATAVIEW_INSTALL`],
-        LogLevel.error,
-      );
+      logMessage(getI18n(locale)[`${ERROR_MESSAGE}NO_DATAVIEW_INSTALL`], LogLevel.error);
       return;
     }
 
     const dataviewApi = getAPI(app);
 
     if (!dataviewApi) {
-      logMessage(
-        getI18n(locale)[`${ERROR_MESSAGE}FAILED_DATAVIEW_API`],
-        LogLevel.error,
-      );
+      logMessage(getI18n(locale)[`${ERROR_MESSAGE}FAILED_DATAVIEW_API`], LogLevel.error);
       return;
     }
 
@@ -102,16 +71,12 @@ export default class LifeOS extends Plugin {
 
   async onload() {
     await this.loadSettings();
-    this.registerView(CREATE_NOTE, leaf => {
+    this.registerView(CREATE_NOTE, (leaf) => {
       return new CreateNoteView(leaf, this.settings, localeMap[locale]);
     });
 
     const i18n = getI18n(locale);
-    const item = this.addRibbonIcon(
-      'file-plus',
-      i18n.COMMAND_CREATE_NOTES,
-      this.initCreateNoteView,
-    );
+    const item = this.addRibbonIcon('file-plus', i18n.COMMAND_CREATE_NOTES, this.initCreateNoteView);
     setIcon(item, 'file-plus');
 
     this.addCommand({
@@ -119,7 +84,7 @@ export default class LifeOS extends Plugin {
       name: i18n.COMMAND_CREATE_NOTES,
       callback: this.initCreateNoteView,
     });
-    [DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY].map(periodType => {
+    [DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY].map((periodType) => {
       this.addCommand({
         id: `periodic-para-create-${periodType.toLocaleLowerCase()}-note`,
         name: i18n[`COMMAND_CREATE_${periodType.toUpperCase()}_NOTE`],
@@ -137,15 +102,9 @@ export default class LifeOS extends Plugin {
     this.loadDailyRecord();
     this.loadGlobalHelpers();
     this.loadViews();
-    this.addSettingTab(
-      new SettingTabView(this.app, this.settings, this, localeMap[locale]),
-    );
+    this.addSettingTab(new SettingTabView(this.app, this.settings, this, localeMap[locale]));
 
-    const handler = (
-      source: keyof typeof this.views,
-      el: HTMLElement,
-      ctx: MarkdownPostProcessorContext,
-    ) => {
+    const handler = (source: keyof typeof this.views, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
       const view = source.trim() as keyof typeof this.views;
       const legacyView = `${view}ByTime` as keyof typeof this.views;
 
@@ -158,10 +117,7 @@ export default class LifeOS extends Plugin {
         );
       }
 
-      if (
-        !Object.keys(this.views).includes(view) &&
-        !Object.keys(this.views).includes(legacyView)
-      ) {
+      if (!Object.keys(this.views).includes(view) && !Object.keys(this.views).includes(legacyView)) {
         return renderError(
           this.app,
           `${getI18n(locale)[`${ERROR_MESSAGE}NO_VIEW_EXISTED`]}: ${view}`,
@@ -179,12 +135,7 @@ export default class LifeOS extends Plugin {
   }
   loadDailyRecord() {
     if (this.settings.usePeriodicNotes && this.settings.useDailyRecord) {
-      this.dailyRecord = new DailyRecord(
-        this.app,
-        this.settings,
-        this.file,
-        locale,
-      );
+      this.dailyRecord = new DailyRecord(this.app, this.settings, this.file, locale);
       this.addCommand({
         id: 'periodic-para-sync-daily-record',
         name: getI18n(locale).COMMAND_SYNC_DAILY_RECORDS,
@@ -196,10 +147,8 @@ export default class LifeOS extends Plugin {
         callback: this.dailyRecord.forceSync,
       });
 
-      const DailyRecordItem = this.addRibbonIcon(
-        'refresh-ccw-dot',
-        getI18n(locale).SYNC_DAILY_RECORDS,
-        () => this.dailyRecord.sync(),
+      const DailyRecordItem = this.addRibbonIcon('refresh-ccw-dot', getI18n(locale).SYNC_DAILY_RECORDS, () =>
+        this.dailyRecord.sync(),
       );
       setIcon(DailyRecordItem, 'refresh-ccw-dot');
 
@@ -209,10 +158,7 @@ export default class LifeOS extends Plugin {
       // sync on start
       this.timeout = setTimeout(() => this.dailyRecord.sync(), 15 * 1000);
       // sync every 0.5 hour
-      this.interval = setInterval(
-        () => this.dailyRecord.sync(),
-        0.5 * 60 * 60 * 1000,
-      );
+      this.interval = setInterval(() => this.dailyRecord.sync(), 0.5 * 60 * 60 * 1000);
     }
   }
   loadViews() {
@@ -262,34 +208,10 @@ export default class LifeOS extends Plugin {
     this.date = new PeriodicDate(this.app, this.settings, this.file, locale);
     this.bullet = new Bullet(this.app, this.settings, this.dataview, locale);
 
-    this.project = new Project(
-      this.settings.projectsPath,
-      this.app,
-      this.settings,
-      this.file,
-      locale,
-    );
-    this.area = new Area(
-      this.settings.areasPath,
-      this.app,
-      this.settings,
-      this.file,
-      locale,
-    );
-    this.resource = new Resource(
-      this.settings.resourcesPath,
-      this.app,
-      this.settings,
-      this.file,
-      locale,
-    );
-    this.archive = new Archive(
-      this.settings.archivesPath,
-      this.app,
-      this.settings,
-      this.file,
-      locale,
-    );
+    this.project = new Project(this.settings.projectsPath, this.app, this.settings, this.file, locale);
+    this.area = new Area(this.settings.areasPath, this.app, this.settings, this.file, locale);
+    this.resource = new Resource(this.settings.resourcesPath, this.app, this.settings, this.file, locale);
+    this.archive = new Archive(this.settings.archivesPath, this.app, this.settings, this.file, locale);
   }
 
   loadGlobalHelpers() {
