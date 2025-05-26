@@ -167,4 +167,30 @@ export class Date {
       quarters: parsed.year && !parsed.month && !parsed.quarter && !parsed.week ? Array.from(quarters) : [],
     };
   }
+
+  lastDay(
+    parsed: DateType = {
+      year: null,
+      month: null,
+      quarter: null,
+      week: null,
+      day: null,
+    },
+  ) {
+    const { year, quarter, month, week } = parsed;
+
+    return {
+      year: year ? moment().year(year).endOf('year').format('YYYY-MM-DD') : '',
+      quarter: quarter && year ? moment().year(year).quarter(quarter).endOf('quarter').format('YYYY-MM-DD') : '',
+      month:
+        month && year
+          ? moment()
+              .year(year)
+              .month(month - 1)
+              .endOf('month')
+              .format('YYYY-MM-DD')
+          : '',
+      week: week && year ? moment().year(year).week(week).endOf('week').format('YYYY-MM-DD') : '',
+    };
+  }
 }
