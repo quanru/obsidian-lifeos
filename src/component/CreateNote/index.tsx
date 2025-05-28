@@ -27,7 +27,7 @@ import {
   YEARLY_REG,
 } from '../../constant';
 import type { PeriodicNotesTemplateFilePath, PluginSettings } from '../../type';
-import { createFile, createPeriodicFile, openOfficialSite } from '../../util';
+import { createFile, createPeriodicFile, getFirstDay, openOfficialSite } from '../../util';
 import './index.less';
 import { useApp } from '../../hooks/useApp';
 import { getI18n } from '../../i18n';
@@ -194,7 +194,7 @@ export const CreateNote = (props: { width: number }) => {
   }, []);
 
   dayjs.updateLocale(localeKey, {
-    weekStart: settings?.weekStart === -1 ? (locale?.locale === 'zh-cn' ? 1 : 0) : settings?.weekStart,
+    weekStart: getFirstDay(settings?.weekStart, locale?.locale),
   });
 
   const cellRender: (value: dayjs.Dayjs, picker: string) => JSX.Element = (value, picker) => {

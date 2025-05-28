@@ -2,6 +2,7 @@ import { moment } from 'obsidian';
 import type { App } from 'obsidian';
 import { DAILY_REG, MONTHLY_REG, QUARTERLY_REG, WEEKLY_REG, YEARLY_REG } from '../constant';
 import type { DateRangeType, DateType, PluginSettings } from '../type';
+import { getFirstDay } from '../util';
 import type { File } from './File';
 
 // biome-ignore lint/suspicious/noShadowRestrictedNames: <explanation>
@@ -59,8 +60,9 @@ export class Date {
     }
 
     if (week) {
-      const from = baseDate?.week(week).startOf('week')?.format('YYYY-MM-DD') || null;
-      const to = baseDate?.week(week).endOf('week')?.format('YYYY-MM-DD') || null;
+      const weekStart = getFirstDay(this.settings.weekStart, this.locale);
+      const from = baseDate?.week(week).startOf('week').day(weekStart)?.format('YYYY-MM-DD') || null;
+      const to = baseDate?.week(week).startOf('week').day(weekStart).add(6, 'days')?.format('YYYY-MM-DD') || null;
 
       return {
         from,

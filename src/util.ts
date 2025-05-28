@@ -16,13 +16,7 @@ import {
   YEARLY,
 } from './constant';
 import { getI18n } from './i18n';
-import type {
-  DailyRecordType,
-  DailyRecordTypeV2,
-  IndexType,
-  PeriodicNotesTemplateFilePath,
-  ResourceType,
-} from './type';
+import type { DailyRecordType, DailyRecordTypeV2, PeriodicNotesTemplateFilePath, ResourceType } from './type';
 import { LogLevel, type PluginSettings } from './type';
 
 export function sleep(milliseconds: number): Promise<void> {
@@ -310,3 +304,7 @@ export function isInPeriodicNote(path: string, settings: PluginSettings) {
     path?.match(new RegExp(`${settings.periodicNotesPath}/${FULL_DAILY_REG.source}`))
   );
 }
+
+export const getFirstDay = (weekStart = -1, locale: string | undefined) => {
+  return weekStart === -1 ? (locale === 'zh-cn' ? 1 : 0) : weekStart;
+};
