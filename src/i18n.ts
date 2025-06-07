@@ -55,8 +55,6 @@ const EN = {
   [`${ERROR_MESSAGE}FAILED_GET_USEMEMOS_VERSION`]: 'Failed to fetch usememos workspace profile',
   [`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`]: 'Please add the tags field for properties !',
   [`${ERROR_MESSAGE}NO_DATAVIEW_INSTALL`]: 'You need to install dataview first!',
-  [`${ERROR_MESSAGE}FAILED_DATAVIEW_API`]:
-    'Dataview API enable failed! Please disable the LifeOS plugin and enable it again!',
   [`${ERROR_MESSAGE}NO_VIEW_PROVIDED`]: 'Please provide the name of the view you want to query!',
   [`${ERROR_MESSAGE}NO_VIEW_EXISTED`]: 'There is no this view in LifeOS plugin',
   [`${ERROR_MESSAGE}NO_INDEX_FILE_EXIST`]:
@@ -180,7 +178,6 @@ const ZH = {
   [`${ERROR_MESSAGE}FAILED_GET_USEMEMOS_VERSION`]: '获取 usememos workspace profile 失败',
   [`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`]: '请为 Properties 加 tags 字段！',
   [`${ERROR_MESSAGE}NO_DATAVIEW_INSTALL`]: '请先安装 dataview！',
-  [`${ERROR_MESSAGE}FAILED_DATAVIEW_API`]: 'Dataview API 开启失败！请关闭 LifeOS 插件后重新打开！',
   [`${ERROR_MESSAGE}NO_VIEW_PROVIDED`]: '请提供所需要查询的视图名！',
   [`${ERROR_MESSAGE}NO_VIEW_EXISTED`]: 'LifeOS 插件中不存在此视图',
   [`${ERROR_MESSAGE}NO_INDEX_FILE_EXIST`]: '索引文件不存在（README.md/xxx.README.md/所在目录同名文件）',

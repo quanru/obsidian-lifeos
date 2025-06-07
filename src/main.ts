@@ -53,20 +53,19 @@ export default class LifeOS extends Plugin {
 
   constructor(app: App, manifest: PluginManifest) {
     super(app, manifest);
+    this.registerEvent(
+      this.app.metadataCache.on('dataview:index-ready' as 'changed', () => {
+        this.dataview = getAPI(this.app);
+      }),
+    );
+
     if (!isPluginEnabled(app)) {
       logMessage(getI18n(locale)[`${ERROR_MESSAGE}NO_DATAVIEW_INSTALL`], LogLevel.error);
       return;
     }
 
-    const dataviewApi = getAPI(app);
-
-    if (!dataviewApi) {
-      logMessage(getI18n(locale)[`${ERROR_MESSAGE}FAILED_DATAVIEW_API`], LogLevel.error);
-      return;
-    }
-
     this.app = app;
-    this.dataview = dataviewApi;
+    this.dataview = getAPI(app);
   }
 
   async onload() {

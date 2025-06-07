@@ -32,7 +32,7 @@
     "prettier": "^3.5.3",
     "simple-git-hooks": "^2.12.1",
     "obsidian": "latest",
-    "obsidian-dataview": "0.5.67",
+    "obsidian-dataview": "0.5.68",
     "tslib": "2.4.0",
     "typescript": "5.3.3"
   },
