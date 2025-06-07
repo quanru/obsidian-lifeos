@@ -2,22 +2,22 @@ import { type App, type MarkdownPostProcessorContext, TFile, TFolder } from 'obs
 import type { IndexType, PluginSettings } from '../type';
 
 import dayjs from 'dayjs';
-import type { DataviewApi } from 'obsidian-dataview';
 import { Markdown } from '../component/Markdown';
 import { ERROR_MESSAGE } from '../constant';
 import { getI18n } from '../i18n';
+import type LifeOS from '../main';
 import { isInPeriodicNote, isInTemplateNote, logMessage, renderError } from '../util';
 
 export class File {
   app: App;
   date: Date;
   settings: PluginSettings;
-  dataview: DataviewApi;
+  plugin: LifeOS;
   locale: string;
-  constructor(app: App, settings: PluginSettings, dataview: DataviewApi, locale: string) {
+  constructor(app: App, settings: PluginSettings, plugin: LifeOS, locale: string) {
     this.app = app;
     this.settings = settings;
-    this.dataview = dataview;
+    this.plugin = plugin;
     this.locale = locale;
   }
 
@@ -159,9 +159,10 @@ export class File {
       .join(' ')
       .trim();
 
-    this.dataview.table(
+    const dataview = await this.plugin.getDataviewAPI();
+    dataview.table(
       ['File', 'Date'],
-      this.dataview
+      dataview
         .pages(from)
         .filter(
           (b: { file: TFile }) =>

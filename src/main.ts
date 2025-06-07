@@ -65,7 +65,25 @@ export default class LifeOS extends Plugin {
     }
 
     this.app = app;
-    this.dataview = getAPI(app);
+    this.dataview = this.dataview ?? getAPI(app);
+  }
+
+  getDataviewAPI(): Promise<DataviewApi> {
+    return new Promise((resolve) => {
+      if (this.dataview) {
+        resolve(this.dataview);
+        return;
+      }
+
+      const eventRef = this.app.metadataCache.on('dataview:index-ready' as 'changed', () => {
+        this.app.metadataCache.offref(eventRef);
+        resolve(getAPI(this.app));
+      });
+
+      setTimeout(() => {
+        resolve(getAPI(app));
+      }, 15 * 1000);
+    });
   }
 
   async onload() {
@@ -202,10 +220,10 @@ export default class LifeOS extends Plugin {
   }
 
   loadHelpers() {
-    this.task = new Task(this.app, this.settings, this.dataview, locale);
-    this.file = new File(this.app, this.settings, this.dataview, locale);
+    this.task = new Task(this.app, this.settings, this, locale);
+    this.file = new File(this.app, this.settings, this, locale);
     this.date = new PeriodicDate(this.app, this.settings, this.file, locale);
-    this.bullet = new Bullet(this.app, this.settings, this.dataview, locale);
+    this.bullet = new Bullet(this.app, this.settings, this, locale);
 
     this.project = new Project(this.settings.projectsPath, this.app, this.settings, this.file, locale);
     this.area = new Area(this.settings.areasPath, this.app, this.settings, this.file, locale);

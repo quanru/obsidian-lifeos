@@ -1,4 +1,4 @@
-import type { App, MarkdownPostProcessorContext } from 'obsidian';
+import type { App, MarkdownPostProcessorContext, Plugin } from 'obsidian';
 import type { TaskResult } from 'obsidian-dataview/lib/api/plugin-api';
 import type { PluginSettings, TaskConditionType } from '../type';
 
@@ -9,6 +9,7 @@ import { TaskStatusType } from '../type';
 
 import { Markdown } from '../component/Markdown';
 import { getI18n } from '../i18n';
+import type LifeOS from '../main';
 import { Date as PeriodicDate } from '../periodic/Date';
 import { File } from '../periodic/File';
 import { generateIgnoreOperator, renderError } from '../util';
@@ -16,20 +17,20 @@ import { generateIgnoreOperator, renderError } from '../util';
 export class Task {
   app: App;
   date: PeriodicDate;
-  dataview: DataviewApi;
+  plugin: LifeOS;
   settings: PluginSettings;
   locale: string;
   file: File;
-  constructor(app: App, settings: PluginSettings, dataview: DataviewApi, locale: string) {
+  constructor(app: App, settings: PluginSettings, plugin: LifeOS, locale: string) {
     this.app = app;
     this.settings = settings;
-    this.dataview = dataview;
+    this.plugin = plugin;
     this.locale = locale;
-    this.file = new File(this.app, this.settings, this.dataview, locale);
+    this.file = new File(this.app, this.settings, this.plugin, locale);
     this.date = new PeriodicDate(this.app, this.settings, this.file, locale);
   }
 
-  doneListByTime = (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
+  doneListByTime = async (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
     const filename = ctx.sourcePath;
     const parsed = this.date.parse(filename);
     const condition = this.date.days(parsed);
@@ -38,7 +39,8 @@ export class Task {
       return;
     }
 
-    const tasks = this.dataview
+    const dataview = await this.plugin.getDataviewAPI();
+    const tasks = dataview
       .pages('')
       .file.tasks.where((t: STask) =>
         this.filter(t, {
@@ -51,12 +53,12 @@ export class Task {
     const div = el.createEl('div');
     const component = new Markdown(div);
 
-    this.dataview.taskList(tasks, false, div, component);
+    dataview.taskList(tasks, false, div, component);
 
     ctx.addChild(component);
   };
 
-  recordListByTime = (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
+  recordListByTime = async (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
     const filename = ctx.sourcePath;
     const parsed = this.date.parse(filename);
     const condition = this.date.days(parsed);
@@ -65,9 +67,10 @@ export class Task {
       return;
     }
 
+    const dataview = await this.plugin.getDataviewAPI();
     let tasks = [];
     // 收集日期范围内的日记文件
-    const dailyTasks = this.dataview.pages('').file.tasks.where((t: STask) =>
+    const dailyTasks = dataview.pages('').file.tasks.where((t: STask) =>
       this.filter(t, {
         status: TaskStatusType.RECORD,
         ...condition,
@@ -81,7 +84,7 @@ export class Task {
     const pages = Object.values(files).flat();
 
     if (pages.length) {
-      const nonDailyTasks = this.dataview.pages(`"${pages.join('" or "')}"`).file.tasks.where((task: STask) => task);
+      const nonDailyTasks = dataview.pages(`"${pages.join('" or "')}"`).file.tasks.where((task: STask) => task);
 
       tasks = [...dailyTasks, ...nonDailyTasks];
     }
@@ -89,7 +92,7 @@ export class Task {
     const div = el.createEl('div');
     const component = new Markdown(div);
 
-    this.dataview.taskList(tasks, false, div, component);
+    dataview.taskList(tasks, false, div, component);
 
     ctx.addChild(component);
   };
@@ -116,14 +119,15 @@ export class Task {
       })
       .join(' ');
 
-    const { values: tasks } = (await this.dataview.tryQuery(`
+    const dataview = await this.plugin.getDataviewAPI();
+    const { values: tasks } = (await dataview.tryQuery(`
 TASK
 FROM (${from}) ${generateIgnoreOperator(this.settings)}
 WHERE ${where} AND file.path != "${filepath}"
 SORT status ASC
     `)) as TaskResult;
 
-    this.dataview.taskList(tasks, false, div, component);
+    dataview.taskList(tasks, false, div, component);
 
     ctx.addChild(component);
   };
