@@ -81,7 +81,7 @@ export default class LifeOS extends Plugin {
       });
 
       setTimeout(() => {
-        resolve(getAPI(app));
+        resolve(getAPI(this.app));
       }, 15 * 1000);
     });
   }
