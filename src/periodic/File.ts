@@ -167,7 +167,7 @@ export class File {
         .filter(
           (b: { file: TFile }) =>
             !isInPeriodicNote(b.file.path, this.settings) &&
-            !isInTemplateNote(filepath, this.settings) &&
+            !isInTemplateNote(b.file.path, this.settings) &&
             b.file.path !== filepath,
         )
         .sort((b: { file: { ctime: { ts: number } } }) => b.file.ctime.ts, 'desc')
