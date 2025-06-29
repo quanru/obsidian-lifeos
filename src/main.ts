@@ -116,39 +116,18 @@ export default class LifeOS extends Plugin {
       callback: () => openOfficialSite(locale),
     });
     this.loadHelpers();
-    this.loadDailyRecord();
     this.loadGlobalHelpers();
     this.loadViews();
+
+    try {
+      this.registerMarkdownCodeBlockProcessor('LifeOS', this.markdownCodeBlockProcessor);
+      this.registerMarkdownCodeBlockProcessor('PeriodicPARA', this.markdownCodeBlockProcessor); // for backward compatibility
+    } catch (error) {
+      logMessage(error, LogLevel.error);
+      return;
+    }
+    this.loadDailyRecord();
     this.addSettingTab(new SettingTabView(this.app, this.settings, this, localeMap[locale]));
-
-    const handler = (source: keyof typeof this.views, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
-      const view = source.trim() as keyof typeof this.views;
-      const legacyView = `${view}ByTime` as keyof typeof this.views;
-
-      if (!view) {
-        return renderError(
-          this.app,
-          getI18n(locale)[`${ERROR_MESSAGE}NO_VIEW_PROVIDED`],
-          el.createEl('div'),
-          ctx.sourcePath,
-        );
-      }
-
-      if (!Object.keys(this.views).includes(view) && !Object.keys(this.views).includes(legacyView)) {
-        return renderError(
-          this.app,
-          `${getI18n(locale)[`${ERROR_MESSAGE}NO_VIEW_EXISTED`]}: ${view}`,
-          el.createEl('div'),
-          ctx.sourcePath,
-        );
-      }
-
-      const callback = this.views[view] || this.views[legacyView];
-
-      return callback(view, el, ctx);
-    };
-    this.registerMarkdownCodeBlockProcessor('LifeOS', handler);
-    this.registerMarkdownCodeBlockProcessor('PeriodicPARA', handler); // for backward compatibility
   }
   loadDailyRecord() {
     if (this.settings.usePeriodicNotes && this.settings.useDailyRecord) {
@@ -205,6 +184,37 @@ export default class LifeOS extends Plugin {
     clearTimeout(this.timeout);
     clearInterval(this.interval);
   }
+
+  markdownCodeBlockProcessor = (
+    source: keyof typeof this.views,
+    el: HTMLElement,
+    ctx: MarkdownPostProcessorContext,
+  ) => {
+    const view = source.trim() as keyof typeof this.views;
+    const legacyView = `${view}ByTime` as keyof typeof this.views;
+
+    if (!view) {
+      return renderError(
+        this.app,
+        getI18n(locale)[`${ERROR_MESSAGE}NO_VIEW_PROVIDED`],
+        el.createEl('div'),
+        ctx.sourcePath,
+      );
+    }
+
+    if (!Object.keys(this.views).includes(view) && !Object.keys(this.views).includes(legacyView)) {
+      return renderError(
+        this.app,
+        `${getI18n(locale)[`${ERROR_MESSAGE}NO_VIEW_EXISTED`]}: ${view}`,
+        el.createEl('div'),
+        ctx.sourcePath,
+      );
+    }
+
+    const callback = this.views[view] || this.views[legacyView];
+
+    return callback(view, el, ctx);
+  };
 
   async loadSettings() {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
