@@ -11,7 +11,6 @@ interface TopBannerProps {
 
 export const TopBanner: React.FC<TopBannerProps> = ({ locale }) => {
   const i18n = getI18n(locale);
-
   const iconLinks = [
     {
       icon: <GithubOutlined />,
@@ -38,13 +37,24 @@ export const TopBanner: React.FC<TopBannerProps> = ({ locale }) => {
   return (
     <ConfigProvider>
       <div className="m-top-banner">
-        <div className="pro-link">
-          <a href={i18n.TOPBANNER_LIFEOS_PRO_HREF} target="_blank" rel="noopener noreferrer">
-            <Space align="center">
-              <DollarOutlined />
-              <span>{i18n.TOPBANNER_LIFEOS_PRO}</span>
-            </Space>
-          </a>
+        <div className="banner-content">
+          <div className="pro-link">
+            <a href={i18n.TOPBANNER_LIFEOS_PRO_HREF} target="_blank" rel="noopener noreferrer">
+              <Space align="center">
+                <DollarOutlined />
+                <span>{i18n.TOPBANNER_LIFEOS_PRO}</span>
+              </Space>
+            </a>
+          </div>
+          <div className="deepask-ad">
+            <a href={i18n.TOP_BANNER_DEEPASK_HREF} target="_blank" rel="noopener noreferrer">
+              <Space align="center">
+                🔥
+                <span>{i18n.TOP_BANNER_DEEPASK_AD}</span>
+                🤖
+              </Space>
+            </a>
+          </div>
         </div>
         <div className="icon-links">
           <Space align="center" size="large">

@@ -139,6 +139,8 @@ const EN = {
   TOPBANNER_SOCIAL_HREF: 'https://x.com/quan_ru',
   TOPBANNER_LIFEOS_PRO: 'LifeOS Pro',
   TOPBANNER_LIFEOS_PRO_HREF: 'https://lifeos.vip/plugin/life-os-pro.html',
+  TOP_BANNER_DEEPASK_AD: 'Inject AI Intelligence into LifeOS',
+  TOP_BANNER_DEEPASK_HREF: 'https://lifeos.vip/plugin/deepask/deepask.html',
 };
 
 const ZH = {
@@ -261,6 +263,8 @@ const ZH = {
   TOPBANNER_SOCIAL_HREF: 'https://www.xiaohongshu.com/user/profile/5b06db60f7e8b974ec6ff7fc',
   TOPBANNER_LIFEOS_PRO: 'LifeOS Pro',
   TOPBANNER_LIFEOS_PRO_HREF: 'https://lifeos.vip/zh/plugin/life-os-pro.html',
+  TOP_BANNER_DEEPASK_AD: '为 LifeOS 注入 AI 智能',
+  TOP_BANNER_DEEPASK_HREF: 'https://lifeos.vip/zh/plugin/deepask/deepask.html',
 };
 
 const I18N_MAP: Record<string, Record<string, string>> = {

@@ -1,9 +1,16 @@
 .m-top-banner {
+  .banner-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 5px 0;
+  }
+
   .pro-link {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 5px 0;
 
     a {
       display: flex;
@@ -13,11 +20,33 @@
     }
   }
 
+  .deepask-ad {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    a {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      height: 40px;
+
+      border-radius: 4px;
+      padding: 0 12px;
+      transition: all 0.3s;
+    }
+  }
+
   .icon-links {
+    overflow: scroll;
     display: flex;
     justify-content: space-around;
     align-items: center;
     padding: 5px 0;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
 
     a {
       display: flex;
