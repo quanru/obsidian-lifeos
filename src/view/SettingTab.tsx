@@ -30,6 +30,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   dailyRecordHeader: 'Daily Record',
   dailyRecordAPI: '',
   dailyRecordToken: '',
+  dailyRecordTag: '#daily-record',
   dailyRecordWarning: true,
   dailyRecordCreating: false,
   useDailyRecord: false,

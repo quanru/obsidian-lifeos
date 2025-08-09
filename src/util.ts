@@ -94,7 +94,7 @@ export function isBulletList(content: string) {
   return /^([-*\u2022]|\d+\.) .*/.test(content);
 }
 
-export function formatDailyRecord(record: DailyRecordType) {
+export function formatDailyRecord(record: DailyRecordType, dailyRecordTag?: string) {
   const { createdTs, createdAt, content, resourceList } = record;
   const timeStamp = createdAt ? moment(createdAt).unix() : createdTs;
   const [date, time] = moment(timeStamp * 1000)
@@ -115,7 +115,15 @@ export function formatDailyRecord(record: DailyRecordType) {
     targetFirstLine = `- ${time} ${firstLine.replace(/^- /, '').trim()}`;
   }
 
-  targetFirstLine += `${firstLine ? ' ' : ''}#daily-record ^${timeStamp}`;
+  // Add custom tag if provided and not empty
+  const tag = dailyRecordTag?.trim();
+  if (tag) {
+    // Ensure tag starts with # if it doesn't already
+    const formattedTag = tag.startsWith('#') ? tag : `#${tag}`;
+    targetFirstLine += `${firstLine ? ' ' : ''}${formattedTag} ^${timeStamp}`;
+  } else {
+    targetFirstLine += ` ^${timeStamp}`;
+  }
 
   const targetOtherLine = otherLine?.length //剩余行
     ? `\n${otherLine

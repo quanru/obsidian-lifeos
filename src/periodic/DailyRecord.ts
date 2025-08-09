@@ -283,7 +283,7 @@ export class DailyRecord {
         continue;
       }
 
-      const [date, timeStamp, formattedRecord] = formatDailyRecord(record);
+      const [date, timeStamp, formattedRecord] = formatDailyRecord(record, this.settings.dailyRecordTag);
 
       if (dailyRecordByDay[date]) {
         dailyRecordByDay[date][timeStamp] = formattedRecord;

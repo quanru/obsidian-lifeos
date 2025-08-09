@@ -220,6 +220,13 @@ export const SettingTab = (props: { settings: PluginSettings; saveSettings: (set
                             <Input.TextArea autoSize={{ minRows: 2 }} />
                           </Form.Item>
                           <Form.Item
+                            help={localeMap.SETTING_DAILY_RECORD_TAG_HELP}
+                            name="dailyRecordTag"
+                            label={localeMap.SETTING_DAILY_RECORD_TAG}
+                          >
+                            <Input placeholder={DEFAULT_SETTINGS.dailyRecordTag} />
+                          </Form.Item>
+                          <Form.Item
                             help={localeMap.SETTING_DAILY_RECORD_CREATING_HELP}
                             name="dailyRecordCreating"
                             label={localeMap.SETTING_DAILY_RECORD_CREATING}
