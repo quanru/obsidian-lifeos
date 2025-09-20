@@ -53,6 +53,10 @@ const EN = {
   [`${MESSAGE}END_SYNC_USEMEMOS`]: 'End sync usememos',
 
   [`${ERROR_MESSAGE}FAILED_GET_USEMEMOS_VERSION`]: 'Failed to fetch usememos workspace profile',
+  [`${ERROR_MESSAGE}AUTH_ENDPOINTS_FAILED`]:
+    'All auth endpoints failed, will continue sync with limited filtering capability',
+  [`${ERROR_MESSAGE}VERSION_DETECTION_FAILED`]: 'Version detection failed, will use default settings',
+  [`${ERROR_MESSAGE}USER_INFO_FAILED`]: 'Failed to get user info, will use generic filtering',
   [`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`]: 'Please add the tags field for properties !',
   [`${ERROR_MESSAGE}NO_DATAVIEW_INSTALL`]: 'You need to install dataview first!',
   [`${ERROR_MESSAGE}NO_VIEW_PROVIDED`]: 'Please provide the name of the view you want to query!',
@@ -180,6 +184,9 @@ const ZH = {
   [`${MESSAGE}END_SYNC_USEMEMOS`]: '结束同步 usememos',
 
   [`${ERROR_MESSAGE}FAILED_GET_USEMEMOS_VERSION`]: '获取 usememos workspace profile 失败',
+  [`${ERROR_MESSAGE}AUTH_ENDPOINTS_FAILED`]: '认证端点都失败了，将继续同步但过滤能力有限',
+  [`${ERROR_MESSAGE}VERSION_DETECTION_FAILED`]: '版本检测失败，将使用默认设置',
+  [`${ERROR_MESSAGE}USER_INFO_FAILED`]: '用户信息获取失败，将使用通用过滤',
   [`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`]: '请为 Properties 加 tags 字段！',
   [`${ERROR_MESSAGE}NO_DATAVIEW_INSTALL`]: '请先安装 dataview！',
   [`${ERROR_MESSAGE}NO_VIEW_PROVIDED`]: '请提供所需要查询的视图名！',

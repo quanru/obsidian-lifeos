@@ -5,6 +5,7 @@ import { DAILY, ERROR_MESSAGE, MESSAGE } from '../constant';
 import { getI18n } from '../i18n';
 import { customRequest } from '../request';
 import {
+  type AttachmentType,
   type DailyRecordResponseTypeV2,
   type DailyRecordType,
   type FetchError,
@@ -21,6 +22,7 @@ import {
   generateFileName,
   generateHeaderRegExp,
   logMessage,
+  sleep,
   transformV2Record,
 } from '../util';
 import type { File } from './File';
@@ -73,14 +75,33 @@ export class DailyRecord {
   }
 
   async getMemosUserName() {
-    const { json: data } = await customRequest<UserType>({
-      url: `${this.baseURL}/api/v1/auth/status`,
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${this.settings.dailyRecordToken}`,
-      },
-    });
-    this.memosUserName = data.name || '';
+    const endpoints = [
+      { url: '/api/v1/auth/sessions/current', method: 'GET' }, // v0.25.0+
+      { url: '/api/v1/auth/status', method: 'POST' }, // Legacy
+    ];
+
+    for (const endpoint of endpoints) {
+      try {
+        const { json: data } = await customRequest<{ user?: UserType } | UserType>({
+          url: `${this.baseURL}${endpoint.url}`,
+          method: endpoint.method as 'GET' | 'POST',
+          headers: {
+            Authorization: `Bearer ${this.settings.dailyRecordToken}`,
+          },
+        });
+
+        // Handle different response formats
+        const user = data && typeof data === 'object' && 'user' in data ? data.user : (data as UserType);
+        this.memosUserName = user?.name || '';
+        return;
+      } catch (error) {
+        logMessage(`Failed to get user from ${endpoint.url}: ${error.message}`, LogLevel.warn);
+      }
+    }
+
+    // If both auth endpoints fail, continue without username
+    // This will affect filtering but won't break the sync process
+    logMessage(getI18n(this.locale)[`${ERROR_MESSAGE}AUTH_ENDPOINTS_FAILED`], LogLevel.info);
   }
 
   async getMemosVersion() {
@@ -95,15 +116,21 @@ export class DailyRecord {
           },
         });
         this.memosProfile = data.workspaceProfile || data;
-        this.memosVersion = semver.lt(this.memosProfile.version, '0.22.0') ? 'v1' : 'v2';
+        if (semver.lt(this.memosProfile.version, '0.22.0')) {
+          this.memosVersion = 'v1';
+        } else if (semver.lt(this.memosProfile.version, '0.25.0')) {
+          this.memosVersion = 'v2';
+        } else {
+          this.memosVersion = 'v2.5';
+        }
         return; // 成功获取版本后退出方法
       } catch (error) {
-        console.warn(`Failed to fetch from ${url}:`, error.message || '');
+        logMessage(`Failed to fetch from ${url}: ${error.message}`, LogLevel.warn);
       }
     }
 
     if (!this.memosVersion) {
-      logMessage(`${getI18n(this.locale)[`${ERROR_MESSAGE}FAILED_GET_USEMEMOS_VERSION`]}`, LogLevel.error);
+      logMessage(`${getI18n(this.locale)[`${ERROR_MESSAGE}FAILED_GET_USEMEMOS_VERSION`]}`, LogLevel.warn);
     }
   }
 
@@ -133,14 +160,22 @@ export class DailyRecord {
 
       if (semver.gte(this.memosProfile.version, '0.24.0')) {
         filterParams = {
-          parent: this.memosUserName,
+          parent: this.memosUserName || undefined, // Will fetch all users' memos if username is unavailable
           state: 'NORMAL',
         };
       } else if (semver.gte(this.memosProfile.version, '0.23.0')) {
-        filterParams = {
-          view: 'MEMO_VIEW_FULL',
-          filter: `creator == '${this.memosUserName}' && visibilities == ['PRIVATE', 'PUBLIC', 'PROTECTED']`,
-        };
+        if (this.memosUserName) {
+          filterParams = {
+            view: 'MEMO_VIEW_FULL',
+            filter: `creator == '${this.memosUserName}' && visibilities == ['PRIVATE', 'PUBLIC', 'PROTECTED']`,
+          };
+        } else {
+          // Fallback to basic filtering without user-specific filtering
+          filterParams = {
+            view: 'MEMO_VIEW_FULL',
+            filter: `visibilities == ['PRIVATE', 'PUBLIC', 'PROTECTED']`,
+          };
+        }
       } else {
         filterParams = {
           filter: 'row_status=="NORMAL"',
@@ -167,7 +202,7 @@ export class DailyRecord {
 
       return data.memos?.map(transformV2Record);
     } catch (error) {
-      logMessage(`${getI18n(this.locale)[`${ERROR_MESSAGE}DAILY_RECORD_FETCH_FAILED`]}: ${error}`, LogLevel.error);
+      logMessage(`${getI18n(this.locale)[`${ERROR_MESSAGE}DAILY_RECORD_FETCH_FAILED`]}: ${error}`, LogLevel.warn);
     }
   }
 
@@ -188,6 +223,45 @@ export class DailyRecord {
         throw new Error(data.message || data.msg || data.error || JSON.stringify(data));
       }
 
+      // Try new attachments API for v0.25.0+
+      if (this.memosVersion === 'v2.5') {
+        try {
+          const { json: data } = await customRequest<{
+            attachments: AttachmentType[];
+          }>({
+            url: `${this.baseURL}/api/v1/attachments`,
+            headers: {
+              Authorization: `Bearer ${this.settings.dailyRecordToken}`,
+            },
+          });
+
+          // Convert attachments to resource format for compatibility
+          return data?.attachments?.map((attachment) => {
+            // Extract the actual resource ID from "attachments/xxx" format
+            const resourceId = attachment.name.replace(/^attachments\//, '');
+            const resource = {
+              id: resourceId,
+              name: resourceId, // Use just the ID part to avoid duplicate "attachments/" in path
+              filename: attachment.filename,
+              externalLink: attachment.external_link || attachment.externalLink,
+              type: attachment.type,
+              size: attachment.size,
+              uid: resourceId, // for v1 compatibility
+              // Store original name for download URL
+              originalName: attachment.name,
+            };
+            return resource;
+          });
+        } catch (attachmentError) {
+          // Fall back to resources API if attachments API fails
+          logMessage(
+            `Attachments API failed, falling back to resources API: ${attachmentError.message}`,
+            LogLevel.warn,
+          );
+        }
+      }
+
+      // Use legacy resources API for v2 or as fallback
       const { json: data } = await customRequest<ResourceTypeV2>({
         url: `${this.baseURL}/api/v1/resources`,
         headers: {
@@ -201,10 +275,10 @@ export class DailyRecord {
 
       return data?.resources;
     } catch (error) {
-      if (error.response.status === 404) {
+      if (error.response?.status === 404) {
         return;
       }
-      logMessage(`${getI18n(this.locale)[`${ERROR_MESSAGE}RESOURCE_FETCH_FAILED`]}: ${error}`, LogLevel.error);
+      logMessage(`${getI18n(this.locale)[`${ERROR_MESSAGE}RESOURCE_FETCH_FAILED`]}: ${error}`, LogLevel.warn);
     }
   }
 
@@ -217,7 +291,23 @@ export class DailyRecord {
     logMessage(getI18n(this.locale)[`${MESSAGE}START_SYNC_USEMEMOS`]);
     this.pageOffset = 0;
     this.pageToken = '';
-    await Promise.all([this.getMemosVersion(), this.getMemosUserName()]);
+
+    // Execute version and user name detection with error handling
+    try {
+      await this.getMemosVersion();
+    } catch (error) {
+      logMessage(
+        `${getI18n(this.locale)[`${ERROR_MESSAGE}VERSION_DETECTION_FAILED`]}: ${error.message}`,
+        LogLevel.warn,
+      );
+    }
+
+    try {
+      await this.getMemosUserName();
+    } catch (error) {
+      logMessage(`${getI18n(this.locale)[`${ERROR_MESSAGE}USER_INFO_FAILED`]}: ${error.message}`, LogLevel.warn);
+    }
+
     await Promise.all([this.insertDailyRecord(), this.downloadResource()]);
   };
 
@@ -239,12 +329,20 @@ export class DailyRecord {
           return;
         }
 
+        let downloadUrl;
+        if (this.memosVersion === 'v1') {
+          downloadUrl = `/o/r/${resource.uid || resource.name || resource.id}`;
+        } else if (this.memosVersion === 'v2.5') {
+          // New attachments API endpoint - use original name with "attachments/" prefix
+          const attachmentName = (resource as any).originalName || resource.name;
+          downloadUrl = `/file/${attachmentName}/${resource.filename}`;
+        } else {
+          // Legacy v2 resources API
+          downloadUrl = `/file/${resource.name}/${resource.filename}`;
+        }
+
         const { arrayBuffer: data } = await customRequest({
-          url: `${this.baseURL}${
-            this.memosVersion === 'v1'
-              ? `/o/r/${resource.uid || resource.name || resource.id}`
-              : `/file/${resource.name}/${resource.filename}`
-          }`,
+          url: `${this.baseURL}${downloadUrl}`,
           headers: {
             Authorization: `Bearer ${this.settings.dailyRecordToken}`,
           },
@@ -283,7 +381,7 @@ export class DailyRecord {
         continue;
       }
 
-      const [date, timeStamp, formattedRecord] = formatDailyRecord(record, this.settings.dailyRecordTag);
+      const [date, timeStamp, formattedRecord] = await formatDailyRecord(record, this.settings.dailyRecordTag);
 
       if (dailyRecordByDay[date]) {
         dailyRecordByDay[date][timeStamp] = formattedRecord;
@@ -314,7 +412,7 @@ export class DailyRecord {
             await sleep(1000); // 等待 templater 创建完成
             targetFile = this.file.get(link, '', this.settings.periodicNotesPath);
           } else if (this.settings.dailyRecordWarning) {
-            logMessage(`${getI18n(this.locale)[`${ERROR_MESSAGE}NO_DAILY_FILE_EXIST`]} ${today}`, LogLevel.error);
+            logMessage(`${getI18n(this.locale)[`${ERROR_MESSAGE}NO_DAILY_FILE_EXIST`]} ${today}`, LogLevel.warn);
           }
         }
         const reg = generateHeaderRegExp(header);

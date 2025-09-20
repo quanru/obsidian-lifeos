@@ -141,6 +141,20 @@ export function formatDailyRecord(record: DailyRecordType, dailyRecordTag?: stri
 }
 
 export function transformV2Record(record: DailyRecordTypeV2) {
+  // Handle both resources (legacy) and attachments (v0.25.0+)
+  const resourceList =
+    record.resources ||
+    (record.attachments
+      ? record.attachments.map((attachment) => ({
+          id: attachment.name,
+          name: attachment.name,
+          filename: attachment.filename,
+          externalLink: attachment.external_link || attachment.externalLink,
+          type: attachment.type,
+          uid: attachment.name,
+        }))
+      : undefined);
+
   return {
     updatedTs: new Date(record.updateTime).getTime() / 1000,
     createdTs: new Date(record.createTime).getTime() / 1000,
@@ -148,7 +162,7 @@ export function transformV2Record(record: DailyRecordTypeV2) {
     updatedAt: new Date(record.updateTime).toISOString(),
     content: record.content,
     rowStatus: record.rowStatus,
-    resourceList: record.resources,
+    resourceList,
   };
 }
 
@@ -163,7 +177,27 @@ export function generateFileLink(resource: ResourceType): string {
 }
 
 export function generateFileName(resource: ResourceType): string {
-  return `${resource.id || resource.name?.split('/')[1]}-${resource.filename.replace(/[/\\?%*:|"<>]/g, '-')}`;
+  let resourceId = resource.id;
+
+  // If no ID, fall back to name processing
+  if (!resourceId) {
+    const name = resource.name;
+    if (name?.includes('/')) {
+      // For compatibility: check if it's the new "attachments/xxx" format
+      if (name.startsWith('attachments/')) {
+        // New v2.5 format: "attachments/xxx" -> take "xxx"
+        resourceId = name.replace('attachments/', '');
+      } else {
+        // Original v1/v2 logic: "xxx/yyy" -> take "yyy" (index [1])
+        resourceId = name.split('/')[1] || name.split('/').pop() || name;
+      }
+    } else {
+      resourceId = name || '';
+    }
+  }
+
+  const fileName = `${resourceId}-${resource.filename.replace(/[/\\?%*:|"<>]/g, '-')}`;
+  return fileName;
 }
 
 export function logMessage(message: string, level: LogLevel = LogLevel.info) {

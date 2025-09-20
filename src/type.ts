@@ -76,6 +76,7 @@ export type ResourceType = {
   uid?: string;
   id: string;
   filename: string;
+  originalName?: string; // For storing original attachment name with path prefix
 };
 
 export type ResourceTypeV2 = {
@@ -83,6 +84,16 @@ export type ResourceTypeV2 = {
   message?: string;
   nextPageToken: string;
   resources: ResourceType[];
+};
+
+export type AttachmentType = {
+  name: string;
+  filename: string;
+  external_link?: string;
+  externalLink?: string;
+  type: string;
+  size: number;
+  memo?: string;
 };
 
 export type DailyRecordType = {
@@ -101,6 +112,7 @@ export type DailyRecordTypeV2 = {
   updateTime: number;
   createTime: number;
   resources?: ResourceType[];
+  attachments?: AttachmentType[];
 };
 
 export type DailyRecordResponseTypeV2 = {
