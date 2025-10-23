@@ -14,6 +14,8 @@
 - It is recommended to download the [LifeOS-example](https://github.com/quanru/obsidian-example-LifeOS/tree/main) to experience it.
 - For more tutorials, please go to [LifeOS for Obsidian Official Site](https://lifeos.vip/)
 
+![](https://obsidian-life-os.pages.dev/plugin/periodic-para-plugin-en.png)
+
 ## Features
 
 - LifeOS Basic: https://lifeos.vip/plugin/lifeos/life-os.html
