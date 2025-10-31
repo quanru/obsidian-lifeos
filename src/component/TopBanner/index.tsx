@@ -1,7 +1,8 @@
-import { DollarOutlined, GithubOutlined, TeamOutlined, UserAddOutlined, YoutubeOutlined } from '@ant-design/icons';
+import { GithubOutlined, TeamOutlined, UserAddOutlined, YoutubeOutlined } from '@ant-design/icons';
 import { Space } from 'antd';
 import React from 'react';
 import { ConfigProvider } from '../ConfigProvider';
+import { Logo } from '../Logo';
 import './index.less';
 import { getI18n } from '../../i18n';
 
@@ -41,7 +42,9 @@ export const TopBanner: React.FC<TopBannerProps> = ({ locale }) => {
           <div className="pro-link">
             <a href={i18n.TOPBANNER_LIFEOS_PRO_HREF} target="_blank" rel="noopener noreferrer">
               <Space align="center">
-                <DollarOutlined />
+                <span style={{ display: 'flex', alignItems: 'center' }}>
+                  <Logo width={20} height={20} />
+                </span>
                 <span>{i18n.TOPBANNER_LIFEOS_PRO}</span>
               </Space>
             </a>
