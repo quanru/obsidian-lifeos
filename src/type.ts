@@ -135,6 +135,19 @@ export type WorkspaceProfileType = {
   };
 };
 
+export type InstanceProfileType = {
+  owner: string;
+  version: string;
+  mode: string;
+  instanceUrl: boolean;
+  instanceProfile?: {
+    owner: string;
+    version: string;
+    mode: string;
+    instanceUrl: boolean;
+  };
+};
+
 export type UserType = {
   name: string;
   id: number;

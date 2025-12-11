@@ -143,7 +143,7 @@ export default class LifeOS extends Plugin {
         callback: this.dailyRecord.forceSync,
       });
 
-      const DailyRecordItem = this.addRibbonIcon('refresh-ccw-dot', getI18n(locale).SYNC_DAILY_RECORDS, () =>
+      const DailyRecordItem = this.addRibbonIcon('refresh-ccw-dot', getI18n(locale).COMMAND_SYNC_DAILY_RECORDS, () =>
         this.dailyRecord.sync(),
       );
       setIcon(DailyRecordItem, 'refresh-ccw-dot');

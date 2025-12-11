@@ -9,6 +9,7 @@ import {
   type DailyRecordResponseTypeV2,
   type DailyRecordType,
   type FetchError,
+  type InstanceProfileType,
   LogLevel,
   type PluginSettings,
   type ResourceType,
@@ -39,7 +40,7 @@ export class DailyRecord {
   locale: string;
   baseURL: string;
   memosVersion: string;
-  memosProfile: WorkspaceProfileType;
+  memosProfile: WorkspaceProfileType | InstanceProfileType;
   memosUserName: string;
   hasCreatedNewFile: boolean;
 
@@ -105,17 +106,20 @@ export class DailyRecord {
   }
 
   async getMemosVersion() {
-    const urls = ['/api/v1/workspace/profile', '/api/v2/workspace/profile'];
+    // Try new instance/profile endpoint first (0.25.0+), then fall back to older workspace/profile endpoints
+    const urls = ['/api/v1/instance/profile', '/api/v1/workspace/profile', '/api/v2/workspace/profile'];
 
     for (const url of urls) {
       try {
-        const { json: data } = await customRequest<WorkspaceProfileType>({
+        const { json: data } = await customRequest<WorkspaceProfileType | InstanceProfileType>({
           url: `${this.baseURL}${url}`,
           headers: {
             Authorization: `Bearer ${this.settings.dailyRecordToken}`,
           },
         });
-        this.memosProfile = data.workspaceProfile || data;
+        // Handle both workspaceProfile and instanceProfile formats
+        this.memosProfile =
+          (data as WorkspaceProfileType).workspaceProfile || (data as InstanceProfileType).instanceProfile || data;
         if (semver.lt(this.memosProfile.version, '0.22.0')) {
           this.memosVersion = 'v1';
         } else if (semver.lt(this.memosProfile.version, '0.25.0')) {
