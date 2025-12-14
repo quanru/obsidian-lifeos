@@ -96,7 +96,7 @@ export class DailyRecord {
         this.memosUserName = user?.name || '';
         return;
       } catch (error) {
-        logMessage(`Failed to get user from ${endpoint.url}: ${error.message}`, LogLevel.warn);
+        // logMessage(`Failed to get user from ${endpoint.url}: ${error.message}`, LogLevel.warn);
       }
     }
 
