@@ -44,7 +44,7 @@
     "react-dom": "^18.2.0",
     "reduce-css-calc": "^2.1.8",
     "semver": "^7.6.2",
-    "tyme4ts": "^1.1.7"
+    "tyme4ts": "^1.3.9"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm exec nano-staged"

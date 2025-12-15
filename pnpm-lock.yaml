@@ -30,8 +30,8 @@ importers:
         specifier: ^7.6.2
         version: 7.7.1
       tyme4ts:
-        specifier: ^1.1.7
-        version: 1.2.2
+        specifier: ^1.3.9
+        version: 1.3.9
     devDependencies:
       '@biomejs/biome':
         specifier: ^1.8.1
@@ -172,9 +172,9 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@codemirror/language@https://codeload.github.com/lishid/cm-language/tar.gz/6c1c5f5b677f6f6503d1ca2ec47f62f6406cda67':
-    resolution: {tarball: https://codeload.github.com/lishid/cm-language/tar.gz/6c1c5f5b677f6f6503d1ca2ec47f62f6406cda67}
-    version: 6.10.8
+  '@codemirror/language@https://codeload.github.com/lishid/cm-language/tar.gz/2d416d7835867d1b1e8d0e726b147fc1135c9f92':
+    resolution: {tarball: https://codeload.github.com/lishid/cm-language/tar.gz/2d416d7835867d1b1e8d0e726b147fc1135c9f92}
+    version: 6.11.2
 
   '@codemirror/state@6.5.2':
     resolution: {integrity: sha512-FVqsPqtPWKVVL3dPSxy8wEF/ymIEuVzF1PK3VbUgrxXpJUSHQWWZz4JMToquRxnkw+36LTamCZG2iua2Ptq0fA==}
@@ -545,12 +545,12 @@ packages:
       '@codemirror/state': ^6.0.0
       '@codemirror/view': ^6.0.0
 
-  obsidian@https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/103ff76a0712a02dd0da28646b5a6b0ba6686d66:
-    resolution: {tarball: https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/103ff76a0712a02dd0da28646b5a6b0ba6686d66}
-    version: 1.8.7
+  obsidian@https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/644caf98e0e7ad8bd079e76a7514d194dd125786:
+    resolution: {tarball: https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/644caf98e0e7ad8bd079e76a7514d194dd125786}
+    version: 1.11.0
     peerDependencies:
-      '@codemirror/state': ^6.0.0
-      '@codemirror/view': ^6.0.0
+      '@codemirror/state': 6.5.0
+      '@codemirror/view': 6.38.6
 
   papaparse@5.5.2:
     resolution: {integrity: sha512-PZXg8UuAc4PcVwLosEEDYjPyfWnTEhOrUfdv+3Bx+NuAb+5NhDmXzg5fHWmdCh1mP5p7JAZfFr3IMQfcntNAdA==}
@@ -890,8 +890,8 @@ packages:
   tslib@2.4.0:
     resolution: {integrity: sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==}
 
-  tyme4ts@1.2.2:
-    resolution: {integrity: sha512-vuKf3fkVmoJH//p9oJ6h2h+iYvry73IuP70xpsdja47cUqGFxf4L7ugIl7DzajYOe8jYVf2I3TuLCeniI2eirQ==}
+  tyme4ts@1.3.9:
+    resolution: {integrity: sha512-zbozh+jm4PcE84yZCUBfY1TFtebMluOQ5c/RH9W/0hUQK9oFqJCvjE+YX5utV/vrVuB8vE3pDZ08h1/FR2JRbA==}
 
   typescript@5.3.3:
     resolution: {integrity: sha512-pXWcraxM0uxAS+tN0AG/BF2TyqmHO014Z070UsJ+pFvYuRSq8KH8DmWpnbXe0pEPDHXZV3FcAbJkijJ5oNEnWw==}
@@ -991,7 +991,7 @@ snapshots:
   '@biomejs/cli-win32-x64@1.9.4':
     optional: true
 
-  '@codemirror/language@https://codeload.github.com/lishid/cm-language/tar.gz/6c1c5f5b677f6f6503d1ca2ec47f62f6406cda67':
+  '@codemirror/language@https://codeload.github.com/lishid/cm-language/tar.gz/2d416d7835867d1b1e8d0e726b147fc1135c9f92':
     dependencies:
       '@codemirror/state': 6.5.2
       '@codemirror/view': 6.36.4
@@ -1385,7 +1385,7 @@ snapshots:
 
   obsidian-daily-notes-interface@0.8.4(@codemirror/state@6.5.2)(@codemirror/view@6.36.4):
     dependencies:
-      obsidian: https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/103ff76a0712a02dd0da28646b5a6b0ba6686d66(@codemirror/state@6.5.2)(@codemirror/view@6.36.4)
+      obsidian: https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/644caf98e0e7ad8bd079e76a7514d194dd125786(@codemirror/state@6.5.2)(@codemirror/view@6.36.4)
       tslib: 2.1.0
     transitivePeerDependencies:
       - '@codemirror/state'
@@ -1393,7 +1393,7 @@ snapshots:
 
   obsidian-dataview@0.5.68:
     dependencies:
-      '@codemirror/language': https://codeload.github.com/lishid/cm-language/tar.gz/6c1c5f5b677f6f6503d1ca2ec47f62f6406cda67
+      '@codemirror/language': https://codeload.github.com/lishid/cm-language/tar.gz/2d416d7835867d1b1e8d0e726b147fc1135c9f92
       '@codemirror/state': 6.5.2
       '@codemirror/view': 6.36.4
       emoji-regex: 10.4.0
@@ -1412,7 +1412,7 @@ snapshots:
       '@types/codemirror': 5.60.8
       moment: 2.29.4
 
-  obsidian@https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/103ff76a0712a02dd0da28646b5a6b0ba6686d66(@codemirror/state@6.5.2)(@codemirror/view@6.36.4):
+  obsidian@https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/644caf98e0e7ad8bd079e76a7514d194dd125786(@codemirror/state@6.5.2)(@codemirror/view@6.36.4):
     dependencies:
       '@codemirror/state': 6.5.2
       '@codemirror/view': 6.36.4
@@ -1823,7 +1823,7 @@ snapshots:
 
   tslib@2.4.0: {}
 
-  tyme4ts@1.2.2: {}
+  tyme4ts@1.3.9: {}
 
   typescript@5.3.3: {}
 
