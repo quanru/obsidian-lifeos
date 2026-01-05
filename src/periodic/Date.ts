@@ -60,7 +60,7 @@ export class Date {
     }
 
     if (week) {
-      const weekStart = getFirstDay(this.settings.weekStart, this.locale);
+      const weekStart = getFirstDay(this.settings?.weekStart, this.locale);
       const from = baseDate?.week(week).startOf('week').day(weekStart)?.format('YYYY-MM-DD') || null;
       const to = baseDate?.week(week).startOf('week').day(weekStart).add(6, 'days')?.format('YYYY-MM-DD') || null;
 
@@ -123,15 +123,38 @@ export class Date {
       day: null,
     },
   ) {
-    // 获取指定日期范围内的 weeks，quarters 和 months，并去重
+    // 获取指定日期范围内的 days, weeks，quarters 和 months，并去重
     const { from, to } = this.days(parsed);
-    const weeks = new Set();
-    const months = new Set();
-    const quarters = new Set();
+
+    // 如果 from 或 to 为空，直接返回空结果，避免死循环
+    if (!from || !to) {
+      return {
+        days: [],
+        weeks: [],
+        months: [],
+        quarters: [],
+      };
+    }
+
+    const days = new Set<string>();
+    const weeks = new Set<string>();
+    const months = new Set<string>();
+    const quarters = new Set<string>();
 
     const currentDate = moment(from).clone();
+    const endDate = moment(to);
 
-    while (currentDate.isBefore(moment(to))) {
+    while (currentDate.isSameOrBefore(endDate)) {
+      const dayLink = `${currentDate.year()}/Daily/${String(currentDate.month() + 1).padStart(
+        2,
+        '0',
+      )}/${currentDate.format('YYYY-MM-DD')}.md`;
+      const dayFile = this.file.get(dayLink, '', this.settings.periodicNotesPath);
+
+      if (dayFile) {
+        days.add(dayFile.path);
+      }
+
       const weekLink = `${currentDate.weekYear()}/Weekly/${currentDate.weekYear()}-W${String(
         currentDate.isoWeek(),
       ).padStart(2, '0')}.md`;
@@ -164,6 +187,7 @@ export class Date {
     }
 
     return {
+      days: Array.from(days),
       weeks: parsed.month ? Array.from(weeks) : [],
       months: parsed.quarter ? Array.from(months) : [],
       quarters: parsed.year && !parsed.month && !parsed.quarter && !parsed.week ? Array.from(quarters) : [],

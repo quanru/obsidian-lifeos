@@ -348,5 +348,7 @@ export function isInPeriodicNote(path: string, settings: PluginSettings) {
 }
 
 export const getFirstDay = (weekStart = -1, locale: string | undefined) => {
-  return weekStart === -1 ? (locale === 'zh-cn' ? 1 : 0) : weekStart;
+  // 识别所有中文 locale（zh, zh-cn, zh-tw 等），默认周一开始
+  const isZhLocale = locale?.toLowerCase()?.startsWith('zh');
+  return weekStart === -1 ? (isZhLocale ? 1 : 0) : weekStart;
 };

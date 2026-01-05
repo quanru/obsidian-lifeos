@@ -1,6 +1,6 @@
-import type { TaskConditionType } from '../type';
+import type { DateType } from '../type';
 
-import { TFile, moment } from 'obsidian';
+import { TFile } from 'obsidian';
 import { type MarkdownPostProcessorContext, MarkdownRenderer } from 'obsidian';
 import { Markdown } from '../component/Markdown';
 import { Date as PeriodicDate } from '../periodic/Date';
@@ -52,37 +52,36 @@ export class Project extends Item {
   }
 
   async filter(
-    condition: TaskConditionType = {
-      from: '',
-      to: '',
+    parsed: DateType = {
+      year: null,
+      month: null,
+      quarter: null,
+      week: null,
+      day: null,
     },
     header: string,
   ) {
-    const { from, to } = condition;
-    let day = from;
+    const date = new PeriodicDate(this.app, this.settings, this.file, this.locale);
+    const { from, to } = date.days(parsed);
+    const periodicNotes = date.files(parsed).days;
     const projectList: string[] = [];
     const projectTimeConsume: Record<string, string> = {};
     let totalTime = '';
     const tasks = [];
 
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-      const momentDay = moment(day);
-      const link = `${momentDay.year()}/Daily/${String(momentDay.month() + 1).padStart(
-        2,
-        '0',
-      )}/${momentDay.format('YYYY-MM-DD')}.md`;
-      const file = this.file.get(link, '', this.settings.periodicNotesPath);
+    for (const periodicNote of periodicNotes) {
+      const file = this.app.vault.getFileByPath(periodicNote);
 
       if (file instanceof TFile) {
         const reg = generateHeaderRegExp(header);
         let todayTotalTime = '0hr0';
+
         tasks.push(async () => {
           const fileContent = await this.app.vault.cachedRead(file);
           const regMatch = fileContent.match(reg);
           const projectContent = regMatch?.length ? regMatch[2]?.split('\n') : [];
 
-          projectContent.map((project) => {
+          projectContent.forEach((project) => {
             if (!project) {
               return;
             }
@@ -117,16 +116,11 @@ export class Project extends Item {
           totalTime = this.timeAdd(totalTime, todayTotalTime);
         });
       }
-
-      if (day === to) {
-        break;
-      }
-
-      day = momentDay.add(1, 'day').format('YYYY-MM-DD');
     }
 
     await Promise.all(tasks.map((task) => task()));
-    Object.keys(projectTimeConsume).map((project) => {
+
+    Object.keys(projectTimeConsume).forEach((project) => {
       projectTimeConsume[project] = projectTimeConsume[project]
         ? `${projectTimeConsume[project]}/${totalTime}=${this.timePercent(projectTimeConsume[project], totalTime)}`
         : '';
@@ -139,9 +133,9 @@ export class Project extends Item {
     };
   }
 
-  listByTime = async (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
+  listByTime = async (_source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
     const date = new PeriodicDate(this.app, this.settings, this.file, this.locale);
-    const parsed = date.days(date.parse(ctx.sourcePath));
+    const parsed = date.parse(ctx.sourcePath);
 
     const header = this.settings.projectListHeader;
     const { projectList, projectTimeConsume } = await this.filter(parsed, header);
@@ -149,7 +143,7 @@ export class Project extends Item {
     const div = el.createEl('div');
     const list: string[] = [];
 
-    projectList.map((project: string, index: number) => {
+    projectList.forEach((project: string, index: number) => {
       // WOT.README
       // 1. Projects/分享-2023 WOT 分享会/README
       const regMatch = project.match(/\/(.*)\//);
