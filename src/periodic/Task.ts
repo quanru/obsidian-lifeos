@@ -79,12 +79,13 @@ export class Task {
 
     tasks = [...dailyTasks];
 
-    // 收集日期范围内的非日记文件
+    // 收集日期范围内的非日记文件（周记、月记、季记、年记）
     const files = this.date.files(parsed);
-    const pages = Object.values(files).flat();
+    const { weeks, months, quarters } = files;
+    const pages = [...weeks, ...months, ...quarters];
 
     if (pages.length) {
-      const nonDailyTasks = dataview.pages(`"${pages.join('" or "')}"`).file.tasks.where((task: STask) => task);
+      const nonDailyTasks = dataview.pages(`"${pages.join('" or "')}"`).file.tasks;
 
       tasks = [...dailyTasks, ...nonDailyTasks];
     }

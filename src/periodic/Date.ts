@@ -2,7 +2,6 @@ import { moment } from 'obsidian';
 import type { App } from 'obsidian';
 import { DAILY_REG, MONTHLY_REG, QUARTERLY_REG, WEEKLY_REG, YEARLY_REG } from '../constant';
 import type { DateRangeType, DateType, PluginSettings } from '../type';
-import { getFirstDay } from '../util';
 import type { File } from './File';
 
 // biome-ignore lint/suspicious/noShadowRestrictedNames: <explanation>
@@ -59,10 +58,11 @@ export class Date {
       };
     }
 
-    if (week) {
-      const weekStart = getFirstDay(this.settings?.weekStart, this.locale);
-      const from = baseDate?.week(week).startOf('week').day(weekStart)?.format('YYYY-MM-DD') || null;
-      const to = baseDate?.week(week).startOf('week').day(weekStart).add(6, 'days')?.format('YYYY-MM-DD') || null;
+    if (week && year) {
+      // 使用 ISO 周年（isoWeekYear）来正确处理跨年周
+      const weekDate = moment().isoWeekYear(year).isoWeek(week);
+      const from = weekDate.clone().startOf('isoWeek').format('YYYY-MM-DD');
+      const to = weekDate.clone().endOf('isoWeek').format('YYYY-MM-DD');
 
       return {
         from,
