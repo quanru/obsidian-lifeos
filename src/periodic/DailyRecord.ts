@@ -42,6 +42,7 @@ export class DailyRecord {
   memosVersion: string;
   memosProfile: WorkspaceProfileType | InstanceProfileType;
   memosUserName: string;
+  memosUserId: number | null;
   hasCreatedNewFile: boolean;
 
   constructor(app: App, settings: PluginSettings, file: File, locale: string) {
@@ -72,37 +73,58 @@ export class DailyRecord {
     this.lastTime = window.localStorage.getItem(this.localKey) || '';
     this.locale = locale;
     this.baseURL = origin;
+    this.memosUserId = null;
     this.hasCreatedNewFile = false;
   }
 
-  async getMemosUserName() {
-    const endpoints = [
-      { url: '/api/v1/auth/sessions/current', method: 'GET' }, // v0.25.0+
-      { url: '/api/v1/auth/status', method: 'POST' }, // Legacy
-    ];
-
-    for (const endpoint of endpoints) {
-      try {
-        const { json: data } = await customRequest<{ user?: UserType } | UserType>({
-          url: `${this.baseURL}${endpoint.url}`,
-          method: endpoint.method as 'GET' | 'POST',
-          headers: {
-            Authorization: `Bearer ${this.settings.dailyRecordToken}`,
-          },
-        });
-
-        // Handle different response formats
-        const user = data && typeof data === 'object' && 'user' in data ? data.user : (data as UserType);
-        this.memosUserName = user?.name || '';
-        return;
-      } catch (error) {
-        // logMessage(`Failed to get user from ${endpoint.url}: ${error.message}`, LogLevel.warn);
-      }
+  private getMemosUserIdFromUser(user?: UserType | null) {
+    if (!user) {
+      return null;
     }
 
-    // If both auth endpoints fail, continue without username
-    // This will affect filtering but won't break the sync process
-    logMessage(getI18n(this.locale)[`${ERROR_MESSAGE}AUTH_ENDPOINTS_FAILED`], LogLevel.info);
+    if (typeof user.id === 'number') {
+      return user.id;
+    }
+
+    const matchedUserId = user.name?.match(/^users\/(\d+)$/);
+    if (!matchedUserId?.[1]) {
+      return null;
+    }
+
+    const parsedUserId = Number.parseInt(matchedUserId[1], 10);
+    return Number.isNaN(parsedUserId) ? null : parsedUserId;
+  }
+
+  async getMemosUserName() {
+    let endpoint: { url: string; method: 'GET' | 'POST' };
+
+    if (this.memosVersion === 'v2.6') {
+      endpoint = { url: '/api/v1/auth/me', method: 'GET' };
+    } else if (this.memosVersion === 'v2.5') {
+      endpoint = { url: '/api/v1/auth/sessions/current', method: 'GET' };
+    } else {
+      endpoint = { url: '/api/v1/auth/status', method: 'POST' };
+    }
+
+    this.memosUserName = '';
+    this.memosUserId = null;
+
+    try {
+      const { json: data } = await customRequest<{ user?: UserType } | UserType>({
+        url: `${this.baseURL}${endpoint.url}`,
+        method: endpoint.method,
+        headers: {
+          Authorization: `Bearer ${this.settings.dailyRecordToken}`,
+        },
+      });
+
+      const user = data && typeof data === 'object' && 'user' in data ? data.user : (data as UserType);
+      this.memosUserName = user?.name || '';
+      this.memosUserId = this.getMemosUserIdFromUser(user);
+    } catch (error) {
+      console.warn(`Failed to get user from ${endpoint.url} (version: ${this.memosVersion}): ${error.message}`);
+      logMessage(getI18n(this.locale)[`${ERROR_MESSAGE}AUTH_ENDPOINTS_FAILED`], LogLevel.info);
+    }
   }
 
   async getMemosVersion() {
@@ -124,8 +146,10 @@ export class DailyRecord {
           this.memosVersion = 'v1';
         } else if (semver.lt(this.memosProfile.version, '0.25.0')) {
           this.memosVersion = 'v2';
-        } else {
+        } else if (semver.lt(this.memosProfile.version, '0.26.0')) {
           this.memosVersion = 'v2.5';
+        } else {
+          this.memosVersion = 'v2.6';
         }
         return; // 成功获取版本后退出方法
       } catch (error) {
@@ -161,25 +185,34 @@ export class DailyRecord {
       }
 
       let filterParams = {};
+      const currentUserResourceName = this.memosUserId !== null ? `users/${this.memosUserId}` : null;
 
-      if (semver.gte(this.memosProfile.version, '0.24.0')) {
+      if (this.memosVersion === 'v2.5' || this.memosVersion === 'v2.6') {
+        if (this.memosUserId === null) {
+          throw new Error('Failed to determine the current memos user ID');
+        }
+
         filterParams = {
-          parent: this.memosUserName || undefined, // Will fetch all users' memos if username is unavailable
+          state: 'NORMAL',
+          filter: `creator_id == ${this.memosUserId}`,
+        };
+      } else if (semver.gte(this.memosProfile.version, '0.24.0')) {
+        if (!currentUserResourceName) {
+          throw new Error('Failed to determine the current memos user');
+        }
+
+        filterParams = {
+          parent: currentUserResourceName,
           state: 'NORMAL',
         };
       } else if (semver.gte(this.memosProfile.version, '0.23.0')) {
-        if (this.memosUserName) {
-          filterParams = {
-            view: 'MEMO_VIEW_FULL',
-            filter: `creator == '${this.memosUserName}' && visibilities == ['PRIVATE', 'PUBLIC', 'PROTECTED']`,
-          };
-        } else {
-          // Fallback to basic filtering without user-specific filtering
-          filterParams = {
-            view: 'MEMO_VIEW_FULL',
-            filter: `visibilities == ['PRIVATE', 'PUBLIC', 'PROTECTED']`,
-          };
+        if (!currentUserResourceName) {
+          throw new Error('Failed to determine the current memos user');
         }
+
+        filterParams = {
+          filter: `creator == '${currentUserResourceName}' && state == 'NORMAL'`,
+        };
       } else {
         filterParams = {
           filter: 'row_status=="NORMAL"',
@@ -228,7 +261,7 @@ export class DailyRecord {
       }
 
       // Try new attachments API for v0.25.0+
-      if (this.memosVersion === 'v2.5') {
+      if (this.memosVersion === 'v2.5' || this.memosVersion === 'v2.6') {
         try {
           const { json: data } = await customRequest<{
             attachments: AttachmentType[];
@@ -336,7 +369,7 @@ export class DailyRecord {
         let downloadUrl;
         if (this.memosVersion === 'v1') {
           downloadUrl = `/o/r/${resource.uid || resource.name || resource.id}`;
-        } else if (this.memosVersion === 'v2.5') {
+        } else if (this.memosVersion === 'v2.5' || this.memosVersion === 'v2.6') {
           // New attachments API endpoint - use original name with "attachments/" prefix
           const attachmentName = (resource as any).originalName || resource.name;
           downloadUrl = `/file/${attachmentName}/${resource.filename}`;
