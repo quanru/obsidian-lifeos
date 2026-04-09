@@ -27,7 +27,7 @@ export class Project extends Item {
     let min = Number(min1) + Number(min2);
 
     if (min >= 60) {
-      carry = Number((min / 60).toFixed(0));
+      carry = Math.floor(min / 60);
       min = min % 60;
     }
 
