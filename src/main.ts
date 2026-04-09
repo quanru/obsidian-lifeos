@@ -131,12 +131,11 @@ export default class LifeOS extends Plugin {
     this.addSettingTab(new SettingTabView(this.app, this.settings, this, localeMap[locale]));
   }
   registerFileMenu() {
-    if (!this.settings.usePARANotes) return;
-
     const i18n = getI18n(locale);
 
     this.registerEvent(
       this.app.workspace.on('file-menu', (menu: Menu, file: TAbstractFile) => {
+        if (!this.settings.usePARANotes) return;
         if (file instanceof TFile) return;
 
         const paraFolders = [
