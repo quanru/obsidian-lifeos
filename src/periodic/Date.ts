@@ -155,7 +155,7 @@ export class Date {
         days.add(dayFile.path);
       }
 
-      const weekLink = `${currentDate.weekYear()}/Weekly/${currentDate.weekYear()}-W${String(
+      const weekLink = `${currentDate.isoWeekYear()}/Weekly/${currentDate.isoWeekYear()}-W${String(
         currentDate.isoWeek(),
       ).padStart(2, '0')}.md`;
       const weekFile = this.file.get(weekLink, '', this.settings.periodicNotesPath);
