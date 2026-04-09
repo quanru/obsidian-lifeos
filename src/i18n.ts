@@ -147,6 +147,8 @@ const EN = {
   TOPBANNER_LIFEOS_PRO_HREF: 'https://lifeos.vip/plugin/life-os-pro.html',
   TOP_BANNER_DEEPASK_AD: 'Inject AI Intelligence into LifeOS',
   TOP_BANNER_DEEPASK_HREF: 'https://lifeos.vip/plugin/deepask/deepask.html',
+
+  MOVE_TO: 'Move to',
 };
 
 const ZH = {
@@ -276,6 +278,8 @@ const ZH = {
   TOPBANNER_LIFEOS_PRO_HREF: 'https://lifeos.vip/zh/plugin/life-os-pro.html',
   TOP_BANNER_DEEPASK_AD: '为 LifeOS 注入 AI 智能',
   TOP_BANNER_DEEPASK_HREF: 'https://lifeos.vip/zh/plugin/deepask/deepask.html',
+
+  MOVE_TO: '移动到',
 };
 
 const I18N_MAP: Record<string, Record<string, string>> = {

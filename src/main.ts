@@ -1,5 +1,5 @@
-import { Platform, Plugin, setIcon } from 'obsidian';
-import type { App, MarkdownPostProcessorContext, PluginManifest, WorkspaceLeaf } from 'obsidian';
+import { Platform, Plugin, TFile, setIcon } from 'obsidian';
+import type { App, MarkdownPostProcessorContext, Menu, PluginManifest, TAbstractFile, WorkspaceLeaf } from 'obsidian';
 import { type DataviewApi, getAPI, isPluginEnabled } from 'obsidian-dataview';
 
 import enUS from 'antd/locale/en_US';
@@ -127,8 +127,45 @@ export default class LifeOS extends Plugin {
       return;
     }
     this.loadDailyRecord();
+    this.registerFileMenu();
     this.addSettingTab(new SettingTabView(this.app, this.settings, this, localeMap[locale]));
   }
+  registerFileMenu() {
+    if (!this.settings.usePARANotes) return;
+
+    const i18n = getI18n(locale);
+
+    this.registerEvent(
+      this.app.workspace.on('file-menu', (menu: Menu, file: TAbstractFile) => {
+        if (file instanceof TFile) return;
+
+        const paraFolders = [
+          this.settings.projectsPath,
+          this.settings.areasPath,
+          this.settings.resourcesPath,
+          this.settings.archivesPath,
+        ];
+
+        const parentPath = file.parent?.path;
+        if (!parentPath || !paraFolders.includes(parentPath)) return;
+
+        const targetFolders = paraFolders.filter((f) => f !== parentPath);
+
+        targetFolders.forEach((targetFolder) => {
+          menu.addItem((item) => {
+            item
+              .setSection('lifeos')
+              .setIcon('folder-tree')
+              .setTitle(`${i18n.MOVE_TO} "${targetFolder}"`)
+              .onClick(() => {
+                this.app.fileManager.renameFile(file, `${targetFolder}/${file.name}`);
+              });
+          });
+        });
+      }),
+    );
+  }
+
   loadDailyRecord() {
     if (this.settings.usePeriodicNotes && this.settings.useDailyRecord) {
       this.dailyRecord = new DailyRecord(this.app, this.settings, this.file, locale);
