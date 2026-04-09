@@ -233,27 +233,27 @@ export const CreateNote = (props: { width: number }) => {
             chineseCalendarText = lunarDate;
           }
         }
-        formattedDate = date.format('YYYY-MM-DD');
+        formattedDate = date.format(settings?.dailyNoteFormat || 'YYYY-MM-DD');
         badgeText = `${date.date()}`;
         break;
       case 'week':
-        formattedDate = date.format('YYYY-[W]WW');
+        formattedDate = date.format(settings?.weeklyNoteFormat || 'gggg-[W]ww');
         badgeText = `${date.date()}`;
         break;
       case 'month':
-        formattedDate = date.format('YYYY-MM');
+        formattedDate = date.format(settings?.monthlyNoteFormat || 'YYYY-MM');
         badgeText = `${date.format('MMM')}`;
         break;
       case 'quarter':
-        formattedDate = date.format('YYYY-[Q]Q');
+        formattedDate = date.format(settings?.quarterlyNoteFormat || 'YYYY-[Q]Q');
         badgeText = `Q${date.quarter()}`;
         break;
       case 'year':
-        formattedDate = date.format('YYYY');
+        formattedDate = date.format(settings?.yearlyNoteFormat || 'YYYY');
         badgeText = `${date.year()}`;
         break;
       case 'decade':
-        formattedDate = date.format('YYYY');
+        formattedDate = date.format(settings?.yearlyNoteFormat || 'YYYY');
         badgeText = `${date.year()}`;
         break;
       default:

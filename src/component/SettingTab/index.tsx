@@ -163,16 +163,38 @@ export const SettingTab = (props: { settings: PluginSettings; saveSettings: (set
                       </Form.Item>
                       {settings.usePeriodicAdvanced &&
                         [DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY].map((item) => {
+                          const formatFieldMap: Record<string, string> = {
+                            [DAILY]: 'dailyNoteFormat',
+                            [WEEKLY]: 'weeklyNoteFormat',
+                            [MONTHLY]: 'monthlyNoteFormat',
+                            [QUARTERLY]: 'quarterlyNoteFormat',
+                            [YEARLY]: 'yearlyNoteFormat',
+                          };
+                          const defaultFormatMap: Record<string, string> = {
+                            [DAILY]: 'YYYY-MM-DD',
+                            [WEEKLY]: 'gggg-[W]ww',
+                            [MONTHLY]: 'YYYY-MM',
+                            [QUARTERLY]: 'YYYY-[Q]Q',
+                            [YEARLY]: 'YYYY',
+                          };
                           return (
-                            <Form.Item
-                              key={item}
-                              name={`periodicNotesTemplateFilePath${item}`}
-                              label={`${localeMap[item]}${localeMap.SETTING_TEMPLATE}`}
-                            >
-                              <AutoComplete options={files}>
-                                <Input placeholder={`${settings.periodicNotesPath}/Templates/${item}.md`} />
-                              </AutoComplete>
-                            </Form.Item>
+                            <React.Fragment key={item}>
+                              <Form.Item
+                                name={`periodicNotesTemplateFilePath${item}`}
+                                label={`${localeMap[item]}${localeMap.SETTING_TEMPLATE}`}
+                              >
+                                <AutoComplete options={files}>
+                                  <Input placeholder={`${settings.periodicNotesPath}/Templates/${item}.md`} />
+                                </AutoComplete>
+                              </Form.Item>
+                              <Form.Item
+                                help={localeMap.SETTING_DATE_FORMAT_HELP}
+                                name={formatFieldMap[item]}
+                                label={`${localeMap[item]}${localeMap.SETTING_DATE_FORMAT}`}
+                              >
+                                <Input placeholder={defaultFormatMap[item]} />
+                              </Form.Item>
+                            </React.Fragment>
                           );
                         })}
                       <Divider />

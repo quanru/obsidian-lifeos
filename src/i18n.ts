@@ -120,6 +120,9 @@ const EN = {
   SETTING_WEEK_START_SATURDAY: 'Saturday',
   SETTING_WEEK_START_SUNDAY: 'Sunday',
 
+  SETTING_DATE_FORMAT: 'Date Format:',
+  SETTING_DATE_FORMAT_HELP: 'The date format used for file names (dayjs format)',
+
   SETTING_INDEX_FILENAME_FOLDER: 'FolderName.md',
   SETTING_INDEX_FILENAME_README: '*.README.md',
 
@@ -248,6 +251,9 @@ const ZH = {
   SETTING_WEEK_START_FRIDAY: '星期五',
   SETTING_WEEK_START_SATURDAY: '星期六',
   SETTING_WEEK_START_SUNDAY: '星期日',
+
+  SETTING_DATE_FORMAT: '日期格式：',
+  SETTING_DATE_FORMAT_HELP: '文件名所用的日期格式（dayjs 格式）',
 
   SETTING_INDEX_FILENAME_FOLDER: '文件夹名.md',
   SETTING_INDEX_FILENAME_README: '*.README.md',
