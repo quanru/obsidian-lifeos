@@ -215,7 +215,8 @@ export function logMessage(message: string, level: LogLevel = LogLevel.info) {
 
 export function generateHeaderRegExp(header: string) {
   const formattedHeader = /^#+/.test(header.trim()) ? header.trim() : `# ${header.trim()}`;
-  const reg = new RegExp(`(${formattedHeader}[^\n]*)([\\s\\S]*?)(?=\\n##|$)`);
+  const level = formattedHeader.match(/^#+/)![0].length;
+  const reg = new RegExp(`(${formattedHeader}[^\n]*)([\\s\\S]*?)(?=\\n#{1,${level}}(?!#)|$)`);
 
   return reg;
 }
