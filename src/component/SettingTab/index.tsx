@@ -191,6 +191,18 @@ export const SettingTab = (props: { settings: PluginSettings; saveSettings: (set
                                 help={localeMap.SETTING_DATE_FORMAT_HELP}
                                 name={formatFieldMap[item]}
                                 label={`${localeMap[item]}${localeMap.SETTING_DATE_FORMAT}`}
+                                rules={[
+                                  {
+                                    validator: (_: unknown, value: string) => {
+                                      if (!value || value.startsWith(defaultFormatMap[item])) {
+                                        return Promise.resolve();
+                                      }
+                                      return Promise.reject(
+                                        new Error(localeMap.SETTING_DATE_FORMAT_MUST_START_WITH + defaultFormatMap[item]),
+                                      );
+                                    },
+                                  },
+                                ]}
                               >
                                 <Input placeholder={defaultFormatMap[item]} />
                               </Form.Item>
