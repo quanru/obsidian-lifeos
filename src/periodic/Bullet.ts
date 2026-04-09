@@ -40,20 +40,24 @@ export class Bullet {
 
     const dataview = await this.plugin.getDataviewAPI();
 
-    // 收集日期范围内的文件
+    // 只收集日期范围内的日记文件
     const files = this.date.files(parsed);
-    const { days, weeks, months, quarters } = files;
-    const pages = [...days, ...weeks, ...months, ...quarters];
+    const { days } = files;
 
-    if (!pages.length) {
+    if (!days.length) {
       return;
     }
 
+    const dailyRecordHeader = this.settings.dailyRecordHeader?.trim();
     const lists = dataview
-      .pages(`"${pages.join('" or "')}"`)
-      .file.lists.where((L: { task: boolean; path: string }) => {
-        return !L.task && L.path !== filename;
-      });
+      .pages(`"${days.join('" or "')}"`)
+      .file.lists.where((L: { task: boolean; path: string; section: { subpath?: string } }) => {
+        if (L.task) return false;
+        // 只取 Daily Record 标题下的 bullet，与 pro 版保持一致
+        if (dailyRecordHeader && L.section?.subpath?.trim() !== dailyRecordHeader) return false;
+        return true;
+      })
+      .sort((L: { path: string; line: number }) => L.path, 'desc');
 
     const groupResult = lists.groupBy((elem: Element) => {
       return elem.link;
