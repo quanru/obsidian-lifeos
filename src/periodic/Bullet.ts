@@ -7,6 +7,7 @@ import { Markdown } from '../component/Markdown';
 import { ERROR_MESSAGE } from '../constant';
 import { getI18n } from '../i18n';
 import type LifeOS from '../main';
+import { Date as PeriodicDate } from '../periodic/Date';
 import { File } from '../periodic/File';
 import { generateIgnoreOperator, renderError } from '../util';
 
@@ -14,6 +15,7 @@ type Element = { text: string; link: Link };
 
 export class Bullet {
   app: App;
+  date: PeriodicDate;
   file: File;
   plugin: LifeOS;
   settings: PluginSettings;
@@ -24,7 +26,49 @@ export class Bullet {
     this.plugin = plugin;
     this.locale = locale;
     this.file = new File(this.app, this.settings, this.plugin, locale);
+    this.date = new PeriodicDate(this.app, this.settings, this.file, locale);
   }
+
+  listByTime = async (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
+    const filename = ctx.sourcePath;
+    const parsed = this.date.parse(filename);
+    const condition = this.date.days(parsed);
+
+    if (!condition.from || !condition.to) {
+      return;
+    }
+
+    const dataview = await this.plugin.getDataviewAPI();
+
+    // 收集日期范围内的文件
+    const files = this.date.files(parsed);
+    const { days, weeks, months, quarters } = files;
+    const pages = [...days, ...weeks, ...months, ...quarters];
+
+    if (!pages.length) {
+      return;
+    }
+
+    const lists = dataview
+      .pages(`"${pages.join('" or "')}"`)
+      .file.lists.where((L: { task: boolean; path: string }) => {
+        return !L.task && L.path !== filename;
+      });
+
+    const groupResult = lists.groupBy((elem: Element) => {
+      return elem.link;
+    });
+    const sortResult = groupResult.sort((elem: { rows: Element }) => elem.rows.link, 'desc');
+    const tableResult = sortResult.map((k: { rows: Element }) => [k.rows.text as string, k.rows.link as Link]);
+    const tableValues = tableResult.array();
+
+    const div = el.createEl('div');
+    const component = new Markdown(div);
+
+    dataview.table(['Bullet', 'Link'], tableValues, div, component, filename);
+
+    ctx.addChild(component);
+  };
 
   listByTag = async (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
     const filepath = ctx.sourcePath;
