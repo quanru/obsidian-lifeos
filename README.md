@@ -25,7 +25,7 @@
 
 ## Download
 
-- [LifeOS-example](https://github.com/quanru/obsidian-example-lifeos/archive/refs/heads/main.zip)
+- [LifeOS-example](https://github.com/quanru/obsidian-example-lifeos) | [中文版本](https://github.com/quanru/obsidian-example-lifeos/tree/chinese-version)
 
 ## Support
 
