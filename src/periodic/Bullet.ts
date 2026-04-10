@@ -48,13 +48,13 @@ export class Bullet {
       return;
     }
 
-    const habitHeader = this.settings.habitHeader?.trim();
+    const dailyRecordHeader = this.settings.dailyRecordHeader?.trim();
     const lists = dataview
       .pages(`"${days.join('" or "')}"`)
       .file.lists.where((L: { task: boolean; path: string; section: { subpath?: string } }) => {
         if (L.task) return false;
-        // 排除习惯打卡区域的 bullet
-        if (habitHeader && L.section?.subpath?.trim() === habitHeader) return false;
+        // 只收集日常记录标题下的 bullet
+        if (dailyRecordHeader) return L.section?.subpath?.trim() === dailyRecordHeader;
         return true;
       })
       .sort((L: { path: string; line: number }) => L.path, 'desc');
