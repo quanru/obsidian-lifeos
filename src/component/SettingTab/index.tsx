@@ -1,4 +1,5 @@
 import { Divider, Form, Input, Select, Switch, Tabs, Typography } from 'antd';
+import dayjs from 'dayjs';
 import React, { useState, useEffect } from 'react';
 import { ARCHIVE, AREA, DAILY, MONTHLY, PROJECT, QUARTERLY, RESOURCE, WEEKLY, YEARLY } from '../../constant';
 import { useApp } from '../../hooks/useApp';
@@ -163,16 +164,64 @@ export const SettingTab = (props: { settings: PluginSettings; saveSettings: (set
                       </Form.Item>
                       {settings.usePeriodicAdvanced &&
                         [DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY].map((item) => {
+                          const formatFieldMap: Record<string, string> = {
+                            [DAILY]: 'dailyNoteFormat',
+                            [WEEKLY]: 'weeklyNoteFormat',
+                            [MONTHLY]: 'monthlyNoteFormat',
+                            [QUARTERLY]: 'quarterlyNoteFormat',
+                            [YEARLY]: 'yearlyNoteFormat',
+                          };
+                          const defaultFormatMap: Record<string, string> = {
+                            [DAILY]: 'YYYY-MM-DD',
+                            [WEEKLY]: 'gggg-[W]ww',
+                            [MONTHLY]: 'YYYY-MM',
+                            [QUARTERLY]: 'YYYY-[Q]Q',
+                            [YEARLY]: 'YYYY',
+                          };
                           return (
-                            <Form.Item
-                              key={item}
-                              name={`periodicNotesTemplateFilePath${item}`}
-                              label={`${localeMap[item]}${localeMap.SETTING_TEMPLATE}`}
-                            >
-                              <AutoComplete options={files}>
-                                <Input placeholder={`${settings.periodicNotesPath}/Templates/${item}.md`} />
-                              </AutoComplete>
-                            </Form.Item>
+                            <React.Fragment key={item}>
+                              <Form.Item
+                                name={`periodicNotesTemplateFilePath${item}`}
+                                label={`${localeMap[item]}${localeMap.SETTING_TEMPLATE}`}
+                              >
+                                <AutoComplete options={files}>
+                                  <Input placeholder={`${settings.periodicNotesPath}/Templates/${item}.md`} />
+                                </AutoComplete>
+                              </Form.Item>
+                              <Form.Item
+                                help={
+                                  <>
+                                    {localeMap.SETTING_DATE_FORMAT_SYNTAX}{' '}
+                                    <a href="https://momentjs.com/docs/#/displaying/format/" target="_blank" rel="noreferrer">
+                                      {localeMap.SETTING_DATE_FORMAT_REFERENCE}
+                                    </a>
+                                    <br />
+                                    {localeMap.SETTING_DATE_FORMAT_PREVIEW}{' '}
+                                    <strong>
+                                      {dayjs().format(
+                                        form.getFieldValue(formatFieldMap[item]) || defaultFormatMap[item],
+                                      )}
+                                    </strong>
+                                  </>
+                                }
+                                name={formatFieldMap[item]}
+                                label={`${localeMap[item]}${localeMap.SETTING_DATE_FORMAT}`}
+                                rules={[
+                                  {
+                                    validator: (_: unknown, value: string) => {
+                                      if (!value || value.startsWith(defaultFormatMap[item])) {
+                                        return Promise.resolve();
+                                      }
+                                      return Promise.reject(
+                                        new Error(localeMap.SETTING_DATE_FORMAT_MUST_START_WITH + defaultFormatMap[item]),
+                                      );
+                                    },
+                                  },
+                                ]}
+                              >
+                                <Input placeholder={defaultFormatMap[item]} />
+                              </Form.Item>
+                            </React.Fragment>
                           );
                         })}
                       <Divider />

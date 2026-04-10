@@ -37,6 +37,11 @@ export type PluginSettings = {
   paraIndexFilename: IndexType;
   weekStart: number;
   useChineseCalendar: boolean;
+  dailyNoteFormat: string;
+  weeklyNoteFormat: string;
+  monthlyNoteFormat: string;
+  quarterlyNoteFormat: string;
+  yearlyNoteFormat: string;
 } & Record<PeriodicNotesTemplateFilePath, string>;
 
 export type DateType = {

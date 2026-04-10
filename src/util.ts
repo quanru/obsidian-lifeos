@@ -244,19 +244,19 @@ export async function createPeriodicFile(
 
   if (periodType === DAILY) {
     folder = `${settings.periodicNotesPath}/${year}/${periodType}/${String(date.month() + 1).padStart(2, '0')}`;
-    value = date.format('YYYY-MM-DD');
+    value = date.format(settings.dailyNoteFormat || 'YYYY-MM-DD');
   } else if (periodType === WEEKLY) {
     folder = `${settings.periodicNotesPath}/${date.format('gggg')}/${periodType}`;
-    value = date.format('gggg-[W]ww');
+    value = date.format(settings.weeklyNoteFormat || 'gggg-[W]ww');
   } else if (periodType === MONTHLY) {
     folder = `${settings.periodicNotesPath}/${year}/${periodType}`;
-    value = date.format('YYYY-MM');
+    value = date.format(settings.monthlyNoteFormat || 'YYYY-MM');
   } else if (periodType === QUARTERLY) {
     folder = `${settings.periodicNotesPath}/${year}/${periodType}`;
-    value = date.format('YYYY-[Q]Q');
+    value = date.format(settings.quarterlyNoteFormat || 'YYYY-[Q]Q');
   } else if (periodType === YEARLY) {
     folder = `${settings.periodicNotesPath}/${year}`;
-    value = year;
+    value = settings.yearlyNoteFormat ? date.format(settings.yearlyNoteFormat) : year;
   }
 
   file = `${folder}/${value}.md`;

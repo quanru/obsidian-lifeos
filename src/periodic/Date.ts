@@ -144,39 +144,37 @@ export class Date {
     const currentDate = moment(from).clone();
     const endDate = moment(to);
 
+    const dailyFormat = this.settings.dailyNoteFormat || 'YYYY-MM-DD';
+    const weeklyFormat = this.settings.weeklyNoteFormat || 'gggg-[W]ww';
+    const monthlyFormat = this.settings.monthlyNoteFormat || 'YYYY-MM';
+    const quarterlyFormat = this.settings.quarterlyNoteFormat || 'YYYY-[Q]Q';
+
     while (currentDate.isSameOrBefore(endDate)) {
       const dayLink = `${currentDate.year()}/Daily/${String(currentDate.month() + 1).padStart(
         2,
         '0',
-      )}/${currentDate.format('YYYY-MM-DD')}.md`;
+      )}/${currentDate.format(dailyFormat)}.md`;
       const dayFile = this.file.get(dayLink, '', this.settings.periodicNotesPath);
 
       if (dayFile) {
         days.add(dayFile.path);
       }
 
-      const weekLink = `${currentDate.isoWeekYear()}/Weekly/${currentDate.isoWeekYear()}-W${String(
-        currentDate.isoWeek(),
-      ).padStart(2, '0')}.md`;
+      const weekLink = `${currentDate.isoWeekYear()}/Weekly/${currentDate.format(weeklyFormat)}.md`;
       const weekFile = this.file.get(weekLink, '', this.settings.periodicNotesPath);
 
       if (weekFile) {
         weeks.add(weekFile.path);
       }
 
-      const monthLink = `${currentDate.year()}/Monthly/${currentDate.year()}-${String(currentDate.month() + 1).padStart(
-        2,
-        '0',
-      )}.md`;
+      const monthLink = `${currentDate.year()}/Monthly/${currentDate.format(monthlyFormat)}.md`;
       const monthFile = this.file.get(monthLink, '', this.settings.periodicNotesPath);
 
       if (monthFile) {
         months.add(monthFile.path);
       }
 
-      const quarterLink = `${currentDate.year()}/Quarterly/${currentDate.year()}-Q${Math.ceil(
-        (currentDate.month() + 1) / 3,
-      )}.md`;
+      const quarterLink = `${currentDate.year()}/Quarterly/${currentDate.format(quarterlyFormat)}.md`;
       const quarterFile = this.file.get(quarterLink, '', this.settings.periodicNotesPath);
 
       if (quarterFile) {

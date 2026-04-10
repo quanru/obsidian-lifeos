@@ -40,6 +40,11 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   paraIndexFilename: 'readme',
   weekStart: -1,
   useChineseCalendar: false,
+  dailyNoteFormat: 'YYYY-MM-DD',
+  weeklyNoteFormat: 'gggg-[W]ww',
+  monthlyNoteFormat: 'YYYY-MM',
+  quarterlyNoteFormat: 'YYYY-[Q]Q',
+  yearlyNoteFormat: 'YYYY',
 };
 
 export class SettingTabView extends PluginSettingTab {
