@@ -48,13 +48,13 @@ export class Bullet {
       return;
     }
 
-    const dailyRecordHeader = this.settings.dailyRecordHeader?.trim();
+    const habitHeader = this.settings.habitHeader?.trim();
     const lists = dataview
       .pages(`"${days.join('" or "')}"`)
       .file.lists.where((L: { task: boolean; path: string; section: { subpath?: string } }) => {
         if (L.task) return false;
-        // 只取 Daily Record 标题下的 bullet，与 pro 版保持一致
-        if (dailyRecordHeader && L.section?.subpath?.trim() !== dailyRecordHeader) return false;
+        // 排除习惯打卡区域的 bullet
+        if (habitHeader && L.section?.subpath?.trim() === habitHeader) return false;
         return true;
       })
       .sort((L: { path: string; line: number }) => L.path, 'desc');
