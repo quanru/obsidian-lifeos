@@ -200,6 +200,7 @@ export default class LifeOS extends Plugin {
       AreaListByTime: this.area.listByTime,
       TaskRecordListByTime: this.task.recordListByTime,
       TaskDoneListByTime: this.task.doneListByTime,
+      BulletRecordListByTime: this.bullet.listByTime,
       // views by tag -> topic context -> para
       TaskListByTag: this.task.listByTag,
       BulletListByTag: this.bullet.listByTag,
