@@ -1,4 +1,5 @@
 import { Divider, Form, Input, Select, Switch, Tabs, Typography } from 'antd';
+import dayjs from 'dayjs';
 import React, { useState, useEffect } from 'react';
 import { ARCHIVE, AREA, DAILY, MONTHLY, PROJECT, QUARTERLY, RESOURCE, WEEKLY, YEARLY } from '../../constant';
 import { useApp } from '../../hooks/useApp';
@@ -188,7 +189,21 @@ export const SettingTab = (props: { settings: PluginSettings; saveSettings: (set
                                 </AutoComplete>
                               </Form.Item>
                               <Form.Item
-                                help={localeMap.SETTING_DATE_FORMAT_HELP}
+                                help={
+                                  <>
+                                    {localeMap.SETTING_DATE_FORMAT_SYNTAX}{' '}
+                                    <a href="https://day.js.org/docs/en/display/format" target="_blank" rel="noreferrer">
+                                      {localeMap.SETTING_DATE_FORMAT_REFERENCE}
+                                    </a>
+                                    <br />
+                                    {localeMap.SETTING_DATE_FORMAT_PREVIEW}{' '}
+                                    <strong>
+                                      {dayjs().format(
+                                        form.getFieldValue(formatFieldMap[item]) || defaultFormatMap[item],
+                                      )}
+                                    </strong>
+                                  </>
+                                }
                                 name={formatFieldMap[item]}
                                 label={`${localeMap[item]}${localeMap.SETTING_DATE_FORMAT}`}
                                 rules={[

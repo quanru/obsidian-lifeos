@@ -121,7 +121,9 @@ const EN = {
   SETTING_WEEK_START_SUNDAY: 'Sunday',
 
   SETTING_DATE_FORMAT: 'Date Format:',
-  SETTING_DATE_FORMAT_HELP: 'The date format used for file names (dayjs format). Must start with the default format, e.g. YYYY-MM-DD ddd',
+  SETTING_DATE_FORMAT_SYNTAX: 'Syntax reference:',
+  SETTING_DATE_FORMAT_REFERENCE: 'dayjs format',
+  SETTING_DATE_FORMAT_PREVIEW: 'Preview with current format:',
   SETTING_DATE_FORMAT_MUST_START_WITH: 'Format must start with the default: ',
 
   SETTING_INDEX_FILENAME_FOLDER: 'FolderName.md',
@@ -254,7 +256,9 @@ const ZH = {
   SETTING_WEEK_START_SUNDAY: '星期日',
 
   SETTING_DATE_FORMAT: '日期格式：',
-  SETTING_DATE_FORMAT_HELP: '文件名所用的日期格式（dayjs 格式），必须以默认格式开头，如 YYYY-MM-DD ddd',
+  SETTING_DATE_FORMAT_SYNTAX: '更多语法，请参阅:',
+  SETTING_DATE_FORMAT_REFERENCE: '时间格式参考',
+  SETTING_DATE_FORMAT_PREVIEW: '当前格式的样例:',
   SETTING_DATE_FORMAT_MUST_START_WITH: '格式必须以默认格式开头：',
 
   SETTING_INDEX_FILENAME_FOLDER: '文件夹名.md',
