@@ -192,7 +192,7 @@ export const SettingTab = (props: { settings: PluginSettings; saveSettings: (set
                                 help={
                                   <>
                                     {localeMap.SETTING_DATE_FORMAT_SYNTAX}{' '}
-                                    <a href="https://day.js.org/docs/en/display/format" target="_blank" rel="noreferrer">
+                                    <a href="https://momentjs.com/docs/#/displaying/format/" target="_blank" rel="noreferrer">
                                       {localeMap.SETTING_DATE_FORMAT_REFERENCE}
                                     </a>
                                     <br />
