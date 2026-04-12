@@ -36,7 +36,7 @@ export const TopBanner: React.FC<TopBannerProps> = ({ locale }) => {
   ];
 
   return (
-    <ConfigProvider>
+    <ConfigProvider localeKey={locale}>
       <div className="m-top-banner">
         <div className="banner-content">
           <div className="pro-link">

@@ -4,6 +4,7 @@ import React from 'react';
 import { type Root, createRoot } from 'react-dom/client';
 import { CreateNote } from '../component/CreateNote';
 import { AppContext } from '../context';
+import type LifeOS from '../main';
 import type { PluginSettings } from '../type';
 
 export const CREATE_NOTE = 'periodic-para';
@@ -12,10 +13,13 @@ export class CreateNoteView extends ItemView {
   settings: PluginSettings;
   root: Root;
   locale: Locale;
-  constructor(leaf: WorkspaceLeaf, settings: PluginSettings, locale: Locale) {
+  plugin: LifeOS;
+
+  constructor(leaf: WorkspaceLeaf, settings: PluginSettings, locale: Locale, plugin: LifeOS) {
     super(leaf);
     this.settings = settings;
     this.locale = locale;
+    this.plugin = plugin;
   }
 
   getViewType() {
@@ -47,8 +51,8 @@ export class CreateNoteView extends ItemView {
       <AppContext.Provider
         value={{
           app: this.app,
-          settings: this.settings,
-          locale: this.locale,
+          settings: this.plugin.settings,
+          locale: this.plugin.locale,
         }}
       >
         <CreateNote width={this.containerEl.innerWidth} />

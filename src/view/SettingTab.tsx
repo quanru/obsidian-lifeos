@@ -9,6 +9,7 @@ import type LifeOS from '../main';
 import type { PluginSettings } from '../type';
 
 export const DEFAULT_SETTINGS: PluginSettings = {
+  locale: '',
   periodicNotesPath: 'PeriodicNotes',
   usePeriodicAdvanced: false,
   periodicNotesTemplateFilePathYearly: '',
@@ -63,6 +64,7 @@ export class SettingTabView extends PluginSettingTab {
   display(): void {
     this.containerEl.empty();
     this.containerEl.addClass('periodic-para-setting-tab');
+    this.locale = this.plugin.locale;
     this.root = createRoot(this.containerEl);
 
     // 保存设置的函数

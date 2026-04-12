@@ -3,11 +3,11 @@ import dayjs from 'dayjs';
 import React, { useState, useEffect } from 'react';
 import { ARCHIVE, AREA, DAILY, MONTHLY, PROJECT, QUARTERLY, RESOURCE, WEEKLY, YEARLY } from '../../constant';
 import { useApp } from '../../hooks/useApp';
+import { getI18n, getLocale, normalizeLocale } from '../../i18n';
 import type { PluginSettings } from '../../type';
 import { DEFAULT_SETTINGS } from '../../view/SettingTab';
 import { ConfigProvider } from '../ConfigProvider';
 import './index.less';
-import { getI18n } from '../../i18n';
 import { AutoComplete } from '../AutoComplete';
 import { TopBanner } from '../TopBanner';
 
@@ -41,11 +41,11 @@ export const SettingTab = (props: { settings: PluginSettings; saveSettings: (set
     setSetting(initialSettings);
   }, [initialSettings]);
 
-  const localeKey = locale?.locale || 'en';
+  const localeKey = normalizeLocale(settings.locale || locale?.locale || getLocale());
   const localeMap = getI18n(localeKey);
 
   return (
-    <ConfigProvider>
+    <ConfigProvider localeKey={localeKey}>
       <TopBanner locale={localeKey} />
       <Form
         form={form}
@@ -57,6 +57,22 @@ export const SettingTab = (props: { settings: PluginSettings; saveSettings: (set
           saveSettings(changedValues);
         }}
       >
+        <Form.Item name="locale" label={localeMap.LANGUAGE} help={localeMap.LANGUAGE_HELP}>
+          <Select
+            options={[
+              { value: '', label: localeMap.LANGUAGE_AUTO },
+              { value: 'en', label: 'English' },
+              { value: 'de', label: 'Deutsch' },
+              { value: 'es', label: 'Espanol' },
+              { value: 'fr', label: 'Francais' },
+              { value: 'pt', label: 'Portugues' },
+              { value: 'zh', label: '简体中文' },
+              { value: 'zh-tw', label: '繁體中文' },
+              { value: 'ja', label: '日本語' },
+              { value: 'ar', label: 'العربية' },
+            ]}
+          />
+        </Form.Item>
         <Tabs
           defaultActiveKey="periodic"
           centered
@@ -112,7 +128,7 @@ export const SettingTab = (props: { settings: PluginSettings; saveSettings: (set
                             {
                               value: -1,
                               label: `${localeMap.SETTING_WEEK_START_AUTO}${
-                                locale?.locale === 'zh-cn'
+                                localeKey.startsWith('zh')
                                   ? `(${localeMap.SETTING_WEEK_START_MONDAY})`
                                   : `(${localeMap.SETTING_WEEK_START_SUNDAY})`
                               }`,

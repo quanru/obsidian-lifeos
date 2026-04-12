@@ -22,6 +22,7 @@
 - **LifeOS Pro** : https://lifeos.vip/plugin/lifeos/life-os-pro.html
 - **DeepAsk AI for Obsidian** : https://lifeos.vip/plugin/deepask/deepask.html
 - **DeepAsk AI for Chrome** : https://chromewebstore.google.com/detail/deepask-ai/abhoenehflglmgbohaibihggedfcpcep
+- Multi-language UI: follows your current Obsidian language by default, and can be overridden from the plugin settings page.
 
 ## Download
 

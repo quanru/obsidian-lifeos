@@ -21,6 +21,7 @@
 - LifeOS Basic: https://lifeos.vip/plugin/lifeos/life-os.html
 - **LifeOS Pro** : https://lifeos.vip/plugin/lifeos/life-os-pro.html
 - **DeepAsk AI Assistant** : https://lifeos.vip/plugin/deepask/deepask.html
+- 多语言界面：默认跟随 Obsidian 当前语言，也可以在插件设置页手动切换语言。
 
 ## Support
 

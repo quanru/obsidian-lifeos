@@ -15,7 +15,7 @@ import {
   WEEKLY,
   YEARLY,
 } from './constant';
-import { getI18n } from './i18n';
+import { getDayjsLocale, getI18n, getLocale, normalizeLocale } from './i18n';
 import type { DailyRecordType, DailyRecordTypeV2, PeriodicNotesTemplateFilePath, ResourceType } from './type';
 import { LogLevel, type PluginSettings } from './type';
 
@@ -227,13 +227,14 @@ export async function createPeriodicFile(
   settings: PluginSettings,
   app: App | undefined,
   newLeaf: boolean = false,
+  locale?: string,
 ): Promise<void> {
   if (!app || !settings.periodicNotesPath) {
     return;
   }
 
-  const locale = window.localStorage.getItem('language') || 'en';
-  const date = dayjs(day.format()).locale(locale);
+  const effectiveLocale = getDayjsLocale(locale || getLocale());
+  const date = dayjs(day.format()).locale(effectiveLocale);
 
   let templateFile = '';
   let folder = '';
@@ -265,7 +266,7 @@ export async function createPeriodicFile(
       `${settings.periodicNotesPath}/Templates/${periodType}.md`
     : `${settings.periodicNotesPath}/Templates/${periodType}.md`;
   await createFile(app, {
-    locale,
+    locale: locale || getLocale(),
     templateFile,
     folder,
     file,
@@ -274,7 +275,7 @@ export async function createPeriodicFile(
 }
 
 export function openOfficialSite(locale: string) {
-  if (locale === 'zh-cn') {
+  if (normalizeLocale(locale).startsWith('zh')) {
     return (window.location.href = `${LIFE_OS_OFFICIAL_SITE}/zh`);
   }
 

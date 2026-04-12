@@ -30,7 +30,7 @@ import type { PeriodicNotesTemplateFilePath, PluginSettings } from '../../type';
 import { createFile, createPeriodicFile, getFirstDay, openOfficialSite } from '../../util';
 import './index.less';
 import { useApp } from '../../hooks/useApp';
-import { getI18n } from '../../i18n';
+import { getDayjsLocale, getI18n, getLocale, normalizeLocale } from '../../i18n';
 import { AutoComplete } from '../AutoComplete';
 import { ConfigProvider } from '../ConfigProvider';
 
@@ -58,8 +58,9 @@ export const CreateNote = (props: { width: number }) => {
   const defaultType = settings?.usePeriodicNotes ? PERIODIC : PARA;
   const [type, setType] = useState(defaultType);
   const [form] = Form.useForm();
-  const today = dayjs(new Date());
-  const localeKey = locale?.locale || 'en';
+  const localeKey = normalizeLocale(settings?.locale || locale?.locale || getLocale());
+  const dayjsLocale = getDayjsLocale(localeKey);
+  const today = dayjs(new Date()).locale(dayjsLocale);
   const localeMap = getI18n(localeKey);
   const SubmitButton = (
     <Form.Item
@@ -138,8 +139,6 @@ export const CreateNote = (props: { width: number }) => {
           [QUARTERLY]: QUARTERLY_REG,
           [YEARLY]: YEARLY_REG,
         };
-        const locale = window.localStorage.getItem('language') || 'en';
-
         for (const [periodicType, regex] of Object.entries(regexMap)) {
           const match = basename.match(regex);
 
@@ -147,7 +146,7 @@ export const CreateNote = (props: { width: number }) => {
             const dateValue = match[0];
             if (periodicType === DAILY) {
               form.setFieldsValue({
-                [DAILY]: dayjs(dateValue, 'YYYY-MM-DD').locale(locale),
+                [DAILY]: dayjs(dateValue, 'YYYY-MM-DD').locale(dayjsLocale),
               });
             } else if (periodicType === WEEKLY) {
               const [year, week] = dateValue.split('-W');
@@ -157,11 +156,11 @@ export const CreateNote = (props: { width: number }) => {
                 .isoWeek(Number.parseInt(week))
                 .startOf('isoWeek');
               form.setFieldsValue({
-                [WEEKLY]: weeklyDate.locale(locale),
+                [WEEKLY]: weeklyDate.locale(dayjsLocale),
               });
             } else if (periodicType === MONTHLY) {
               form.setFieldsValue({
-                [MONTHLY]: dayjs(dateValue, 'YYYY-MM').locale(locale),
+                [MONTHLY]: dayjs(dateValue, 'YYYY-MM').locale(dayjsLocale),
               });
             } else if (periodicType === QUARTERLY) {
               const [year, quarter] = dateValue.split('-Q');
@@ -171,11 +170,11 @@ export const CreateNote = (props: { width: number }) => {
                 .quarter(Number.parseInt(quarter))
                 .startOf('quarter');
               form.setFieldsValue({
-                [QUARTERLY]: quarterlyDate.locale(locale),
+                [QUARTERLY]: quarterlyDate.locale(dayjsLocale),
               });
             } else if (periodicType === YEARLY) {
               form.setFieldsValue({
-                [YEARLY]: dayjs(dateValue, 'YYYY').locale(locale),
+                [YEARLY]: dayjs(dateValue, 'YYYY').locale(dayjsLocale),
               });
             }
 
@@ -191,23 +190,24 @@ export const CreateNote = (props: { width: number }) => {
     return () => {
       app?.workspace.off('active-leaf-change', leafChangeHandler);
     };
-  }, []);
+  }, [app, dayjsLocale, form, settings?.periodicNotesPath]);
 
-  dayjs.updateLocale(localeKey, {
-    weekStart: getFirstDay(settings?.weekStart, locale?.locale),
-  });
+  useEffect(() => {
+    dayjs.updateLocale(dayjsLocale, {
+      weekStart: getFirstDay(settings?.weekStart, localeKey),
+    });
+  }, [dayjsLocale, localeKey, settings?.weekStart]);
 
   const cellRender: (value: dayjs.Dayjs, picker: string) => JSX.Element = (value, picker) => {
     let formattedDate: string;
     let badgeText: string;
-    const locale = window.localStorage.getItem('language') || 'en';
-    const date = dayjs(value.format()).locale(locale);
+    const date = dayjs(value.format()).locale(dayjsLocale);
     let chineseCalendarText = '';
     let dayWorkStatus = '';
     const onClick = (day: dayjs.Dayjs, event: React.MouseEvent<HTMLDivElement>) => {
       const newLeaf = event.ctrlKey || event.metaKey || event.altKey;
 
-      createPeriodicFile(day, periodicActiveTab, settings!, app, newLeaf);
+      createPeriodicFile(day, periodicActiveTab, settings!, app, newLeaf, localeKey);
     };
 
     switch (picker) {
@@ -215,7 +215,8 @@ export const CreateNote = (props: { width: number }) => {
         if (settings?.useChineseCalendar) {
           const solar = SolarDay.fromYmd(date.year(), date.month() + 1, date.date());
           const holiday = solar.getLegalHoliday();
-          dayWorkStatus = typeof holiday?.isWork !== 'function' ? '' : holiday?.isWork() ? '班' : '休';
+          const isWorkday = typeof holiday?.isWork === 'function' ? holiday.isWork() : null;
+          dayWorkStatus = isWorkday === null ? '' : isWorkday ? localeMap.CALENDAR_WORKDAY : localeMap.CALENDAR_HOLIDAY;
 
           const lunar = solar.getLunarDay();
 
@@ -269,8 +270,8 @@ export const CreateNote = (props: { width: number }) => {
             <span className="chinese-cal">{chineseCalendarText}</span>
             <p
               className={`label
-                          ${dayWorkStatus === '休' ? 'holiday' : ''}
-                          ${dayWorkStatus === '班' ? 'workday' : ''}
+                          ${dayWorkStatus === localeMap.CALENDAR_HOLIDAY ? 'holiday' : ''}
+                          ${dayWorkStatus === localeMap.CALENDAR_WORKDAY ? 'workday' : ''}
                         `}
             >
               {dayWorkStatus}
@@ -367,6 +368,7 @@ export const CreateNote = (props: { width: number }) => {
 
   return (
     <ConfigProvider
+      localeKey={localeKey}
       components={{
         DatePicker: {
           cellWidth: width ? width / 7.5 : 45,
@@ -417,7 +419,7 @@ export const CreateNote = (props: { width: number }) => {
             onTabClick={(key) => {
               if (singleClickRef.current) {
                 clearTimeout(singleClickRef.current);
-                createPeriodicFile(dayjs(new Date()), key, settings, app);
+                createPeriodicFile(dayjs(new Date()), key, settings, app, false, localeKey);
                 singleClickRef.current = null;
               } else {
                 singleClickRef.current = window.setTimeout(() => {
@@ -508,9 +510,7 @@ export const CreateNote = (props: { width: number }) => {
                             <Input
                               onChange={() => handleTagInput(para)}
                               allowClear
-                              placeholder={
-                                para === PROJECT ? 'PKM/LifeOS' : 'PKM' // 引导用户，项目一般属于某个领域
-                              }
+                              placeholder={para === PROJECT ? localeMap.PARA_TAG_PLACEHOLDER_PROJECT : localeMap.PARA_TAG_PLACEHOLDER_DEFAULT}
                             />
                           </AutoComplete>
                         </Form.Item>
@@ -525,7 +525,7 @@ export const CreateNote = (props: { width: number }) => {
                             },
                           ]}
                         >
-                          <Input type="text" allowClear placeholder="PKM-LifeOS" />
+                          <Input type="text" allowClear placeholder={localeMap.PARA_FOLDER_PLACEHOLDER} />
                         </Form.Item>
                         <Form.Item
                           label={localeMap[INDEX]}
@@ -538,7 +538,7 @@ export const CreateNote = (props: { width: number }) => {
                             },
                           ]}
                         >
-                          <Input allowClear placeholder="LifeOS.README.md" />
+                          <Input allowClear placeholder={localeMap.PARA_INDEX_PLACEHOLDER} />
                         </Form.Item>
                       </>
                     ) : null,

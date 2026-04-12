@@ -2,8 +2,6 @@ import { Platform, Plugin, TFile, setIcon } from 'obsidian';
 import type { App, MarkdownPostProcessorContext, Menu, PluginManifest, TAbstractFile, WorkspaceLeaf } from 'obsidian';
 import { type DataviewApi, getAPI, isPluginEnabled } from 'obsidian-dataview';
 
-import enUS from 'antd/locale/en_US';
-import zhCN from 'antd/locale/zh_CN';
 import dayjs from 'dayjs';
 import { DAILY, ERROR_MESSAGE, MONTHLY, QUARTERLY, WEEKLY, YEARLY } from './constant';
 import { Archive } from './para/Archive';
@@ -20,20 +18,20 @@ import { createPeriodicFile, logMessage, openOfficialSite, renderError } from '.
 import { CREATE_NOTE, CreateNoteView } from './view/CreateNote';
 import { SettingTabView } from './view/SettingTab';
 import { DEFAULT_SETTINGS } from './view/SettingTab';
+import 'dayjs/locale/ar';
+import 'dayjs/locale/de';
+import 'dayjs/locale/es';
+import 'dayjs/locale/fr';
+import 'dayjs/locale/ja';
+import 'dayjs/locale/pt';
+import 'dayjs/locale/pt-br';
 import 'dayjs/locale/zh-cn';
 import 'dayjs/locale/zh';
+import 'dayjs/locale/zh-tw';
 import type { Locale } from 'antd/es/locale';
-import { getI18n } from './i18n';
+import { getAntdLocale, getDayjsLocale, getI18n, getLocale } from './i18n';
 
 import './index.less';
-
-const localeMap: Record<string, Locale> = {
-  en: enUS,
-  'en-us': enUS,
-  zh: zhCN,
-  'zh-cn': zhCN,
-};
-const locale = window.localStorage.getItem('language') || 'en';
 
 export default class LifeOS extends Plugin {
   settings: PluginSettings;
@@ -50,6 +48,9 @@ export default class LifeOS extends Plugin {
   dailyRecord: DailyRecord;
   timeout: NodeJS.Timeout;
   interval: NodeJS.Timer;
+  dailyRecordRibbonItem?: HTMLElement;
+  locale: Locale;
+  i18n: Record<string, string>;
 
   constructor(app: App, manifest: PluginManifest) {
     super(app, manifest);
@@ -60,7 +61,7 @@ export default class LifeOS extends Plugin {
     );
 
     if (!isPluginEnabled(app)) {
-      logMessage(getI18n(locale)[`${ERROR_MESSAGE}NO_DATAVIEW_INSTALL`], LogLevel.error);
+      logMessage(getI18n(getLocale())[`${ERROR_MESSAGE}NO_DATAVIEW_INSTALL`], LogLevel.error);
       return;
     }
 
@@ -89,31 +90,30 @@ export default class LifeOS extends Plugin {
   async onload() {
     await this.loadSettings();
     this.registerView(CREATE_NOTE, (leaf) => {
-      return new CreateNoteView(leaf, this.settings, localeMap[locale]);
+      return new CreateNoteView(leaf, this.settings, this.locale, this);
     });
 
-    const i18n = getI18n(locale);
-    const item = this.addRibbonIcon('file-plus', i18n.COMMAND_CREATE_NOTES, this.initCreateNoteView);
+    const item = this.addRibbonIcon('file-plus', this.i18n.COMMAND_CREATE_NOTES, this.initCreateNoteView);
     setIcon(item, 'file-plus');
 
     this.addCommand({
       id: 'periodic-para-create-notes',
-      name: i18n.COMMAND_CREATE_NOTES,
+      name: this.i18n.COMMAND_CREATE_NOTES,
       callback: this.initCreateNoteView,
     });
     [DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY].map((periodType) => {
       this.addCommand({
         id: `periodic-para-create-${periodType.toLocaleLowerCase()}-note`,
-        name: i18n[`COMMAND_CREATE_${periodType.toUpperCase()}_NOTE`],
+        name: this.i18n[`COMMAND_CREATE_${periodType.toUpperCase()}_NOTE`],
         callback: () => {
-          createPeriodicFile(dayjs(), periodType, this.settings, this.app);
+          createPeriodicFile(dayjs(), periodType, this.settings, this.app, false, this.getCurrentLocaleKey());
         },
       });
     });
     this.addCommand({
       id: 'periodic-para-life-os-guide',
-      name: i18n.COMMAND_LIFEOS_GUIDE,
-      callback: () => openOfficialSite(locale),
+      name: this.i18n.COMMAND_LIFEOS_GUIDE,
+      callback: () => openOfficialSite(this.getCurrentLocaleKey()),
     });
     this.loadHelpers();
     this.loadGlobalHelpers();
@@ -128,11 +128,9 @@ export default class LifeOS extends Plugin {
     }
     this.loadDailyRecord();
     this.registerFileMenu();
-    this.addSettingTab(new SettingTabView(this.app, this.settings, this, localeMap[locale]));
+    this.addSettingTab(new SettingTabView(this.app, this.settings, this, this.locale));
   }
   registerFileMenu() {
-    const i18n = getI18n(locale);
-
     this.registerEvent(
       this.app.workspace.on('file-menu', (menu: Menu, file: TAbstractFile) => {
         if (!this.settings.usePARANotes) return;
@@ -152,6 +150,7 @@ export default class LifeOS extends Plugin {
 
         targetFolders.forEach((targetFolder) => {
           menu.addItem((item) => {
+            const i18n = getI18n(this.getCurrentLocaleKey());
             item
               .setSection('lifeos')
               .setIcon('folder-tree')
@@ -166,26 +165,32 @@ export default class LifeOS extends Plugin {
   }
 
   loadDailyRecord() {
+    clearTimeout(this.timeout);
+    clearInterval(this.interval);
+    this.dailyRecordRibbonItem?.remove();
+    this.dailyRecordRibbonItem = undefined;
+
     if (this.settings.usePeriodicNotes && this.settings.useDailyRecord) {
-      this.dailyRecord = new DailyRecord(this.app, this.settings, this.file, locale);
+      const localeKey = this.getCurrentLocaleKey();
+
+      this.dailyRecord = new DailyRecord(this.app, this.settings, this.file, localeKey);
       this.addCommand({
         id: 'periodic-para-sync-daily-record',
-        name: getI18n(locale).COMMAND_SYNC_DAILY_RECORDS,
+        name: getI18n(localeKey).COMMAND_SYNC_DAILY_RECORDS,
         callback: this.dailyRecord.sync,
       });
       this.addCommand({
         id: 'periodic-para-force-sync-daily-record',
-        name: getI18n(locale).COMMAND_FORCE_SYNC_DAILY_RECORDS,
+        name: getI18n(localeKey).COMMAND_FORCE_SYNC_DAILY_RECORDS,
         callback: this.dailyRecord.forceSync,
       });
 
-      const DailyRecordItem = this.addRibbonIcon('refresh-ccw-dot', getI18n(locale).COMMAND_SYNC_DAILY_RECORDS, () =>
-        this.dailyRecord.sync(),
+      this.dailyRecordRibbonItem = this.addRibbonIcon(
+        'refresh-ccw-dot',
+        getI18n(localeKey).COMMAND_SYNC_DAILY_RECORDS,
+        () => this.dailyRecord.sync(),
       );
-      setIcon(DailyRecordItem, 'refresh-ccw-dot');
-
-      clearTimeout(this.timeout);
-      clearInterval(this.interval);
+      setIcon(this.dailyRecordRibbonItem, 'refresh-ccw-dot');
 
       // sync on start
       this.timeout = setTimeout(() => this.dailyRecord.sync(), 15 * 1000);
@@ -229,11 +234,12 @@ export default class LifeOS extends Plugin {
   ) => {
     const view = source.trim() as keyof typeof this.views;
     const legacyView = `${view}ByTime` as keyof typeof this.views;
+    const localeKey = this.getCurrentLocaleKey();
 
     if (!view) {
       return renderError(
         this.app,
-        getI18n(locale)[`${ERROR_MESSAGE}NO_VIEW_PROVIDED`],
+        getI18n(localeKey)[`${ERROR_MESSAGE}NO_VIEW_PROVIDED`],
         el.createEl('div'),
         ctx.sourcePath,
       );
@@ -242,7 +248,7 @@ export default class LifeOS extends Plugin {
     if (!Object.keys(this.views).includes(view) && !Object.keys(this.views).includes(legacyView)) {
       return renderError(
         this.app,
-        `${getI18n(locale)[`${ERROR_MESSAGE}NO_VIEW_EXISTED`]}: ${view}`,
+        `${getI18n(localeKey)[`${ERROR_MESSAGE}NO_VIEW_EXISTED`]}: ${view}`,
         el.createEl('div'),
         ctx.sourcePath,
       );
@@ -255,11 +261,13 @@ export default class LifeOS extends Plugin {
 
   async loadSettings() {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    this.syncLocale(this.settings.locale);
   }
 
   async saveSettings(settings: PluginSettings) {
     await this.saveData(settings);
     this.settings = settings;
+    this.syncLocale(settings.locale);
     this.loadHelpers();
     this.loadGlobalHelpers();
     this.loadViews();
@@ -267,15 +275,17 @@ export default class LifeOS extends Plugin {
   }
 
   loadHelpers() {
-    this.task = new Task(this.app, this.settings, this, locale);
-    this.file = new File(this.app, this.settings, this, locale);
-    this.date = new PeriodicDate(this.app, this.settings, this.file, locale);
-    this.bullet = new Bullet(this.app, this.settings, this, locale);
+    const localeKey = this.getCurrentLocaleKey();
 
-    this.project = new Project(this.settings.projectsPath, this.app, this.settings, this.file, locale);
-    this.area = new Area(this.settings.areasPath, this.app, this.settings, this.file, locale);
-    this.resource = new Resource(this.settings.resourcesPath, this.app, this.settings, this.file, locale);
-    this.archive = new Archive(this.settings.archivesPath, this.app, this.settings, this.file, locale);
+    this.task = new Task(this.app, this.settings, this, localeKey);
+    this.file = new File(this.app, this.settings, this, localeKey);
+    this.date = new PeriodicDate(this.app, this.settings, this.file, localeKey);
+    this.bullet = new Bullet(this.app, this.settings, this, localeKey);
+
+    this.project = new Project(this.settings.projectsPath, this.app, this.settings, this.file, localeKey);
+    this.area = new Area(this.settings.areasPath, this.app, this.settings, this.file, localeKey);
+    this.resource = new Resource(this.settings.resourcesPath, this.app, this.settings, this.file, localeKey);
+    this.archive = new Archive(this.settings.archivesPath, this.app, this.settings, this.file, localeKey);
   }
 
   loadGlobalHelpers() {
@@ -311,4 +321,15 @@ export default class LifeOS extends Plugin {
 
     await leaf?.setViewState({ type: CREATE_NOTE, active: true });
   };
+
+  private syncLocale(localeOverride?: string) {
+    const effectiveLocale = localeOverride || getLocale();
+    this.i18n = getI18n(effectiveLocale);
+    this.locale = getAntdLocale(effectiveLocale);
+    dayjs.locale(getDayjsLocale(effectiveLocale));
+  }
+
+  getCurrentLocaleKey() {
+    return this.settings?.locale || getLocale();
+  }
 }

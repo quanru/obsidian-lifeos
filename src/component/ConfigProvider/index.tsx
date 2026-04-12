@@ -2,16 +2,23 @@ import React, { type ReactNode, useEffect, useState } from 'react';
 import reduceCSSCalc from 'reduce-css-calc';
 
 import { useApp } from '../../hooks/useApp';
+import { getAntdLocale, getLocale } from '../../i18n';
 import { isDarkTheme } from '../../util';
 
 import { ConfigProvider as AntdConfigProvider, type ThemeConfig, theme } from 'antd';
 
-export const ConfigProvider = (props: { children: ReactNode; components?: ThemeConfig['components'] }) => {
-  const { children, components } = props;
-  const { locale } = useApp() || {};
+export const ConfigProvider = (props: {
+  children: ReactNode;
+  components?: ThemeConfig['components'];
+  localeKey?: string;
+}) => {
+  const { children, components, localeKey } = props;
+  const { locale, settings } = useApp() || {};
   const computedStyle = getComputedStyle(document.querySelector('.app-container')!);
   const fontSize = Number.parseInt(computedStyle?.getPropertyValue('--nav-item-size')) || 13;
   const [isDark, setDark] = useState(isDarkTheme());
+  const effectiveLocale = getAntdLocale(localeKey || settings?.locale || locale?.locale || getLocale());
+
   useEffect(() => {
     const handleBodyClassChange = () => {
       setDark(isDarkTheme());
@@ -29,7 +36,7 @@ export const ConfigProvider = (props: { children: ReactNode; components?: ThemeC
   }, []);
   return (
     <AntdConfigProvider
-      locale={locale}
+      locale={effectiveLocale}
       theme={{
         token: {
           fontFamily: 'var(--font-interface)',
