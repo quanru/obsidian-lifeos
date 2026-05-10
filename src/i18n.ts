@@ -155,7 +155,7 @@ const EN = {
   TOPBANNER_CONTACT: 'Contact',
   TOPBANNER_CONTACT_HREF: 'https://lifeos.vip/contact/index.html',
   TOPBANNER_SOCIAL: 'Twitter',
-  TOPBANNER_SOCIAL_HREF: 'https://x.com/quan_ru',
+  TOPBANNER_SOCIAL_HREF: 'https://x.com/lifeos_md',
   TOPBANNER_LIFEOS_PRO: 'LifeOS Pro',
   TOPBANNER_LIFEOS_PRO_HREF: 'https://lifeos.vip/plugin/life-os-pro.html',
   TOP_BANNER_DEEPASK_AD: 'Inject AI Intelligence into LifeOS',

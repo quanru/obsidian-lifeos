@@ -32,8 +32,8 @@
 
 - [🎮 Discord](https://discord.gg/HZGanKEkuZ)
 - [💬 Telegram](https://t.me/+OLTasChvEEthMjBl)
-- [🐦 LifeOS for Obsidian](https://twitter.com/quan_ru)
-- [🐦 Twitter](https://x.com/quan_ru)
+- [🐦 LifeOS for Obsidian](https://twitter.com/lifeos_md)
+- [🐦 Twitter](https://x.com/lifeos_md)
 - [📺 Youtube](https://www.youtube.com/@LeYangLin)
 - [🧑‍🔧 Bento](https://bento.me/leyang)
 - [📧 Email](mailto:quanruzhuoxiu@gmail.com)
