@@ -156,15 +156,17 @@ export type InstanceProfileType = {
 
 export type UserType = {
   name: string;
-  id: number;
+  id?: number | string;
   role: string;
   username: string;
   email: string;
-  nickname: string;
+  nickname?: string;
+  displayName?: string;
   avatarUrl: string;
   description: string;
   password: string;
-  rowStatus: string;
+  rowStatus?: string;
+  state?: string;
   createTime: string;
   updateTime: string;
 };
