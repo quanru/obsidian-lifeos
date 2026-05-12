@@ -43,6 +43,7 @@ export class DailyRecord {
   memosProfile: WorkspaceProfileType | InstanceProfileType;
   memosUserName: string;
   memosUserId: number | null;
+  memosUserResourceName: string;
   hasCreatedNewFile: boolean;
 
   constructor(app: App, settings: PluginSettings, file: File, locale: string) {
@@ -74,7 +75,21 @@ export class DailyRecord {
     this.locale = locale;
     this.baseURL = origin;
     this.memosUserId = null;
+    this.memosUserResourceName = '';
     this.hasCreatedNewFile = false;
+  }
+
+  private parseMemosUserId(value?: number | string | null) {
+    if (typeof value === 'number') {
+      return Number.isFinite(value) ? value : null;
+    }
+
+    if (typeof value !== 'string') {
+      return null;
+    }
+
+    const parsedUserId = Number.parseInt(value, 10);
+    return /^\d+$/.test(value) && !Number.isNaN(parsedUserId) ? parsedUserId : null;
   }
 
   private getMemosUserIdFromUser(user?: UserType | null) {
@@ -82,49 +97,112 @@ export class DailyRecord {
       return null;
     }
 
-    if (typeof user.id === 'number') {
-      return user.id;
+    const idFromField = this.parseMemosUserId(user.id);
+    if (idFromField !== null) {
+      return idFromField;
     }
 
     const matchedUserId = user.name?.match(/^users\/(\d+)$/);
-    if (!matchedUserId?.[1]) {
-      return null;
+    return this.parseMemosUserId(matchedUserId?.[1]);
+  }
+
+  private getMemosUserResourceNameFromUser(user?: UserType | null) {
+    if (!user) {
+      return '';
     }
 
-    const parsedUserId = Number.parseInt(matchedUserId[1], 10);
-    return Number.isNaN(parsedUserId) ? null : parsedUserId;
+    if (user.name?.startsWith('users/')) {
+      return user.name;
+    }
+
+    const userId = this.getMemosUserIdFromUser(user);
+    if (userId !== null) {
+      return `users/${userId}`;
+    }
+
+    if (user.username) {
+      return `users/${user.username}`;
+    }
+
+    return '';
+  }
+
+  private escapeMemosFilterString(value: string) {
+    return value.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+  }
+
+  private buildCurrentUserMemosFilter() {
+    if (this.memosUserId !== null) {
+      return `creator_id == ${this.memosUserId}`;
+    }
+
+    if (this.memosUserResourceName) {
+      return `creator == '${this.escapeMemosFilterString(this.memosUserResourceName)}'`;
+    }
+
+    return '';
+  }
+
+  private async hasLocalDailyRecordForDate(date: string) {
+    const momentDay = moment(date);
+    const link = `${momentDay.year()}/Daily/${String(momentDay.month() + 1).padStart(
+      2,
+      '0',
+    )}/${momentDay.format('YYYY-MM-DD')}.md`;
+    const targetFile = this.file.get(link, '', this.settings.periodicNotesPath);
+
+    if (!(targetFile instanceof TFile)) {
+      return false;
+    }
+
+    const originFileContent = await this.app.vault.read(targetFile);
+    const regMatch = originFileContent.match(generateHeaderRegExp(this.settings.dailyRecordHeader));
+    const localRecordContent = regMatch?.[2]?.trim() || '';
+
+    return /\^\d{10}/.test(localRecordContent) || /#daily-record\b/.test(localRecordContent);
   }
 
   async getMemosUserName() {
-    let endpoint: { url: string; method: 'GET' | 'POST' };
+    const endpoints: { url: string; method: 'GET' | 'POST' }[] = [];
 
-    if (this.memosVersion === 'v2.6') {
-      endpoint = { url: '/api/v1/auth/me', method: 'GET' };
-    } else if (this.memosVersion === 'v2.5') {
-      endpoint = { url: '/api/v1/auth/sessions/current', method: 'GET' };
-    } else {
-      endpoint = { url: '/api/v1/auth/status', method: 'POST' };
+    if (this.memosVersion === 'v2.5') {
+      endpoints.push({ url: '/api/v1/auth/sessions/current', method: 'GET' });
     }
+
+    if (this.memosVersion !== 'v1') {
+      endpoints.push({ url: '/api/v1/auth/me', method: 'GET' });
+    }
+
+    endpoints.push({ url: '/api/v1/auth/status', method: 'POST' });
 
     this.memosUserName = '';
     this.memosUserId = null;
+    this.memosUserResourceName = '';
 
-    try {
-      const { json: data } = await customRequest<{ user?: UserType } | UserType>({
-        url: `${this.baseURL}${endpoint.url}`,
-        method: endpoint.method,
-        headers: {
-          Authorization: `Bearer ${this.settings.dailyRecordToken}`,
-        },
-      });
+    for (const endpoint of endpoints) {
+      try {
+        const { json: data } = await customRequest<{ user?: UserType } | UserType>({
+          url: `${this.baseURL}${endpoint.url}`,
+          method: endpoint.method,
+          headers: {
+            Authorization: `Bearer ${this.settings.dailyRecordToken}`,
+          },
+        });
 
-      const user = data && typeof data === 'object' && 'user' in data ? data.user : (data as UserType);
-      this.memosUserName = user?.name || '';
-      this.memosUserId = this.getMemosUserIdFromUser(user);
-    } catch (error) {
-      console.warn(`Failed to get user from ${endpoint.url} (version: ${this.memosVersion}): ${error.message}`);
-      logMessage(getI18n(this.locale)[`${ERROR_MESSAGE}AUTH_ENDPOINTS_FAILED`], LogLevel.info);
+        const user = data && typeof data === 'object' && 'user' in data ? data.user : (data as UserType);
+        this.memosUserResourceName = this.getMemosUserResourceNameFromUser(user);
+        this.memosUserName = this.memosUserResourceName || user?.name || user?.username || '';
+        this.memosUserId = this.getMemosUserIdFromUser(user);
+
+        if (this.memosUserName || this.memosUserId !== null || this.memosUserResourceName) {
+          return;
+        }
+      } catch (error) {
+        console.warn(`Failed to get user from ${endpoint.url} (version: ${this.memosVersion}): ${error.message}`);
+      }
     }
+
+    logMessage(getI18n(this.locale)[`${ERROR_MESSAGE}AUTH_ENDPOINTS_FAILED`], LogLevel.info);
   }
 
   async getMemosVersion() {
@@ -185,16 +263,17 @@ export class DailyRecord {
       }
 
       let filterParams = {};
-      const currentUserResourceName = this.memosUserId !== null ? `users/${this.memosUserId}` : null;
+      const currentUserResourceName = this.memosUserResourceName;
+      const currentUserFilter = this.buildCurrentUserMemosFilter();
 
       if (this.memosVersion === 'v2.5' || this.memosVersion === 'v2.6') {
-        if (this.memosUserId === null) {
-          throw new Error('Failed to determine the current memos user ID');
+        if (!currentUserFilter) {
+          throw new Error('Failed to determine the current memos user');
         }
 
         filterParams = {
           state: 'NORMAL',
-          filter: `creator_id == ${this.memosUserId}`,
+          filter: currentUserFilter,
         };
       } else if (semver.gte(this.memosProfile.version, '0.24.0')) {
         if (!currentUserResourceName) {
@@ -211,7 +290,7 @@ export class DailyRecord {
         }
 
         filterParams = {
-          filter: `creator == '${currentUserResourceName}' && state == 'NORMAL'`,
+          filter: `creator == '${this.escapeMemosFilterString(currentUserResourceName)}' && state == 'NORMAL'`,
         };
       } else {
         filterParams = {
@@ -404,7 +483,18 @@ export class DailyRecord {
     const records = (await this.fetchMemosList()) || [];
     const mostRecentTimeStamp = records[0]?.createdAt ? moment(records[0]?.createdAt).unix() : records[0]?.createdTs;
 
-    if (!records.length || mostRecentTimeStamp * 1000 < Number(this.lastTime)) {
+    if (!records.length) {
+      logMessage(getI18n(this.locale)[`${MESSAGE}END_SYNC_USEMEMOS`]);
+
+      this.updateRecentTimestamp();
+
+      return;
+    }
+
+    const mostRecentRecordDate = moment(mostRecentTimeStamp * 1000).format('YYYY-MM-DD');
+    const hasLocalDailyRecord = await this.hasLocalDailyRecordForDate(mostRecentRecordDate);
+
+    if (mostRecentTimeStamp * 1000 < Number(this.lastTime) && hasLocalDailyRecord) {
       // 直到 record 返回为空，或者最新的一条记录的时间，晚于上一次同步时间
       logMessage(getI18n(this.locale)[`${MESSAGE}END_SYNC_USEMEMOS`]);
 
@@ -458,7 +548,7 @@ export class DailyRecord {
           const originFileContent = await this.app.vault.read(targetFile);
           const regMatch = originFileContent.match(reg);
 
-          if (!regMatch?.length || !regMatch?.index) {
+          if (!regMatch?.length || regMatch.index === undefined) {
             if (!this.settings.dailyRecordToken) {
               logMessage('Current daily file will not insert daily record due to no daily record header');
               return;
