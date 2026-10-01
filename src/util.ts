@@ -1,20 +1,9 @@
+import { buildPeriodicFilePath, joinVaultPath } from './periodic/paths';
+export { isInPeriodicNote, isInPeriodicNotesFolder, joinVaultPath } from './periodic/paths';
 import dayjs, { type Dayjs } from 'dayjs';
 import { Component, MarkdownRenderer, Notice, TFile, TFolder, moment } from 'obsidian';
 import type { App } from 'obsidian';
-import {
-  DAILY,
-  ERROR_MESSAGE,
-  FULL_DAILY_REG,
-  FULL_MONTHLY_REG,
-  FULL_QUARTERLY_REG,
-  FULL_WEEKLY_REG,
-  FULL_YEARLY_REG,
-  LIFE_OS_OFFICIAL_SITE,
-  MONTHLY,
-  QUARTERLY,
-  WEEKLY,
-  YEARLY,
-} from './constant';
+import { DAILY, ERROR_MESSAGE, LIFE_OS_OFFICIAL_SITE, MONTHLY, QUARTERLY, WEEKLY, YEARLY } from './constant';
 import { getDayjsLocale, getI18n, getLocale, normalizeLocale } from './i18n';
 import type { DailyRecordType, DailyRecordTypeV2, PeriodicNotesTemplateFilePath, ResourceType } from './type';
 import { LogLevel, type PluginSettings } from './type';
@@ -259,27 +248,33 @@ export async function createPeriodicFile(
   let value;
 
   if (periodType === DAILY) {
-    folder = `${settings.periodicNotesPath}/${year}/${periodType}/${String(date.month() + 1).padStart(2, '0')}`;
+    folder = joinVaultPath(settings.periodicNotesPath, year, periodType, String(date.month() + 1).padStart(2, '0'));
     value = date.format(settings.dailyNoteFormat || 'YYYY-MM-DD');
   } else if (periodType === WEEKLY) {
-    folder = `${settings.periodicNotesPath}/${date.format('gggg')}/${periodType}`;
+    folder = joinVaultPath(settings.periodicNotesPath, date.format('gggg'), periodType);
     value = date.format(settings.weeklyNoteFormat || 'gggg-[W]ww');
   } else if (periodType === MONTHLY) {
-    folder = `${settings.periodicNotesPath}/${year}/${periodType}`;
+    folder = joinVaultPath(settings.periodicNotesPath, year, periodType);
     value = date.format(settings.monthlyNoteFormat || 'YYYY-MM');
   } else if (periodType === QUARTERLY) {
-    folder = `${settings.periodicNotesPath}/${year}/${periodType}`;
+    folder = joinVaultPath(settings.periodicNotesPath, year, periodType);
     value = date.format(settings.quarterlyNoteFormat || 'YYYY-[Q]Q');
   } else if (periodType === YEARLY) {
-    folder = `${settings.periodicNotesPath}/${year}`;
+    folder = joinVaultPath(settings.periodicNotesPath, year);
     value = settings.yearlyNoteFormat ? date.format(settings.yearlyNoteFormat) : year;
   }
 
-  file = `${folder}/${value}.md`;
+  file = buildPeriodicFilePath(
+    settings.periodicNotesPath,
+    periodType === WEEKLY ? date.format('gggg') : year,
+    periodType,
+    String(value),
+    String(date.month() + 1).padStart(2, '0'),
+  );
   templateFile = settings.usePeriodicAdvanced
     ? settings[`periodicNotesTemplateFilePath${periodType}` as PeriodicNotesTemplateFilePath] ||
-      `${settings.periodicNotesPath}/Templates/${periodType}.md`
-    : `${settings.periodicNotesPath}/Templates/${periodType}.md`;
+      joinVaultPath(settings.periodicNotesPath, 'Templates', `${periodType}.md`)
+    : joinVaultPath(settings.periodicNotesPath, 'Templates', `${periodType}.md`);
   const fileCreated = await createFile(app, {
     locale: locale || getLocale(),
     templateFile,
@@ -310,7 +305,7 @@ export function generateIgnoreOperator(settings: PluginSettings) {
   } = settings;
 
   return [
-    `${periodicNotesPath}/Templates`,
+    joinVaultPath(periodicNotesPath, 'Templates'),
     periodicNotesTemplateFilePathYearly,
     periodicNotesTemplateFilePathQuarterly,
     periodicNotesTemplateFilePathMonthly,
@@ -339,7 +334,7 @@ export function getAllTemplateFiles(settings: PluginSettings) {
 
   return [
     'Template.md',
-    `${periodicNotesPath}/Templates`,
+    joinVaultPath(periodicNotesPath, 'Templates'),
     projectsTemplateFilePath,
     areasTemplateFilePath,
     resourcesTemplateFilePath,
@@ -354,16 +349,6 @@ export function getAllTemplateFiles(settings: PluginSettings) {
 
 export function isInTemplateNote(path: string, settings: PluginSettings) {
   return getAllTemplateFiles(settings).some((template) => path.includes(template));
-}
-
-export function isInPeriodicNote(path: string, settings: PluginSettings) {
-  return (
-    path?.match(new RegExp(`${settings.periodicNotesPath}/${FULL_YEARLY_REG.source}`)) ||
-    path?.match(new RegExp(`${settings.periodicNotesPath}/${FULL_QUARTERLY_REG.source}`)) ||
-    path?.match(new RegExp(`${settings.periodicNotesPath}/${FULL_MONTHLY_REG.source}`)) ||
-    path?.match(new RegExp(`${settings.periodicNotesPath}/${FULL_WEEKLY_REG.source}`)) ||
-    path?.match(new RegExp(`${settings.periodicNotesPath}/${FULL_DAILY_REG.source}`))
-  );
 }
 
 export const getFirstDay = (weekStart = -1, locale: string | undefined) => {

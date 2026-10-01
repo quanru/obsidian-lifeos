@@ -22,6 +22,7 @@ import {
   formatDailyRecord,
   generateFileName,
   generateHeaderRegExp,
+  joinVaultPath,
   logMessage,
   sleep,
   transformV2Record,
@@ -430,7 +431,7 @@ export class DailyRecord {
           return;
         }
 
-        const folder = `${this.settings.periodicNotesPath}/Attachments`;
+        const folder = joinVaultPath(this.settings.periodicNotesPath, 'Attachments');
         const resourcePath = normalizePath(`${folder}/${generateFileName(resource)}`);
 
         const isResourceExists = await this.app.vault.adapter.exists(resourcePath);
