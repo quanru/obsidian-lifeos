@@ -1,6 +1,7 @@
 import { ARCHIVE, AREA, DAILY, MONTHLY, PROJECT, QUARTERLY, RESOURCE, WEEKLY, YEARLY } from '../constant';
 import { getFeatureI18n } from '../feature-i18n';
 import type { PeriodicNotesTemplateFilePath, PluginSettings } from '../type';
+import { joinVaultPath } from '../util';
 
 export type WorkspaceMode = 'periodic' | 'para';
 export type WorkspaceLocale = 'en' | 'zh-cn' | 'zh-tw';
@@ -249,7 +250,7 @@ function getPeriodicTemplatePath(settings: PluginSettings, periodType: string): 
     return settings[settingKey];
   }
 
-  return `${settings.periodicNotesPath}/Templates/${periodType}.md`;
+  return joinVaultPath(settings.periodicNotesPath, 'Templates', `${periodType}.md`);
 }
 
 function buildDailyTemplate(settings: PluginSettings, mode: WorkspaceMode, locale?: string): string {
