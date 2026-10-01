@@ -1,75 +1,15 @@
+import { buildPeriodicFilePath, joinVaultPath } from './periodic/paths';
+export { isInPeriodicNote, isInPeriodicNotesFolder, joinVaultPath } from './periodic/paths';
 import dayjs, { type Dayjs } from 'dayjs';
 import { Component, MarkdownRenderer, Notice, TFile, TFolder, moment } from 'obsidian';
 import type { App } from 'obsidian';
-import {
-  DAILY,
-  ERROR_MESSAGE,
-  FULL_DAILY_REG,
-  FULL_MONTHLY_REG,
-  FULL_QUARTERLY_REG,
-  FULL_WEEKLY_REG,
-  FULL_YEARLY_REG,
-  LIFE_OS_OFFICIAL_SITE,
-  MONTHLY,
-  QUARTERLY,
-  WEEKLY,
-  YEARLY,
-} from './constant';
+import { DAILY, ERROR_MESSAGE, LIFE_OS_OFFICIAL_SITE, MONTHLY, QUARTERLY, WEEKLY, YEARLY } from './constant';
 import { getDayjsLocale, getI18n, getLocale, normalizeLocale } from './i18n';
 import type { DailyRecordType, DailyRecordTypeV2, PeriodicNotesTemplateFilePath, ResourceType } from './type';
 import { LogLevel, type PluginSettings } from './type';
 
 export function sleep(milliseconds: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
-}
-
-/**
- * Join path segments into a normalized, vault-relative path.
- *
- * `Vault.getAbstractFileByPath()` does NOT normalize the path it receives,
- * while `Vault.create()` does. Building a path with a template literal such as
- * `` `${settings.periodicNotesPath}/${year}/...` `` therefore yields a double
- * slash whenever `periodicNotesPath` is `/` (vault root) or has a trailing
- * slash — e.g. `//2026/Daily/10/2026-10-01.md`. The lookup then silently
- * misses the existing file, so `createFile()` falls through to
- * `Vault.create()` and throws `Error: File already exists.`
- */
-export function joinVaultPath(...segments: Array<string | undefined | null>): string {
-  return segments
-    .map((segment) => String(segment ?? '').replace(/^\/+|\/+$/g, ''))
-    .filter((segment) => segment.length > 0)
-    .join('/');
-}
-
-/**
- * Normalize `settings.periodicNotesPath` for prefix checks and regex building.
- * `/` (vault root) and `Foo/` both normalize to `Foo`; the root normalizes to `''`.
- */
-export function normalizePeriodicNotesPath(periodicNotesPath: string | undefined | null): string {
-  return String(periodicNotesPath ?? '').replace(/^\/+|\/+$/g, '');
-}
-
-/**
- * Whether `path` lives inside the configured periodic-notes folder.
- * A `periodicNotesPath` of `/` means "vault root" and matches every path.
- */
-export function isInPeriodicNotesFolder(path: string | undefined, settings: PluginSettings | undefined): boolean {
-  if (!settings?.periodicNotesPath) {
-    return false;
-  }
-
-  const base = normalizePeriodicNotesPath(settings.periodicNotesPath);
-
-  if (!base) {
-    return true;
-  }
-
-  return path === base || !!path?.startsWith(`${base}/`);
-}
-
-/** Escape a literal string so it can be embedded in a `RegExp`. */
-export function escapeRegExp(value: string): string {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 export function renderError(app: App, msg: string, containerEl: HTMLElement, sourcePath: string) {
@@ -324,7 +264,13 @@ export async function createPeriodicFile(
     value = settings.yearlyNoteFormat ? date.format(settings.yearlyNoteFormat) : year;
   }
 
-  file = joinVaultPath(folder, `${value}.md`);
+  file = buildPeriodicFilePath(
+    settings.periodicNotesPath,
+    periodType === WEEKLY ? date.format('gggg') : year,
+    periodType,
+    String(value),
+    String(date.month() + 1).padStart(2, '0'),
+  );
   templateFile = settings.usePeriodicAdvanced
     ? settings[`periodicNotesTemplateFilePath${periodType}` as PeriodicNotesTemplateFilePath] ||
       joinVaultPath(settings.periodicNotesPath, 'Templates', `${periodType}.md`)
@@ -403,19 +349,6 @@ export function getAllTemplateFiles(settings: PluginSettings) {
 
 export function isInTemplateNote(path: string, settings: PluginSettings) {
   return getAllTemplateFiles(settings).some((template) => path.includes(template));
-}
-
-export function isInPeriodicNote(path: string, settings: PluginSettings) {
-  const prefix = normalizePeriodicNotesPath(settings.periodicNotesPath);
-  const folderPrefix = prefix ? `${escapeRegExp(prefix)}/` : '';
-
-  return (
-    path?.match(new RegExp(`${folderPrefix}${FULL_YEARLY_REG.source}`)) ||
-    path?.match(new RegExp(`${folderPrefix}${FULL_QUARTERLY_REG.source}`)) ||
-    path?.match(new RegExp(`${folderPrefix}${FULL_MONTHLY_REG.source}`)) ||
-    path?.match(new RegExp(`${folderPrefix}${FULL_WEEKLY_REG.source}`)) ||
-    path?.match(new RegExp(`${folderPrefix}${FULL_DAILY_REG.source}`))
-  );
 }
 
 export const getFirstDay = (weekStart = -1, locale: string | undefined) => {

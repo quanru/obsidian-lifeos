@@ -1,3 +1,4 @@
+import { buildPeriodicFilePath } from '../../periodic/paths';
 import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, DatePicker, Form, Input, Radio, Tabs, Tooltip } from 'antd';
 import dayjs from 'dayjs';
@@ -27,7 +28,14 @@ import {
   YEARLY_REG,
 } from '../../constant';
 import type { PeriodicNotesTemplateFilePath, PluginSettings } from '../../type';
-import { createFile, createPeriodicFile, getFirstDay, isInPeriodicNotesFolder, openOfficialSite } from '../../util';
+import {
+  createFile,
+  createPeriodicFile,
+  getFirstDay,
+  isInPeriodicNote,
+  isInPeriodicNotesFolder,
+  openOfficialSite,
+} from '../../util';
 import './index.less';
 import { useApp } from '../../hooks/useApp';
 import { getDayjsLocale, getI18n, getLocale, normalizeLocale } from '../../i18n';
@@ -74,15 +82,7 @@ export const CreateNote = (props: { width: number }) => {
       <Button htmlType="submit" type="primary" shape="circle" size="large" icon={<PlusOutlined />}></Button>
     </Form.Item>
   );
-  const [existsDates, setExistsDates] = useState<(string | undefined)[]>(
-    app?.vault
-      .getAllLoadedFiles()
-      .filter(
-        (file) =>
-          isInPeriodicNotesFolder(file.path, settings) && (file as { extension?: string }).extension === 'md',
-      )
-      .map((file) => (file as { basename?: string }).basename) || [],
-  );
+  const [existingPaths, setExistingPaths] = useState<string[]>([]);
 
   useDocumentEvent('settingUpdate', (event) => {
     setSettings(event.detail);
@@ -90,23 +90,24 @@ export const CreateNote = (props: { width: number }) => {
   });
 
   useEffect(() => {
-    // 已存在的日记高亮
+    const isTracked = (file: TFile) => file.extension === 'md' && isInPeriodicNotesFolder(file.path, settings);
+    setExistingPaths(
+      app?.vault
+        .getMarkdownFiles()
+        .filter(isTracked)
+        .map((file) => file.path) || [],
+    );
     const createHandler = (file: TFile) => {
-      if (file instanceof TFile) {
-        setExistsDates((prevDates) => [file.basename, ...prevDates]);
-      }
+      if (file instanceof TFile && isTracked(file)) setExistingPaths((paths) => [...paths, file.path]);
     };
-
     const deleteHandler = (file: TFile) => {
-      if (file instanceof TFile) {
-        setExistsDates((prevDates) => prevDates.filter((date) => date !== file.basename));
-      }
+      setExistingPaths((paths) => paths.filter((path) => path !== file.path));
     };
-
     const renameHandler = (file: TFile, oldPath: string) => {
-      if (file instanceof TFile) {
-        setExistsDates((prevDates) => [file.basename, ...prevDates.filter((date) => date !== oldPath)]);
-      }
+      setExistingPaths((paths) => [
+        ...paths.filter((path) => path !== oldPath),
+        ...(file instanceof TFile && isTracked(file) ? [file.path] : []),
+      ]);
     };
 
     app?.vault.on('create', createHandler);
@@ -118,14 +119,14 @@ export const CreateNote = (props: { width: number }) => {
       app?.vault.off('delete', deleteHandler);
       app?.vault.off('rename', renameHandler);
     };
-  }, []);
+  }, [app, settings?.periodicNotesPath]);
 
   useEffect(() => {
     // 切换文件时，切换表单
     const leafChangeHandler = (leaf: WorkspaceLeaf) => {
       const { path, basename } = (leaf?.view as any).file || {};
 
-      if (!isInPeriodicNotesFolder(path, settings)) {
+      if (!settings || !isInPeriodicNote(path, settings)) {
         return;
       }
 
@@ -279,7 +280,16 @@ export const CreateNote = (props: { width: number }) => {
       </>
     );
 
-    if (existsDates.includes(formattedDate)) {
+    const periodType =
+      { date: DAILY, week: WEEKLY, month: MONTHLY, quarter: QUARTERLY, year: YEARLY, decade: YEARLY }[picker] || DAILY;
+    const expectedPath = buildPeriodicFilePath(
+      settings?.periodicNotesPath || '',
+      date.format(periodType === WEEKLY ? 'gggg' : 'YYYY'),
+      periodType,
+      formattedDate,
+      String(date.month() + 1).padStart(2, '0'),
+    );
+    if (settings?.periodicNotesPath && existingPaths.includes(expectedPath)) {
       if (picker !== 'week') {
         return (
           <div className="ant-picker-cell-inner" onClick={(e) => onClick(value, e)}>
@@ -508,7 +518,11 @@ export const CreateNote = (props: { width: number }) => {
                             <Input
                               onChange={() => handleTagInput(para)}
                               allowClear
-                              placeholder={para === PROJECT ? localeMap.PARA_TAG_PLACEHOLDER_PROJECT : localeMap.PARA_TAG_PLACEHOLDER_DEFAULT}
+                              placeholder={
+                                para === PROJECT
+                                  ? localeMap.PARA_TAG_PLACEHOLDER_PROJECT
+                                  : localeMap.PARA_TAG_PLACEHOLDER_DEFAULT
+                              }
                             />
                           </AutoComplete>
                         </Form.Item>
