@@ -27,7 +27,7 @@ import {
   YEARLY_REG,
 } from '../../constant';
 import type { PeriodicNotesTemplateFilePath, PluginSettings } from '../../type';
-import { createFile, createPeriodicFile, getFirstDay, openOfficialSite } from '../../util';
+import { createFile, createPeriodicFile, getFirstDay, isInPeriodicNotesFolder, openOfficialSite } from '../../util';
 import './index.less';
 import { useApp } from '../../hooks/useApp';
 import { getDayjsLocale, getI18n, getLocale, normalizeLocale } from '../../i18n';
@@ -79,9 +79,7 @@ export const CreateNote = (props: { width: number }) => {
       .getAllLoadedFiles()
       .filter(
         (file) =>
-          settings?.periodicNotesPath &&
-          file.path.indexOf(settings?.periodicNotesPath) === 0 &&
-          (file as { extension?: string }).extension === 'md',
+          isInPeriodicNotesFolder(file.path, settings) && (file as { extension?: string }).extension === 'md',
       )
       .map((file) => (file as { basename?: string }).basename) || [],
   );
@@ -127,7 +125,7 @@ export const CreateNote = (props: { width: number }) => {
     const leafChangeHandler = (leaf: WorkspaceLeaf) => {
       const { path, basename } = (leaf?.view as any).file || {};
 
-      if (!path || path.indexOf(settings?.periodicNotesPath) !== 0) {
+      if (!isInPeriodicNotesFolder(path, settings)) {
         return;
       }
 
