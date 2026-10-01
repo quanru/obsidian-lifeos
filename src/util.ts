@@ -23,6 +23,55 @@ export function sleep(milliseconds: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
+/**
+ * Join path segments into a normalized, vault-relative path.
+ *
+ * `Vault.getAbstractFileByPath()` does NOT normalize the path it receives,
+ * while `Vault.create()` does. Building a path with a template literal such as
+ * `` `${settings.periodicNotesPath}/${year}/...` `` therefore yields a double
+ * slash whenever `periodicNotesPath` is `/` (vault root) or has a trailing
+ * slash — e.g. `//2026/Daily/10/2026-10-01.md`. The lookup then silently
+ * misses the existing file, so `createFile()` falls through to
+ * `Vault.create()` and throws `Error: File already exists.`
+ */
+export function joinVaultPath(...segments: Array<string | undefined | null>): string {
+  return segments
+    .map((segment) => String(segment ?? '').replace(/^\/+|\/+$/g, ''))
+    .filter((segment) => segment.length > 0)
+    .join('/');
+}
+
+/**
+ * Normalize `settings.periodicNotesPath` for prefix checks and regex building.
+ * `/` (vault root) and `Foo/` both normalize to `Foo`; the root normalizes to `''`.
+ */
+export function normalizePeriodicNotesPath(periodicNotesPath: string | undefined | null): string {
+  return String(periodicNotesPath ?? '').replace(/^\/+|\/+$/g, '');
+}
+
+/**
+ * Whether `path` lives inside the configured periodic-notes folder.
+ * A `periodicNotesPath` of `/` means "vault root" and matches every path.
+ */
+export function isInPeriodicNotesFolder(path: string | undefined, settings: PluginSettings | undefined): boolean {
+  if (!settings?.periodicNotesPath) {
+    return false;
+  }
+
+  const base = normalizePeriodicNotesPath(settings.periodicNotesPath);
+
+  if (!base) {
+    return true;
+  }
+
+  return path === base || !!path?.startsWith(`${base}/`);
+}
+
+/** Escape a literal string so it can be embedded in a `RegExp`. */
+export function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 export function renderError(app: App, msg: string, containerEl: HTMLElement, sourcePath: string) {
   const component = new Component();
 
@@ -259,27 +308,27 @@ export async function createPeriodicFile(
   let value;
 
   if (periodType === DAILY) {
-    folder = `${settings.periodicNotesPath}/${year}/${periodType}/${String(date.month() + 1).padStart(2, '0')}`;
+    folder = joinVaultPath(settings.periodicNotesPath, year, periodType, String(date.month() + 1).padStart(2, '0'));
     value = date.format(settings.dailyNoteFormat || 'YYYY-MM-DD');
   } else if (periodType === WEEKLY) {
-    folder = `${settings.periodicNotesPath}/${date.format('gggg')}/${periodType}`;
+    folder = joinVaultPath(settings.periodicNotesPath, date.format('gggg'), periodType);
     value = date.format(settings.weeklyNoteFormat || 'gggg-[W]ww');
   } else if (periodType === MONTHLY) {
-    folder = `${settings.periodicNotesPath}/${year}/${periodType}`;
+    folder = joinVaultPath(settings.periodicNotesPath, year, periodType);
     value = date.format(settings.monthlyNoteFormat || 'YYYY-MM');
   } else if (periodType === QUARTERLY) {
-    folder = `${settings.periodicNotesPath}/${year}/${periodType}`;
+    folder = joinVaultPath(settings.periodicNotesPath, year, periodType);
     value = date.format(settings.quarterlyNoteFormat || 'YYYY-[Q]Q');
   } else if (periodType === YEARLY) {
-    folder = `${settings.periodicNotesPath}/${year}`;
+    folder = joinVaultPath(settings.periodicNotesPath, year);
     value = settings.yearlyNoteFormat ? date.format(settings.yearlyNoteFormat) : year;
   }
 
-  file = `${folder}/${value}.md`;
+  file = joinVaultPath(folder, `${value}.md`);
   templateFile = settings.usePeriodicAdvanced
     ? settings[`periodicNotesTemplateFilePath${periodType}` as PeriodicNotesTemplateFilePath] ||
-      `${settings.periodicNotesPath}/Templates/${periodType}.md`
-    : `${settings.periodicNotesPath}/Templates/${periodType}.md`;
+      joinVaultPath(settings.periodicNotesPath, 'Templates', `${periodType}.md`)
+    : joinVaultPath(settings.periodicNotesPath, 'Templates', `${periodType}.md`);
   const fileCreated = await createFile(app, {
     locale: locale || getLocale(),
     templateFile,
@@ -310,7 +359,7 @@ export function generateIgnoreOperator(settings: PluginSettings) {
   } = settings;
 
   return [
-    `${periodicNotesPath}/Templates`,
+    joinVaultPath(periodicNotesPath, 'Templates'),
     periodicNotesTemplateFilePathYearly,
     periodicNotesTemplateFilePathQuarterly,
     periodicNotesTemplateFilePathMonthly,
@@ -339,7 +388,7 @@ export function getAllTemplateFiles(settings: PluginSettings) {
 
   return [
     'Template.md',
-    `${periodicNotesPath}/Templates`,
+    joinVaultPath(periodicNotesPath, 'Templates'),
     projectsTemplateFilePath,
     areasTemplateFilePath,
     resourcesTemplateFilePath,
@@ -357,12 +406,15 @@ export function isInTemplateNote(path: string, settings: PluginSettings) {
 }
 
 export function isInPeriodicNote(path: string, settings: PluginSettings) {
+  const prefix = normalizePeriodicNotesPath(settings.periodicNotesPath);
+  const folderPrefix = prefix ? `${escapeRegExp(prefix)}/` : '';
+
   return (
-    path?.match(new RegExp(`${settings.periodicNotesPath}/${FULL_YEARLY_REG.source}`)) ||
-    path?.match(new RegExp(`${settings.periodicNotesPath}/${FULL_QUARTERLY_REG.source}`)) ||
-    path?.match(new RegExp(`${settings.periodicNotesPath}/${FULL_MONTHLY_REG.source}`)) ||
-    path?.match(new RegExp(`${settings.periodicNotesPath}/${FULL_WEEKLY_REG.source}`)) ||
-    path?.match(new RegExp(`${settings.periodicNotesPath}/${FULL_DAILY_REG.source}`))
+    path?.match(new RegExp(`${folderPrefix}${FULL_YEARLY_REG.source}`)) ||
+    path?.match(new RegExp(`${folderPrefix}${FULL_QUARTERLY_REG.source}`)) ||
+    path?.match(new RegExp(`${folderPrefix}${FULL_MONTHLY_REG.source}`)) ||
+    path?.match(new RegExp(`${folderPrefix}${FULL_WEEKLY_REG.source}`)) ||
+    path?.match(new RegExp(`${folderPrefix}${FULL_DAILY_REG.source}`))
   );
 }
 
