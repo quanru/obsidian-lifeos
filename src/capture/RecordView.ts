@@ -63,7 +63,7 @@ export async function renderRecord(
   const tm = themeMessages(locale);
   const matches = matchedThemes(record.text, themes);
   if (matches.length) {
-    const links = card.createDiv('lifeos-capture-themes');
+    const links = header.createDiv('lifeos-capture-themes');
     for (const theme of matches) {
       const button = links.createEl('button', {
         text: `${tm[theme.kind]} · ${theme.name}`,
@@ -72,11 +72,11 @@ export async function renderRecord(
       button.onclick = () => callbacks.openTheme(theme.path);
     }
   }
+  header.createEl('small', { text: t.source, cls: 'lifeos-capture-source' });
   const body = card.createDiv('lifeos-capture-body markdown-rendered');
   const text =
     record.kind === 'task' ? `- [${record.checked ? 'x' : ' '}] ${record.text.replace(/\n/g, '\n  ')}` : record.text;
   await MarkdownRenderer.render(app, text, body, record.path, scope);
-  card.createEl('small', { text: t.source, cls: 'lifeos-capture-source' });
   const actions = card.createDiv('lifeos-capture-actions');
   const action = (label: string, icon: string, run: () => void) => {
     const button = actions.createEl('button', { attr: { 'aria-label': label, title: label } });

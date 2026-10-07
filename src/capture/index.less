@@ -25,13 +25,16 @@
   .lifeos-capture-history-header span { color: var(--text-muted); font-size: var(--font-ui-smaller); flex: 1; }
   .lifeos-capture-list { overflow: auto; min-height: 80px; flex: 1; }
   .lifeos-capture-card { border: 1px solid var(--background-modifier-border); border-radius: var(--radius-m); margin-bottom: 10px; padding: 12px 16px; }
-  .lifeos-capture-card-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .lifeos-capture-card-header { display: flex; align-items: center; gap: 4px 8px; flex-wrap: wrap; }
+  .lifeos-capture-card-header .lifeos-capture-themes { margin: 0; min-width: 0; }
+  .lifeos-capture-card-header .lifeos-capture-themes button { height: auto; min-height: 22px; padding: 1px 6px; font-size: var(--font-ui-smaller); white-space: normal; overflow-wrap: anywhere; }
+  .lifeos-capture-card-header .lifeos-capture-source { margin-inline-start: auto; }
   .lifeos-capture-stamp { color: var(--text-muted); font-size: var(--font-ui-smaller); }
   .lifeos-capture-actions { display: flex; gap: 6px; }
   .lifeos-capture-actions button { padding: 2px 6px; height: 26px; box-shadow: none; background: transparent; color: var(--text-muted); font-size: var(--font-ui-smaller); }
   .lifeos-capture-body { overflow-wrap: anywhere; }
-  .lifeos-capture-body > :first-child { margin-top: 8px; }
-  .lifeos-capture-body > :last-child { margin-bottom: 2px; }
+  .lifeos-capture-body > :first-child { margin-top: 4px; }
+  .lifeos-capture-body > :last-child { margin-bottom: 0; }
   .lifeos-capture-body img { max-width: 100%; max-height: 260px; object-fit: contain; }
   .lifeos-capture-more { display: block; margin: 14px auto; }
   .lifeos-capture-empty, .lifeos-capture-end { color: var(--text-muted); text-align: center; padding: 12px; }
@@ -98,8 +101,9 @@
   .lifeos-capture-history-header { margin: 4px 0; font-size: var(--font-ui-smaller); }
   .lifeos-capture-history-header h3 { display: none; }
   .lifeos-capture-date-heading { font-size: var(--font-ui-small); color: var(--text-muted); font-weight: 500; margin: 12px 0 8px; }
-  .lifeos-capture-card { padding: 12px; }
-  .lifeos-capture-card .lifeos-capture-actions { justify-content: end; margin-top: 6px; }
+  .lifeos-capture-card { padding: 8px 12px; margin-bottom: 8px; }
+  .lifeos-capture-card-editing { padding: 12px; }
+  .lifeos-capture-card .lifeos-capture-actions { justify-content: end; margin-top: 2px; }
   .lifeos-capture-source { font-size: var(--font-ui-smaller); color: var(--text-faint); }
   .lifeos-capture-card-editing > small { color: var(--text-muted); display: block; margin-bottom: 8px; }
   .lifeos-capture-end { border: 0; background: transparent; box-shadow: none; width: 100%; }
