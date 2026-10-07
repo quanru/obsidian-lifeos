@@ -1,0 +1,22 @@
+{
+  "version": "1.28.1",
+  "commit": "5f599dc5c7ff383b0c3cab59c3498c2da4f159e7",
+  "url": "https://github.com/quanru/obsidian-lifeos/releases/tag/1.28.1",
+  "publishedAt": "2026-10-07T14:12:31Z",
+  "verifiedAt": "2026-10-07T14:12:58.504312+00:00",
+  "artifactSha256": {
+    "styles.css": "d27d2f59bd225ffa783408f5b187f1c2791d09b176a403e86785d08e32883014",
+    "main.js": "68759099d32132e074aad6c1ebc0cdc48e5f6926be594f69046d0c51cb486d9c",
+    "obsidian-periodic-para-1.28.1.zip": "14e3e730e87b12c06611c60f615fc8ea03607f7e8e5fb1227e8c55c528705e76",
+    "manifest.json": "1b4036396c848546de4fc3100047c7bd1eff5911f7861d4a67e95821fa442e30"
+  },
+  "downloadedAssetsMatched": true,
+  "publishedAssetDigestsMatched": true,
+  "unitTestsPassed": 67,
+  "runtimeHost": "macOS Obsidian 1.14.3",
+  "captureInteractionsPassed": true,
+  "interfaceLanguagesPassed": 10,
+  "remoteCITriggered": false,
+  "evidenceDirectory": "/Volumes/T5/personal/obsidian-lifeos/.verify/release-1.28.1",
+  "publicManifestDownloadMatched": true
+}
