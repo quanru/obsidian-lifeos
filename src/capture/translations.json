@@ -1,0 +1,79 @@
+{
+  "de": {
+    "title":"Schnellerfassung", "description":"Ideen, Bilder und Aufgaben in Tagesnotizen speichern. Strg/Cmd + Enter zum Speichern.",
+    "record":"Notiz", "task":"Aufgabe", "placeholder":"Eine Idee, ein Fortschritt oder eine Aufgabe…", "save":"Speichern", "saving":"Wird gespeichert…",
+    "source":"Markdown", "preview":"Vorschau", "bold":"Fett", "italic":"Kursiv", "checkbox":"Checkliste", "image":"Bild hinzufügen", "link":"Notiz verknüpfen",
+    "search":"Einträge suchen", "tags":"Nach Tags filtern", "from":"Von", "to":"Bis", "clear":"Filter löschen", "history":"Letzte Einträge",
+    "empty":"Noch keine Einträge. Schreibe den ersten oben.", "noResults":"Keine passenden Einträge.", "more":"Mehr laden", "loading":"Wird geladen…", "end":"Alle passenden Einträge geladen",
+    "edit":"Bearbeiten", "remove":"Löschen", "open":"Tagesnotiz öffnen", "cancel":"Abbrechen", "deleteTitle":"Diesen Eintrag löschen?",
+    "deleteHint":"Entfernt den Eintrag aus der Tagesnotiz. Andere Inhalte und Anhänge bleiben erhalten.",
+    "fullscreen":"Vollbild", "restore":"Vollbild verlassen", "failed":"Der Vorgang konnte nicht abgeschlossen werden",
+    "conflict":"Dieser Eintrag wurde in der Tagesnotiz geändert. Aktualisiere die Liste und versuche es erneut. Dein Entwurf bleibt erhalten.", "refresh":"Aktualisieren", "imageLimit":"Wähle ein Bild kleiner als 20 MB.", "count":"Einträge"
+  },
+  "es": {
+    "title":"Captura rápida", "description":"Guarda ideas, imágenes y tareas en tus notas diarias. Ctrl/Cmd + Enter para guardar.",
+    "record":"Nota", "task":"Tarea", "placeholder":"Una idea, un avance o algo que hacer…", "save":"Guardar", "saving":"Guardando…",
+    "source":"Markdown", "preview":"Vista previa", "bold":"Negrita", "italic":"Cursiva", "checkbox":"Lista de tareas", "image":"Añadir imagen", "link":"Enlazar nota",
+    "search":"Buscar registros", "tags":"Filtrar por etiquetas", "from":"Desde", "to":"Hasta", "clear":"Borrar filtros", "history":"Registros recientes",
+    "empty":"Aún no hay registros. Escribe el primero arriba.", "noResults":"No hay registros coincidentes.", "more":"Cargar más", "loading":"Cargando…", "end":"Todos los registros coincidentes cargados",
+    "edit":"Editar", "remove":"Eliminar", "open":"Abrir nota diaria", "cancel":"Cancelar", "deleteTitle":"¿Eliminar este registro?",
+    "deleteHint":"Se quitará el registro de su nota diaria. El resto del contenido y los adjuntos se conservarán.",
+    "fullscreen":"Pantalla completa", "restore":"Salir de pantalla completa", "failed":"No se pudo completar la operación",
+    "conflict":"Este registro cambió en su nota diaria. Actualiza y vuelve a intentarlo; tu borrador se conserva.", "refresh":"Actualizar", "imageLimit":"Elige una imagen de menos de 20 MB.", "count":"registros"
+  },
+  "fr": {
+    "title":"Capture rapide", "description":"Conservez idées, images et tâches dans vos notes quotidiennes. Ctrl/Cmd + Entrée pour enregistrer.",
+    "record":"Note", "task":"Tâche", "placeholder":"Une idée, une avancée ou une tâche…", "save":"Enregistrer", "saving":"Enregistrement…",
+    "source":"Markdown", "preview":"Aperçu", "bold":"Gras", "italic":"Italique", "checkbox":"Liste de tâches", "image":"Ajouter une image", "link":"Lier une note",
+    "search":"Rechercher des entrées", "tags":"Filtrer par étiquettes", "from":"Du", "to":"Au", "clear":"Effacer les filtres", "history":"Entrées récentes",
+    "empty":"Aucune entrée. Écrivez la première ci-dessus.", "noResults":"Aucune entrée correspondante.", "more":"Charger plus", "loading":"Chargement…", "end":"Toutes les entrées correspondantes sont chargées",
+    "edit":"Modifier", "remove":"Supprimer", "open":"Ouvrir la note quotidienne", "cancel":"Annuler", "deleteTitle":"Supprimer cette entrée ?",
+    "deleteHint":"Cette entrée sera retirée de sa note quotidienne. Les autres contenus et pièces jointes seront conservés.",
+    "fullscreen":"Plein écran", "restore":"Quitter le plein écran", "failed":"Impossible de terminer l’opération",
+    "conflict":"Cette entrée a changé dans sa note quotidienne. Actualisez puis réessayez ; votre brouillon est conservé.", "refresh":"Actualiser", "imageLimit":"Choisissez une image de moins de 20 Mo.", "count":"entrées"
+  },
+  "pt": {
+    "title":"Captura rápida", "description":"Guarde ideias, imagens e tarefas nas notas diárias. Ctrl/Cmd + Enter para salvar.",
+    "record":"Nota", "task":"Tarefa", "placeholder":"Uma ideia, um progresso ou algo a fazer…", "save":"Salvar", "saving":"Salvando…",
+    "source":"Markdown", "preview":"Prévia", "bold":"Negrito", "italic":"Itálico", "checkbox":"Lista de tarefas", "image":"Adicionar imagem", "link":"Vincular nota",
+    "search":"Buscar registros", "tags":"Filtrar por etiquetas", "from":"De", "to":"Até", "clear":"Limpar filtros", "history":"Registros recentes",
+    "empty":"Ainda não há registros. Escreva o primeiro acima.", "noResults":"Nenhum registro correspondente.", "more":"Carregar mais", "loading":"Carregando…", "end":"Todos os registros correspondentes foram carregados",
+    "edit":"Editar", "remove":"Excluir", "open":"Abrir nota diária", "cancel":"Cancelar", "deleteTitle":"Excluir este registro?",
+    "deleteHint":"O registro será removido da nota diária. Os outros conteúdos e anexos serão mantidos.",
+    "fullscreen":"Tela cheia", "restore":"Sair da tela cheia", "failed":"Não foi possível concluir a operação",
+    "conflict":"Este registro mudou na nota diária. Atualize e tente novamente; seu rascunho foi mantido.", "refresh":"Atualizar", "imageLimit":"Escolha uma imagem menor que 20 MB.", "count":"registros"
+  },
+  "ja": {
+    "title":"クイック記録", "description":"アイデア、画像、タスクをデイリーノートに保存します。Ctrl/Cmd + Enter で保存。",
+    "record":"記録", "task":"タスク", "placeholder":"アイデア、進捗、やることを記録…", "save":"保存", "saving":"保存中…",
+    "source":"Markdown", "preview":"プレビュー", "bold":"太字", "italic":"斜体", "checkbox":"チェックリスト", "image":"画像を追加", "link":"ノートをリンク",
+    "search":"記録を検索", "tags":"タグで絞り込み", "from":"開始日", "to":"終了日", "clear":"絞り込みを解除", "history":"最近の記録",
+    "empty":"記録はまだありません。上に最初の記録を書いてみましょう。", "noResults":"該当する記録はありません。", "more":"さらに読み込む", "loading":"読み込み中…", "end":"該当する記録をすべて表示しました",
+    "edit":"編集", "remove":"削除", "open":"デイリーノートを開く", "cancel":"キャンセル", "deleteTitle":"この記録を削除しますか？",
+    "deleteHint":"デイリーノートからこの記録を削除します。他の内容や添付ファイルは保持されます。",
+    "fullscreen":"全画面", "restore":"全画面を終了", "failed":"操作を完了できませんでした",
+    "conflict":"デイリーノート内の記録が変更されました。更新してから再試行してください。下書きは保持されています。", "refresh":"更新", "imageLimit":"20 MB 未満の画像を選択してください。", "count":"件"
+  },
+  "ko": {
+    "title":"빠른 기록", "description":"아이디어, 이미지와 작업을 일일 노트에 저장합니다. Ctrl/Cmd + Enter로 저장하세요.",
+    "record":"기록", "task":"작업", "placeholder":"아이디어, 진행 상황 또는 할 일…", "save":"저장", "saving":"저장 중…",
+    "source":"Markdown", "preview":"미리보기", "bold":"굵게", "italic":"기울임", "checkbox":"체크리스트", "image":"이미지 추가", "link":"노트 연결",
+    "search":"기록 검색", "tags":"태그로 필터", "from":"시작일", "to":"종료일", "clear":"필터 지우기", "history":"최근 기록",
+    "empty":"아직 기록이 없습니다. 위에서 첫 기록을 작성하세요.", "noResults":"일치하는 기록이 없습니다.", "more":"더 불러오기", "loading":"불러오는 중…", "end":"일치하는 기록을 모두 표시했습니다",
+    "edit":"편집", "remove":"삭제", "open":"일일 노트 열기", "cancel":"취소", "deleteTitle":"이 기록을 삭제할까요?",
+    "deleteHint":"일일 노트에서 이 기록을 삭제합니다. 다른 내용과 첨부 파일은 유지됩니다.",
+    "fullscreen":"전체 화면", "restore":"전체 화면 종료", "failed":"작업을 완료할 수 없습니다",
+    "conflict":"일일 노트에서 이 기록이 변경되었습니다. 새로고침 후 다시 시도하세요. 초안은 유지됩니다.", "refresh":"새로고침", "imageLimit":"20 MB보다 작은 이미지를 선택하세요.", "count":"개 기록"
+  },
+  "ar": {
+    "title":"تسجيل سريع", "description":"احفظ الأفكار والصور والمهام في ملاحظاتك اليومية. اضغط Ctrl/Cmd + Enter للحفظ.",
+    "record":"تسجيل", "task":"مهمة", "placeholder":"فكرة أو تحديث أو مهمة…", "save":"حفظ", "saving":"جارٍ الحفظ…",
+    "source":"Markdown", "preview":"معاينة", "bold":"عريض", "italic":"مائل", "checkbox":"قائمة مهام", "image":"إضافة صورة", "link":"ربط ملاحظة",
+    "search":"البحث في السجلات", "tags":"تصفية حسب الوسوم", "from":"من تاريخ", "to":"إلى تاريخ", "clear":"مسح عوامل التصفية", "history":"السجلات الأخيرة",
+    "empty":"لا توجد سجلات بعد. اكتب أول سجل أعلاه.", "noResults":"لا توجد سجلات مطابقة.", "more":"تحميل المزيد", "loading":"جارٍ التحميل…", "end":"تم تحميل جميع السجلات المطابقة",
+    "edit":"تعديل", "remove":"حذف", "open":"فتح الملاحظة اليومية", "cancel":"إلغاء", "deleteTitle":"حذف هذا السجل؟",
+    "deleteHint":"سيُحذف هذا السجل من الملاحظة اليومية. سيُحتفظ بالمحتوى الآخر والمرفقات.",
+    "fullscreen":"ملء الشاشة", "restore":"الخروج من ملء الشاشة", "failed":"تعذر إكمال العملية",
+    "conflict":"تغير هذا السجل في الملاحظة اليومية. حدّث القائمة وحاول مجددًا؛ ما زالت مسودتك محفوظة.", "refresh":"تحديث", "imageLimit":"اختر صورة أصغر من 20 ميغابايت.", "count":"سجل"
+  }
+}

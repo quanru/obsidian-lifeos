@@ -28,6 +28,7 @@ import {
   YEARLY_REG,
 } from '../../constant';
 import type { PeriodicNotesTemplateFilePath, PluginSettings } from '../../type';
+import { isoWeekRange, isoWeeklyFormat } from '../../periodic/calendar';
 import {
   createFile,
   createPeriodicFile,
@@ -149,11 +150,9 @@ export const CreateNote = (props: { width: number }) => {
               });
             } else if (periodicType === WEEKLY) {
               const [year, week] = dateValue.split('-W');
-              const weeklyDate = dayjs()
-                .year(Number.parseInt(year))
-                .startOf('year')
-                .isoWeek(Number.parseInt(week))
-                .startOf('isoWeek');
+              const range = isoWeekRange(Number.parseInt(year), Number.parseInt(week));
+              if (!range.from) continue;
+              const weeklyDate = dayjs(range.from);
               form.setFieldsValue({
                 [WEEKLY]: weeklyDate.locale(dayjsLocale),
               });
@@ -237,7 +236,7 @@ export const CreateNote = (props: { width: number }) => {
         badgeText = `${date.date()}`;
         break;
       case 'week':
-        formattedDate = date.format(settings?.weeklyNoteFormat || 'gggg-[W]ww');
+        formattedDate = date.format(isoWeeklyFormat(settings?.weeklyNoteFormat || 'gggg-[W]ww'));
         badgeText = `${date.date()}`;
         break;
       case 'month':
@@ -464,6 +463,9 @@ export const CreateNote = (props: { width: number }) => {
                         return cellRender(value, info.type);
                       }}
                       picker={picker}
+                      format={
+                        picker === 'week' ? isoWeeklyFormat(settings?.weeklyNoteFormat || 'gggg-[W]ww') : undefined
+                      }
                       showNow={false}
                       style={{ width: 200 }}
                       inputReadOnly

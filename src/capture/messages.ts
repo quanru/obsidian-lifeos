@@ -6,6 +6,7 @@ import ja from '../locales/capture-ja.json';
 import ko from '../locales/capture-ko.json';
 import pt from '../locales/capture-pt.json';
 import { normalizeWorkspaceLocale } from '../onboarding/locale';
+import translations from './translations.json';
 const en = {
   title: 'Quick capture',
   description:

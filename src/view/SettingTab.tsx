@@ -10,6 +10,7 @@ import type { PluginSettings } from '../type';
 
 export const DEFAULT_SETTINGS: PluginSettings = {
   onboardingVersion: 0,
+  quickCaptureDefaultThemes: [],
   locale: '',
   periodicNotesPath: 'PeriodicNotes',
   usePeriodicAdvanced: false,

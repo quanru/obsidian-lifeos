@@ -6,6 +6,7 @@ import React, {
   type ReactNode,
   useCallback,
   useEffect,
+  useId,
   useMemo,
   useRef,
   useState,
@@ -57,6 +58,7 @@ export const InlineAutoComplete: FC<InlineAutoCompleteProps> = ({
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const containerRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const listboxId = useId();
 
   const text = value ?? '';
 
@@ -130,6 +132,11 @@ export const InlineAutoComplete: FC<InlineAutoCompleteProps> = ({
     >
       <input
         className="inline-autocomplete-input"
+        role="combobox"
+        aria-autocomplete="list"
+        aria-expanded={isOpen && filtered.length > 0}
+        aria-controls={listboxId}
+        aria-activedescendant={isOpen && highlightedIndex >= 0 ? `${listboxId}-option-${highlightedIndex}` : undefined}
         value={text}
         placeholder={placeholder}
         disabled={disabled}
@@ -142,12 +149,14 @@ export const InlineAutoComplete: FC<InlineAutoCompleteProps> = ({
         onKeyDown={handleKeyDown}
       />
       {isOpen && filtered.length > 0 && (
-        <div ref={dropdownRef} className="inline-autocomplete-dropdown" role="listbox">
+        <div id={listboxId} ref={dropdownRef} className="inline-autocomplete-dropdown" role="listbox" tabIndex={-1}>
           {filtered.map((opt, idx) => (
             <div
+              id={`${listboxId}-option-${idx}`}
               key={opt.value}
               className={`inline-autocomplete-option ${idx === highlightedIndex ? 'highlighted' : ''} ${opt.value === text ? 'selected' : ''}`}
               role="option"
+              tabIndex={-1}
               aria-selected={opt.value === text}
               onMouseEnter={() => setHighlightedIndex(idx)}
               onMouseDown={(e) => {

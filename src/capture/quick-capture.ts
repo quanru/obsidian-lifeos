@@ -3,7 +3,12 @@ import { type App, TFile } from 'obsidian';
 import { DAILY } from '../constant';
 import type { PluginSettings } from '../type';
 import { createPeriodicFile } from '../util';
-import { type QuickCaptureKind, appendUnderHeading, formatCaptureEntry } from './content';
+import { withVaultLock } from '../vault-lock';
+import {
+  type QuickCaptureKind,
+  appendUnderHeading,
+  formatCaptureEntry,
+} from './content';
 
 export async function captureToToday(
   app: App,
@@ -11,21 +16,35 @@ export async function captureToToday(
   locale: string,
   kind: QuickCaptureKind,
   text: string,
+  openSource = true,
 ): Promise<TFile> {
-  const dailyFile = await createPeriodicFile(dayjs(), DAILY, settings, app, false, locale);
+  const dailyFile = await createPeriodicFile(
+    dayjs(),
+    DAILY,
+    settings,
+    app,
+    false,
+    locale,
+  );
 
   if (!(dailyFile instanceof TFile)) {
-    throw new Error('The daily note or its template is unavailable. Run “Set up workspace” first.');
+    throw new Error(
+      'The daily note or its template is unavailable. Run “Set up workspace” first.',
+    );
   }
 
-  const currentContent = await app.vault.cachedRead(dailyFile);
-  const entry = formatCaptureEntry(kind, text, dayjs().format('HH:mm'));
-  const nextContent = appendUnderHeading(currentContent, settings.dailyRecordHeader, entry);
+  const lines = formatCaptureEntry(kind, text, dayjs().format('HH:mm')).split(
+    '\n',
+  );
+  // Stable Obsidian block IDs distinguish repeated captures without a separate database.
+  lines[0] += ` ^capture-${crypto.randomUUID()}`;
+  const entry = lines.join('\n');
+  await withVaultLock(app.vault, () =>
+    app.vault.process(dailyFile, (content) =>
+      appendUnderHeading(content, settings.dailyRecordHeader, entry),
+    ),
+  );
 
-  if (nextContent !== currentContent) {
-    await app.vault.modify(dailyFile, nextContent);
-  }
-
-  await app.workspace.getLeaf(false).openFile(dailyFile);
+  if (openSource) await app.workspace.getLeaf(false).openFile(dailyFile);
   return dailyFile;
 }

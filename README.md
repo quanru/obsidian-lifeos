@@ -1,4 +1,4 @@
-<p align="center"><a title="中文版本" href="https://github.com/quanru/obsidian-example-lifeos/tree/chinese-version">中文版本</a>  |  English Version</p>
+<p align="center"><a title="中文版本" href="https://github.com/quanru/obsidian-example-lifeos/tree/main/examples/zh-cn">中文版本</a>  |  English Version</p>
 
 <a href="https://obsidian.md/blog/2024-goty-winners/">🔥 LifeOS for Obsidian won the third place 🥉 in the Best Templates category at the 2024 Obsidian Gems of the Year awards!</a>
 
@@ -20,11 +20,11 @@ The starter workflow now supports ten languages (English, Simplified and Traditi
 
 ## Features
 
-- A first-run setup wizard can create a periodic-notes workspace with or without PARA in English, Simplified Chinese, or Traditional Chinese. The selected workspace profile is kept for future repairs, and existing files are never overwritten.
+- A first-run setup wizard can create a periodic-notes workspace with or without PARA in any of the ten supported languages. The selected workspace profile is kept for future repairs, and existing files are never overwritten.
 - Built-in starter templates cover daily, weekly, monthly, quarterly, yearly, Projects, Areas, Resources, and Archives notes.
 - An optional example workflow and a five-minute completion guide help you make the first capture; the example can be removed safely while it remains unchanged.
-- Use **Quick record** and **Quick task** from the command palette to capture directly into today's `Daily Record` section.
-- Dataview remains the query engine and must be installed and enabled before LifeOS.
+- **Quick record** and **Quick task** support continuous capture, native live preview, images, checklists, PARA theme associations, history, combined filters, and safe editing. Everything stays in daily-note Markdown. See the [quick capture guide (Chinese)](docs/quick-capture.md).
+- Query views use Dataview. Setup, quick capture, and weekly review work without it.
 - LifeOS Basic: https://lifeos.vip/plugin/lifeos/life-os.html
 - **LifeOS Pro** : https://lifeos.vip/plugin/lifeos/life-os-pro.html
 - **DeepAsk AI for Obsidian** : https://lifeos.vip/plugin/deepask/deepask.html
@@ -33,7 +33,17 @@ The starter workflow now supports ten languages (English, Simplified and Traditi
 
 ## Download
 
-- [LifeOS-example](https://github.com/quanru/obsidian-example-lifeos) | [中文版本](https://github.com/quanru/obsidian-example-lifeos/tree/chinese-version)
+- [LifeOS-example](https://github.com/quanru/obsidian-example-lifeos) | [中文版本](https://github.com/quanru/obsidian-example-lifeos/tree/main/examples/zh-cn)
+
+See the [weekly review guide](docs/weekly-review.md) for scope and refresh behavior.
+
+## Development and contributions
+
+See the [contribution guide](CONTRIBUTING.md) and [community tasks](docs/community-tasks.md). Requires Obsidian 1.4.0 or newer.
+
+Setup, quick capture, and **Weekly review** work without Dataview. Query views still require Dataview and show installation, enablement, or indexing guidance.
+
+Run **Weekly review** from the command palette to preview this week or last week. Save or refresh a separate `*-Review.md` note while preserving your reflections. Weeks use ISO numbering (Monday–Sunday); existing weekly notes are not migrated. Checked tasks reflect current note contents, not completion dates; project activity reflects file modification times.
 
 ## Support
 

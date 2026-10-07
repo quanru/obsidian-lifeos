@@ -12,6 +12,7 @@ export type IndexType = 'readme' | 'folderName';
 
 export type PluginSettings = {
   onboardingVersion: number;
+  quickCaptureDefaultThemes: string[];
   locale: string;
   periodicNotesPath: string;
   usePeriodicAdvanced: boolean;

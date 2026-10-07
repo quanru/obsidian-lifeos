@@ -20,15 +20,23 @@
 
 ## Features
 
-- 首次启用时提供初始化向导，可选择“周期笔记 + PARA”或“仅周期笔记”，并以简体中文、繁体中文或英文生成工作区。初始化后会保留所选方案，后续修复不会覆盖已有文件。
+- 首次启用时提供初始化向导，可选择“周期笔记 + PARA”或“仅周期笔记”，并以十种支持语言之一生成工作区。初始化后会保留所选方案，后续修复不会覆盖已有文件。
 - 内置日、周、月、季度、年度以及 Projects、Areas、Resources、Archives 基础模板。
 - 可选示例工作流与五分钟完成指南会引导用户完成首次记录；示例未被修改时可以安全移除。
-- 在命令面板中使用“快速记录”或“快速任务”，可直接写入今日日记的 `Daily Record` 区域。
-- 继续使用 Dataview 作为查询引擎；启用 LifeOS 前请先安装并启用 Dataview。
+- “快速记录”支持连续输入、原生实时预览、图片、任务、PARA 主题关联、历史浏览、组合筛选与编辑管理，内容直接保存在日记中。见[快速记录说明](docs/quick-capture.md)。
+- 初始化、快速记录和每周回顾无需 Dataview；查询视图仍使用 Dataview，并会提示安装、启用或等待索引。
+- 在命令面板运行“每周回顾”，预览本周或上周的记录、任务与近期更新的项目笔记。保存到独立的 `*-Review.md`，刷新会保留手写总结。
+- 周记和每周回顾使用 ISO 周（周一至周日）；已有周记不会自动迁移。回顾中的任务状态以当前笔记为准，项目列表按文件更新时间汇总。
 - LifeOS Basic: https://lifeos.vip/plugin/lifeos/life-os.html
 - **LifeOS Pro** : https://lifeos.vip/plugin/lifeos/life-os-pro.html
 - **DeepAsk AI Assistant** : https://lifeos.vip/plugin/deepask/deepask.html
 - 多语言界面：默认跟随 Obsidian 当前语言，也可以在插件设置页手动切换语言。
+
+使用范围和刷新规则见 [每周回顾说明](docs/weekly-review.md)。
+
+## 开发与贡献
+
+请阅读 [贡献指南](CONTRIBUTING.md) 和 [社区贡献任务](docs/community-tasks.md)。最低支持 Obsidian 1.4.0。
 
 ## Support
 

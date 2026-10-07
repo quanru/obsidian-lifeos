@@ -6,6 +6,7 @@ import React, {
   type ReactNode,
   useCallback,
   useEffect,
+  useId,
   useMemo,
   useRef,
   useState,
@@ -63,6 +64,7 @@ export const InlineSelect: FC<InlineSelectProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const listboxId = useId();
 
   const selectedOption = useMemo(() => options.find((o) => o.value === value), [options, value]);
 
@@ -180,6 +182,9 @@ export const InlineSelect: FC<InlineSelectProps> = ({
         role="combobox"
         aria-expanded={isOpen}
         aria-haspopup="listbox"
+        aria-controls={listboxId}
+        aria-activedescendant={isOpen && highlightedIndex >= 0 ? `${listboxId}-option-${highlightedIndex}` : undefined}
+        aria-disabled={disabled}
       >
         <span className={`inline-select-label ${!selectedOption ? 'inline-select-placeholder' : ''}`}>
           {selectedOption ? selectedOption.label : placeholder || ''}
@@ -189,8 +194,16 @@ export const InlineSelect: FC<InlineSelectProps> = ({
             <span
               className="inline-select-clear"
               role="button"
+              tabIndex={0}
               aria-label="clear"
               onMouseDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onChange?.('');
+                close();
+              }}
+              onKeyDown={(e) => {
+                if (e.key !== 'Enter' && e.key !== ' ') return;
                 e.preventDefault();
                 e.stopPropagation();
                 onChange?.('');
@@ -205,13 +218,16 @@ export const InlineSelect: FC<InlineSelectProps> = ({
       </div>
 
       {isOpen && (
-        <div ref={dropdownRef} className="inline-select-dropdown" role="listbox">
+        <div id={listboxId} ref={dropdownRef} className="inline-select-dropdown" role="listbox" tabIndex={-1}>
           {showSearch && (
             <div className="inline-select-search">
               <input
                 ref={searchRef}
                 value={search}
                 placeholder={placeholder}
+                role="searchbox"
+                aria-controls={listboxId}
+                aria-activedescendant={highlightedIndex >= 0 ? `${listboxId}-option-${highlightedIndex}` : undefined}
                 onChange={(e) => {
                   setSearch(e.target.value);
                   setHighlightedIndex(0);
@@ -226,9 +242,11 @@ export const InlineSelect: FC<InlineSelectProps> = ({
             ) : (
               filtered.map((opt, idx) => (
                 <div
+                  id={`${listboxId}-option-${idx}`}
                   key={opt.value}
                   className={`inline-select-option ${opt.value === value ? 'selected' : ''} ${idx === highlightedIndex ? 'highlighted' : ''} ${opt.disabled ? 'disabled' : ''}`}
                   role="option"
+                  tabIndex={-1}
                   aria-selected={opt.value === value}
                   aria-disabled={opt.disabled}
                   onMouseEnter={() => setHighlightedIndex(idx)}

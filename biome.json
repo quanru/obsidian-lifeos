@@ -65,5 +65,17 @@
         "useKeyWithClickEvents": "off"
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      "include": ["src/component/InlineAutoComplete/**/*.tsx", "src/component/InlineSelect/**/*.tsx"],
+      "linter": {
+        "rules": {
+          "a11y": {
+            "useSemanticElements": "off"
+          }
+        }
+      }
+    }
+  ]
 }

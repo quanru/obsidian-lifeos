@@ -2,7 +2,10 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { captureMessages } from '../capture/messages.ts';
 import { getI18n, getDayjsLocale, getAntdLocale } from '../i18n.ts';
+import { memoryApp, settings } from '../../tests/vault.ts';
 import { WORKSPACE_LANGUAGES, normalizeWorkspaceLocale } from './locale.ts';
+import { getLocalizedWorkspaceSettings, getBasicTemplatePlans } from './templates.ts';
+import { initializeWorkspace, readWorkspaceProfile } from './workspace.ts';
 import { getFeatureI18n } from '../feature-i18n.ts';
 import { getReviewI18n } from '../review/i18n.ts';
 
@@ -17,6 +20,21 @@ test('regional locales retain their workspace language and unknown languages fal
   assert.equal(getI18n('ko-KR').Daily, '일');
   assert.equal(getDayjsLocale('ko-KR'), 'ko');
   assert.equal(getAntdLocale('ko-KR').locale, 'ko');
+});
+
+test('all workspace languages round-trip, preserve custom files, and reject language changes', async () => {
+  for (const locale of Object.keys(WORKSPACE_LANGUAGES)) {
+    const { app, contents } = memoryApp();
+    const localized = getLocalizedWorkspaceSettings(settings, locale);
+    await initializeWorkspace(app, localized, 'para', locale);
+    assert.equal((await readWorkspaceProfile(app))?.locale, locale);
+    const plans = getBasicTemplatePlans(localized, 'para', locale);
+    assert(plans[0].content.includes(`## ${localized.dailyRecordHeader}`));
+    contents.set(plans[0].path, 'My customized template');
+    await initializeWorkspace(app, localized, 'para', locale);
+    assert.equal(contents.get(plans[0].path), 'My customized template');
+    await assert.rejects(initializeWorkspace(app, localized, 'para', locale === 'en' ? 'ja' : 'en'));
+  }
 });
 
 test('new feature and review dialogs do not silently fall back to English', () => {

@@ -1,0 +1,227 @@
+import { normalizeWorkspaceLocale } from '../onboarding/locale';
+const en = {
+  associate: 'Associate themes',
+  title: 'Associated themes',
+  search: 'Search themes',
+  save: 'Apply',
+  cancel: 'Cancel',
+  empty:
+    'No tagged PARA index notes found. Add tags to a theme’s index note first.',
+  shared:
+    'Some themes share tags. These themes may match together; shared tags are kept when another selected theme needs them.',
+  changed:
+    'The draft or theme changed. Close this picker and reopen it; your input is kept.',
+  open: 'Open theme',
+  project: 'Project',
+  area: 'Area',
+  resource: 'Resource',
+  archive: 'Archive',
+  visual: 'Live preview',
+  source: 'Markdown source',
+  loading: 'Loading editor…',
+  unavailable:
+    'Live preview is unavailable in this Obsidian version. Markdown input remains available.',
+};
+export type ThemeMessages = typeof en;
+const locales: Record<string, ThemeMessages> = {
+  'zh-cn': {
+    associate: '关联主题',
+    title: '关联的主题',
+    search: '搜索主题',
+    save: '应用',
+    cancel: '取消',
+    empty: '没有找到带标签的 PARA 索引笔记，请先给主题的索引笔记添加 tags。',
+    shared: '部分主题共用标签，可能同时匹配；另一个已选主题需要的标签会保留。',
+    changed: '草稿或主题已经变化，请关闭选择器后重新打开。输入内容已保留。',
+    open: '打开主题',
+    project: '项目',
+    area: '领域',
+    resource: '资源',
+    archive: '存档',
+    visual: '实时预览',
+    source: 'Markdown 源码',
+    loading: '正在加载编辑器…',
+    unavailable: '当前 Obsidian 版本无法启用实时预览，仍可使用 Markdown 输入。',
+  },
+  'zh-tw': {
+    associate: '關聯主題',
+    title: '關聯的主題',
+    search: '搜尋主題',
+    save: '套用',
+    cancel: '取消',
+    empty: '沒有找到帶標籤的 PARA 索引筆記，請先為主題的索引筆記新增 tags。',
+    shared: '部分主題共用標籤，可能同時匹配；另一個已選主題需要的標籤會保留。',
+    changed: '草稿或主題已經變更，請關閉選擇器後重新開啟。輸入內容已保留。',
+    open: '開啟主題',
+    project: '專案',
+    area: '領域',
+    resource: '資源',
+    archive: '封存',
+    visual: '即時預覽',
+    source: 'Markdown 原始碼',
+    loading: '正在載入編輯器…',
+    unavailable: '目前 Obsidian 版本無法啟用即時預覽，仍可使用 Markdown 輸入。',
+  },
+  de: {
+    associate: 'Themen zuordnen',
+    title: 'Zugeordnete Themen',
+    search: 'Themen suchen',
+    save: 'Anwenden',
+    cancel: 'Abbrechen',
+    empty:
+      'Keine PARA-Indexnotizen mit Tags gefunden. Füge einer Themen-Indexnotiz zuerst Tags hinzu.',
+    shared:
+      'Einige Themen teilen Tags und können gemeinsam zugeordnet werden. Tags anderer ausgewählter Themen bleiben erhalten.',
+    changed:
+      'Entwurf oder Thema geändert. Öffne die Auswahl erneut; deine Eingabe bleibt erhalten.',
+    open: 'Thema öffnen',
+    project: 'Projekt',
+    area: 'Bereich',
+    resource: 'Ressource',
+    archive: 'Archiv',
+    visual: 'Live-Vorschau',
+    source: 'Markdown-Quelltext',
+    loading: 'Editor wird geladen…',
+    unavailable:
+      'Live-Vorschau ist nicht verfügbar. Markdown-Eingabe bleibt möglich.',
+  },
+  es: {
+    associate: 'Asociar temas',
+    title: 'Temas asociados',
+    search: 'Buscar temas',
+    save: 'Aplicar',
+    cancel: 'Cancelar',
+    empty:
+      'No hay notas de índice PARA con etiquetas. Añade etiquetas al índice de un tema.',
+    shared:
+      'Algunos temas comparten etiquetas y pueden coincidir juntos. Se conservan las etiquetas que necesite otro tema seleccionado.',
+    changed:
+      'El borrador o tema cambió. Vuelve a abrir el selector; tu texto se conserva.',
+    open: 'Abrir tema',
+    project: 'Proyecto',
+    area: 'Área',
+    resource: 'Recurso',
+    archive: 'Archivo',
+    visual: 'Vista previa en vivo',
+    source: 'Código Markdown',
+    loading: 'Cargando editor…',
+    unavailable:
+      'La vista previa en vivo no está disponible. Puedes escribir Markdown.',
+  },
+  fr: {
+    associate: 'Associer des thèmes',
+    title: 'Thèmes associés',
+    search: 'Rechercher des thèmes',
+    save: 'Appliquer',
+    cancel: 'Annuler',
+    empty:
+      'Aucune note d’index PARA avec étiquettes. Ajoutez des étiquettes à l’index d’un thème.',
+    shared:
+      'Certains thèmes partagent des étiquettes et peuvent correspondre ensemble. Les étiquettes nécessaires aux autres thèmes sélectionnés sont conservées.',
+    changed:
+      'Le brouillon ou le thème a changé. Rouvrez le sélecteur ; votre texte est conservé.',
+    open: 'Ouvrir le thème',
+    project: 'Projet',
+    area: 'Domaine',
+    resource: 'Ressource',
+    archive: 'Archive',
+    visual: 'Aperçu en direct',
+    source: 'Source Markdown',
+    loading: 'Chargement de l’éditeur…',
+    unavailable:
+      'L’aperçu en direct est indisponible. La saisie Markdown reste possible.',
+  },
+  pt: {
+    associate: 'Associar temas',
+    title: 'Temas associados',
+    search: 'Buscar temas',
+    save: 'Aplicar',
+    cancel: 'Cancelar',
+    empty:
+      'Nenhuma nota de índice PARA com etiquetas. Adicione etiquetas ao índice de um tema.',
+    shared:
+      'Alguns temas compartilham etiquetas e podem corresponder juntos. As etiquetas necessárias a outros temas selecionados serão mantidas.',
+    changed:
+      'O rascunho ou tema mudou. Reabra o seletor; seu texto foi mantido.',
+    open: 'Abrir tema',
+    project: 'Projeto',
+    area: 'Área',
+    resource: 'Recurso',
+    archive: 'Arquivo',
+    visual: 'Prévia ao vivo',
+    source: 'Código Markdown',
+    loading: 'Carregando editor…',
+    unavailable:
+      'A prévia ao vivo não está disponível. A entrada Markdown continua disponível.',
+  },
+  ja: {
+    associate: 'テーマを関連付け',
+    title: '関連テーマ',
+    search: 'テーマを検索',
+    save: '適用',
+    cancel: 'キャンセル',
+    empty:
+      'タグ付きの PARA インデックスノートがありません。テーマのインデックスにタグを追加してください。',
+    shared:
+      '一部のテーマはタグを共有するため同時に一致する場合があります。他の選択中テーマに必要なタグは保持されます。',
+    changed:
+      '下書きまたはテーマが変更されました。選択画面を開き直してください。入力は保持されています。',
+    open: 'テーマを開く',
+    project: 'プロジェクト',
+    area: 'エリア',
+    resource: 'リソース',
+    archive: 'アーカイブ',
+    visual: 'ライブプレビュー',
+    source: 'Markdown ソース',
+    loading: 'エディタを読み込み中…',
+    unavailable:
+      'ライブプレビューを利用できません。Markdown 入力は利用できます。',
+  },
+  ko: {
+    associate: '주제 연결',
+    title: '연결된 주제',
+    search: '주제 검색',
+    save: '적용',
+    cancel: '취소',
+    empty:
+      '태그가 있는 PARA 색인 노트가 없습니다. 주제의 색인 노트에 태그를 추가하세요.',
+    shared:
+      '일부 주제가 태그를 공유하여 함께 일치할 수 있습니다. 다른 선택된 주제에 필요한 태그는 유지됩니다.',
+    changed:
+      '초안이나 주제가 변경되었습니다. 선택 창을 다시 여세요. 입력은 유지됩니다.',
+    open: '주제 열기',
+    project: '프로젝트',
+    area: '영역',
+    resource: '자료',
+    archive: '보관',
+    visual: '라이브 미리보기',
+    source: 'Markdown 소스',
+    loading: '편집기 불러오는 중…',
+    unavailable:
+      '라이브 미리보기를 사용할 수 없습니다. Markdown 입력은 가능합니다.',
+  },
+  ar: {
+    associate: 'ربط المواضيع',
+    title: 'المواضيع المرتبطة',
+    search: 'البحث عن مواضيع',
+    save: 'تطبيق',
+    cancel: 'إلغاء',
+    empty:
+      'لا توجد ملاحظات فهرس PARA ذات وسوم. أضف وسومًا إلى فهرس الموضوع أولًا.',
+    shared:
+      'تتشارك بعض المواضيع الوسوم وقد تتطابق معًا. تُحفظ الوسوم التي يحتاجها موضوع آخر محدد.',
+    changed: 'تغيرت المسودة أو الموضوع. أعد فتح نافذة الاختيار؛ سيُحتفظ بالنص.',
+    open: 'فتح الموضوع',
+    project: 'مشروع',
+    area: 'مجال',
+    resource: 'مورد',
+    archive: 'أرشيف',
+    visual: 'معاينة مباشرة',
+    source: 'مصدر Markdown',
+    loading: 'جارٍ تحميل المحرر…',
+    unavailable: 'المعاينة المباشرة غير متاحة. يمكنك كتابة Markdown.',
+  },
+};
+export function themeMessages(locale: string): ThemeMessages {
+  return locales[normalizeWorkspaceLocale(locale)] ?? en;
+}

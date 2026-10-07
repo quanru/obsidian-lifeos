@@ -1,6 +1,9 @@
 import { Platform, Plugin, TFile, setIcon } from 'obsidian';
-import type { App, MarkdownPostProcessorContext, Menu, PluginManifest, TAbstractFile, WorkspaceLeaf } from 'obsidian';
-import { type DataviewApi, getAPI, isPluginEnabled } from 'obsidian-dataview';
+import type { MarkdownPostProcessorContext, Menu, TAbstractFile, WorkspaceLeaf } from 'obsidian';
+import type { DataviewApi } from 'obsidian-dataview';
+import { dataviewState, waitForDataview } from './dependencies/dataview';
+import { getReviewI18n } from './review/i18n';
+import { WeeklyReviewModal } from './review/WeeklyReviewModal';
 
 import dayjs from 'dayjs';
 import { QuickCaptureModal } from './capture/QuickCaptureModal';
@@ -47,7 +50,6 @@ export default class LifeOS extends Plugin {
   file: File;
   bullet: Bullet;
   date: PeriodicDate;
-  dataview: DataviewApi;
   views: Record<string, (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext, folder?: string) => void>;
   dailyRecord: DailyRecord;
   timeout: NodeJS.Timeout;
@@ -59,39 +61,12 @@ export default class LifeOS extends Plugin {
   private onboardingModal?: OnboardingModal;
   private quickCaptureModal?: QuickCaptureModal;
 
-  constructor(app: App, manifest: PluginManifest) {
-    super(app, manifest);
-    this.registerEvent(
-      this.app.metadataCache.on('dataview:index-ready' as 'changed', () => {
-        this.dataview = getAPI(this.app);
-      }),
-    );
-
-    if (!isPluginEnabled(app)) {
-      logMessage(getI18n(getLocale())[`${ERROR_MESSAGE}NO_DATAVIEW_INSTALL`], LogLevel.error);
-      return;
-    }
-
-    this.app = app;
-    this.dataview = this.dataview ?? getAPI(app);
+  getDataviewAPI(): Promise<DataviewApi> {
+    return waitForDataview(this.app, () => this.dataviewMessage());
   }
 
-  getDataviewAPI(): Promise<DataviewApi> {
-    return new Promise((resolve) => {
-      if (this.dataview) {
-        resolve(this.dataview);
-        return;
-      }
-
-      const eventRef = this.app.metadataCache.on('dataview:index-ready' as 'changed', () => {
-        this.app.metadataCache.offref(eventRef);
-        resolve(getAPI(this.app));
-      });
-
-      setTimeout(() => {
-        resolve(getAPI(this.app));
-      }, 15 * 1000);
-    });
+  private dataviewMessage(): string {
+    return getReviewI18n(this.getCurrentLocaleKey())[dataviewState(this.app)];
   }
 
   async onload() {
@@ -123,6 +98,7 @@ export default class LifeOS extends Plugin {
       callback: () => openOfficialSite(this.getCurrentLocaleKey()),
     });
     this.registerWorkspaceCommands();
+    this.addRibbonIcon('message-square-text', getFeatureI18n(this.getCurrentLocaleKey()).quickRecordTitle, () => this.openQuickCapture('record'));
     this.loadHelpers();
     this.loadGlobalHelpers();
     this.loadViews();
@@ -272,7 +248,20 @@ export default class LifeOS extends Plugin {
 
     const callback = this.views[view] || this.views[legacyView];
 
-    return callback(view, el, ctx);
+    if (!view.endsWith('ByFolder') && dataviewState(this.app) !== 'ready') {
+      const container = el.createDiv({ cls: 'lifeos-dependency-message' });
+      container.createEl('p', { text: this.dataviewMessage() });
+      const button = container.createEl('button', { text: getReviewI18n(localeKey).retry });
+      button.addEventListener('click', () => {
+        el.empty();
+        void this.markdownCodeBlockProcessor(source, el, ctx);
+      });
+      return;
+    }
+    return Promise.resolve(callback(view, el, ctx)).catch(() => {
+      el.empty();
+      el.createEl('p', { text: this.dataviewMessage() });
+    });
   };
 
   async loadSettings() {
@@ -358,6 +347,11 @@ export default class LifeOS extends Plugin {
   private registerWorkspaceCommands() {
     const t = getFeatureI18n(this.getCurrentLocaleKey());
 
+    this.addCommand({
+      id: 'periodic-para-weekly-review',
+      name: getReviewI18n(this.getCurrentLocaleKey()).command,
+      callback: () => new WeeklyReviewModal(this).open(),
+    });
     this.addCommand({
       id: 'periodic-para-initialize-workspace',
       name: t.setupCommand,

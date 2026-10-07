@@ -1,9 +1,7 @@
 name: Release Obsidian plugin
 
 on:
-  push:
-    tags:
-      - '*'
+  workflow_dispatch:
 env:
   PLUGIN_NAME: obsidian-periodic-para
 

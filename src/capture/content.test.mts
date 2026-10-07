@@ -19,3 +19,16 @@ test('formats records and tasks as standard Markdown', () => {
   assert.equal(formatCaptureEntry('record', 'A thought\nwith context', '10:15'), '- 10:15 A thought\n  with context');
   assert.equal(formatCaptureEntry('task', 'Ship the release', '10:15'), '- [ ] Ship the release');
 });
+
+test('ignores matching headings and section boundaries inside fenced code', () => {
+  const content =
+    '# Daily\n\n```md\n## Daily Record\n```\n\n## Daily Record\n\n~~~md\n## Fake boundary\n~~~\n\n## Reflection\nKeep me\n';
+  const result = appendUnderHeading(content, 'Daily Record', '- 10:00 Actual entry');
+  assert.ok(result.startsWith('# Daily\n\n```md\n## Daily Record\n```'));
+  assert.match(result, /~~~\n- 10:00 Actual entry\n\n## Reflection/);
+});
+
+test('preserves CRLF content semantically and handles duplicate headers deterministically', () => {
+  const result = appendUnderHeading('## Daily Record\r\n\r\n## Daily Record\r\nLater\r\n', 'Daily Record', '- New');
+  assert.equal(result, '## Daily Record\n\n- New\n\n## Daily Record\nLater\n');
+});

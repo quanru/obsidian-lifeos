@@ -8,6 +8,8 @@ import type { PluginSettings } from '../../type';
 import { DEFAULT_SETTINGS } from '../../view/SettingTab';
 import { ConfigProvider } from '../ConfigProvider';
 import './index.less';
+import { CaptureSettings } from '../../capture/CaptureSettings';
+import { captureSettingsMessages } from '../../capture/settings-messages';
 import { InlineAutoComplete } from '../InlineAutoComplete';
 import { InlineSelect } from '../InlineSelect';
 import { TopBanner } from '../TopBanner';
@@ -54,8 +56,9 @@ export const SettingTab = (props: { settings: PluginSettings; saveSettings: (set
         wrapperCol={{ span: 16 }}
         initialValues={settings}
         onValuesChange={(changedValues) => {
-          setSetting({ ...settings, ...changedValues });
-          saveSettings(changedValues);
+          const next = { ...settings, ...changedValues };
+          setSetting(next);
+          saveSettings(next);
         }}
       >
         <Form.Item name="locale" label={localeMap.LANGUAGE} help={localeMap.LANGUAGE_HELP}>
@@ -79,6 +82,22 @@ export const SettingTab = (props: { settings: PluginSettings; saveSettings: (set
           defaultActiveKey="periodic"
           centered
           items={[
+            {
+              key: 'capture',
+              label: captureSettingsMessages(localeKey).title,
+              children: app && (
+                <CaptureSettings
+                  app={app}
+                  settings={settings}
+                  locale={localeKey}
+                  onChange={(paths) => {
+                    const next = { ...settings, quickCaptureDefaultThemes: paths };
+                    setSetting(next);
+                    saveSettings(next);
+                  }}
+                />
+              ),
+            },
             {
               key: 'periodic',
               label: localeMap.SETTING_PERIODIC_NOTES,
@@ -209,7 +228,11 @@ export const SettingTab = (props: { settings: PluginSettings; saveSettings: (set
                                 help={
                                   <>
                                     {localeMap.SETTING_DATE_FORMAT_SYNTAX}{' '}
-                                    <a href="https://momentjs.com/docs/#/displaying/format/" target="_blank" rel="noreferrer">
+                                    <a
+                                      href="https://momentjs.com/docs/#/displaying/format/"
+                                      target="_blank"
+                                      rel="noreferrer"
+                                    >
                                       {localeMap.SETTING_DATE_FORMAT_REFERENCE}
                                     </a>
                                     <br />
@@ -230,7 +253,9 @@ export const SettingTab = (props: { settings: PluginSettings; saveSettings: (set
                                         return Promise.resolve();
                                       }
                                       return Promise.reject(
-                                        new Error(localeMap.SETTING_DATE_FORMAT_MUST_START_WITH + defaultFormatMap[item]),
+                                        new Error(
+                                          localeMap.SETTING_DATE_FORMAT_MUST_START_WITH + defaultFormatMap[item],
+                                        ),
                                       );
                                     },
                                   },

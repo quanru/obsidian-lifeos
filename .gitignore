@@ -25,3 +25,6 @@ data.json
 .specstory
 CLAUDE.md
 .claude
+
+# Isolated runtime evidence and scratch vaults
+.verify/

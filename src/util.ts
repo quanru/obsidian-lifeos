@@ -3,7 +3,22 @@ export { isInPeriodicNote, isInPeriodicNotesFolder, joinVaultPath } from './peri
 import dayjs, { type Dayjs } from 'dayjs';
 import { Component, MarkdownRenderer, Notice, TFile, TFolder, moment } from 'obsidian';
 import type { App } from 'obsidian';
-import { DAILY, ERROR_MESSAGE, LIFE_OS_OFFICIAL_SITE, MONTHLY, QUARTERLY, WEEKLY, YEARLY } from './constant';
+import {
+  DAILY,
+  ERROR_MESSAGE,
+  FULL_DAILY_REG,
+  FULL_MONTHLY_REG,
+  FULL_QUARTERLY_REG,
+  FULL_WEEKLY_REG,
+  FULL_YEARLY_REG,
+  LIFE_OS_OFFICIAL_SITE,
+  MONTHLY,
+  QUARTERLY,
+  WEEKLY,
+  YEARLY,
+} from './constant';
+import { periodicLocation } from './periodic/calendar';
+import { withVaultLock } from './vault-lock';
 import { getDayjsLocale, getI18n, getLocale, normalizeLocale } from './i18n';
 import type { DailyRecordType, DailyRecordTypeV2, PeriodicNotesTemplateFilePath, ResourceType } from './type';
 import { LogLevel, type PluginSettings } from './type';
@@ -33,7 +48,7 @@ async function ensureFolderTree(app: App, folder: string): Promise<void> {
   }
 }
 
-export async function createFile(
+async function createFileUnlocked(
   app: App,
   options: {
     locale: string;
@@ -49,27 +64,20 @@ export async function createFile(
   }
 
   const { templateFile, folder, file, tag, locale, newLeaf } = options;
-  const templateTFile = app.vault.getAbstractFileByPath(templateFile!);
   const finalFile = file.match(/\.md$/) ? file : `${file}.md`;
-
-  if (!templateTFile) {
-    return new Notice(getI18n(locale)[`${ERROR_MESSAGE}NO_TEMPLATE_EXIST`] + templateFile);
+  const existing = app.vault.getAbstractFileByPath(finalFile);
+  if (existing instanceof TFile) {
+    await app.workspace.getLeaf(newLeaf).openFile(existing);
+    return existing;
   }
-
-  if (templateTFile instanceof TFile) {
+  if (existing) throw new Error(`A folder already exists where a note is required: ${finalFile}`);
+  const templateTFile = app.vault.getAbstractFileByPath(templateFile);
+  if (!(templateTFile instanceof TFile)) {
+    new Notice(getI18n(locale)[`${ERROR_MESSAGE}NO_TEMPLATE_EXIST`] + templateFile);
+    return;
+  }
+  if (folder && finalFile) {
     const templateContent = await app.vault.cachedRead(templateTFile);
-
-    if (!folder || !finalFile) {
-      return;
-    }
-
-    const tFile = app.vault.getAbstractFileByPath(finalFile);
-
-    if (tFile && tFile instanceof TFile) {
-      await app.workspace.getLeaf(newLeaf).openFile(tFile);
-      return tFile;
-    }
-
     await ensureFolderTree(app, folder);
 
     const fileCreated = await app.vault.create(finalFile, templateContent);
@@ -87,6 +95,10 @@ export async function createFile(
     await app.workspace.getLeaf(newLeaf).openFile(fileCreated);
     return fileCreated;
   }
+}
+
+export function createFile(app: App, options: Parameters<typeof createFileUnlocked>[1]) {
+  return withVaultLock(app.vault, () => createFileUnlocked(app, options));
 }
 
 export function isDarkTheme() {
@@ -240,38 +252,8 @@ export async function createPeriodicFile(
   const effectiveLocale = getDayjsLocale(locale || getLocale());
   const date = dayjs(day.format()).locale(effectiveLocale);
 
-  let templateFile = '';
-  let folder = '';
-  let file = '';
-
-  const year = date.format('YYYY');
-  let value;
-
-  if (periodType === DAILY) {
-    folder = joinVaultPath(settings.periodicNotesPath, year, periodType, String(date.month() + 1).padStart(2, '0'));
-    value = date.format(settings.dailyNoteFormat || 'YYYY-MM-DD');
-  } else if (periodType === WEEKLY) {
-    folder = joinVaultPath(settings.periodicNotesPath, date.format('gggg'), periodType);
-    value = date.format(settings.weeklyNoteFormat || 'gggg-[W]ww');
-  } else if (periodType === MONTHLY) {
-    folder = joinVaultPath(settings.periodicNotesPath, year, periodType);
-    value = date.format(settings.monthlyNoteFormat || 'YYYY-MM');
-  } else if (periodType === QUARTERLY) {
-    folder = joinVaultPath(settings.periodicNotesPath, year, periodType);
-    value = date.format(settings.quarterlyNoteFormat || 'YYYY-[Q]Q');
-  } else if (periodType === YEARLY) {
-    folder = joinVaultPath(settings.periodicNotesPath, year);
-    value = settings.yearlyNoteFormat ? date.format(settings.yearlyNoteFormat) : year;
-  }
-
-  file = buildPeriodicFilePath(
-    settings.periodicNotesPath,
-    periodType === WEEKLY ? date.format('gggg') : year,
-    periodType,
-    String(value),
-    String(date.month() + 1).padStart(2, '0'),
-  );
-  templateFile = settings.usePeriodicAdvanced
+  const { folder, file } = periodicLocation(date, periodType, settings);
+  const templateFile = settings.usePeriodicAdvanced
     ? settings[`periodicNotesTemplateFilePath${periodType}` as PeriodicNotesTemplateFilePath] ||
       joinVaultPath(settings.periodicNotesPath, 'Templates', `${periodType}.md`)
     : joinVaultPath(settings.periodicNotesPath, 'Templates', `${periodType}.md`);

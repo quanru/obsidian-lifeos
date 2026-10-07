@@ -1,3 +1,4 @@
+import { isoWeekRange, isoWeeklyFormat } from './calendar';
 import { moment } from 'obsidian';
 import type { App } from 'obsidian';
 import { DAILY_REG, MONTHLY_REG, QUARTERLY_REG, WEEKLY_REG, YEARLY_REG } from '../constant';
@@ -59,15 +60,7 @@ export class Date {
     }
 
     if (week && year) {
-      // 使用 ISO 周年（isoWeekYear）来正确处理跨年周
-      const weekDate = moment().isoWeekYear(year).isoWeek(week);
-      const from = weekDate.clone().startOf('isoWeek').format('YYYY-MM-DD');
-      const to = weekDate.clone().endOf('isoWeek').format('YYYY-MM-DD');
-
-      return {
-        from,
-        to,
-      };
+      return isoWeekRange(year, week);
     }
 
     if (month) {
@@ -145,7 +138,7 @@ export class Date {
     const endDate = moment(to);
 
     const dailyFormat = this.settings.dailyNoteFormat || 'YYYY-MM-DD';
-    const weeklyFormat = this.settings.weeklyNoteFormat || 'gggg-[W]ww';
+    const weeklyFormat = isoWeeklyFormat(this.settings.weeklyNoteFormat || 'gggg-[W]ww');
     const monthlyFormat = this.settings.monthlyNoteFormat || 'YYYY-MM';
     const quarterlyFormat = this.settings.quarterlyNoteFormat || 'YYYY-[Q]Q';
 
@@ -214,7 +207,7 @@ export class Date {
               .endOf('month')
               .format('YYYY-MM-DD')
           : '',
-      week: week && year ? moment().year(year).week(week).endOf('week').format('YYYY-MM-DD') : '',
+      week: week && year ? isoWeekRange(year, week).to || '' : '',
     };
   }
 }

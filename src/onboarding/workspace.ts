@@ -1,5 +1,6 @@
 import { WORKSPACE_LANGUAGES } from './locale';
 import { type App, TFile, TFolder, normalizePath } from 'obsidian';
+import { withVaultLock } from '../vault-lock';
 import type { PluginSettings } from '../type';
 import {
   type WorkspaceLocale,
@@ -45,7 +46,7 @@ async function ensureFolder(app: App, folderPath: string, result: WorkspaceSetup
   }
 }
 
-export async function initializeWorkspace(
+async function initializeWorkspaceUnlocked(
   app: App,
   settings: PluginSettings,
   mode: WorkspaceMode,
@@ -53,7 +54,10 @@ export async function initializeWorkspace(
   options: { includeExamples?: boolean } = {},
 ): Promise<WorkspaceSetupResult> {
   const normalizedLocale = normalizeWorkspaceLocale(locale);
-  const profileEntry = app.vault.getAbstractFileByPath(WORKSPACE_PROFILE_PATH);
+  const profileFolder = await app.vault.adapter.stat('.lifeos');
+  if (profileFolder && profileFolder.type !== 'folder')
+    throw new Error('A file already exists where .lifeos is required.');
+  const profileEntry = await app.vault.adapter.exists(WORKSPACE_PROFILE_PATH);
   const existingProfile = await readWorkspaceProfile(app);
   if (profileEntry && !existingProfile) {
     throw new Error(`The LifeOS workspace profile is invalid: ${WORKSPACE_PROFILE_PATH}`);
@@ -107,25 +111,33 @@ export async function initializeWorkspace(
   }
 
   if (!existingProfile) {
-    await ensureFolder(app, '.lifeos', result);
+    if (!profileFolder) {
+      await app.vault.adapter.mkdir('.lifeos');
+      result.created.push('.lifeos');
+    }
     const profile: WorkspaceProfile = {
       schemaVersion: 1,
       template: mode,
       locale: normalizedLocale,
       initializedAt: new Date().toISOString(),
     };
-    await app.vault.create(WORKSPACE_PROFILE_PATH, `${JSON.stringify(profile, null, 2)}\n`);
+    await app.vault.adapter.write(WORKSPACE_PROFILE_PATH, `${JSON.stringify(profile, null, 2)}\n`);
     result.created.push(WORKSPACE_PROFILE_PATH);
   }
 
   return result;
 }
 
+export function initializeWorkspace(
+  ...args: Parameters<typeof initializeWorkspaceUnlocked>
+): Promise<WorkspaceSetupResult> {
+  return withVaultLock(args[0].vault, () => initializeWorkspaceUnlocked(...args));
+}
+
 export async function readWorkspaceProfile(app: App): Promise<WorkspaceProfile | null> {
-  const profileFile = app.vault.getAbstractFileByPath(WORKSPACE_PROFILE_PATH);
-  if (!(profileFile instanceof TFile)) return null;
+  if (!(await app.vault.adapter.exists(WORKSPACE_PROFILE_PATH))) return null;
   try {
-    const parsed = JSON.parse(await app.vault.read(profileFile)) as Partial<WorkspaceProfile>;
+    const parsed = JSON.parse(await app.vault.adapter.read(WORKSPACE_PROFILE_PATH)) as Partial<WorkspaceProfile>;
     if (
       parsed.schemaVersion === 1 &&
       (parsed.template === 'periodic' || parsed.template === 'para') &&
