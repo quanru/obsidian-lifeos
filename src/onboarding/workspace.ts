@@ -1,3 +1,4 @@
+import { WORKSPACE_LANGUAGES } from './locale';
 import { type App, TFile, TFolder, normalizePath } from 'obsidian';
 import type { PluginSettings } from '../type';
 import {
@@ -128,7 +129,8 @@ export async function readWorkspaceProfile(app: App): Promise<WorkspaceProfile |
     if (
       parsed.schemaVersion === 1 &&
       (parsed.template === 'periodic' || parsed.template === 'para') &&
-      (parsed.locale === 'en' || parsed.locale === 'zh-cn' || parsed.locale === 'zh-tw')
+      typeof parsed.locale === 'string' &&
+      Object.prototype.hasOwnProperty.call(WORKSPACE_LANGUAGES, parsed.locale)
     ) {
       return parsed as WorkspaceProfile;
     }

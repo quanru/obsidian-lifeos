@@ -1,0 +1,22 @@
+{
+  "MESSAGE_START_SYNC_USEMEMOS": "開始同步 usememos",
+  "MESSAGE_END_SYNC_USEMEMOS": "usememos 同步完成",
+  "ERROR_MESSAGE_FAILED_GET_USEMEMOS_VERSION": "無法取得 usememos 工作區資料",
+  "ERROR_MESSAGE_AUTH_ENDPOINTS_FAILED": "驗證失敗，將以有限的篩選能力繼續同步。",
+  "ERROR_MESSAGE_VERSION_DETECTION_FAILED": "無法辨識版本，將使用預設設定。",
+  "ERROR_MESSAGE_USER_INFO_FAILED": "無法取得使用者資訊，將使用通用篩選。",
+  "ERROR_MESSAGE_NO_FRONT_MATTER_TAG": "請在屬性中新增 tags 欄位。",
+  "ERROR_MESSAGE_NO_DATAVIEW_INSTALL": "請先安裝 Dataview。",
+  "ERROR_MESSAGE_NO_VIEW_PROVIDED": "請提供要查詢的檢視名稱。",
+  "ERROR_MESSAGE_NO_VIEW_EXISTED": "LifeOS 中沒有這個檢視。",
+  "ERROR_MESSAGE_NO_INDEX_FILE_EXIST": "找不到索引檔案：請使用 README.md、*.README.md 或與資料夾同名的 .md 檔案。",
+  "ERROR_MESSAGE_NO_TEMPLATE_EXIST": "找不到範本檔案： ",
+  "ERROR_MESSAGE_TAGS_MUST_INPUT": "請輸入標籤。",
+  "ERROR_MESSAGE_DAILY_RECORD_FETCH_FAILED": "無法取得 usememos 記錄",
+  "ERROR_MESSAGE_RESOURCE_FETCH_FAILED": "無法取得資源",
+  "ERROR_MESSAGE_NO_DAILY_RECORD_HEADER": "請在 LifeOS 設定中指定 usememos 的插入標題。",
+  "ERROR_MESSAGE_NO_DAILY_RECORD_API": "請設定 usememos API。",
+  "ERROR_MESSAGE_NO_DAILY_RECORD_TOKEN": "請設定 usememos Token。",
+  "ERROR_MESSAGE_NO_DAILY_FILE_EXIST": "日記不存在，請先建立： ",
+  "ERROR_MESSAGE_CREATING_DAILY_FILE": "日記不存在，正在建立： "
+}

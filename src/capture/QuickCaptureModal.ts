@@ -25,6 +25,7 @@ export class QuickCaptureModal extends Modal {
     const placeholder = this.kind === 'task' ? t.quickTaskPlaceholder : t.quickRecordPlaceholder;
 
     this.modalEl.addClass('lifeos-quick-capture-modal');
+    this.modalEl.dir = locale.toLowerCase().startsWith('ar') ? 'rtl' : 'ltr';
     this.setTitle(title);
     this.contentEl.createEl('p', {
       cls: 'lifeos-quick-capture-description',

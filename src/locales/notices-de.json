@@ -1,0 +1,22 @@
+{
+  "MESSAGE_START_SYNC_USEMEMOS": "usememos-Synchronisierung gestartet",
+  "MESSAGE_END_SYNC_USEMEMOS": "usememos-Synchronisierung beendet",
+  "ERROR_MESSAGE_FAILED_GET_USEMEMOS_VERSION": "usememos-Profil konnte nicht geladen werden",
+  "ERROR_MESSAGE_AUTH_ENDPOINTS_FAILED": "Authentifizierung fehlgeschlagen. Synchronisierung wird mit eingeschränkter Filterung fortgesetzt.",
+  "ERROR_MESSAGE_VERSION_DETECTION_FAILED": "Version nicht erkannt. Standardeinstellungen werden verwendet.",
+  "ERROR_MESSAGE_USER_INFO_FAILED": "Benutzerinformationen fehlen. Allgemeine Filter werden verwendet.",
+  "ERROR_MESSAGE_NO_FRONT_MATTER_TAG": "Bitte die Eigenschaft tags hinzufügen.",
+  "ERROR_MESSAGE_NO_DATAVIEW_INSTALL": "Bitte zuerst Dataview installieren.",
+  "ERROR_MESSAGE_NO_VIEW_PROVIDED": "Bitte den Namen der Abfrageansicht angeben.",
+  "ERROR_MESSAGE_NO_VIEW_EXISTED": "Diese Ansicht existiert in LifeOS nicht.",
+  "ERROR_MESSAGE_NO_INDEX_FILE_EXIST": "Indexdatei fehlt: README.md, *.README.md oder der Ordnername mit .md.",
+  "ERROR_MESSAGE_NO_TEMPLATE_EXIST": "Vorlagendatei fehlt: ",
+  "ERROR_MESSAGE_TAGS_MUST_INPUT": "Bitte Tags eingeben.",
+  "ERROR_MESSAGE_DAILY_RECORD_FETCH_FAILED": "usememos konnte nicht geladen werden",
+  "ERROR_MESSAGE_RESOURCE_FETCH_FAILED": "Ressource konnte nicht geladen werden",
+  "ERROR_MESSAGE_NO_DAILY_RECORD_HEADER": "Bitte den Titel des Abschnitts für usememos in den LifeOS-Einstellungen festlegen.",
+  "ERROR_MESSAGE_NO_DAILY_RECORD_API": "Bitte die usememos-API in LifeOS festlegen.",
+  "ERROR_MESSAGE_NO_DAILY_RECORD_TOKEN": "Bitte das usememos-Token in LifeOS festlegen.",
+  "ERROR_MESSAGE_NO_DAILY_FILE_EXIST": "Tagesnotiz fehlt. Bitte zuerst erstellen: ",
+  "ERROR_MESSAGE_CREATING_DAILY_FILE": "Tagesnotiz fehlt und wird erstellt: "
+}

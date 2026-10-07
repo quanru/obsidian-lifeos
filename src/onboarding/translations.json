@@ -1,0 +1,338 @@
+{
+  "de": {
+    "settings": {
+      "periodicNotesPath": "0. Periodische Notizen",
+      "projectsPath": "1. Projekte",
+      "areasPath": "2. Bereiche",
+      "resourcesPath": "3. Ressourcen",
+      "archivesPath": "4. Archiv",
+      "dailyRecordHeader": "Tagesprotokoll",
+      "projectListHeader": "Projektliste",
+      "areaListHeader": "Bereiche",
+      "habitHeader": "Gewohnheiten"
+    },
+    "copy": {
+      "title": "LifeOS Einstieg",
+      "exampleTitle": "Dein erster Arbeitsablauf",
+      "lead": "In fünf Minuten mit eigenen Inhalten beginnen.",
+      "checklist": "Die ersten fünf Minuten",
+      "startPath": "LifeOS Einstieg.md",
+      "steps": [
+        "Heute öffnen",
+        "Einen echten Gedanken erfassen",
+        "Eine konkrete nächste Aufgabe anlegen",
+        "Bei Bedarf mit PARA verbinden",
+        "Den Wochenrückblick ausfüllen"
+      ],
+      "destinations": "Arbeitsziele",
+      "exampleFolder": "LifeOS Beispiele",
+      "exampleFile": "Dein erster Arbeitsablauf.md",
+      "exampleLead": "Erst erfassen, dann mit Aufgaben und Struktur verbinden.",
+      "exampleSteps": [
+        "Einen Gedanken festhalten, bevor er verloren geht.",
+        "Daraus einen kleinen nächsten Schritt machen.",
+        "Am Wochenende prüfen und Wichtiges behalten."
+      ]
+    },
+    "guides": {
+      "periodic": {
+        "bestFor": "Ein leichtes Journal mit täglicher Erfassung und regelmäßigen Rückblicken.",
+        "notFor": "Wissen mit dauerhaften Projekt- und Verantwortungsordnern.",
+        "dailyFlow": "Heute erfassen → nächste Aufgabe markieren → Woche prüfen."
+      },
+      "para": {
+        "bestFor": "Wissen zu aktiven Projekten und langfristiger Verantwortung.",
+        "notFor": "Ein reines Journal ohne Strukturpflege oder eine reine Aufgabenliste.",
+        "dailyFlow": "Erfassen → Projekt oder Bereich zuordnen → Ressourcen nutzen → archivieren."
+      }
+    }
+  },
+  "es": {
+    "settings": {
+      "periodicNotesPath": "0. Notas periódicas",
+      "projectsPath": "1. Proyectos",
+      "areasPath": "2. Áreas",
+      "resourcesPath": "3. Recursos",
+      "archivesPath": "4. Archivo",
+      "dailyRecordHeader": "Registro diario",
+      "projectListHeader": "Lista de proyectos",
+      "areaListHeader": "Áreas",
+      "habitHeader": "Hábitos"
+    },
+    "copy": {
+      "title": "LifeOS Empieza aquí",
+      "exampleTitle": "Tu primer flujo de trabajo",
+      "lead": "Empieza con tu propio contenido en cinco minutos.",
+      "checklist": "Tus primeros cinco minutos",
+      "startPath": "LifeOS Empieza aquí.md",
+      "steps": [
+        "Abrir Hoy",
+        "Capturar una idea real",
+        "Crear una próxima acción concreta",
+        "Conectar con PARA cuando sea útil",
+        "Completar la revisión semanal"
+      ],
+      "destinations": "Destinos de trabajo",
+      "exampleFolder": "Ejemplos LifeOS",
+      "exampleFile": "Tu primer flujo de trabajo.md",
+      "exampleLead": "Primero captura, después conecta con acciones y estructura.",
+      "exampleSteps": [
+        "Captura una idea antes de olvidarla.",
+        "Conviértela en una pequeña próxima acción.",
+        "Revísala al final de la semana y conserva lo importante."
+      ]
+    },
+    "guides": {
+      "periodic": {
+        "bestFor": "Un diario ligero con capturas diarias y revisiones periódicas.",
+        "notFor": "Conocimiento que necesita carpetas duraderas de proyectos y responsabilidades.",
+        "dailyFlow": "Capturar en Hoy → marcar la próxima acción → revisar la semana."
+      },
+      "para": {
+        "bestFor": "Conocimiento ligado a proyectos activos y responsabilidades a largo plazo.",
+        "notFor": "Un diario sin mantenimiento de estructura o solo una lista de tareas.",
+        "dailyFlow": "Capturar → conectar con proyecto o área → usar recursos → archivar."
+      }
+    }
+  },
+  "fr": {
+    "settings": {
+      "periodicNotesPath": "0. Notes périodiques",
+      "projectsPath": "1. Projets",
+      "areasPath": "2. Domaines",
+      "resourcesPath": "3. Ressources",
+      "archivesPath": "4. Archives",
+      "dailyRecordHeader": "Journal quotidien",
+      "projectListHeader": "Liste des projets",
+      "areaListHeader": "Domaines",
+      "habitHeader": "Habitudes"
+    },
+    "copy": {
+      "title": "LifeOS Bien démarrer",
+      "exampleTitle": "Votre premier parcours",
+      "lead": "Commencez avec votre propre contenu en cinq minutes.",
+      "checklist": "Vos cinq premières minutes",
+      "startPath": "LifeOS Bien démarrer.md",
+      "steps": [
+        "Ouvrir Aujourd’hui",
+        "Capturer une idée réelle",
+        "Créer une prochaine action concrète",
+        "Relier à PARA si utile",
+        "Compléter le bilan hebdomadaire"
+      ],
+      "destinations": "Points d’entrée",
+      "exampleFolder": "Exemples LifeOS",
+      "exampleFile": "Votre premier parcours.md",
+      "exampleLead": "Capturez d’abord, puis reliez le contenu aux actions et à la structure.",
+      "exampleSteps": [
+        "Capturer une idée avant de l’oublier.",
+        "En faire une petite prochaine action.",
+        "La revoir en fin de semaine et garder l’essentiel."
+      ]
+    },
+    "guides": {
+      "periodic": {
+        "bestFor": "Un journal léger avec capture quotidienne et bilans réguliers.",
+        "notFor": "Des connaissances nécessitant des dossiers durables de projets et de responsabilités.",
+        "dailyFlow": "Capturer aujourd’hui → marquer la prochaine action → faire le bilan de la semaine."
+      },
+      "para": {
+        "bestFor": "Des connaissances liées aux projets actifs et aux responsabilités durables.",
+        "notFor": "Un journal sans entretien de structure ou une simple liste de tâches.",
+        "dailyFlow": "Capturer → relier au projet ou au domaine → utiliser les ressources → archiver."
+      }
+    }
+  },
+  "pt": {
+    "settings": {
+      "periodicNotesPath": "0. Notas periódicas",
+      "projectsPath": "1. Projetos",
+      "areasPath": "2. Áreas",
+      "resourcesPath": "3. Recursos",
+      "archivesPath": "4. Arquivo",
+      "dailyRecordHeader": "Registro diário",
+      "projectListHeader": "Lista de projetos",
+      "areaListHeader": "Áreas",
+      "habitHeader": "Hábitos"
+    },
+    "copy": {
+      "title": "LifeOS Comece aqui",
+      "exampleTitle": "Seu primeiro fluxo de trabalho",
+      "lead": "Comece com seu próprio conteúdo em cinco minutos.",
+      "checklist": "Seus primeiros cinco minutos",
+      "startPath": "LifeOS Comece aqui.md",
+      "steps": [
+        "Abrir Hoje",
+        "Capturar uma ideia real",
+        "Criar uma próxima ação concreta",
+        "Conectar ao PARA quando for útil",
+        "Preencher a revisão semanal"
+      ],
+      "destinations": "Destinos de trabalho",
+      "exampleFolder": "Exemplos LifeOS",
+      "exampleFile": "Seu primeiro fluxo de trabalho.md",
+      "exampleLead": "Capture primeiro, depois conecte o conteúdo às ações e à estrutura.",
+      "exampleSteps": [
+        "Capture uma ideia antes de esquecê-la.",
+        "Transforme-a em uma pequena próxima ação.",
+        "Revise no fim da semana e mantenha o que importa."
+      ]
+    },
+    "guides": {
+      "periodic": {
+        "bestFor": "Um diário leve com capturas diárias e revisões periódicas.",
+        "notFor": "Conhecimento que precisa de pastas duradouras de projetos e responsabilidades.",
+        "dailyFlow": "Capturar em Hoje → marcar a próxima ação → revisar a semana."
+      },
+      "para": {
+        "bestFor": "Conhecimento ligado a projetos ativos e responsabilidades duradouras.",
+        "notFor": "Um diário sem manutenção de estrutura ou apenas uma lista de tarefas.",
+        "dailyFlow": "Capturar → conectar ao projeto ou área → usar recursos → arquivar."
+      }
+    }
+  },
+  "ja": {
+    "settings": {
+      "periodicNotesPath": "0. 定期ノート",
+      "projectsPath": "1. プロジェクト",
+      "areasPath": "2. 分野",
+      "resourcesPath": "3. 資料",
+      "archivesPath": "4. アーカイブ",
+      "dailyRecordHeader": "日常記録",
+      "projectListHeader": "プロジェクト一覧",
+      "areaListHeader": "分野",
+      "habitHeader": "習慣"
+    },
+    "copy": {
+      "title": "LifeOS はじめに",
+      "exampleTitle": "最初のワークフロー",
+      "lead": "自分の内容を使って5分で始めましょう。",
+      "checklist": "最初の5分",
+      "startPath": "LifeOS はじめに.md",
+      "steps": [
+        "今日を開く",
+        "実際のアイデアを記録する",
+        "具体的な次のタスクを作る",
+        "必要なときに PARA へつなげる",
+        "週の振り返りを書く"
+      ],
+      "destinations": "作業の入口",
+      "exampleFolder": "LifeOS サンプル",
+      "exampleFile": "最初のワークフロー.md",
+      "exampleLead": "まず記録し、役立つ内容を行動や構成につなげます。",
+      "exampleSteps": [
+        "忘れる前にアイデアを記録する。",
+        "小さな次の行動に変える。",
+        "週末に振り返り、大切な内容を残す。"
+      ]
+    },
+    "guides": {
+      "periodic": {
+        "bestFor": "日々の記録と定期的な振り返りを中心にした軽い日記。",
+        "notFor": "プロジェクトや責任分野のフォルダを長く維持する知識。",
+        "dailyFlow": "今日に記録 → 次の行動を決める → 週を振り返る。"
+      },
+      "para": {
+        "bestFor": "進行中のプロジェクトや長期的な責任に結びつく知識。",
+        "notFor": "構成を維持しない時系列の日記やタスク一覧だけの用途。",
+        "dailyFlow": "記録 → プロジェクトや分野につなげる → 資料を使う → アーカイブ。"
+      }
+    }
+  },
+  "ko": {
+    "settings": {
+      "periodicNotesPath": "0. 주기 노트",
+      "projectsPath": "1. 프로젝트",
+      "areasPath": "2. 영역",
+      "resourcesPath": "3. 자료",
+      "archivesPath": "4. 보관함",
+      "dailyRecordHeader": "일상 기록",
+      "projectListHeader": "프로젝트 목록",
+      "areaListHeader": "영역",
+      "habitHeader": "습관"
+    },
+    "copy": {
+      "title": "LifeOS 시작하기",
+      "exampleTitle": "첫 작업 흐름",
+      "lead": "실제 내용으로 5분 안에 시작해 보세요.",
+      "checklist": "처음 5분",
+      "startPath": "LifeOS 시작하기.md",
+      "steps": [
+        "오늘 열기",
+        "실제 생각을 빠르게 기록하기",
+        "구체적인 다음 할 일 만들기",
+        "필요할 때 PARA에 연결하기",
+        "주간 회고 작성하기"
+      ],
+      "destinations": "작업 시작점",
+      "exampleFolder": "LifeOS 예제",
+      "exampleFile": "첫 작업 흐름.md",
+      "exampleLead": "먼저 기록하고 유용한 내용을 행동과 구조에 연결하세요.",
+      "exampleSteps": [
+        "잊기 전에 생각을 기록합니다.",
+        "작은 다음 행동으로 바꿉니다.",
+        "주말에 돌아보고 중요한 내용만 남깁니다."
+      ]
+    },
+    "guides": {
+      "periodic": {
+        "bestFor": "일상 기록과 정기 회고를 중심으로 한 가벼운 일지.",
+        "notFor": "프로젝트와 책임 영역 폴더를 장기적으로 유지해야 하는 지식.",
+        "dailyFlow": "오늘 기록 → 다음 행동 표시 → 주간 회고."
+      },
+      "para": {
+        "bestFor": "진행 중인 프로젝트와 장기적 책임에 연결된 지식.",
+        "notFor": "구조 관리가 없는 시간순 일지 또는 할 일 목록만 쓰는 경우.",
+        "dailyFlow": "기록 → 프로젝트나 영역 연결 → 자료 활용 → 보관."
+      }
+    }
+  },
+  "ar": {
+    "settings": {
+      "periodicNotesPath": "0. الملاحظات الدورية",
+      "projectsPath": "1. المشاريع",
+      "areasPath": "2. المجالات",
+      "resourcesPath": "3. الموارد",
+      "archivesPath": "4. الأرشيف",
+      "dailyRecordHeader": "السجل اليومي",
+      "projectListHeader": "قائمة المشاريع",
+      "areaListHeader": "المجالات",
+      "habitHeader": "العادات"
+    },
+    "copy": {
+      "title": "LifeOS ابدأ هنا",
+      "exampleTitle": "سير عملك الأول",
+      "lead": "ابدأ بمحتواك الحقيقي خلال خمس دقائق.",
+      "checklist": "الدقائق الخمس الأولى",
+      "startPath": "LifeOS ابدأ هنا.md",
+      "steps": [
+        "فتح اليوم",
+        "تسجيل فكرة حقيقية",
+        "إنشاء مهمة تالية محددة",
+        "الربط بـ PARA عند الحاجة",
+        "كتابة المراجعة الأسبوعية"
+      ],
+      "destinations": "نقاط العمل",
+      "exampleFolder": "أمثلة LifeOS",
+      "exampleFile": "سير عملك الأول.md",
+      "exampleLead": "سجّل أولًا ثم اربط المحتوى المفيد بالعمل والهيكل.",
+      "exampleSteps": [
+        "سجّل فكرة قبل نسيانها.",
+        "حوّلها إلى خطوة تالية صغيرة.",
+        "راجعها في نهاية الأسبوع واحتفظ بالمهم."
+      ]
+    },
+    "guides": {
+      "periodic": {
+        "bestFor": "يوميات خفيفة ترتكز على التسجيل اليومي والمراجعات الدورية.",
+        "notFor": "معرفة تحتاج إلى مجلدات دائمة للمشاريع والمسؤوليات.",
+        "dailyFlow": "سجّل اليوم → حدّد الخطوة التالية → راجع الأسبوع."
+      },
+      "para": {
+        "bestFor": "معرفة مرتبطة بمشاريع نشطة ومسؤوليات طويلة الأمد.",
+        "notFor": "يوميات زمنية دون إدارة هيكل أو قائمة مهام فقط.",
+        "dailyFlow": "سجّل → اربط بمشروع أو مجال → استخدم الموارد → أرشف."
+      }
+    }
+  }
+}

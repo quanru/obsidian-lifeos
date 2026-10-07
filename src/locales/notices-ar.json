@@ -1,0 +1,22 @@
+{
+  "MESSAGE_START_SYNC_USEMEMOS": "بدء مزامنة usememos",
+  "MESSAGE_END_SYNC_USEMEMOS": "انتهت مزامنة usememos",
+  "ERROR_MESSAGE_FAILED_GET_USEMEMOS_VERSION": "تعذّر جلب ملف usememos",
+  "ERROR_MESSAGE_AUTH_ENDPOINTS_FAILED": "فشلت المصادقة. ستستمر المزامنة بتصفية محدودة.",
+  "ERROR_MESSAGE_VERSION_DETECTION_FAILED": "تعذّر تحديد الإصدار. ستُستخدم الإعدادات الافتراضية.",
+  "ERROR_MESSAGE_USER_INFO_FAILED": "تعذّر جلب معلومات المستخدم. ستُستخدم تصفية عامة.",
+  "ERROR_MESSAGE_NO_FRONT_MATTER_TAG": "أضف خاصية tags.",
+  "ERROR_MESSAGE_NO_DATAVIEW_INSTALL": "ثبّت Dataview أولًا.",
+  "ERROR_MESSAGE_NO_VIEW_PROVIDED": "حدّد اسم عرض الاستعلام.",
+  "ERROR_MESSAGE_NO_VIEW_EXISTED": "هذا العرض غير موجود في LifeOS.",
+  "ERROR_MESSAGE_NO_INDEX_FILE_EXIST": "ملف الفهرس مفقود: README.md أو *.README.md أو اسم المجلد مع .md.",
+  "ERROR_MESSAGE_NO_TEMPLATE_EXIST": "ملف القالب مفقود: ",
+  "ERROR_MESSAGE_TAGS_MUST_INPUT": "أدخل الوسوم.",
+  "ERROR_MESSAGE_DAILY_RECORD_FETCH_FAILED": "تعذّر جلب usememos",
+  "ERROR_MESSAGE_RESOURCE_FETCH_FAILED": "تعذّر جلب المورد",
+  "ERROR_MESSAGE_NO_DAILY_RECORD_HEADER": "حدّد عنوان قسم usememos في إعدادات LifeOS.",
+  "ERROR_MESSAGE_NO_DAILY_RECORD_API": "اضبط API الخاص بـ usememos في LifeOS.",
+  "ERROR_MESSAGE_NO_DAILY_RECORD_TOKEN": "اضبط رمز usememos في LifeOS.",
+  "ERROR_MESSAGE_NO_DAILY_FILE_EXIST": "الملاحظة اليومية غير موجودة. أنشئها أولًا: ",
+  "ERROR_MESSAGE_CREATING_DAILY_FILE": "الملاحظة اليومية غير موجودة. جارٍ إنشاؤها: "
+}

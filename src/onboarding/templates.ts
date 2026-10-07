@@ -1,9 +1,13 @@
+import translations from './translations.json';
 import { ARCHIVE, AREA, DAILY, MONTHLY, PROJECT, QUARTERLY, RESOURCE, WEEKLY, YEARLY } from '../constant';
 import { getFeatureI18n } from '../feature-i18n';
 import type { PeriodicNotesTemplateFilePath, PluginSettings } from '../type';
 
 export type WorkspaceMode = 'periodic' | 'para';
-export type WorkspaceLocale = 'en' | 'zh-cn' | 'zh-tw';
+export { normalizeWorkspaceLocale } from './locale';
+import { normalizeWorkspaceLocale } from './locale';
+export type { WorkspaceLocale } from './locale';
+import type { WorkspaceLocale } from './locale';
 
 export type TemplatePlan = {
   path: string;
@@ -17,7 +21,7 @@ export type WorkspaceModeGuide = {
   dailyFlow: string;
 };
 
-const MODE_GUIDES: Record<WorkspaceLocale, Record<WorkspaceMode, WorkspaceModeGuide>> = {
+const MODE_GUIDES: Record<'en' | 'zh-cn' | 'zh-tw', Record<WorkspaceMode, WorkspaceModeGuide>> = {
   en: {
     periodic: {
       bestFor: 'A lightweight journal built around daily capture and periodic review.',
@@ -56,19 +60,16 @@ const MODE_GUIDES: Record<WorkspaceLocale, Record<WorkspaceMode, WorkspaceModeGu
   },
 };
 
-export function normalizeWorkspaceLocale(locale?: string): WorkspaceLocale {
-  const normalized = locale?.toLowerCase().replace('_', '-') ?? 'en';
-  if (normalized === 'zh-tw' || normalized === 'zh-hk' || normalized === 'zh-hant') return 'zh-tw';
-  if (normalized.startsWith('zh')) return 'zh-cn';
-  return 'en';
-}
-
 export function getWorkspaceModeGuide(mode: WorkspaceMode, locale?: string): WorkspaceModeGuide {
-  return MODE_GUIDES[normalizeWorkspaceLocale(locale)][mode];
+  const normalized = normalizeWorkspaceLocale(locale);
+  const translated = translations[normalized as keyof typeof translations];
+  return translated ? translated.guides[mode] : MODE_GUIDES[normalized as 'en' | 'zh-cn' | 'zh-tw'][mode];
 }
 
 export function getLocalizedWorkspaceSettings(settings: PluginSettings, locale?: string): PluginSettings {
   const normalized = normalizeWorkspaceLocale(locale);
+  const translated = translations[normalized as keyof typeof translations];
+  if (translated) return { ...settings, ...translated.settings, locale: normalized };
   const localized =
     normalized === 'en'
       ? {
@@ -110,6 +111,8 @@ export function getLocalizedWorkspaceSettings(settings: PluginSettings, locale?:
 
 function getOnboardingCopy(locale?: string) {
   const normalized = normalizeWorkspaceLocale(locale);
+  const translated = translations[normalized as keyof typeof translations];
+  if (translated) return translated.copy;
   if (normalized === 'zh-cn') {
     return {
       startPath: 'LifeOS 开始使用.md',
@@ -121,7 +124,7 @@ function getOnboardingCopy(locale?: string) {
         '快速记录一个真实想法',
         '创建一个具体的下一步任务',
         '只在需要时连接到 PARA',
-        '打开周记完成首次回顾',
+        '运行“每周回顾”，填写本周总结',
       ],
       destinations: '工作入口',
       exampleFolder: 'LifeOS 示例',
@@ -146,7 +149,7 @@ function getOnboardingCopy(locale?: string) {
         '快速記錄一個真實想法',
         '建立一個具體的下一步任務',
         '只在需要時連結到 PARA',
-        '開啟週記完成首次回顧',
+        '執行「每週回顧」，填寫本週總結',
       ],
       destinations: '工作入口',
       exampleFolder: 'LifeOS 範例',
@@ -170,7 +173,7 @@ function getOnboardingCopy(locale?: string) {
       'Quick-capture one real thought',
       'Create one concrete next-action task',
       'Connect it to PARA only when useful',
-      'Open the weekly note for your first review',
+      'Run Weekly review and write your first reflection',
     ],
     destinations: 'Working destinations',
     exampleFolder: 'LifeOS Examples',
@@ -204,12 +207,12 @@ export function getStartHerePlan(settings: PluginSettings, mode: WorkspaceMode, 
       '',
       `## ${copy.destinations}`,
       '',
-      `- Today: \`${settings.periodicNotesPath}\``,
+      `- ${getFeatureI18n(locale).setupOpenToday}: \`${settings.periodicNotesPath}\``,
       ...(mode === 'para'
         ? [
-            `- Projects: \`${settings.projectsPath}\``,
-            `- Areas: \`${settings.areasPath}\``,
-            `- Resources: \`${settings.resourcesPath}\``,
+            `- ${getFeatureI18n(locale).templateProjects}: \`${settings.projectsPath}\``,
+            `- ${getFeatureI18n(locale).templateAreas}: \`${settings.areasPath}\``,
+            `- ${settings.resourcesPath.replace(/^\d+\. /, '')}: \`${settings.resourcesPath}\``,
           ]
         : []),
       '',

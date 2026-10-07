@@ -16,6 +16,8 @@
 
 ![](https://obsidian-life-os.pages.dev/plugin/periodic-para-plugin-en.png)
 
+初始化向导、快速记录、每周回顾、模板和目录配置现已支持英、简中、繁中、德、西、法、葡、日、韩、阿拉伯语。对应的开源示例库提供每种语言的示例版和空白版，维护方式见[多语言工作库](docs/multilingual-workspaces.md)。
+
 ## Features
 
 - 首次启用时提供初始化向导，可选择“周期笔记 + PARA”或“仅周期笔记”，并以简体中文、繁体中文或英文生成工作区。初始化后会保留所选方案，后续修复不会覆盖已有文件。

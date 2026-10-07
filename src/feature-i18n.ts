@@ -1,4 +1,11 @@
-import { normalizeLocale } from './i18n';
+import { normalizeWorkspaceLocale } from './onboarding/locale';
+import de from './locales/features-de.json';
+import es from './locales/features-es.json';
+import fr from './locales/features-fr.json';
+import pt from './locales/features-pt.json';
+import ja from './locales/features-ja.json';
+import ko from './locales/features-ko.json';
+import ar from './locales/features-ar.json';
 
 export type FeatureI18n = {
   setupTitle: string;
@@ -247,10 +254,17 @@ const ZH_TW: FeatureI18n = {
 };
 
 export function getFeatureI18n(locale?: string): FeatureI18n {
-  const normalized = normalizeLocale(locale);
+  const normalized = normalizeWorkspaceLocale(locale);
 
   if (normalized === 'zh-tw') return ZH_TW;
   if (normalized.startsWith('zh')) return ZH;
 
-  return EN;
+  const translations = { de, es, fr, pt, ja, ko, ar };
+  const copy = translations[normalized as keyof typeof translations];
+  if (!copy) return EN;
+  return {
+    ...copy,
+    setupSuccess: (created, skipped) =>
+      copy.setupSuccess.replace('{created}', String(created)).replace('{skipped}', String(skipped)),
+  };
 }

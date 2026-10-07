@@ -16,6 +16,8 @@
 
 ![](https://obsidian-life-os.pages.dev/plugin/periodic-para-plugin-en.png)
 
+The starter workflow now supports ten languages (English, Simplified and Traditional Chinese, German, Spanish, French, Portuguese, Japanese, Korean, Arabic), including workspace setup, quick capture, weekly review, templates, and folder settings. See [multilingual workspace maintenance](docs/multilingual-workspaces.md).
+
 ## Features
 
 - A first-run setup wizard can create a periodic-notes workspace with or without PARA in English, Simplified Chinese, or Traditional Chinese. The selected workspace profile is kept for future repairs, and existing files are never overwritten.

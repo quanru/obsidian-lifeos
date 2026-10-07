@@ -1,0 +1,22 @@
+{
+  "MESSAGE_START_SYNC_USEMEMOS": "Iniciando sincronización con usememos",
+  "MESSAGE_END_SYNC_USEMEMOS": "Sincronización con usememos finalizada",
+  "ERROR_MESSAGE_FAILED_GET_USEMEMOS_VERSION": "No se pudo obtener el perfil de usememos",
+  "ERROR_MESSAGE_AUTH_ENDPOINTS_FAILED": "Falló la autenticación. Se continúa con filtros limitados.",
+  "ERROR_MESSAGE_VERSION_DETECTION_FAILED": "No se detectó la versión. Se usarán los ajustes predeterminados.",
+  "ERROR_MESSAGE_USER_INFO_FAILED": "No se obtuvo información del usuario. Se usarán filtros generales.",
+  "ERROR_MESSAGE_NO_FRONT_MATTER_TAG": "Añade la propiedad tags.",
+  "ERROR_MESSAGE_NO_DATAVIEW_INSTALL": "Instala Dataview primero.",
+  "ERROR_MESSAGE_NO_VIEW_PROVIDED": "Indica el nombre de la vista de consulta.",
+  "ERROR_MESSAGE_NO_VIEW_EXISTED": "Esta vista no existe en LifeOS.",
+  "ERROR_MESSAGE_NO_INDEX_FILE_EXIST": "Falta el índice: README.md, *.README.md o el nombre de la carpeta con .md.",
+  "ERROR_MESSAGE_NO_TEMPLATE_EXIST": "Falta la plantilla: ",
+  "ERROR_MESSAGE_TAGS_MUST_INPUT": "Introduce las etiquetas.",
+  "ERROR_MESSAGE_DAILY_RECORD_FETCH_FAILED": "No se pudo obtener usememos",
+  "ERROR_MESSAGE_RESOURCE_FETCH_FAILED": "No se pudo obtener el recurso",
+  "ERROR_MESSAGE_NO_DAILY_RECORD_HEADER": "Configura el título de la sección de usememos en LifeOS.",
+  "ERROR_MESSAGE_NO_DAILY_RECORD_API": "Configura la API de usememos en LifeOS.",
+  "ERROR_MESSAGE_NO_DAILY_RECORD_TOKEN": "Configura el token de usememos en LifeOS.",
+  "ERROR_MESSAGE_NO_DAILY_FILE_EXIST": "No existe la nota diaria. Créala primero: ",
+  "ERROR_MESSAGE_CREATING_DAILY_FILE": "La nota diaria no existe. Creando: "
+}

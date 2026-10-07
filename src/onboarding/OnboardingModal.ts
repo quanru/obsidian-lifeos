@@ -1,3 +1,4 @@
+import { WORKSPACE_LANGUAGES } from './locale';
 import dayjs from 'dayjs';
 import { Modal, Notice, Setting, TFile } from 'obsidian';
 import { QuickCaptureModal } from '../capture/QuickCaptureModal';
@@ -56,6 +57,7 @@ export class OnboardingModal extends Modal {
 
   private renderSetup(): void {
     const t = getFeatureI18n(this.locale);
+    this.modalEl.dir = this.locale === 'ar' ? 'rtl' : 'ltr';
     this.contentEl.empty();
     this.setTitle(t.setupTitle);
     this.contentEl.createEl('p', { cls: 'lifeos-onboarding-description', text: t.setupDescription });
@@ -68,10 +70,8 @@ export class OnboardingModal extends Modal {
       .setName(t.setupLanguage)
       .setDesc(t.setupLanguageDescription)
       .addDropdown((dropdown) => {
+        Object.entries(WORKSPACE_LANGUAGES).forEach(([key, label]) => dropdown.addOption(key, label));
         dropdown
-          .addOption('zh-cn', '简体中文')
-          .addOption('zh-tw', '繁體中文')
-          .addOption('en', 'English')
           .setValue(this.locale)
           .setDisabled(Boolean(this.profile))
           .onChange((value) => {
@@ -172,6 +172,7 @@ export class OnboardingModal extends Modal {
 
   private renderCompletion(result: WorkspaceSetupResult): void {
     const t = getFeatureI18n(this.locale);
+    this.modalEl.dir = this.locale === 'ar' ? 'rtl' : 'ltr';
     this.contentEl.empty();
     this.setTitle(t.setupCompleteTitle);
     this.contentEl.createEl('p', { cls: 'lifeos-onboarding-description', text: t.setupCompleteDescription });

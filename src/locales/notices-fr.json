@@ -1,0 +1,22 @@
+{
+  "MESSAGE_START_SYNC_USEMEMOS": "Début de la synchronisation usememos",
+  "MESSAGE_END_SYNC_USEMEMOS": "Synchronisation usememos terminée",
+  "ERROR_MESSAGE_FAILED_GET_USEMEMOS_VERSION": "Impossible de charger le profil usememos",
+  "ERROR_MESSAGE_AUTH_ENDPOINTS_FAILED": "Échec de l’authentification. La synchronisation continue avec un filtrage limité.",
+  "ERROR_MESSAGE_VERSION_DETECTION_FAILED": "Version non détectée. Les réglages par défaut seront utilisés.",
+  "ERROR_MESSAGE_USER_INFO_FAILED": "Informations utilisateur indisponibles. Les filtres généraux seront utilisés.",
+  "ERROR_MESSAGE_NO_FRONT_MATTER_TAG": "Ajoutez la propriété tags.",
+  "ERROR_MESSAGE_NO_DATAVIEW_INSTALL": "Installez d’abord Dataview.",
+  "ERROR_MESSAGE_NO_VIEW_PROVIDED": "Indiquez le nom de la vue à interroger.",
+  "ERROR_MESSAGE_NO_VIEW_EXISTED": "Cette vue n’existe pas dans LifeOS.",
+  "ERROR_MESSAGE_NO_INDEX_FILE_EXIST": "Index absent : README.md, *.README.md ou le nom du dossier avec .md.",
+  "ERROR_MESSAGE_NO_TEMPLATE_EXIST": "Modèle absent : ",
+  "ERROR_MESSAGE_TAGS_MUST_INPUT": "Saisissez les étiquettes.",
+  "ERROR_MESSAGE_DAILY_RECORD_FETCH_FAILED": "Impossible de charger usememos",
+  "ERROR_MESSAGE_RESOURCE_FETCH_FAILED": "Impossible de charger la ressource",
+  "ERROR_MESSAGE_NO_DAILY_RECORD_HEADER": "Définissez le titre de la section usememos dans LifeOS.",
+  "ERROR_MESSAGE_NO_DAILY_RECORD_API": "Configurez l’API usememos dans LifeOS.",
+  "ERROR_MESSAGE_NO_DAILY_RECORD_TOKEN": "Configurez le jeton usememos dans LifeOS.",
+  "ERROR_MESSAGE_NO_DAILY_FILE_EXIST": "Note quotidienne absente. Créez-la d’abord : ",
+  "ERROR_MESSAGE_CREATING_DAILY_FILE": "Note quotidienne absente. Création : "
+}

@@ -64,12 +64,13 @@ export const SettingTab = (props: { settings: PluginSettings; saveSettings: (set
               { value: '', label: localeMap.LANGUAGE_AUTO },
               { value: 'en', label: 'English' },
               { value: 'de', label: 'Deutsch' },
-              { value: 'es', label: 'Espanol' },
-              { value: 'fr', label: 'Francais' },
-              { value: 'pt', label: 'Portugues' },
+              { value: 'es', label: 'Español' },
+              { value: 'fr', label: 'Français' },
+              { value: 'pt', label: 'Português' },
               { value: 'zh', label: '简体中文' },
               { value: 'zh-tw', label: '繁體中文' },
               { value: 'ja', label: '日本語' },
+              { value: 'ko', label: '한국어' },
               { value: 'ar', label: 'العربية' },
             ]}
           />

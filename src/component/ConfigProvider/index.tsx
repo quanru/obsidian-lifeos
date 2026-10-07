@@ -37,6 +37,7 @@ export const ConfigProvider = (props: {
   return (
     <AntdConfigProvider
       locale={effectiveLocale}
+      direction={effectiveLocale.locale === 'ar' ? 'rtl' : 'ltr'}
       theme={{
         token: {
           fontFamily: 'var(--font-interface)',
