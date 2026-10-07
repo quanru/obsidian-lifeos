@@ -1,12 +1,12 @@
 {
   "name": "periodic-para",
-  "version": "1.27.0",
+  "version": "1.27.1",
   "description": "Assist in practicing the PARA method with periodic notes and usememos.",
   "main": "main.js",
   "scripts": {
     "dev": "node esbuild.config.mjs",
     "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
-    "test": "node --experimental-strip-types --test src/capture/*.test.mts",
+    "test": "node --experimental-strip-types --test src/capture/*.test.mts src/periodic/*.test.mts",
     "version": "node version-bump.mjs && git add manifest.json versions.json",
     "lint": "biome check . --diagnostic-level=warn ",
     "format": "prettier --write .",
