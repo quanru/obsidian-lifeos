@@ -1,4 +1,4 @@
-import { type App, type EditorPosition, MarkdownView, TFile, WorkspaceLeaf } from 'obsidian';
+import { type App, type EditorPosition, MarkdownView, type Menu, TFile, WorkspaceLeaf } from 'obsidian';
 
 /** A draft view has file context for links, but no route to save a fragment into that file. */
 class UnsavedMarkdownView extends MarkdownView {
@@ -25,8 +25,11 @@ export class DraftEditor {
     private readonly path: () => string,
     private readonly placeholder: string,
     private readonly changed: () => void,
+    private readonly editorMenu?: (menu: Menu) => void,
   ) {
-    this.previous = app.workspace.activeEditor;
+    // A null override restores the active leaf; the setter ignores MarkdownView.
+    const previous = app.workspace.activeEditor;
+    this.previous = previous instanceof MarkdownView ? null : previous;
   }
 
   async mount(): Promise<void> {
@@ -67,6 +70,12 @@ export class DraftEditor {
     const content = view.containerEl.querySelector<HTMLElement>('.cm-content');
     content?.setAttribute('aria-label', this.placeholder);
     content?.setAttribute('data-placeholder', this.placeholder);
+    if (this.editorMenu) {
+      const ref = this.app.workspace.on('editor-menu', (menu, editor) => {
+        if (!this.disposed && editor === view.editor) this.editorMenu?.(menu);
+      });
+      this.listeners.push(() => this.app.workspace.offref(ref));
+    }
     this.setBusy(this.busy);
     this.focus();
   }
@@ -85,9 +94,24 @@ export class DraftEditor {
       stat: { ctime: 0, mtime: 0, size: 0 },
     });
     this.view.file = file;
-    // The host also calls MarkdownView methods (for example getMode) on activeEditor.
-    // Keep the real unsaved view as context rather than a partial MarkdownFileInfo object.
-    this.context = this.view;
+    // Workspace ignores MarkdownView instances assigned to activeEditor: detached
+    // views are not active leaves. Supply file info and the mode hook commands use.
+    const view = this.view;
+    const context: NonNullable<App['workspace']['activeEditor']> & {
+      getMode: () => ReturnType<MarkdownView['getMode']>;
+    } = {
+      app: this.app,
+      file,
+      editor: view.editor,
+      get hoverPopover() {
+        return view.hoverPopover;
+      },
+      set hoverPopover(value) {
+        view.hoverPopover = value;
+      },
+      getMode: () => view.getMode(),
+    };
+    this.context = context;
     if (this.app.workspace.activeEditor?.editor === this.view.editor) this.app.workspace.activeEditor = this.context;
   }
 
@@ -124,16 +148,6 @@ export class DraftEditor {
   }
   insert(text: string): void {
     this.view?.editor.replaceSelection(text);
-    this.changed();
-    this.focus();
-  }
-  wrap(before: string, after: string): void {
-    const editor = this.view?.editor;
-    if (!editor) return;
-    const from = editor.getCursor('from');
-    const selected = editor.getSelection();
-    editor.replaceSelection(`${before}${selected}${after}`);
-    if (!selected) editor.setCursor({ line: from.line, ch: from.ch + before.length });
     this.changed();
     this.focus();
   }

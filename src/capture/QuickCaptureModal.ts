@@ -1,4 +1,4 @@
-import { Component, type EventRef, Modal, Notice, TFile, setIcon } from 'obsidian';
+import { Component, type EventRef, Modal, Notice, Scope, TFile, setIcon } from 'obsidian';
 import type LifeOS from '../main';
 import { CaptureFilterBar } from './FilterBar';
 import { InlineCaptureEdit } from './InlineEdit';
@@ -47,6 +47,12 @@ export class QuickCaptureModal extends Modal {
     private readonly kind: QuickCaptureKind,
   ) {
     super(plugin.app);
+    // Allow configured editor shortcuts to reach the focused unsaved draft.
+    this.scope = new Scope(this.app.scope);
+    this.scope.register([], 'Escape', () => {
+      this.close();
+      return false;
+    });
     this.repository = new CaptureRepository(this.app, plugin.settings);
     this.m = captureMessages(plugin.getCurrentLocaleKey());
   }
@@ -56,7 +62,7 @@ export class QuickCaptureModal extends Modal {
     this.modalEl.addClass('lifeos-quick-capture-modal');
     this.contentEl.dir = this.plugin.getCurrentLocaleKey().startsWith('ar') ? 'rtl' : 'ltr';
     this.modalEl.dir = this.plugin.getCurrentLocaleKey().toLowerCase().startsWith('ar') ? 'rtl' : 'ltr';
-    this.setTitle(this.m.title);
+    this.setTitle(this.kind === 'task' ? `${this.m.title} · ${this.m.task}` : this.m.title);
     this.contentEl.createEl('p', {
       cls: 'lifeos-quick-capture-description',
       text: this.m.description,
@@ -330,14 +336,14 @@ export class QuickCaptureModal extends Modal {
       } catch {
         this.themes = [];
       }
-      this.resetNewDraft(true);
+      this.resetNewDraft();
       this.limit = 25;
       this.list.scrollTop = 0;
     });
   }
-  private resetNewDraft(resetMode = false): void {
+  private resetNewDraft(): void {
     this.defaultDraft = defaultCaptureDraft(this.themes, this.plugin.settings.quickCaptureDefaultThemes);
-    this.composer.setDraft(this.defaultDraft, resetMode ? 'record' : this.composer.kind);
+    this.composer.setDraft(this.defaultDraft, this.kind);
   }
   private async mutate(action: () => Promise<void>): Promise<void> {
     if (this.busy || !this.opened) return;
@@ -370,8 +376,8 @@ export class QuickCaptureModal extends Modal {
     this.subscriptions.forEach((ref) => this.app.vault.offref(ref));
     this.subscriptions = [];
     this.renderScope?.unload();
-    this.composer?.destroy();
     this.finishEdit();
+    this.composer?.destroy();
     this.observer?.disconnect();
     this.filterBar?.destroy(this.contentEl.ownerDocument);
     this.deleteModal?.close();

@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { type App, Component, FuzzySuggestModal, MarkdownRenderer, Notice, TFile, setIcon } from 'obsidian';
+import { type App, Notice, TFile, setIcon } from 'obsidian';
 import { DAILY } from '../constant';
 import { periodicLocation } from '../periodic/calendar';
 import type { PluginSettings } from '../type';
@@ -9,57 +9,26 @@ import { DraftEditor } from './DraftEditor';
 import { ThemePicker } from './ThemePicker';
 import { captureAttachmentPath } from './attachments';
 import type { QuickCaptureKind } from './content';
-import { interactionMessages } from './interaction-messages';
 import type { CaptureMessages } from './messages';
 import { themeMessages } from './theme-messages';
-
-class NotePicker extends FuzzySuggestModal<TFile> {
-  constructor(
-    app: App,
-    private readonly choose: (file: TFile) => void,
-    label: string,
-  ) {
-    super(app);
-    this.setPlaceholder(label);
-  }
-  getItems() {
-    return this.app.vault.getMarkdownFiles();
-  }
-  getItemText(file: TFile) {
-    return file.path;
-  }
-  onChooseItem(file: TFile) {
-    this.choose(file);
-  }
-}
 
 export class CaptureComposer {
   readonly input: HTMLTextAreaElement;
   private native?: DraftEditor;
   private nativeHost: HTMLElement;
   private nativeReady = false;
-  private sourceButton?: HTMLButtonElement;
   private sourceMode = false;
   private ready = false;
   private closed = false;
   private initializationError?: string;
   private picker?: ThemePicker;
   kind: QuickCaptureKind;
-  private preview: HTMLDivElement;
   private footer: HTMLDivElement;
-  private toolHost?: HTMLElement;
-  private moreTools!: HTMLDetailsElement;
   private saveButton: HTMLButtonElement;
   private cancelButton: HTMLButtonElement;
-  private renderScope?: Component;
-  private previewing = false;
   private busy = false;
   private sourcePath?: string;
-  private editing = false;
-  private modes: HTMLButtonElement[] = [];
   private controls: HTMLButtonElement[] = [];
-  private imageInput: HTMLInputElement;
-  private previewVersion = 0;
 
   constructor(
     private readonly app: App,
@@ -84,65 +53,8 @@ export class CaptureComposer {
     this.nativeHost.textContent = themeMessages(locale).loading;
     this.nativeHost.style.setProperty('--lifeos-capture-placeholder', JSON.stringify(m.placeholder));
     this.input.hidden = true;
-    this.preview = area.createDiv('lifeos-capture-preview');
-    this.preview.hidden = true;
     this.footer = area.createDiv('lifeos-capture-toolbar');
-    for (const mode of ['record', 'task'] as const) {
-      const button = this.button(m[mode], mode === 'task' ? 'list-todo' : 'list', () => {
-        this.kind = mode;
-        this.updateModes();
-      });
-      button.createSpan({ text: m[mode] });
-      this.modes.push(button);
-    }
-    this.updateModes();
-    this.moreTools = this.footer.createEl('details', { cls: 'lifeos-capture-more-tools' });
-    const moreLabel = interactionMessages(locale).moreTools;
-    const summary = this.moreTools.createEl('summary', { attr: { 'aria-label': moreLabel, title: moreLabel } });
-    setIcon(summary, 'ellipsis');
-    this.toolHost = this.moreTools.createDiv('lifeos-capture-tools-menu');
-    this.button(m.bold, 'bold', () => this.wrap('**', '**'));
-    this.button(m.italic, 'italic', () => this.wrap('*', '*'));
-    this.button(m.checkbox, 'list-checks', () => this.insert(`${this.getText().length ? '\n' : ''}- [ ] `));
-    this.button(m.link, 'link', () =>
-      new NotePicker(
-        app,
-        (file) => this.insert(app.fileManager.generateMarkdownLink(file, this.path())),
-        m.link,
-      ).open(),
-    );
-    this.imageInput = area.createEl('input', {
-      type: 'file',
-      attr: { accept: 'image/*', 'aria-label': m.image },
-    });
-    this.imageInput.hidden = true;
-    this.imageInput.onchange = () => {
-      const image = this.imageInput.files?.[0];
-      if (image) void this.addImage(image);
-      this.imageInput.value = '';
-    };
-    this.button(m.image, 'image-plus', () => this.imageInput.click());
-    const toggle = this.button(m.preview, 'eye', () => {
-      this.previewing = !this.previewing;
-      toggle.setAttribute('aria-label', this.previewing ? m.source : m.preview);
-      toggle.title = this.previewing ? m.source : m.preview;
-      setIcon(toggle, this.previewing ? 'code' : 'eye');
-      this.input.hidden = this.previewing || this.nativeReady;
-      this.nativeHost.hidden = this.previewing || !this.nativeReady;
-      this.preview.hidden = !this.previewing;
-      if (this.previewing) void this.renderPreview();
-      else this.focus();
-    });
-    this.toolHost = undefined;
     const tm = themeMessages(locale);
-    const source = this.button(tm.source, 'code', () => {
-      this.sourceMode = !this.sourceMode;
-      source.setAttribute('aria-label', this.sourceMode ? tm.visual : tm.source);
-      source.title = this.sourceMode ? tm.visual : tm.source;
-      source.setAttribute('aria-pressed', String(this.sourceMode));
-      void this.native?.setSource(this.sourceMode);
-    });
-    this.sourceButton = source;
     this.button(tm.associate, 'tags', () => {
       this.picker = new ThemePicker(
         app,
@@ -201,6 +113,25 @@ export class CaptureComposer {
       () => {
         this.input.value = this.native?.getText() ?? this.input.value;
       },
+      (menu) => {
+        menu.addSeparator();
+        menu.addItem((item) =>
+          item
+            .setTitle(this.sourceMode ? tm.visual : tm.source)
+            .setIcon(this.sourceMode ? 'eye' : 'code')
+            .setDisabled(this.busy || !this.ready)
+            .onClick(async () => {
+              if (this.busy || this.closed || !this.nativeReady) return;
+              const next = !this.sourceMode;
+              try {
+                await this.native?.setSource(next);
+                this.sourceMode = next;
+              } catch {
+                new Notice(m.failed);
+              }
+            }),
+        );
+      },
     );
     this.setBusy(false);
     void this.native
@@ -225,7 +156,6 @@ export class CaptureComposer {
         this.ready = true;
         new Notice(tm.unavailable);
         this.setBusy(this.busy);
-        source.disabled = true;
         this.focus();
       });
   }
@@ -234,22 +164,14 @@ export class CaptureComposer {
     return this.sourcePath ?? periodicLocation(dayjs(), DAILY, this.settings).file;
   }
   private button(label: string, icon: string, action: () => void): HTMLButtonElement {
-    const button = (this.toolHost ?? this.footer).createEl('button', {
+    const button = this.footer.createEl('button', {
       attr: { 'aria-label': label, title: label },
       cls: 'lifeos-capture-tool',
     });
     setIcon(button, icon);
-    button.onclick = () => {
-      this.moreTools.open = false;
-      action();
-    };
+    button.onclick = action;
     this.controls.push(button);
     return button;
-  }
-  private updateModes(): void {
-    this.modes.forEach((button, i) =>
-      button.setAttribute('aria-pressed', String(this.kind === (i ? 'task' : 'record'))),
-    );
   }
   getText(): string {
     return this.nativeReady ? this.native!.getText() : this.input.value;
@@ -257,37 +179,15 @@ export class CaptureComposer {
   private setText(text: string): void {
     this.input.value = text;
     this.native?.setText(text);
-    if (this.previewing) void this.renderPreview();
   }
   focus(): void {
     if (this.nativeReady) this.native?.focus();
     else this.input.focus();
   }
-  private wrap(before: string, after: string): void {
-    if (this.nativeReady) {
-      this.native?.wrap(before, after);
-      return;
-    }
-    const start = this.input.selectionStart;
-    const end = this.input.selectionEnd;
-    this.insert(`${before}${this.input.value.slice(start, end)}${after}`);
-    if (start === end) this.input.setSelectionRange(start + before.length, start + before.length);
-  }
   private insert(text: string): void {
     if (this.nativeReady) this.native?.insert(text);
     else this.input.setRangeText(text, this.input.selectionStart, this.input.selectionEnd, 'end');
-    if (this.previewing) void this.renderPreview();
-    else this.focus();
-  }
-  private async renderPreview(): Promise<void> {
-    const version = ++this.previewVersion;
-    this.renderScope?.unload();
-    const scope = (this.renderScope = new Component());
-    scope.load();
-    const target = this.preview.createDiv();
-    this.preview.replaceChildren(target);
-    await MarkdownRenderer.render(this.app, this.getText(), target, this.path(), scope);
-    if (version !== this.previewVersion) scope.unload();
+    this.focus();
   }
   private async addImage(image: File): Promise<void> {
     if (this.busy) return;
@@ -317,40 +217,27 @@ export class CaptureComposer {
   setBusy(busy: boolean): void {
     this.busy = busy;
     this.input.disabled = busy;
-    this.moreTools.inert = busy;
-    if (busy) this.moreTools.open = false;
     this.native?.setBusy(busy);
     this.saveButton.disabled = busy || !this.ready;
     this.saveButton.textContent = busy ? this.m.saving : this.m.save;
     this.cancelButton.disabled = busy;
     this.controls.forEach((button) => {
-      button.disabled =
-        busy ||
-        !this.ready ||
-        (button === this.sourceButton && !this.nativeReady) ||
-        (this.editing && this.modes.includes(button));
+      button.disabled = busy || !this.ready;
     });
   }
+
   setDraft(text: string, kind: QuickCaptureKind, editing = false, sourcePath?: string): void {
-    this.editing = editing;
     this.sourcePath = sourcePath;
     this.input.value = text;
     this.native?.setText(text, true);
     this.kind = kind;
-    this.updateModes();
     this.cancelButton.hidden = !editing;
-    this.modes.forEach((button) => {
-      button.disabled = editing;
-      button.hidden = editing;
-    });
-    if (this.previewing) void this.renderPreview();
-    else this.focus();
+    this.focus();
   }
+
   destroy(): void {
     this.closed = true;
     this.picker?.close();
     this.native?.destroy();
-    this.previewVersion++;
-    this.renderScope?.unload();
   }
 }
