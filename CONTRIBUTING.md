@@ -71,6 +71,6 @@ OBSIDIAN_PLUGIN_DIR='/absolute/path/to/test-vault/.obsidian/plugins/periodic-par
 
 贡献说明写清问题、改动后的行为和验证结果。仓库维护者遵守当前工作区约定；外部贡献者可通过 GitHub PR 提交。
 
-开源版独立通过 GitHub Release 发布，不使用 Pro 的激活、签名或服务端发布流程。发布前同步 `package.json`、`manifest.json` 和 `versions.json`；插件附件为 `main.js`、`styles.css` 和 `manifest.json`。发行版标题和更新说明默认使用英文，指定语言的本地化说明按对应语言撰写。
+开源版独立通过 GitHub Release 发布，不使用 Pro 的激活、签名或服务端发布流程。默认在本机完成构建、测试及产物哈希核验后上传附件；GitHub workflow 仅在明确授权手动运行时构建指定现有 tag 并保存供审阅的 artifact，不自动发布或覆盖 Release。发布前同步 `package.json`、`manifest.json` 和 `versions.json`；插件附件为 `main.js`、`styles.css` 和 `manifest.json`。发行版标题和更新说明默认使用英文，指定语言的本地化说明按对应语言撰写。
 
 可从 [社区贡献任务](docs/community-tasks.md) 选择一个范围小的工作。Obsidian API 与开发流程见 [官方开发文档](https://docs.obsidian.md/)。

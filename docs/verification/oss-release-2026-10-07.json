@@ -1,0 +1,42 @@
+{
+  "verifiedAt": "2026-10-07T10:56:51.095073+00:00",
+  "releases": {
+    "plugin": {
+      "version": "1.28.0",
+      "commit": "d897c576a05cde741d126aa73cfda65734edc796",
+      "url": "https://github.com/quanru/obsidian-lifeos/releases/tag/1.28.0",
+      "publishedAt": "2026-10-07T10:53:37Z",
+      "assetSha256": {
+        "main.js": "4152071fe1cef6be8822116e5a8d53932c5cc2e3090df875dbfde4c284e00f7d",
+        "styles.css": "52f2fa6228e5067533f0203f0ca7e8965ccc571a4909ce98e8064174219192a2",
+        "manifest.json": "6b128d1a7cf37cafc986cb04c0d317e0bf1e4b279ed263bc2492ee7867c1cbf8",
+        "obsidian-periodic-para-1.28.0.zip": "74cb27b75623b1c7a736c000491c5455b2d1a271566b3e6942301fa9c7bb92b2"
+      },
+      "downloadedAssetsMatched": true
+    },
+    "examples": {
+      "version": "1.19.0",
+      "commit": "4cc022c65c12f8de39b53e26a8e46bfbfcaeb7cc",
+      "url": "https://github.com/quanru/obsidian-example-lifeos/releases/tag/1.19.0",
+      "publishedAt": "2026-10-07T10:55:43Z",
+      "assetSha256": {
+        "LifeOS.zip": "436a5eb10714cf952d978eb1e2c181142c7074c4e7fc9d55f906baaf3df0f615",
+        "LifeOS_AR.zip": "16491af34066797f34e6b062c11f17f3c99234bd572d701620700161e4f0e8f8",
+        "LifeOS_DE.zip": "62ecb40498e9a6661c6a1195f98fdbb0b14ca08fca0aa135c7a1f27ecaab78f0",
+        "LifeOS_ES.zip": "83d05ab9b9b43c8d8c5b02ce2c062a70f9479e51e845e76cd5bdf467f8e96406",
+        "LifeOS_FR.zip": "94f1f16c1e0e7061780aeb03efd65bed966651b3069bc16773e3d17ce3232129",
+        "LifeOS_JA.zip": "e3c6d65d0246762d96d14717fcd630994e6d01b65f77e38569c57281dceeb77e",
+        "LifeOS_KO.zip": "ab8850ba72531a20cab581024570b00ed8f1872cde1e32aa0526bb75d48d1385",
+        "LifeOS_PT.zip": "946112fea0339b55619939acb5379ebbd3a9cc09aae6ea8ff7bd6263c5dd9901",
+        "LifeOS_ZH.zip": "d6825f46b3a2f50605cc8e610477004cc042d78fe8c0e7b10b17e1a1ae471a60",
+        "LifeOS_ZH_TW.zip": "400d8c285e0e29fc1f286df44267db4c5a86d561d555b99b0bf959cca4b177a9"
+      },
+      "downloadedAssetsMatched": true
+    }
+  },
+  "runtimeHost": "macOS Obsidian 1.14.3",
+  "unitTestsPassed": 67,
+  "firstUseCasesPassed": 4,
+  "captureInteractionsPassed": true,
+  "remoteCITriggered": false
+}
