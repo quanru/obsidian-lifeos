@@ -1,0 +1,28 @@
+{
+  "version": "1.28.3",
+  "commit": "1fe3d34581ba70210c2c86cc257c6aa999ab1691",
+  "url": "https://github.com/quanru/obsidian-lifeos/releases/tag/1.28.3",
+  "publishedAt": "2026-10-09T01:39:04Z",
+  "verifiedAt": "2026-10-09T01:40:04.885128+00:00",
+  "artifactSha256": {
+    "main.js": "d8a4b217094b3d02752e6e6c4e7afda6267e75c42981115bf39390a1d59d1463",
+    "manifest.json": "20cb0504819aa820e51839e1e2f9906b921fe1c314ab3147a03e96cece933b24",
+    "obsidian-periodic-para-1.28.3.zip": "dff4964bc6ee476e8b761cdbc5e605fc4a5cc05315ba34c44cae9a1cec7f4c03",
+    "styles.css": "b822b50c7da25dffd1dfaf93415a4e4885d9c65eeb9d1f7a172ff1d8497606ea"
+  },
+  "downloadedAssetsMatched": true,
+  "publishedAssetDigestsMatched": true,
+  "publicManifestDownloadMatched": true,
+  "unitTestsPassed": 77,
+  "runtimeHost": "macOS Obsidian 1.14.3",
+  "runtimeSuites": [
+    "snapshot",
+    "tasks",
+    "capture",
+    "workspace"
+  ],
+  "templateAutoOnAndOffPassed": true,
+  "sourceInputsSha256": "e30d9f2976ea751722251fd1082c8010c6da86f4ed98070a63c4ded19397a63d",
+  "remoteCITriggered": false,
+  "evidenceDirectory": "/Volumes/T5/personal/obsidian-lifeos/.verify/release-1.28.3"
+}
