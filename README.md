@@ -16,7 +16,13 @@
 
 ![](https://obsidian-life-os.pages.dev/plugin/periodic-para-plugin-en.png)
 
-The starter workflow now supports ten languages (English, Simplified and Traditional Chinese, German, Spanish, French, Portuguese, Japanese, Korean, Arabic), including workspace setup, quick capture, weekly review, templates, and folder settings. See [multilingual workspace maintenance](docs/multilingual-workspaces.md).
+The starter workflow now supports ten languages (English, Simplified and Traditional Chinese, German, Spanish, French, Portuguese, Japanese, Korean, Arabic), including workspace setup, quick capture, templates, and folder settings. See [multilingual workspace maintenance](docs/multilingual-workspaces.md).
+
+## Free tools and the independent Pro plugin
+
+Quick capture, basic task entry, topic links remain fully free. Settings → **Usage and upgrade** offers shortcuts, a read-only preview of your folder settings, and a static promotional link to the independently paid LifeOS Pro plugin. This plugin does not contain paid unlocks or automatically install Pro. Its new promotional section does not fetch remote ads, send telemetry, or upload notes; opening the website is optional and includes only a fixed channel parameter. Existing optional usememos integration is configured separately.
+
+Use the **Today’s records** command to open today's daily note at the record section. See the [handover guide](docs/pro-handover.md) before switching plugins. Pro source code, private configuration and activation data are not part of this repository.
 
 ## Features
 
@@ -24,7 +30,7 @@ The starter workflow now supports ten languages (English, Simplified and Traditi
 - Built-in starter templates cover daily, weekly, monthly, quarterly, yearly, Projects, Areas, Resources, and Archives notes.
 - An optional example workflow and a five-minute completion guide help you make the first capture; the example can be removed safely while it remains unchanged.
 - **Quick record** and **Quick task** support continuous capture, native live preview, images, checklists, PARA theme associations, history, combined filters, and safe editing. Everything stays in daily-note Markdown. See the [quick capture guide (Chinese)](docs/quick-capture.md).
-- Query views use Dataview. Setup, quick capture, and weekly review work without it.
+- Query views use Dataview. Setup and quick capture work without it.
 - LifeOS Basic: https://lifeos.vip/plugin/lifeos/life-os.html
 - **LifeOS Pro** : https://lifeos.vip/plugin/lifeos/life-os-pro.html
 - **DeepAsk AI for Obsidian** : https://lifeos.vip/plugin/deepask/deepask.html
@@ -35,15 +41,11 @@ The starter workflow now supports ten languages (English, Simplified and Traditi
 
 - [LifeOS-example](https://github.com/quanru/obsidian-example-lifeos) | [中文版本](https://github.com/quanru/obsidian-example-lifeos/tree/main/examples/zh-cn)
 
-See the [weekly review guide](docs/weekly-review.md) for scope and refresh behavior.
-
 ## Development and contributions
 
 See the [contribution guide](CONTRIBUTING.md) and [community tasks](docs/community-tasks.md). Requires Obsidian 1.4.0 or newer.
 
-Setup, quick capture, and **Weekly review** work without Dataview. Query views still require Dataview and show installation, enablement, or indexing guidance.
-
-Run **Weekly review** from the command palette to preview this week or last week. Save or refresh a separate `*-Review.md` note while preserving your reflections. Weeks use ISO numbering (Monday–Sunday); existing weekly notes are not migrated. Checked tasks reflect current note contents, not completion dates; project activity reflects file modification times.
+Setup and quick capture work without Dataview. Query views still require Dataview and show installation, enablement, or indexing guidance.
 
 ## Support
 

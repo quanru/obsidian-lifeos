@@ -1,0 +1,191 @@
+.lifeos-product-settings {
+  --lifeos-product-radius: 10px;
+  padding-block: 8px 20px;
+  color: var(--text-normal);
+  h3 {
+    margin: 0;
+    padding: 0;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+  p {
+    margin: 8px 0 0;
+    color: var(--text-muted);
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .lifeos-product-heading {
+    margin-bottom: 18px;
+  }
+  .lifeos-product-shortcuts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    button {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 10px;
+      height: auto;
+      min-height: 80px;
+      padding: 14px;
+      border: 1px solid var(--background-modifier-border);
+      border-radius: var(--lifeos-product-radius);
+      box-shadow: none;
+      background: var(--background-primary);
+      color: var(--text-normal);
+      font-size: 13px;
+      white-space: normal;
+      text-align: start;
+      line-height: 1.4;
+      transition:
+        background 150ms,
+        border-color 150ms;
+      > .anticon {
+        font-size: 18px;
+        color: var(--text-muted);
+      }
+      &:hover {
+        background: var(--background-modifier-hover);
+        border-color: var(--interactive-accent);
+      }
+    }
+  }
+  button:focus-visible,
+  a:focus-visible,
+  summary:focus-visible {
+    outline: 2px solid var(--interactive-accent);
+    outline-offset: 3px;
+  }
+  .lifeos-product-pro {
+    margin-block: 24px;
+    padding: 20px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: var(--lifeos-product-radius);
+    background: var(--background-secondary);
+    .lifeos-product-pro-heading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .lifeos-product-pro-icon {
+      display: inline-flex;
+      color: var(--text-accent);
+      font-size: 20px;
+    }
+    .lifeos-product-caption {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .lifeos-product-link {
+      margin-top: 16px;
+    }
+  }
+  .lifeos-product-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 100%;
+    color: var(--text-accent);
+    font-size: 13px;
+    line-height: 1.5;
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+    .anticon {
+      flex-shrink: 0;
+      font-size: 12px;
+    }
+  }
+  .lifeos-product-handover {
+    border: 1px solid var(--background-modifier-border);
+    border-radius: var(--lifeos-product-radius);
+    summary {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+      min-height: 48px;
+      cursor: pointer;
+      list-style: none;
+      font-size: 13px;
+      font-weight: 500;
+      &::-webkit-details-marker {
+        display: none;
+      }
+      > .anticon {
+        color: var(--text-muted);
+      }
+      .lifeos-product-chevron {
+        margin-inline-start: auto;
+        font-size: 10px;
+        transition: transform 150ms;
+      }
+    }
+    &[open] .lifeos-product-chevron {
+      transform: rotate(180deg);
+    }
+  }
+  .lifeos-product-handover-body {
+    padding: 0 16px 16px;
+    > p {
+      margin-top: 0;
+      font-size: 12px;
+    }
+    dl {
+      margin: 14px 0;
+    }
+    dl > div {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+      gap: 12px;
+      padding-block: 7px;
+      border-bottom: 1px solid var(--background-modifier-border);
+    }
+    dl > div:last-child {
+      border-bottom: 0;
+    }
+    dt {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    dd {
+      margin: 0;
+      overflow-wrap: anywhere;
+      font-size: 12px;
+    }
+    code {
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: var(--background-secondary);
+      font-family: var(--font-monospace);
+      font-size: 12px;
+    }
+  }
+  &[dir='rtl'] .lifeos-product-link .anticon-arrow-right {
+    transform: rotate(180deg);
+  }
+  @media (max-width: 600px) {
+    .lifeos-product-shortcuts {
+      gap: 8px;
+      button {
+        padding: 12px 10px;
+        min-height: 76px;
+      }
+    }
+    .lifeos-product-pro {
+      padding: 16px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition: none !important;
+    }
+  }
+}

@@ -21,8 +21,7 @@
         "Heute öffnen",
         "Einen echten Gedanken erfassen",
         "Eine konkrete nächste Aufgabe anlegen",
-        "Bei Bedarf mit PARA verbinden",
-        "Den Wochenrückblick ausfüllen"
+        "Bei Bedarf mit PARA verbinden"
       ],
       "destinations": "Arbeitsziele",
       "exampleFolder": "LifeOS Beispiele",
@@ -69,8 +68,7 @@
         "Abrir Hoy",
         "Capturar una idea real",
         "Crear una próxima acción concreta",
-        "Conectar con PARA cuando sea útil",
-        "Completar la revisión semanal"
+        "Conectar con PARA cuando sea útil"
       ],
       "destinations": "Destinos de trabajo",
       "exampleFolder": "Ejemplos LifeOS",
@@ -117,8 +115,7 @@
         "Ouvrir Aujourd’hui",
         "Capturer une idée réelle",
         "Créer une prochaine action concrète",
-        "Relier à PARA si utile",
-        "Compléter le bilan hebdomadaire"
+        "Relier à PARA si utile"
       ],
       "destinations": "Points d’entrée",
       "exampleFolder": "Exemples LifeOS",
@@ -165,8 +162,7 @@
         "Abrir Hoje",
         "Capturar uma ideia real",
         "Criar uma próxima ação concreta",
-        "Conectar ao PARA quando for útil",
-        "Preencher a revisão semanal"
+        "Conectar ao PARA quando for útil"
       ],
       "destinations": "Destinos de trabalho",
       "exampleFolder": "Exemplos LifeOS",
@@ -209,13 +205,7 @@
       "lead": "自分の内容を使って5分で始めましょう。",
       "checklist": "最初の5分",
       "startPath": "LifeOS はじめに.md",
-      "steps": [
-        "今日を開く",
-        "実際のアイデアを記録する",
-        "具体的な次のタスクを作る",
-        "必要なときに PARA へつなげる",
-        "週の振り返りを書く"
-      ],
+      "steps": ["今日を開く", "実際のアイデアを記録する", "具体的な次のタスクを作る", "必要なときに PARA へつなげる"],
       "destinations": "作業の入口",
       "exampleFolder": "LifeOS サンプル",
       "exampleFile": "最初のワークフロー.md",
@@ -257,13 +247,7 @@
       "lead": "실제 내용으로 5분 안에 시작해 보세요.",
       "checklist": "처음 5분",
       "startPath": "LifeOS 시작하기.md",
-      "steps": [
-        "오늘 열기",
-        "실제 생각을 빠르게 기록하기",
-        "구체적인 다음 할 일 만들기",
-        "필요할 때 PARA에 연결하기",
-        "주간 회고 작성하기"
-      ],
+      "steps": ["오늘 열기", "실제 생각을 빠르게 기록하기", "구체적인 다음 할 일 만들기", "필요할 때 PARA에 연결하기"],
       "destinations": "작업 시작점",
       "exampleFolder": "LifeOS 예제",
       "exampleFile": "첫 작업 흐름.md",
@@ -305,13 +289,7 @@
       "lead": "ابدأ بمحتواك الحقيقي خلال خمس دقائق.",
       "checklist": "الدقائق الخمس الأولى",
       "startPath": "LifeOS ابدأ هنا.md",
-      "steps": [
-        "فتح اليوم",
-        "تسجيل فكرة حقيقية",
-        "إنشاء مهمة تالية محددة",
-        "الربط بـ PARA عند الحاجة",
-        "كتابة المراجعة الأسبوعية"
-      ],
+      "steps": ["فتح اليوم", "تسجيل فكرة حقيقية", "إنشاء مهمة تالية محددة", "الربط بـ PARA عند الحاجة"],
       "destinations": "نقاط العمل",
       "exampleFolder": "أمثلة LifeOS",
       "exampleFile": "سير عملك الأول.md",

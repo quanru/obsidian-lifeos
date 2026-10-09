@@ -29,6 +29,7 @@ export class CaptureComposer {
   private busy = false;
   private sourcePath?: string;
   private controls: HTMLButtonElement[] = [];
+  private kindButtons = new Map<QuickCaptureKind, HTMLButtonElement>();
 
   constructor(
     private readonly app: App,
@@ -39,6 +40,7 @@ export class CaptureComposer {
     kind: QuickCaptureKind,
     save: () => Promise<void>,
     cancel: () => void,
+    private readonly kindChanged: (kind: QuickCaptureKind) => void = () => {},
   ) {
     this.kind = kind;
     const area = host.createDiv('lifeos-capture-composer');
@@ -54,6 +56,26 @@ export class CaptureComposer {
     this.nativeHost.style.setProperty('--lifeos-capture-placeholder', JSON.stringify(m.placeholder));
     this.input.hidden = true;
     this.footer = area.createDiv('lifeos-capture-toolbar');
+    const types = this.footer.createDiv('lifeos-capture-kind');
+    types.setAttribute('role', 'group');
+    for (const [value, label, icon] of [
+      ['record', m.record, 'list'],
+      ['task', m.task, 'square-check'],
+    ] as const) {
+      const button = types.createEl('button', {
+        cls: 'lifeos-capture-tool',
+        attr: { 'aria-label': label, title: label, 'aria-pressed': String(kind === value) },
+      });
+      setIcon(button, icon);
+      button.createSpan({ text: label });
+      button.onclick = () => {
+        if (this.busy || !this.ready) return;
+        this.setKind(value);
+        this.focus();
+      };
+      this.kindButtons.set(value, button);
+      this.controls.push(button);
+    }
     const tm = themeMessages(locale);
     this.button(tm.associate, 'tags', () => {
       this.picker = new ThemePicker(
@@ -230,9 +252,15 @@ export class CaptureComposer {
     this.sourcePath = sourcePath;
     this.input.value = text;
     this.native?.setText(text, true);
-    this.kind = kind;
+    this.setKind(kind);
     this.cancelButton.hidden = !editing;
     this.focus();
+  }
+
+  private setKind(kind: QuickCaptureKind): void {
+    this.kind = kind;
+    this.kindButtons.forEach((button, value) => button.setAttribute('aria-pressed', String(value === kind)));
+    this.kindChanged(kind);
   }
 
   destroy(): void {

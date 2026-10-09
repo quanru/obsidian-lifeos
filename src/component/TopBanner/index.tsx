@@ -2,7 +2,6 @@ import { GithubOutlined, TeamOutlined, UserAddOutlined, YoutubeOutlined } from '
 import { Space } from 'antd';
 import React from 'react';
 import { ConfigProvider } from '../ConfigProvider';
-import { Logo } from '../Logo';
 import './index.less';
 import { getI18n } from '../../i18n';
 
@@ -38,27 +37,6 @@ export const TopBanner: React.FC<TopBannerProps> = ({ locale }) => {
   return (
     <ConfigProvider localeKey={locale}>
       <div className="m-top-banner">
-        <div className="banner-content">
-          <div className="pro-link">
-            <a href={i18n.TOPBANNER_LIFEOS_PRO_HREF} target="_blank" rel="noopener noreferrer">
-              <Space align="center">
-                <span style={{ display: 'flex', alignItems: 'center' }}>
-                  <Logo width={20} height={20} />
-                </span>
-                <span>{i18n.TOPBANNER_LIFEOS_PRO}</span>
-              </Space>
-            </a>
-          </div>
-          <div className="deepask-ad">
-            <a href={i18n.TOP_BANNER_DEEPASK_HREF} target="_blank" rel="noopener noreferrer">
-              <Space align="center">
-                🔥
-                <span>{i18n.TOP_BANNER_DEEPASK_AD}</span>
-                🤖
-              </Space>
-            </a>
-          </div>
-        </div>
         <div className="icon-links">
           <Space align="center" size="large">
             {iconLinks.map(({ icon, href, text }) => (

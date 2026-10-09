@@ -1,0 +1,72 @@
+{
+  "en": {
+    "missing": "Dataview is not installed. Install it in Settings → Community plugins, then enable it.",
+    "disabled": "Dataview is disabled. Enable it in Settings → Community plugins.",
+    "indexing": "Dataview is still preparing its index. Wait a moment, then retry.",
+    "ready": "The query could not be rendered. Check the view name and Dataview settings, then retry.",
+    "retry": "Retry"
+  },
+  "zh-cn": {
+    "missing": "尚未安装 Dataview。请在“设置 → 第三方插件”中安装并启用。",
+    "disabled": "Dataview 尚未启用。请在“设置 → 第三方插件”中启用。",
+    "indexing": "Dataview 正在准备索引，请稍后重试。",
+    "ready": "查询视图无法显示，请检查视图名称和 Dataview 设置后重试。",
+    "retry": "重试"
+  },
+  "zh-tw": {
+    "missing": "尚未安裝 Dataview。請在「設定 → 第三方外掛」中安裝並啟用。",
+    "disabled": "Dataview 尚未啟用。請在「設定 → 第三方外掛」中啟用。",
+    "indexing": "Dataview 正在準備索引，請稍後重試。",
+    "ready": "查詢檢視無法顯示，請檢查檢視名稱和 Dataview 設定後重試。",
+    "retry": "重試"
+  },
+  "de": {
+    "missing": "Dataview fehlt. Unter Einstellungen → Community-Erweiterungen installieren und aktivieren.",
+    "disabled": "Dataview ist deaktiviert. Unter Einstellungen → Community-Erweiterungen aktivieren.",
+    "indexing": "Dataview erstellt den Index. Bitte später erneut versuchen.",
+    "ready": "Abfrage nicht darstellbar. Ansichtsname und Dataview-Einstellungen prüfen und erneut versuchen.",
+    "retry": "Erneut versuchen"
+  },
+  "es": {
+    "missing": "Dataview no está instalado. Instálalo y actívalo en Ajustes → Plugins de la comunidad.",
+    "disabled": "Dataview está desactivado. Actívalo en Ajustes → Plugins de la comunidad.",
+    "indexing": "Dataview está preparando su índice. Espera y reintenta.",
+    "ready": "No se pudo mostrar la consulta. Comprueba el nombre de la vista y los ajustes de Dataview.",
+    "retry": "Reintentar"
+  },
+  "fr": {
+    "missing": "Dataview n’est pas installé. Installez-le et activez-le dans Paramètres → Modules complémentaires.",
+    "disabled": "Dataview est désactivé. Activez-le dans Paramètres → Modules complémentaires.",
+    "indexing": "Dataview prépare son index. Patientez puis réessayez.",
+    "ready": "Impossible d’afficher la requête. Vérifiez le nom de la vue et les paramètres de Dataview.",
+    "retry": "Réessayer"
+  },
+  "pt": {
+    "missing": "Dataview não está instalado. Instale e ative em Configurações → Plugins da comunidade.",
+    "disabled": "Dataview está desativado. Ative em Configurações → Plugins da comunidade.",
+    "indexing": "Dataview está preparando o índice. Aguarde e tente novamente.",
+    "ready": "Não foi possível exibir a consulta. Verifique o nome da visualização e as configurações do Dataview.",
+    "retry": "Tentar novamente"
+  },
+  "ja": {
+    "missing": "Dataview が未インストールです。設定 → コミュニティプラグインでインストールし有効にしてください。",
+    "disabled": "Dataview が無効です。設定 → コミュニティプラグインで有効にしてください。",
+    "indexing": "Dataview が索引を準備中です。少し待って再試行してください。",
+    "ready": "クエリを表示できません。ビュー名と Dataview の設定を確認してください。",
+    "retry": "再試行"
+  },
+  "ko": {
+    "missing": "Dataview가 설치되지 않았습니다. 설정 → 커뮤니티 플러그인에서 설치하고 켜세요.",
+    "disabled": "Dataview가 꺼져 있습니다. 설정 → 커뮤니티 플러그인에서 켜세요.",
+    "indexing": "Dataview가 색인을 준비 중입니다. 잠시 후 다시 시도하세요.",
+    "ready": "쿼리를 표시할 수 없습니다. 보기 이름과 Dataview 설정을 확인하세요.",
+    "retry": "다시 시도"
+  },
+  "ar": {
+    "missing": "Dataview غير مثبت. ثبّته وفعّله في الإعدادات ← إضافات المجتمع.",
+    "disabled": "Dataview معطّل. فعّله في الإعدادات ← إضافات المجتمع.",
+    "indexing": "Dataview يجهّز الفهرس. انتظر قليلًا ثم أعد المحاولة.",
+    "ready": "تعذّر عرض الاستعلام. تحقق من اسم العرض وإعدادات Dataview.",
+    "retry": "إعادة المحاولة"
+  }
+}

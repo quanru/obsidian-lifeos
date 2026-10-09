@@ -10,6 +10,8 @@ import { ConfigProvider } from '../ConfigProvider';
 import './index.less';
 import { CaptureSettings } from '../../capture/CaptureSettings';
 import { captureSettingsMessages } from '../../capture/settings-messages';
+import { ProductSettings } from '../../product/ProductSettings';
+import { productMessages } from '../../product/messages';
 import { InlineAutoComplete } from '../InlineAutoComplete';
 import { InlineSelect } from '../InlineSelect';
 import { TopBanner } from '../TopBanner';
@@ -61,7 +63,12 @@ export const SettingTab = (props: { settings: PluginSettings; saveSettings: (set
           saveSettings(next);
         }}
       >
-        <Form.Item name="locale" label={localeMap.LANGUAGE} help={localeMap.LANGUAGE_HELP}>
+        <Form.Item
+          className="lifeos-language-setting"
+          name="locale"
+          label={localeMap.LANGUAGE}
+          help={localeMap.LANGUAGE_HELP}
+        >
           <InlineSelect
             options={[
               { value: '', label: localeMap.LANGUAGE_AUTO },
@@ -82,6 +89,11 @@ export const SettingTab = (props: { settings: PluginSettings; saveSettings: (set
           defaultActiveKey="periodic"
           centered
           items={[
+            {
+              key: 'product',
+              label: productMessages(localeKey).title,
+              children: app && <ProductSettings app={app} settings={settings} locale={localeKey} />,
+            },
             {
               key: 'capture',
               label: captureSettingsMessages(localeKey).title,

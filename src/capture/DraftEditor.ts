@@ -99,6 +99,7 @@ export class DraftEditor {
     const view = this.view;
     const context: NonNullable<App['workspace']['activeEditor']> & {
       getMode: () => ReturnType<MarkdownView['getMode']>;
+      readonly editMode: { sourceMode: boolean };
     } = {
       app: this.app,
       file,
@@ -110,6 +111,10 @@ export class DraftEditor {
         view.hoverPopover = value;
       },
       getMode: () => view.getMode(),
+      // Obsidian's native menus also query the editing mode of the active context.
+      get editMode() {
+        return (view as unknown as { editMode: { sourceMode: boolean } }).editMode;
+      },
     };
     this.context = context;
     if (this.app.workspace.activeEditor?.editor === this.view.editor) this.app.workspace.activeEditor = this.context;

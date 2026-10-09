@@ -1,13 +1,13 @@
-import type { App, MarkdownPostProcessorContext, Plugin } from 'obsidian';
+import type { App, MarkdownPostProcessorContext } from 'obsidian';
 import type { TaskResult } from 'obsidian-dataview/lib/api/plugin-api';
 import type { PluginSettings, TaskConditionType } from '../type';
 
 import { moment } from 'obsidian';
-import type { DataviewApi, STask } from 'obsidian-dataview';
+import type { STask } from 'obsidian-dataview';
 import { ERROR_MESSAGE } from '../constant';
 import { TaskStatusType } from '../type';
 
-import { Markdown } from '../component/Markdown';
+import { renderTaskQuery } from '../component/TaskQuery';
 import { getI18n } from '../i18n';
 import type LifeOS from '../main';
 import { Date as PeriodicDate } from '../periodic/Date';
@@ -39,23 +39,26 @@ export class Task {
       return;
     }
 
-    const dataview = await this.plugin.getDataviewAPI();
-    const tasks = dataview
-      .pages('')
-      .file.tasks.where((t: STask) =>
-        this.filter(t, {
-          status: TaskStatusType.DONE,
-          ...condition,
-        }),
-      )
-      .sort((t: STask) => t.completion, 'asc');
+    return renderTaskQuery(
+      this.app,
+      el,
+      ctx,
+      async (div, component) => {
+        const dataview = await this.plugin.getDataviewAPI();
+        const tasks = dataview
+          .pages('')
+          .file.tasks.where((t: STask) =>
+            this.filter(t, {
+              status: TaskStatusType.DONE,
+              ...condition,
+            }),
+          )
+          .sort((t: STask) => t.completion, 'asc');
 
-    const div = el.createEl('div');
-    const component = new Markdown(div);
-
-    dataview.taskList(tasks, false, div, component);
-
-    ctx.addChild(component);
+        await dataview.taskList(tasks, false, div, component, filename);
+      },
+      this.locale,
+    );
   };
 
   recordListByTime = async (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
@@ -67,70 +70,77 @@ export class Task {
       return;
     }
 
-    const dataview = await this.plugin.getDataviewAPI();
-    let tasks = [];
-    // 收集日期范围内的日记文件
-    const dailyTasks = dataview.pages('').file.tasks.where((t: STask) =>
-      this.filter(t, {
-        status: TaskStatusType.RECORD,
-        ...condition,
-      }),
+    return renderTaskQuery(
+      this.app,
+      el,
+      ctx,
+      async (div, component) => {
+        const dataview = await this.plugin.getDataviewAPI();
+        let tasks = [];
+        // 收集日期范围内的日记文件
+        const dailyTasks = dataview.pages('').file.tasks.where((t: STask) =>
+          this.filter(t, {
+            status: TaskStatusType.RECORD,
+            ...condition,
+          }),
+        );
+
+        tasks = [...dailyTasks];
+
+        // 收集日期范围内的非日记文件（周记、月记、季记、年记）
+        const files = this.date.files(parsed);
+        const { weeks, months, quarters } = files;
+        const pages = [...weeks, ...months, ...quarters];
+
+        if (pages.length) {
+          const nonDailyTasks = dataview.pages(`"${pages.join('" or "')}"`).file.tasks;
+
+          tasks = [...dailyTasks, ...nonDailyTasks];
+        }
+
+        await dataview.taskList(tasks, false, div, component, filename);
+      },
+      this.locale,
     );
-
-    tasks = [...dailyTasks];
-
-    // 收集日期范围内的非日记文件（周记、月记、季记、年记）
-    const files = this.date.files(parsed);
-    const { weeks, months, quarters } = files;
-    const pages = [...weeks, ...months, ...quarters];
-
-    if (pages.length) {
-      const nonDailyTasks = dataview.pages(`"${pages.join('" or "')}"`).file.tasks;
-
-      tasks = [...dailyTasks, ...nonDailyTasks];
-    }
-
-    const div = el.createEl('div');
-    const component = new Markdown(div);
-
-    dataview.taskList(tasks, false, div, component);
-
-    ctx.addChild(component);
   };
 
   listByTag = async (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
     const filepath = ctx.sourcePath;
-    const tags = this.file.tags(filepath);
-    const div = el.createEl('div');
-    const component = new Markdown(div);
+    return renderTaskQuery(
+      this.app,
+      el,
+      ctx,
+      async (div, component) => {
+        const tags = this.file.tags(filepath);
 
-    if (!tags.length) {
-      return renderError(this.app, getI18n(this.locale)[`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`], div, filepath);
-    }
+        if (!tags.length) {
+          return renderError(this.app, getI18n(this.locale)[`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`], div, filepath);
+        }
 
-    const from = tags
-      .map((tag: string, index: number) => {
-        return `#${tag} ${index === tags.length - 1 ? '' : 'OR'}`;
-      })
-      .join(' ')
-      .trim();
-    const where = tags
-      .map((tag: string, index: number) => {
-        return `contains(lower(tags), "#${tag.toLowerCase()}") ${index === tags.length - 1 ? '' : 'OR'}`;
-      })
-      .join(' ');
+        const from = tags
+          .map((tag: string, index: number) => {
+            return `#${tag} ${index === tags.length - 1 ? '' : 'OR'}`;
+          })
+          .join(' ')
+          .trim();
+        const where = tags
+          .map((tag: string, index: number) => {
+            return `contains(lower(tags), "#${tag.toLowerCase()}") ${index === tags.length - 1 ? '' : 'OR'}`;
+          })
+          .join(' ');
 
-    const dataview = await this.plugin.getDataviewAPI();
-    const { values: tasks } = (await dataview.tryQuery(`
+        const dataview = await this.plugin.getDataviewAPI();
+        const { values: tasks } = (await dataview.tryQuery(`
 TASK
 FROM (${from}) ${generateIgnoreOperator(this.settings)}
 WHERE ${where} AND file.path != "${filepath}"
 SORT status ASC
     `)) as TaskResult;
 
-    dataview.taskList(tasks, false, div, component);
-
-    ctx.addChild(component);
+        await dataview.taskList(tasks, false, div, component, filepath);
+      },
+      this.locale,
+    );
   };
 
   filter(

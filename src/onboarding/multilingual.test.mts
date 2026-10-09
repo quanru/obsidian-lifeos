@@ -7,7 +7,7 @@ import { WORKSPACE_LANGUAGES, normalizeWorkspaceLocale } from './locale.ts';
 import { getLocalizedWorkspaceSettings, getBasicTemplatePlans } from './templates.ts';
 import { initializeWorkspace, readWorkspaceProfile } from './workspace.ts';
 import { getFeatureI18n } from '../feature-i18n.ts';
-import { getReviewI18n } from '../review/i18n.ts';
+import { dependencyMessages } from '../dependencies/messages.ts';
 
 test('regional locales retain their workspace language and unknown languages fall back', () => {
   assert.equal(normalizeWorkspaceLocale(' zh_Hant_HK '), 'zh-tw');
@@ -37,19 +37,19 @@ test('all workspace languages round-trip, preserve custom files, and reject lang
   }
 });
 
-test('new feature and review dialogs do not silently fall back to English', () => {
+test('new feature and dependency messages do not silently fall back to English', () => {
   const feature = getFeatureI18n('en');
-  const review = getReviewI18n('en');
+  const dependency = dependencyMessages('en');
   for (const locale of Object.keys(WORKSPACE_LANGUAGES).filter((locale) => locale !== 'en')) {
     const f = getFeatureI18n(locale),
-      r = getReviewI18n(locale);
+      r = dependencyMessages(locale);
     assert.notEqual(f.setupTitle, feature.setupTitle, locale);
     assert.notEqual(f.setupSuccess(7, 3), feature.setupSuccess(7, 3), locale);
     assert(f.setupSuccess(7, 3).includes('7') && f.setupSuccess(7, 3).includes('3'));
-    assert.notEqual(r.description, review.description, locale);
+    assert.notEqual(r.missing, dependency.missing, locale);
     const capture = captureMessages(locale);
     assert.notEqual(capture.title, captureMessages('en').title, locale);
     assert.deepEqual(Object.keys(capture).sort(), Object.keys(captureMessages('en')).sort());
-    assert.deepEqual(Object.keys(r).sort(), Object.keys(review).sort());
+    assert.deepEqual(Object.keys(r).sort(), Object.keys(dependency).sort());
   }
 });

@@ -19,6 +19,7 @@ import {
 } from './constant';
 import { periodicLocation } from './periodic/calendar';
 import { withVaultLock } from './vault-lock';
+import { createFromTemplate } from './dependencies/template-creation';
 import { getDayjsLocale, getI18n, getLocale, normalizeLocale } from './i18n';
 import type { DailyRecordType, DailyRecordTypeV2, PeriodicNotesTemplateFilePath, ResourceType } from './type';
 import { LogLevel, type PluginSettings } from './type';
@@ -80,17 +81,16 @@ async function createFileUnlocked(
     const templateContent = await app.vault.cachedRead(templateTFile);
     await ensureFolderTree(app, folder);
 
-    const fileCreated = await app.vault.create(finalFile, templateContent);
+    const fileCreated = await createFromTemplate(app, templateTFile, templateContent, finalFile);
 
-    await app.fileManager.processFrontMatter(fileCreated, (frontMatter) => {
-      if (!tag) {
-        return;
-      }
-
-      frontMatter.tags = frontMatter.tags || [];
-      frontMatter.tags.push(tag.replace(/^#/, ''));
-      frontMatter.aliases = tag;
-    });
+    if (tag) {
+      await app.fileManager.processFrontMatter(fileCreated, (frontMatter) => {
+        const tags = frontMatter.tags;
+        frontMatter.tags = Array.isArray(tags) ? tags : tags ? [tags] : [];
+        frontMatter.tags.push(tag.replace(/^#/, ''));
+        frontMatter.aliases = tag;
+      });
+    }
     await sleep(30); // 等待被索引，否则读取不到 frontmatter：this.app.metadataCache.getFileCache(file)
     await app.workspace.getLeaf(newLeaf).openFile(fileCreated);
     return fileCreated;

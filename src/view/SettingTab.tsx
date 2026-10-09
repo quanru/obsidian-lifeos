@@ -64,6 +64,7 @@ export class SettingTabView extends PluginSettingTab {
   }
 
   display(): void {
+    this.settings = this.plugin.settings;
     this.containerEl.empty();
     this.containerEl.addClass('periodic-para-setting-tab');
     this.locale = this.plugin.locale;

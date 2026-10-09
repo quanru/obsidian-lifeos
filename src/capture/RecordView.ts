@@ -5,6 +5,7 @@ import type { CaptureMessages } from './messages';
 import { themeMessages } from './theme-messages';
 import type { CaptureTheme } from './theme-model';
 import { matchedThemes } from './theme-model';
+import { captureBody } from './presentation';
 
 export class DeleteCaptureModal extends Modal {
   constructor(
@@ -55,15 +56,18 @@ export async function renderRecord(
 ): Promise<void> {
   const card = host.createDiv('lifeos-capture-card');
   const header = card.createDiv('lifeos-capture-card-header');
-  header.createEl('time', {
-    text: record.time || '—',
-    cls: 'lifeos-capture-stamp',
-  });
+  if (record.time) {
+    header.createEl('time', {
+      text: record.time,
+      cls: 'lifeos-capture-stamp',
+    });
+  }
   const t = interactionMessages(locale);
   const tm = themeMessages(locale);
   const matches = matchedThemes(record.text, themes);
+  const metadata = header.createDiv('lifeos-capture-metadata');
   if (matches.length) {
-    const links = header.createDiv('lifeos-capture-themes');
+    const links = metadata.createDiv('lifeos-capture-themes');
     for (const theme of matches) {
       const button = links.createEl('button', {
         text: `${tm[theme.kind]} · ${theme.name}`,
@@ -72,11 +76,22 @@ export async function renderRecord(
       button.onclick = () => callbacks.openTheme(theme.path);
     }
   }
+  if (record.tags.length) {
+    const tags = metadata.createDiv('lifeos-capture-card-tags markdown-rendered');
+    await MarkdownRenderer.render(app, record.tags.map((tag) => `#${tag}`).join(' '), tags, record.path, scope);
+  }
   header.createEl('small', { text: t.source, cls: 'lifeos-capture-source' });
   const body = card.createDiv('lifeos-capture-body markdown-rendered');
   const text =
     record.kind === 'task' ? `- [${record.checked ? 'x' : ' '}] ${record.text.replace(/\n/g, '\n  ')}` : record.text;
-  await MarkdownRenderer.render(app, text, body, record.path, scope);
+  const display = captureBody(record.text);
+  await MarkdownRenderer.render(
+    app,
+    record.kind === 'task' ? `- [${record.checked ? 'x' : ' '}] ${display.replace(/\n/g, '\n  ')}` : display,
+    body,
+    record.path,
+    scope,
+  );
   const actions = card.createDiv('lifeos-capture-actions');
   const action = (label: string, icon: string, run: () => void) => {
     const button = actions.createEl('button', { attr: { 'aria-label': label, title: label } });

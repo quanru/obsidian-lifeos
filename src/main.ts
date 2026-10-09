@@ -1,9 +1,9 @@
-import { Platform, Plugin, TFile, setIcon } from 'obsidian';
+import { Notice, Platform, Plugin, TFile, setIcon } from 'obsidian';
 import type { MarkdownPostProcessorContext, Menu, TAbstractFile, WorkspaceLeaf } from 'obsidian';
 import type { DataviewApi } from 'obsidian-dataview';
 import { dataviewState, waitForDataview } from './dependencies/dataview';
-import { getReviewI18n } from './review/i18n';
-import { WeeklyReviewModal } from './review/WeeklyReviewModal';
+import { dependencyMessages } from './dependencies/messages';
+import './dependencies/index.less';
 
 import dayjs from 'dayjs';
 import { QuickCaptureModal } from './capture/QuickCaptureModal';
@@ -39,6 +39,8 @@ import { getAntdLocale, getDayjsLocale, getI18n, getLocale } from './i18n';
 import { OnboardingModal } from './onboarding/OnboardingModal';
 
 import './index.less';
+import { productMessages } from './product/messages';
+import { openTodayRecords } from './product/today';
 
 export default class LifeOS extends Plugin {
   settings: PluginSettings;
@@ -66,7 +68,7 @@ export default class LifeOS extends Plugin {
   }
 
   private dataviewMessage(): string {
-    return getReviewI18n(this.getCurrentLocaleKey())[dataviewState(this.app)];
+    return dependencyMessages(this.getCurrentLocaleKey())[dataviewState(this.app)];
   }
 
   async onload() {
@@ -98,7 +100,9 @@ export default class LifeOS extends Plugin {
       callback: () => openOfficialSite(this.getCurrentLocaleKey()),
     });
     this.registerWorkspaceCommands();
-    this.addRibbonIcon('message-square-text', getFeatureI18n(this.getCurrentLocaleKey()).quickRecordTitle, () => this.openQuickCapture('record'));
+    this.addRibbonIcon('message-square-text', getFeatureI18n(this.getCurrentLocaleKey()).quickRecordTitle, () =>
+      this.openQuickCapture('record'),
+    );
     this.loadHelpers();
     this.loadGlobalHelpers();
     this.loadViews();
@@ -251,7 +255,7 @@ export default class LifeOS extends Plugin {
     if (!view.endsWith('ByFolder') && dataviewState(this.app) !== 'ready') {
       const container = el.createDiv({ cls: 'lifeos-dependency-message' });
       container.createEl('p', { text: this.dataviewMessage() });
-      const button = container.createEl('button', { text: getReviewI18n(localeKey).retry });
+      const button = container.createEl('button', { text: dependencyMessages(localeKey).retry });
       button.addEventListener('click', () => {
         el.empty();
         void this.markdownCodeBlockProcessor(source, el, ctx);
@@ -346,12 +350,17 @@ export default class LifeOS extends Plugin {
 
   private registerWorkspaceCommands() {
     const t = getFeatureI18n(this.getCurrentLocaleKey());
-
+    const product = productMessages(this.getCurrentLocaleKey());
     this.addCommand({
-      id: 'periodic-para-weekly-review',
-      name: getReviewI18n(this.getCurrentLocaleKey()).command,
-      callback: () => new WeeklyReviewModal(this).open(),
+      id: 'periodic-para-open-today-records',
+      name: product.today,
+      callback: () => {
+        void openTodayRecords(this.app, this.settings, this.getCurrentLocaleKey(), product.unavailable).catch(
+          () => new Notice(product.unavailable),
+        );
+      },
     });
+
     this.addCommand({
       id: 'periodic-para-initialize-workspace',
       name: t.setupCommand,

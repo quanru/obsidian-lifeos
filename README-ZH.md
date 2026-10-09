@@ -16,7 +16,13 @@
 
 ![](https://obsidian-life-os.pages.dev/plugin/periodic-para-plugin-en.png)
 
-初始化向导、快速记录、每周回顾、模板和目录配置现已支持英、简中、繁中、德、西、法、葡、日、韩、阿拉伯语。对应的开源示例库提供每种语言的示例版和空白版，维护方式见[多语言工作库](docs/multilingual-workspaces.md)。
+初始化向导、快速记录、模板和目录配置现已支持英、简中、繁中、德、西、法、葡、日、韩、阿拉伯语。对应的开源示例库提供每种语言的示例版和空白版，维护方式见[多语言工作库](docs/multilingual-workspaces.md)。
+
+## 免费功能与独立 Pro 插件
+
+快速记录、基础任务录入、主题关联均完整免费。设置中的「使用与升级」提供快捷入口、只读目录配置预览，以及独立收费插件 LifeOS Pro 的静态推广链接。本插件没有付费解锁，也不会自动安装 Pro。新增推广区不加载远程广告、不发送遥测、不上传笔记；官网仅在点击链接时打开，携带固定渠道参数。已有可选 usememos 集成独立配置。
+
+通过「今日记录」命令可打开今日日记并定位到记录段落。切换插件前请阅读[接管指南](docs/pro-handover.md)。本仓库不包含 Pro 源码、私有配置或激活数据。
 
 ## Features
 
@@ -24,15 +30,12 @@
 - 内置日、周、月、季度、年度以及 Projects、Areas、Resources、Archives 基础模板。
 - 可选示例工作流与五分钟完成指南会引导用户完成首次记录；示例未被修改时可以安全移除。
 - “快速记录”支持连续输入、原生实时预览、图片、任务、PARA 主题关联、历史浏览、组合筛选与编辑管理，内容直接保存在日记中。见[快速记录说明](docs/quick-capture.md)。
-- 初始化、快速记录和每周回顾无需 Dataview；查询视图仍使用 Dataview，并会提示安装、启用或等待索引。
-- 在命令面板运行“每周回顾”，预览本周或上周的记录、任务与近期更新的项目笔记。保存到独立的 `*-Review.md`，刷新会保留手写总结。
-- 周记和每周回顾使用 ISO 周（周一至周日）；已有周记不会自动迁移。回顾中的任务状态以当前笔记为准，项目列表按文件更新时间汇总。
+- 初始化、快速记录无需 Dataview；查询视图仍使用 Dataview，并会提示安装、启用或等待索引。
+- 周记使用 ISO 周（周一至周日）；已有周记不会自动迁移。
 - LifeOS Basic: https://lifeos.vip/plugin/lifeos/life-os.html
 - **LifeOS Pro** : https://lifeos.vip/plugin/lifeos/life-os-pro.html
 - **DeepAsk AI Assistant** : https://lifeos.vip/plugin/deepask/deepask.html
 - 多语言界面：默认跟随 Obsidian 当前语言，也可以在插件设置页手动切换语言。
-
-使用范围和刷新规则见 [每周回顾说明](docs/weekly-review.md)。
 
 ## 开发与贡献
 

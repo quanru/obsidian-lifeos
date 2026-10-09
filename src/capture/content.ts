@@ -2,27 +2,15 @@ import { headingSection } from '../markdown-lines';
 
 export type QuickCaptureKind = 'record' | 'task';
 
-export function formatCaptureEntry(
-  kind: QuickCaptureKind,
-  text: string,
-  time: string,
-): string {
-  const [firstLine = '', ...remainingLines] = text
-    .replace(/\r\n/g, '\n')
-    .trim()
-    .split('\n');
-  if (
-    kind === 'record' &&
-    /^(?:[-*+] |\d+[.)] |#{1,6} |>|```|~~~)/.test(firstLine)
-  ) {
+export function formatCaptureEntry(kind: QuickCaptureKind, text: string, time: string): string {
+  const [firstLine = '', ...remainingLines] = text.replace(/\r\n/g, '\n').trim().split('\n');
+  if (kind === 'record' && /^(?:[-*+] |\d+[.)] |#{1,6} |>|```|~~~)/.test(firstLine)) {
     return `- ${time}\n${[firstLine, ...remainingLines].map((line) => `  ${line}`).join('\n')}`;
   }
   const prefix = kind === 'task' ? '- [ ] ' : `- ${time} `;
   const continuation = remainingLines.map((line) => `  ${line}`).join('\n');
 
-  return continuation
-    ? `${prefix}${firstLine}\n${continuation}`
-    : `${prefix}${firstLine}`;
+  return continuation ? `${prefix}${firstLine}\n${continuation}` : `${prefix}${firstLine}`;
 }
 
 function normalizeHeadingTitle(header: string): string {
@@ -33,14 +21,10 @@ function normalizeHeadingTitle(header: string): string {
     .trim();
 }
 
-export function appendUnderHeading(
-  content: string,
-  header: string,
-  entry: string,
-): string {
+export function appendUnderHeading(content: string, header: string, entry: string): string {
   const headingTitle = normalizeHeadingTitle(header);
   const lines = content.replace(/\r\n/g, '\n').split('\n');
-  const section = headingSection(content, header);
+  const section = headingSection(content, header, false);
   if (!section) {
     const base = content.trimEnd();
     const sectionContent = `## ${headingTitle}\n\n${entry}`;
@@ -50,10 +34,7 @@ export function appendUnderHeading(
   const sectionEnd = section.end;
 
   const before = lines.slice(0, sectionEnd);
-  while (
-    before.length > headingIndex + 1 &&
-    before[before.length - 1].trim() === ''
-  ) {
+  while (before.length > headingIndex + 1 && before[before.length - 1].trim() === '') {
     before.pop();
   }
 

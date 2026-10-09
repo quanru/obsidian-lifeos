@@ -1,8 +1,6 @@
 import { WORKSPACE_LANGUAGES } from './locale';
 import dayjs from 'dayjs';
 import { Modal, Notice, Setting, TFile } from 'obsidian';
-import { WeeklyReviewModal } from '../review/WeeklyReviewModal';
-import { getReviewI18n } from '../review/i18n';
 import { QuickCaptureModal } from '../capture/QuickCaptureModal';
 import { DAILY } from '../constant';
 import { getFeatureI18n } from '../feature-i18n';
@@ -191,10 +189,6 @@ export class OnboardingModal extends Modal {
     this.addAction(actions, t.setupOpenToday, async () => {
       await createPeriodicFile(dayjs(), DAILY, this.plugin.settings, this.app, false, this.locale);
       this.close();
-    });
-    this.addAction(actions, getReviewI18n(this.locale).command, async () => {
-      this.close();
-      new WeeklyReviewModal(this.plugin).open();
     });
     this.addAction(actions, t.setupQuickRecord, async () => {
       this.close();

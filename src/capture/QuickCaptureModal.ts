@@ -44,7 +44,7 @@ export class QuickCaptureModal extends Modal {
 
   constructor(
     private readonly plugin: LifeOS,
-    private readonly kind: QuickCaptureKind,
+    private kind: QuickCaptureKind,
   ) {
     super(plugin.app);
     // Allow configured editor shortcuts to reach the focused unsaved draft.
@@ -88,6 +88,10 @@ export class QuickCaptureModal extends Modal {
       this.kind,
       () => this.save(),
       () => this.cancelEdit(),
+      (kind) => {
+        this.kind = kind;
+        this.setTitle(kind === 'task' ? `${this.m.title} · ${this.m.task}` : this.m.title);
+      },
     );
     this.pendingDefaults = defaultThemePaths(this.plugin.settings.quickCaptureDefaultThemes).length > 0;
     if (this.pendingDefaults) this.composer.setBusy(true);
@@ -296,7 +300,10 @@ export class QuickCaptureModal extends Modal {
         const editor = this.inlineEdit;
         if (!editor || !editor.composer.getText().trim()) return;
         await this.mutate(async () => {
-          await this.repository.replace(editor.record, revisedRecord(editor.record, editor.composer.getText().trim()));
+          await this.repository.replace(
+            editor.record,
+            revisedRecord(editor.record, editor.composer.getText().trim(), editor.composer.kind),
+          );
           this.finishEdit();
         });
       },

@@ -9,28 +9,18 @@ export interface CaptureTheme {
   tags: string[];
 }
 export function themeTags(value: unknown): string[] {
-  const values = Array.isArray(value)
-    ? value
-    : typeof value === 'string'
-      ? value.split(/[\s,，]+/)
-      : [];
+  const values = Array.isArray(value) ? value : typeof value === 'string' ? value.split(/[\s,，]+/) : [];
   return [
     ...new Set(
       values
         .filter((tag): tag is string => typeof tag === 'string')
         .map((tag) => tag.trim().replace(/^#+/, ''))
-        .filter(
-          (tag) => /^[\p{L}\p{N}_/-]+$/u.test(tag) && /[\p{L}_/-]/u.test(tag),
-        ),
+        .filter((tag) => /^[\p{L}\p{N}_/-]+$/u.test(tag) && /[\p{L}_/-]/u.test(tag)),
     ),
   ];
 }
-export function identifyTheme(
-  path: string,
-  settings: PluginSettings,
-): Omit<CaptureTheme, 'tags'> | undefined {
-  const normalize = (value: string) =>
-    value.replace(/\\/g, '/').replace(/^\/+|\/+$/g, '');
+export function identifyTheme(path: string, settings: PluginSettings): Omit<CaptureTheme, 'tags'> | undefined {
+  const normalize = (value: string) => value.replace(/\\/g, '/').replace(/^\/+|\/+$/g, '');
   const templates = [
     settings.projectsTemplateFilePath,
     settings.areasTemplateFilePath,
@@ -56,28 +46,20 @@ export function identifyTheme(
     const parts = relative.split('/');
     if (parts.length !== 2 || !parts[1].endsWith('.md')) continue;
     const base = parts[1].slice(0, -3);
-    if (
-      settings.paraIndexFilename === 'folderName'
-        ? base !== parts[0]
-        : base.toLowerCase() !== 'readme'
-    )
-      continue;
+    if (settings.paraIndexFilename === 'folderName' ? base !== parts[0] : !/(?:^|\.)README$/i.test(base)) continue;
     return { path, name: parts[0], kind };
   }
 }
 
 /** Locate actual inline tags, leaving code, links and escaped text untouched. */
-export function inlineThemeTags(
-  text: string,
-): { tag: string; start: number; end: number }[] {
+export function inlineThemeTags(text: string): { tag: string; start: number; end: number }[] {
   const visible = new Set(markdownLines(text).map((line) => line.index));
   const spans: { tag: string; start: number; end: number }[] = [];
   let offset = 0;
   text.split('\n').forEach((line, index) => {
     if (visible.has(index)) {
-      const masked = line.replace(
-        /`+[^`]*`+|!?\[\[[^\]]*\]\]|!?\[[^\]]*\]\([^)]*\)|\\./g,
-        (value) => ' '.repeat(value.length),
+      const masked = line.replace(/`+[^`]*`+|!?\[\[[^\]]*\]\]|!?\[[^\]]*\]\([^)]*\)|\\./g, (value) =>
+        ' '.repeat(value.length),
       );
       for (const match of masked.matchAll(/(?:^|\s)#([\p{L}\p{N}_/-]+)/gu)) {
         spans.push({
@@ -91,14 +73,9 @@ export function inlineThemeTags(
   });
   return spans;
 }
-export function matchedThemes(
-  text: string,
-  themes: CaptureTheme[],
-): CaptureTheme[] {
+export function matchedThemes(text: string, themes: CaptureTheme[]): CaptureTheme[] {
   const tags = new Set(inlineThemeTags(text).map((item) => item.tag));
-  return themes.filter(
-    (theme) => theme.tags.length && theme.tags.every((tag) => tags.has(tag)),
-  );
+  return themes.filter((theme) => theme.tags.length && theme.tags.every((tag) => tags.has(tag)));
 }
 export function applyThemeSelection(
   text: string,
@@ -106,27 +83,14 @@ export function applyThemeSelection(
   original: readonly string[],
   selected: readonly string[],
 ): string {
-  const removed = new Set(
-    themes
-      .filter((theme) => original.includes(theme.path))
-      .flatMap((theme) => theme.tags),
-  );
-  const wanted = new Set(
-    themes
-      .filter((theme) => selected.includes(theme.path))
-      .flatMap((theme) => theme.tags),
-  );
+  const removed = new Set(themes.filter((theme) => original.includes(theme.path)).flatMap((theme) => theme.tags));
+  const wanted = new Set(themes.filter((theme) => selected.includes(theme.path)).flatMap((theme) => theme.tags));
   let next = text;
   for (const span of inlineThemeTags(text).reverse()) {
-    if (removed.has(span.tag) && !wanted.has(span.tag))
-      next = next.slice(0, span.start) + next.slice(span.end);
+    if (removed.has(span.tag) && !wanted.has(span.tag)) next = next.slice(0, span.start) + next.slice(span.end);
   }
   const existing = new Set(inlineThemeTags(next).map((span) => span.tag));
-  const additions = [...wanted]
-    .filter((tag) => !existing.has(tag))
-    .map((tag) => `#${tag}`);
+  const additions = [...wanted].filter((tag) => !existing.has(tag)).map((tag) => `#${tag}`);
   // Put association tags on their own first line, never inside an unclosed code fence.
-  return additions.length
-    ? `${additions.join(' ')}${next.trim() ? `\n${next}` : ''}`
-    : next;
+  return additions.length ? `${additions.join(' ')}${next.trim() ? `\n${next}` : ''}` : next;
 }
