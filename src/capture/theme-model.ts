@@ -1,7 +1,8 @@
+import { normalizeThemePath, themeRoots, themeTemplatePaths, isThemeIndex, themeIndexStyle } from '../theme/config';
 import { markdownLines } from '../markdown-lines';
 import type { PluginSettings } from '../type';
 
-export type ThemeKind = 'project' | 'area' | 'resource' | 'archive';
+export type ThemeKind = 'theme' | 'project' | 'area' | 'resource' | 'archive';
 export interface CaptureTheme {
   path: string;
   name: string;
@@ -20,34 +21,16 @@ export function themeTags(value: unknown): string[] {
   ];
 }
 export function identifyTheme(path: string, settings: PluginSettings): Omit<CaptureTheme, 'tags'> | undefined {
-  const normalize = (value: string) => value.replace(/\\/g, '/').replace(/^\/+|\/+$/g, '');
-  const templates = [
-    settings.projectsTemplateFilePath,
-    settings.areasTemplateFilePath,
-    settings.resourcesTemplateFilePath,
-    settings.archivesTemplateFilePath,
-    settings.periodicNotesTemplateFilePathDaily,
-    settings.periodicNotesTemplateFilePathWeekly,
-    settings.periodicNotesTemplateFilePathMonthly,
-    settings.periodicNotesTemplateFilePathQuarterly,
-    settings.periodicNotesTemplateFilePathYearly,
-  ]
-    .filter(Boolean)
-    .map(normalize);
-  if (templates.includes(normalize(path))) return;
-  for (const [kind, root] of [
-    ['project', settings.projectsPath],
-    ['area', settings.areasPath],
-    ['resource', settings.resourcesPath],
-    ['archive', settings.archivesPath],
-  ] as const) {
-    if (!root || !normalize(path).startsWith(`${normalize(root)}/`)) continue;
-    const relative = normalize(path).slice(normalize(root).length + 1);
-    const parts = relative.split('/');
-    if (parts.length !== 2 || !parts[1].endsWith('.md')) continue;
-    const base = parts[1].slice(0, -3);
-    if (settings.paraIndexFilename === 'folderName' ? base !== parts[0] : !/(?:^|\.)README$/i.test(base)) continue;
-    return { path, name: parts[0], kind };
+  if (settings.useThemeNotes === false) return;
+  const normalized = normalizeThemePath(path);
+  if (themeTemplatePaths(settings).includes(normalized)) return;
+  const roots = themeRoots(settings).sort((a, b) => b.root.length - a.root.length);
+  for (const { kind, root } of roots) {
+    if (!normalized.startsWith(`${root}/`)) continue;
+    const parts = normalized.slice(root.length + 1).split('/');
+    if (parts.length < 2 || !isThemeIndex(parts[parts.length - 1], parts[parts.length - 2], themeIndexStyle(settings)))
+      continue;
+    return { path, name: parts[parts.length - 2], kind };
   }
 }
 
@@ -75,7 +58,7 @@ export function inlineThemeTags(text: string): { tag: string; start: number; end
 }
 export function matchedThemes(text: string, themes: CaptureTheme[]): CaptureTheme[] {
   const tags = new Set(inlineThemeTags(text).map((item) => item.tag));
-  return themes.filter((theme) => theme.tags.length && theme.tags.every((tag) => tags.has(tag)));
+  return themes.filter((theme) => theme.tags.length && theme.tags.some((tag) => tags.has(tag)));
 }
 export function applyThemeSelection(
   text: string,
@@ -90,7 +73,11 @@ export function applyThemeSelection(
     if (removed.has(span.tag) && !wanted.has(span.tag)) next = next.slice(0, span.start) + next.slice(span.end);
   }
   const existing = new Set(inlineThemeTags(next).map((span) => span.tag));
-  const additions = [...wanted].filter((tag) => !existing.has(tag)).map((tag) => `#${tag}`);
+  const additions = themes
+    .filter((theme) => selected.includes(theme.path) && !theme.tags.some((tag) => existing.has(tag)))
+    .map((theme) => theme.tags[0])
+    .filter((tag, index, tags) => tag && tags.indexOf(tag) === index)
+    .map((tag) => `#${tag}`);
   // Put association tags on their own first line, never inside an unclosed code fence.
   return additions.length ? `${additions.join(' ')}${next.trim() ? `\n${next}` : ''}` : next;
 }

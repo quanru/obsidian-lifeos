@@ -1,10 +1,12 @@
+import { themeSettingsMessages } from '../theme/messages';
+import { buildThemeTemplate } from '../theme/templates';
 import translations from './translations.json';
 import { ARCHIVE, AREA, DAILY, MONTHLY, PROJECT, QUARTERLY, RESOURCE, WEEKLY, YEARLY } from '../constant';
 import { getFeatureI18n } from '../feature-i18n';
 import type { PeriodicNotesTemplateFilePath, PluginSettings } from '../type';
-import { joinVaultPath } from '../util';
+import { joinVaultPath } from '../periodic/paths';
 
-export type WorkspaceMode = 'periodic' | 'para';
+export type WorkspaceMode = 'periodic' | 'para' | 'theme';
 export { normalizeWorkspaceLocale } from './locale';
 import { normalizeWorkspaceLocale } from './locale';
 export type { WorkspaceLocale } from './locale';
@@ -22,7 +24,7 @@ export type WorkspaceModeGuide = {
   dailyFlow: string;
 };
 
-const MODE_GUIDES: Record<'en' | 'zh-cn' | 'zh-tw', Record<WorkspaceMode, WorkspaceModeGuide>> = {
+const MODE_GUIDES: Record<'en' | 'zh-cn' | 'zh-tw', Record<'periodic' | 'para', WorkspaceModeGuide>> = {
   en: {
     periodic: {
       bestFor: 'A lightweight journal built around daily capture and periodic review.',
@@ -62,6 +64,12 @@ const MODE_GUIDES: Record<'en' | 'zh-cn' | 'zh-tw', Record<WorkspaceMode, Worksp
 };
 
 export function getWorkspaceModeGuide(mode: WorkspaceMode, locale?: string): WorkspaceModeGuide {
+  if (mode === 'theme')
+    return {
+      bestFor: themeSettingsMessages(locale || 'en').modeHelp,
+      notFor: themeSettingsMessages(locale || 'en').modeNotFor,
+      dailyFlow: themeSettingsMessages(locale || 'en').modeFlow,
+    };
   const normalized = normalizeWorkspaceLocale(locale);
   const translated = translations[normalized as keyof typeof translations];
   return translated ? translated.guides[mode] : MODE_GUIDES[normalized as 'en' | 'zh-cn' | 'zh-tw'][mode];
@@ -70,7 +78,13 @@ export function getWorkspaceModeGuide(mode: WorkspaceMode, locale?: string): Wor
 export function getLocalizedWorkspaceSettings(settings: PluginSettings, locale?: string): PluginSettings {
   const normalized = normalizeWorkspaceLocale(locale);
   const translated = translations[normalized as keyof typeof translations];
-  if (translated) return { ...settings, ...translated.settings, locale: normalized };
+  if (translated)
+    return {
+      ...settings,
+      ...translated.settings,
+      themesPath: themeSettingsMessages(normalized).defaultFolder,
+      locale: normalized,
+    };
   const localized =
     normalized === 'en'
       ? {
@@ -107,7 +121,7 @@ export function getLocalizedWorkspaceSettings(settings: PluginSettings, locale?:
             areaListHeader: '領域',
             habitHeader: '習慣',
           };
-  return { ...settings, ...localized, locale: normalized };
+  return { ...settings, ...localized, themesPath: themeSettingsMessages(normalized).defaultFolder, locale: normalized };
 }
 
 function getOnboardingCopy(locale?: string) {
@@ -191,7 +205,10 @@ export function getStartHerePlan(settings: PluginSettings, mode: WorkspaceMode, 
       '',
       `## ${copy.checklist}`,
       '',
-      ...copy.steps.map((step) => `- [ ] ${step}`),
+      ...copy.steps.map(
+        (step, index) =>
+          `- [ ] ${mode === 'theme' && index === 3 ? themeSettingsMessages(locale || 'en').modeFlow : step}`,
+      ),
       '',
       `## ${copy.destinations}`,
       '',
@@ -202,7 +219,9 @@ export function getStartHerePlan(settings: PluginSettings, mode: WorkspaceMode, 
             `- ${getFeatureI18n(locale).templateAreas}: \`${settings.areasPath}\``,
             `- ${settings.resourcesPath.replace(/^\d+\. /, '')}: \`${settings.resourcesPath}\``,
           ]
-        : []),
+        : mode === 'theme'
+          ? [`- ${themeSettingsMessages(locale || 'en').title}: \`${settings.themesPath}\``]
+          : []),
       '',
     ].join('\n'),
   };
@@ -250,6 +269,9 @@ function buildDailyTemplate(settings: PluginSettings, mode: WorkspaceMode, local
   if (mode === 'para') {
     sections.push(`## ${settings.projectListHeader}`, '', '0hr0', '');
   }
+
+  if (mode === 'theme')
+    sections.push(`## ${themeSettingsMessages(locale || 'en').title}`, '', '{{snapshot:Theme}}', '');
 
   sections.push(`## ${settings.habitHeader}`, '', '- [ ] ', '');
 
@@ -369,6 +391,19 @@ export function getBasicTemplatePlans(
         path: getParaTemplatePath(settings, type),
         content: buildParaTemplate(locale),
       });
+    });
+  }
+
+  if (mode === 'theme') {
+    const template =
+      settings.useThemeAdvanced && settings.themesTemplateFilePath
+        ? settings.themesTemplateFilePath
+        : joinVaultPath(settings.themesPath, 'Template.md');
+    plans.push({ path: template, content: buildThemeTemplate(locale || 'en') });
+    plans.push({
+      path: joinVaultPath(settings.themesPath, 'README.md'),
+      content: `# ${themeSettingsMessages(locale || 'en').title}\n\n${codeBlock('ThemeListByFolder')}\n`,
+      role: 'guide',
     });
   }
 

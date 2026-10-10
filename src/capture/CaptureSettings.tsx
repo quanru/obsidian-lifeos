@@ -51,6 +51,12 @@ export function CaptureSettings({
   }, [
     app,
     settings.usePARANotes,
+    settings.useThemeNotes,
+    settings.themesPath,
+    settings.useThemeAdvanced,
+    settings.themeIndexFilename,
+    settings.themesTemplateFilePath,
+    settings.usePARAAdvanced,
     settings.projectsPath,
     settings.areasPath,
     settings.resourcesPath,

@@ -17,7 +17,7 @@ test('default paths tolerate old or malformed settings and keep unique paths', (
 });
 test('new presets use live theme tags, merge shared tags, and skip missing or disabled themes', () => {
   const paths = themes.map((theme) => theme.path).concat('Missing/README.md');
-  assert.equal(defaultCaptureDraft(themes, paths), '#work #launch\n');
+  assert.equal(defaultCaptureDraft(themes, paths), '#work\n');
   assert.equal(defaultCaptureDraft([{ ...themes[0], tags: ['new'] }], paths), '#new\n');
   assert.equal(defaultCaptureDraft([], paths), '');
   assert.equal(defaultCaptureDraft(themes, []), '');
@@ -27,7 +27,7 @@ test('preset tags and whitespace alone cannot create a record, while content and
     themes,
     themes.map((theme) => theme.path),
   );
-  assert.equal(hasCaptureBody(' #launch\n #work  ', preset), false);
+  assert.equal(hasCaptureBody(' #work  ', preset), false);
   assert.equal(hasCaptureBody('', preset), false);
   assert.equal(hasCaptureBody('#work #launch\nA thought', preset), true);
   assert.equal(hasCaptureBody('#work #personal', preset), true);

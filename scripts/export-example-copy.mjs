@@ -24,6 +24,11 @@ try {
     const settings = api.getLocalizedWorkspaceSettings(
       {
         usePeriodicNotes: true,
+        useThemeNotes: true,
+        useThemeFolderSync: true,
+        useThemeAdvanced: false,
+        themeIndexFilename: 'readme',
+        useThemeSearch: true,
         usePARANotes: true,
         useDailyRecord: false,
         weekStart: -1,
@@ -37,6 +42,13 @@ try {
       settings,
       copy: { ...api.getFeatureI18n(locale) },
       plans: api.getBasicTemplatePlans(settings, 'para', locale, { includeGuide: true, includeExample: true }),
+      themes: {
+        settings: { ...settings, usePARANotes: false },
+        plans: api.getBasicTemplatePlans({ ...settings, usePARANotes: false }, 'theme', locale, {
+          includeGuide: true,
+          includeExample: true,
+        }),
+      },
     };
     delete languages[locale].copy.setupSuccess;
   }

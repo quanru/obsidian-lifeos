@@ -1,3 +1,7 @@
+import { ThemeCreateFields } from '../../theme/ThemeCreateFields';
+import { createThemeNote } from '../../theme/create';
+import { themeSettingsMessages } from '../../theme/messages';
+import { themeIndexStyle } from '../../theme/config';
 import { buildPeriodicFilePath } from '../../periodic/paths';
 import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, DatePicker, Form, Input, Radio, Tabs, Tooltip } from 'antd';
@@ -318,40 +322,20 @@ export const CreateNote = (props: { width: number }) => {
     );
   };
 
-  const createPARAFile = async (values: any) => {
-    if (!app || !settings) {
-      return;
+  const createPARAFile = async (values: Record<string, string>) => {
+    if (!app || !settings) return;
+    const kind = settings.usePARANotes ? paraActiveTab.toLowerCase() : 'theme';
+    const prefix = settings.usePARANotes ? paraActiveTab : 'Theme';
+    try {
+      await createThemeNote(app, settings, localeKey, kind, {
+        tag: values[`${prefix}Tag`],
+        folder: values[`${prefix}Folder`],
+        index: values[`${prefix}Index`],
+      });
+      form.resetFields();
+    } catch (error) {
+      new Notice(error instanceof Error ? error.message : themeSettingsMessages(localeKey).failed);
     }
-
-    let templateFile = '';
-    let folder = '';
-    let file = '';
-    let tag = '';
-    let INDEX = '';
-    const path = settings[`${paraActiveTab.toLocaleLowerCase()}sPath` as keyof PluginSettings]; // settings.archivesPath;
-    const key = values[`${paraActiveTab}Folder`]; // values.archiveFolder;
-    tag = values[`${paraActiveTab}Tag`]; // values.archiveTag;
-    INDEX = values[`${paraActiveTab}Index`]; // values.archiveIndex;
-
-    if (!tag) {
-      return new Notice(localeMap[`${ERROR_MESSAGE}TAGS_MUST_INPUT`]);
-    }
-
-    folder = `${path}/${key}`;
-    file = `${folder}/${INDEX}`;
-    templateFile = settings.usePARAAdvanced
-      ? settings[`${paraActiveTab.toLocaleLowerCase()}sTemplateFilePath` as PeriodicNotesTemplateFilePath] ||
-        `${path}/Template.md`
-      : `${path}/Template.md`;
-
-    await createFile(app, {
-      locale: localeKey,
-      templateFile,
-      folder,
-      file,
-      tag,
-    });
-    form.resetFields();
   };
 
   // all tags
@@ -363,10 +347,12 @@ export const CreateNote = (props: { width: number }) => {
 
   const singleClickRef = useRef<number | null>(null);
   const handleTagInput = (item: string) => {
-    const itemTag = form.getFieldValue(`${item}Tag`).replace(/^#/, '');
+    const itemTag = String(form.getFieldValue(`${item}Tag`) || '').replace(/^#/, '');
     const itemFolder = itemTag.replace(/\//g, '-');
     const itemIndex =
-      settings?.paraIndexFilename === 'readme' ? `${itemTag.split('/').reverse()[0]}.README` : `${itemFolder}`;
+      settings && themeIndexStyle(settings) === 'readme'
+        ? `${itemTag.split('/').reverse()[0]}.README`
+        : `${itemFolder}`;
 
     form.setFieldValue(`${item}Folder`, itemFolder);
     form.setFieldValue(`${item}Index`, itemIndex ? `${itemIndex}.md` : '');
@@ -404,7 +390,7 @@ export const CreateNote = (props: { width: number }) => {
         onFinish={createPARAFile}
         layout="vertical"
       >
-        {settings?.usePARANotes && settings?.usePeriodicNotes && (
+        {settings?.useThemeNotes && settings?.usePeriodicNotes && (
           <Radio.Group
             name="type"
             value={type}
@@ -416,7 +402,9 @@ export const CreateNote = (props: { width: number }) => {
             }}
           >
             <Radio.Button value={PERIODIC}>{localeMap[PERIODIC]}</Radio.Button>
-            <Radio.Button value={PARA}>{localeMap[PARA]}</Radio.Button>
+            <Radio.Button value={PARA}>
+              {settings?.usePARANotes ? localeMap[PARA] : themeSettingsMessages(localeKey).title}
+            </Radio.Button>
           </Radio.Group>
         )}
         {type === PERIODIC && settings?.usePeriodicNotes && (
@@ -478,87 +466,41 @@ export const CreateNote = (props: { width: number }) => {
             })}
           ></Tabs>
         )}
-        {type === PARA && settings?.usePARANotes && (
+        {type === PARA && settings?.useThemeNotes && (
           <>
-            <Tabs
-              key="PARA"
-              activeKey={paraActiveTab}
-              onChange={setParaActiveTab}
-              centered
-              size="small"
-              indicator={{ size: 0 }}
-              style={{ width: '100%' }}
-              items={[PROJECT, AREA, RESOURCE, ARCHIVE].map((para) => {
-                const label = localeMap[para];
-
-                return {
-                  label,
+            {settings.usePARANotes ? (
+              <Tabs
+                key="PARA"
+                activeKey={paraActiveTab}
+                onChange={setParaActiveTab}
+                centered
+                size="small"
+                indicator={{ size: 0 }}
+                style={{ width: '100%' }}
+                items={[PROJECT, AREA, RESOURCE, ARCHIVE].map((para) => ({
+                  label: localeMap[para],
                   key: para,
                   children:
                     paraActiveTab === para ? (
-                      <>
-                        <Form.Item
-                          label={localeMap[TAG]}
-                          name={`${para}Tag`}
-                          tooltip={localeMap[`${TAG}ToolTip`]}
-                          rules={[
-                            {
-                              required: true,
-                              message: localeMap[`${TAG}Required`],
-                            },
-                            {
-                              pattern: /^[^\s]*$/,
-                              message: localeMap[`${TAG}Required2`],
-                            },
-                            {
-                              pattern: /^#/,
-                              message: localeMap[`${TAG}Required3`],
-                            },
-                          ]}
-                        >
-                          <AutoComplete options={tags} onSelect={() => handleTagInput(para)}>
-                            <Input
-                              onChange={() => handleTagInput(para)}
-                              allowClear
-                              placeholder={
-                                para === PROJECT
-                                  ? localeMap.PARA_TAG_PLACEHOLDER_PROJECT
-                                  : localeMap.PARA_TAG_PLACEHOLDER_DEFAULT
-                              }
-                            />
-                          </AutoComplete>
-                        </Form.Item>
-                        <Form.Item
-                          label={localeMap[FOLDER]}
-                          name={`${para}Folder`}
-                          tooltip={localeMap[`${FOLDER}ToolTip`]}
-                          rules={[
-                            {
-                              required: true,
-                              message: localeMap[`${FOLDER}Required`],
-                            },
-                          ]}
-                        >
-                          <Input type="text" allowClear placeholder={localeMap.PARA_FOLDER_PLACEHOLDER} />
-                        </Form.Item>
-                        <Form.Item
-                          label={localeMap[INDEX]}
-                          name={`${para}Index`}
-                          tooltip={localeMap[`${INDEX}ToolTip`]}
-                          rules={[
-                            {
-                              required: true,
-                              message: localeMap[`${INDEX}Required`],
-                            },
-                          ]}
-                        >
-                          <Input allowClear placeholder={localeMap.PARA_INDEX_PLACEHOLDER} />
-                        </Form.Item>
-                      </>
+                      <ThemeCreateFields
+                        prefix={para}
+                        locale={localeKey}
+                        form={form}
+                        tags={tags}
+                        onTag={() => handleTagInput(para)}
+                      />
                     ) : null,
-                };
-              })}
-            ></Tabs>
+                }))}
+              />
+            ) : (
+              <ThemeCreateFields
+                prefix="Theme"
+                locale={localeKey}
+                form={form}
+                tags={tags}
+                onTag={() => handleTagInput('Theme')}
+              />
+            )}
             {SubmitButton}
           </>
         )}

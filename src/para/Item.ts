@@ -1,49 +1,50 @@
 import { type App, type MarkdownPostProcessorContext, MarkdownRenderer } from 'obsidian';
-import { Markdown } from '../component/Markdown';
 import { Date as PeriodicDate } from '../periodic/Date';
 import type { File } from '../periodic/File';
 import type { PluginSettings } from '../type';
+import { renderTaskQuery } from '../component/TaskQuery';
+import { themeSettingsMessages } from '../theme/messages';
 
 export class Item {
-  dir: string;
-  app: App;
-  settings: PluginSettings;
-  file: File;
   date: PeriodicDate;
-  locale: string;
-
-  constructor(dir: string, app: App, settings: PluginSettings, file: File, locale: string) {
-    this.dir = dir;
-    this.app = app;
-    this.settings = settings;
-    this.file = file;
-    this.locale = locale;
-    this.date = new PeriodicDate(this.app, this.settings, this.file, locale);
+  constructor(
+    public dir: string,
+    public app: App,
+    public settings: PluginSettings,
+    public file: File,
+    public locale: string,
+  ) {
+    this.date = new PeriodicDate(app, settings, file, locale);
   }
-
   snapshot(dir = this.dir) {
     return this.file.list(dir);
   }
-
-  listByFolder = async (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
-    const div = el.createEl('div');
-    const markdown = this.file.list(this.dir);
-    const component = new Markdown(div);
-
-    MarkdownRenderer.render(this.app, markdown || '- Nothing', div, ctx.sourcePath, component);
-
-    ctx.addChild(component);
-  };
-
-  listByTag = async (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
-    const filepath = ctx.sourcePath;
-    const tags = this.file.tags(filepath);
-    const div = el.createEl('div');
-    const markdown = this.file.list(this.dir, { tags });
-    const component = new Markdown(div);
-
-    MarkdownRenderer.render(this.app, markdown || '- Nothing', div, ctx.sourcePath, component);
-
-    ctx.addChild(component);
-  };
+  listByFolder = (_source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => this.render(el, ctx, false);
+  listByTag = (_source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => this.render(el, ctx, true);
+  private render(el: HTMLElement, ctx: MarkdownPostProcessorContext, byTag: boolean) {
+    return renderTaskQuery(
+      this.app,
+      el,
+      ctx,
+      async (container, component) => {
+        const m = themeSettingsMessages(this.locale);
+        const tags = byTag ? this.file.tags(ctx.sourcePath) : [];
+        const rows = (byTag && !tags.length ? '' : this.file.list(this.dir, { tags })).split('\n').filter(Boolean);
+        const search = this.settings.useThemeSearch
+          ? container.createEl('input', { type: 'search', attr: { placeholder: m.search, 'aria-label': m.search } })
+          : undefined;
+        const list = container.createDiv('lifeos-theme-list');
+        const update = async () => {
+          list.empty();
+          const filtered = rows.filter((row) =>
+            row.toLocaleLowerCase().includes(search?.value.toLocaleLowerCase() || ''),
+          );
+          await MarkdownRenderer.render(this.app, filtered.join('\n') || m.empty, list, ctx.sourcePath, component);
+        };
+        if (search) search.oninput = () => void update();
+        await update();
+      },
+      this.locale,
+    );
+  }
 }

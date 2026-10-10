@@ -74,6 +74,9 @@ export class ThemePicker extends Modal {
         check.onchange = () => {
           if (check.checked) this.selected.add(theme.path);
           else this.selected.delete(theme.path);
+          const effective = applyThemeSelection(this.text, this.themes, this.original, [...this.selected]);
+          this.selected = new Set(matchedThemes(effective, this.themes).map((item) => item.path));
+          render();
         };
         const info = label.createSpan();
         info.createEl('strong', {

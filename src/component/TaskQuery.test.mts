@@ -12,6 +12,12 @@ function fixture(render: (el: any, component: any) => Promise<void>) {
     },
   };
   const app: any = {
+    vault: {
+      on: (_: string, callback: () => void) => {
+        listeners.add(callback);
+        return { off: () => listeners.delete(callback) };
+      },
+    },
     metadataCache: {
       on: (_: string, callback: () => void) => {
         listeners.add(callback);

@@ -1,3 +1,6 @@
+import { themeTemplatePaths } from './theme/config';
+import { themeSnapshot } from './theme/catalog';
+import { themeSettingsMessages } from './theme/messages';
 import { buildPeriodicFilePath, joinVaultPath } from './periodic/paths';
 export { isInPeriodicNote, isInPeriodicNotesFolder, joinVaultPath } from './periodic/paths';
 import dayjs, { type Dayjs } from 'dayjs';
@@ -58,6 +61,9 @@ async function createFileUnlocked(
     file: string;
     tag?: string;
     newLeaf?: boolean;
+    requireNew?: boolean;
+    fallbackContent?: string;
+    snapshotContent?: string;
   },
 ) {
   if (!app) {
@@ -67,21 +73,27 @@ async function createFileUnlocked(
   const { templateFile, folder, file, tag, locale, newLeaf } = options;
   const finalFile = file.match(/\.md$/) ? file : `${file}.md`;
   const existing = app.vault.getAbstractFileByPath(finalFile);
+  if (existing && options.requireNew) throw new Error(themeSettingsMessages(locale).conflict);
   if (existing instanceof TFile) {
     await app.workspace.getLeaf(newLeaf).openFile(existing);
     return existing;
   }
   if (existing) throw new Error(`A folder already exists where a note is required: ${finalFile}`);
   const templateTFile = app.vault.getAbstractFileByPath(templateFile);
-  if (!(templateTFile instanceof TFile)) {
+  if (!(templateTFile instanceof TFile) && options.fallbackContent === undefined) {
     new Notice(getI18n(locale)[`${ERROR_MESSAGE}NO_TEMPLATE_EXIST`] + templateFile);
     return;
   }
   if (folder && finalFile) {
-    const templateContent = await app.vault.cachedRead(templateTFile);
+    const templateContent = (
+      templateTFile instanceof TFile ? await app.vault.cachedRead(templateTFile) : options.fallbackContent!
+    ).replaceAll('{{snapshot:Theme}}', options.snapshotContent ?? '');
     await ensureFolderTree(app, folder);
 
-    const fileCreated = await createFromTemplate(app, templateTFile, templateContent, finalFile);
+    const fileCreated =
+      templateTFile instanceof TFile
+        ? await createFromTemplate(app, templateTFile, templateContent, finalFile)
+        : await app.vault.create(finalFile, templateContent);
 
     if (tag) {
       await app.fileManager.processFrontMatter(fileCreated, (frontMatter) => {
@@ -263,6 +275,7 @@ export async function createPeriodicFile(
     folder,
     file,
     newLeaf,
+    snapshotContent: settings.useThemeNotes && !settings.usePARANotes ? themeSnapshot(app, settings) : undefined,
   });
 
   return fileCreated instanceof TFile ? fileCreated : undefined;
@@ -293,6 +306,7 @@ export function generateIgnoreOperator(settings: PluginSettings) {
     periodicNotesTemplateFilePathMonthly,
     periodicNotesTemplateFilePathWeekly,
     periodicNotesTemplateFilePathDaily,
+    ...themeTemplatePaths(settings),
   ]
     .filter((path) => path)
     .map((path) => `AND -"${path}"`)
@@ -306,6 +320,7 @@ export function getAllTemplateFiles(settings: PluginSettings) {
     areasTemplateFilePath,
     resourcesTemplateFilePath,
     archivesTemplateFilePath,
+    themesTemplateFilePath,
     periodicNotesPath,
     periodicNotesTemplateFilePathYearly,
     periodicNotesTemplateFilePathQuarterly,
@@ -321,6 +336,7 @@ export function getAllTemplateFiles(settings: PluginSettings) {
     areasTemplateFilePath,
     resourcesTemplateFilePath,
     archivesTemplateFilePath,
+    themesTemplateFilePath,
     periodicNotesTemplateFilePathYearly,
     periodicNotesTemplateFilePathQuarterly,
     periodicNotesTemplateFilePathMonthly,

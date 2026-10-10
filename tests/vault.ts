@@ -16,6 +16,11 @@ export const settings = {
   archivesPath: 'Archives',
   projectListHeader: 'Projects',
   habitHeader: 'Habits',
+  useThemeNotes: true,
+  useThemeFolderSync: true,
+  useThemeAdvanced: false,
+  themesPath: 'Themes',
+  themeIndexFilename: 'readme',
   usePARANotes: true,
 } as PluginSettings;
 
@@ -45,6 +50,12 @@ export function memoryApp() {
         },
       },
       getAbstractFileByPath: (path: string) => entries.get(path) ?? null,
+      on: (_name: string, callback: () => void) => {
+        const ref = {};
+        events.set(ref, callback);
+        return ref;
+      },
+      getFileByPath: (path: string) => (entries.get(path) instanceof TFile ? entries.get(path) : null),
       getMarkdownFiles: () => [...entries.values()].filter((file): file is TFile => file instanceof TFile),
       createFolder: async (path: string) => {
         if (entries.has(path)) throw new Error('Already exists');

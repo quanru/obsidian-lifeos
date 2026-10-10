@@ -1,3 +1,4 @@
+import { themeSettingsMessages } from '../theme/messages';
 import { WORKSPACE_LANGUAGES } from './locale';
 import dayjs from 'dayjs';
 import { Modal, Notice, Setting, TFile } from 'obsidian';
@@ -33,7 +34,7 @@ export class OnboardingModal extends Modal {
 
   constructor(private readonly plugin: LifeOS) {
     super(plugin.app);
-    this.mode = plugin.settings.usePARANotes ? 'para' : 'periodic';
+    this.mode = plugin.settings.useThemeNotes ? (plugin.settings.usePARANotes ? 'para' : 'theme') : 'periodic';
     this.locale = normalizeWorkspaceLocale(plugin.getCurrentLocaleKey());
   }
 
@@ -82,11 +83,18 @@ export class OnboardingModal extends Modal {
 
     new Setting(this.contentEl)
       .setName(t.setupMode)
-      .setDesc(this.mode === 'para' ? t.setupParaDescription : t.setupPeriodicOnlyDescription)
+      .setDesc(
+        this.mode === 'para'
+          ? t.setupParaDescription
+          : this.mode === 'theme'
+            ? themeSettingsMessages(this.locale).modeHelp
+            : t.setupPeriodicOnlyDescription,
+      )
       .addDropdown((dropdown) => {
         dropdown
           .addOption('para', t.setupPara)
           .addOption('periodic', t.setupPeriodicOnly)
+          .addOption('theme', themeSettingsMessages(this.locale).title)
           .setValue(this.mode)
           .setDisabled(Boolean(this.profile))
           .onChange((value) => {
@@ -141,6 +149,7 @@ export class OnboardingModal extends Modal {
                 onboardingVersion: 1,
                 usePeriodicNotes: true,
                 usePARANotes: this.mode === 'para',
+                useThemeNotes: this.mode !== 'periodic',
               };
               const result = await initializeWorkspace(this.app, settings, this.mode, this.locale, {
                 includeExamples: this.includeExamples,

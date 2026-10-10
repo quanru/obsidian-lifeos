@@ -1,3 +1,5 @@
+import { themeIndexStyle, isThemeIndex } from '../theme/config';
+import { themeTags } from '../capture/theme-model';
 import { type App, type MarkdownPostProcessorContext, TFile, TFolder } from 'obsidian';
 import type { IndexType, PluginSettings } from '../type';
 
@@ -24,7 +26,7 @@ export class File {
   private hasCommonPrefix(tags1: string[], tags2: string[]) {
     for (const tag1 of tags1) {
       for (const tag2 of tags2) {
-        if (tag1.startsWith(tag2)) {
+        if (tag1 === tag2 || tag1.startsWith(`${tag2}/`)) {
           return true;
         }
       }
@@ -44,21 +46,11 @@ export class File {
             const { name } = subFolder;
             const files = subFolder.children;
             const indexFile = files.find((file) => {
-              const indexType: IndexType = this.settings.usePARAAdvanced ? this.settings.paraIndexFilename : 'readme';
-
-              if (indexType === 'readme') {
-                if (file.path.match(/(.*\.)?README\.md/)) {
-                  return true;
-                }
-              }
-
-              if (indexType === 'folderName') {
-                if ((file as any).basename === name) {
-                  return true;
-                }
-              }
-
-              return false;
+              return (
+                file instanceof TFile &&
+                !isInTemplateNote(file.path, this.settings) &&
+                isThemeIndex(file.name, name, themeIndexStyle(this.settings))
+              );
             });
 
             if (condition.tags.length) {
@@ -128,18 +120,9 @@ export class File {
         frontmatter: {},
       };
 
-      let tags = frontmatter?.tags;
-
-      if (!tags) {
-        return [];
-      }
-
-      if (typeof tags === 'string') {
-        tags = [tags];
-      }
-
-      return tags.map((tag: string) => tag.replace(/^#(.*)$/, '$1'));
+      return themeTags(frontmatter?.tags);
     }
+    return [];
   }
 
   listByTag = async (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
@@ -153,7 +136,7 @@ export class File {
     }
 
     const from = tags
-      .map((tag: string[], index: number) => {
+      .map((tag: string, index: number) => {
         return `#${tag} ${index === tags.length - 1 ? '' : 'OR'}`;
       })
       .join(' ')

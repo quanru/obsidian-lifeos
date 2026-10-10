@@ -1,3 +1,6 @@
+import { Theme } from './theme/Theme';
+import { ThemeRenameSync } from './theme/rename';
+import { migrateThemeSettings } from './theme/config';
 import { Notice, Platform, Plugin, TFile, setIcon } from 'obsidian';
 import type { MarkdownPostProcessorContext, Menu, TAbstractFile, WorkspaceLeaf } from 'obsidian';
 import type { DataviewApi } from 'obsidian-dataview';
@@ -44,6 +47,7 @@ import { openTodayRecords } from './product/today';
 
 export default class LifeOS extends Plugin {
   settings: PluginSettings;
+  theme: Theme;
   project: Project;
   area: Area;
   resource: Resource;
@@ -116,6 +120,17 @@ export default class LifeOS extends Plugin {
     }
     this.loadDailyRecord();
     this.registerFileMenu();
+    const themeRename = new ThemeRenameSync(
+      this.app,
+      () => this.settings,
+      () => this.getCurrentLocaleKey(),
+    );
+    this.registerEvent(
+      this.app.vault.on('rename', (file, oldPath) => {
+        // Finish the originating rename before starting another file-manager operation.
+        this.registerInterval(window.setTimeout(() => void themeRename.handle(file, oldPath), 0));
+      }),
+    );
     this.addSettingTab(new SettingTabView(this.app, this.settings, this, this.locale));
 
     this.app.workspace.onLayoutReady(() => {
@@ -208,6 +223,8 @@ export default class LifeOS extends Plugin {
       AreaListByTag: this.area.listByTag,
       ResourceListByTag: this.resource.listByTag,
       ArchiveListByTag: this.archive.listByTag,
+      ThemeListByTag: this.theme.listByTag,
+      ThemeListByFolder: this.theme.listByFolder,
       // views by folder
       ProjectListByFolder: this.project.listByFolder,
       AreaListByFolder: this.area.listByFolder,
@@ -252,7 +269,7 @@ export default class LifeOS extends Plugin {
 
     const callback = this.views[view] || this.views[legacyView];
 
-    if (!view.endsWith('ByFolder') && dataviewState(this.app) !== 'ready') {
+    if (!view.endsWith('ByFolder') && view !== 'ThemeListByTag' && dataviewState(this.app) !== 'ready') {
       const container = el.createDiv({ cls: 'lifeos-dependency-message' });
       container.createEl('p', { text: this.dataviewMessage() });
       const button = container.createEl('button', { text: dependencyMessages(localeKey).retry });
@@ -271,7 +288,7 @@ export default class LifeOS extends Plugin {
   async loadSettings() {
     const savedSettings = await this.loadData();
     this.isFreshInstall = !savedSettings || Object.keys(savedSettings).length === 0;
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, savedSettings);
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, savedSettings, migrateThemeSettings(savedSettings));
 
     if (!this.isFreshInstall && this.settings.onboardingVersion === 0) {
       this.settings.onboardingVersion = 1;
@@ -297,6 +314,7 @@ export default class LifeOS extends Plugin {
     this.date = new PeriodicDate(this.app, this.settings, this.file, localeKey);
     this.bullet = new Bullet(this.app, this.settings, this, localeKey);
 
+    this.theme = new Theme(this.app, this.settings, localeKey);
     this.project = new Project(this.settings.projectsPath, this.app, this.settings, this.file, localeKey);
     this.area = new Area(this.settings.areasPath, this.app, this.settings, this.file, localeKey);
     this.resource = new Resource(this.settings.resourcesPath, this.app, this.settings, this.file, localeKey);
@@ -305,6 +323,7 @@ export default class LifeOS extends Plugin {
 
   loadGlobalHelpers() {
     const helpers = {
+      Theme: this.theme,
       Project: this.project,
       Area: this.area,
       Resource: this.resource,

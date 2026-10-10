@@ -1,3 +1,5 @@
+import { themeRowFilter } from '../theme/query-filter';
+import { renderTaskQuery } from '../component/TaskQuery';
 import type { App, MarkdownPostProcessorContext, Plugin } from 'obsidian';
 import type { PluginSettings } from '../type';
 
@@ -77,41 +79,50 @@ export class Bullet {
   listByTag = async (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
     const filepath = ctx.sourcePath;
     const tags = this.file.tags(filepath);
-    const div = el.createEl('div');
-    const component = new Markdown(div);
-
-    if (!tags.length) {
-      return renderError(this.app, getI18n(this.locale)[`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`], div, filepath);
-    }
-
-    const from = tags
-      .map((tag: string, index: number) => {
-        return `#${tag} ${index === tags.length - 1 ? '' : 'OR'}`;
-      })
-      .join(' ')
-      .trim();
-    const dataview = await this.plugin.getDataviewAPI();
-    const lists = await dataview.pages(`(${from}) ${generateIgnoreOperator(this.settings)}`).file.lists;
-    const result = lists.where((L: { task: STask; path: string; tags: string[] }) => {
-      let includeTag = false;
-      if (L.task || L.path === filepath) return false;
-      for (const tag of tags) {
-        includeTag = L.tags.join(' ').toLowerCase().includes(`#${tag.toLowerCase()}`);
-        if (includeTag) {
-          break;
+    return renderTaskQuery(
+      this.app,
+      el,
+      ctx,
+      async (div, component) => {
+        if (!tags.length) {
+          return renderError(this.app, getI18n(this.locale)[`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`], div, filepath);
         }
-      }
-      return includeTag;
-    });
-    const groupResult = result.groupBy((elem: Element) => {
-      return elem.link;
-    });
-    const sortResult = groupResult.sort((elem: { rows: Element }) => elem.rows.link, 'desc');
-    const tableResult = sortResult.map((k: { rows: Element }) => [k.rows.text as string, k.rows.link as Link]);
-    const tableValues = tableResult.array();
 
-    dataview.table(['Bullet', 'Link'], tableValues, div, component, filepath);
+        const from = tags
+          .map((tag: string, index: number) => {
+            return `#${tag} ${index === tags.length - 1 ? '' : 'OR'}`;
+          })
+          .join(' ')
+          .trim();
+        const dataview = await this.plugin.getDataviewAPI();
+        const lists = await dataview.pages(`(${from}) ${generateIgnoreOperator(this.settings)}`).file.lists;
+        const allowed = await themeRowFilter(
+          this.app,
+          this.settings,
+          lists.array().map((row: { path: string }) => row.path),
+          filepath,
+        );
+        const result = lists.where((L: { task: STask; path: string; line: number; tags: string[] }) => {
+          let includeTag = false;
+          if (L.task || !allowed(L)) return false;
+          for (const tag of tags) {
+            includeTag = L.tags.join(' ').toLowerCase().includes(`#${tag.toLowerCase()}`);
+            if (includeTag) {
+              break;
+            }
+          }
+          return includeTag;
+        });
+        const groupResult = result.groupBy((elem: Element) => {
+          return elem.link;
+        });
+        const sortResult = groupResult.sort((elem: { rows: Element }) => elem.rows.link, 'desc');
+        const tableResult = sortResult.map((k: { rows: Element }) => [k.rows.text as string, k.rows.link as Link]);
+        const tableValues = tableResult.array();
 
-    ctx.addChild(component);
+        dataview.table(['Bullet', 'Link'], tableValues, div, component, filepath);
+      },
+      this.locale,
+    );
   };
 }

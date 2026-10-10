@@ -140,7 +140,7 @@ export async function readWorkspaceProfile(app: App): Promise<WorkspaceProfile |
     const parsed = JSON.parse(await app.vault.adapter.read(WORKSPACE_PROFILE_PATH)) as Partial<WorkspaceProfile>;
     if (
       parsed.schemaVersion === 1 &&
-      (parsed.template === 'periodic' || parsed.template === 'para') &&
+      (parsed.template === 'periodic' || parsed.template === 'para' || parsed.template === 'theme') &&
       typeof parsed.locale === 'string' &&
       Object.prototype.hasOwnProperty.call(WORKSPACE_LANGUAGES, parsed.locale)
     ) {

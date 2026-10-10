@@ -22,6 +22,9 @@ export class TaskQuery extends MarkdownRenderChild {
     this.stopped = false;
     this.registerEvent(this.app.metadataCache.on('dataview:metadata-change' as 'changed', () => void this.refresh()));
     this.registerEvent(this.app.metadataCache.on('dataview:index-ready' as 'changed', () => void this.refresh()));
+    this.registerEvent(this.app.metadataCache.on('changed', () => void this.refresh()));
+    this.registerEvent(this.app.vault.on('rename', () => void this.refresh()));
+    this.registerEvent(this.app.vault.on('delete', () => void this.refresh()));
     void this.refresh();
   }
 

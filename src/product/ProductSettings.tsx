@@ -1,3 +1,4 @@
+import { themeSettingsMessages } from '../theme/messages';
 import {
   ArrowRightOutlined,
   CalendarOutlined,
@@ -22,10 +23,14 @@ export function ProductSettings({ app, settings, locale }: { app: App; settings:
   const paths = [
     [t.SETTING_PERIODIC_NOTES_FOLDER, settings.periodicNotesPath],
     [t.SETTING_DAILY_RECORD_HEADER, settings.dailyRecordHeader],
-    [t.SETTING_PROJECTS_FOLDER, settings.projectsPath],
-    [t.SETTING_AREAS_FOLDER, settings.areasPath],
-    [t.SETTING_RESOURCES_FOLDER, settings.resourcesPath],
-    [t.SETTING_ARCHIVES_FOLDER, settings.archivesPath],
+    ...(settings.usePARANotes
+      ? [
+          [t.SETTING_PROJECTS_FOLDER, settings.projectsPath],
+          [t.SETTING_AREAS_FOLDER, settings.areasPath],
+          [t.SETTING_RESOURCES_FOLDER, settings.resourcesPath],
+          [t.SETTING_ARCHIVES_FOLDER, settings.archivesPath],
+        ]
+      : [[themeSettingsMessages(locale).folder, settings.themesPath]]),
   ];
   const run = (id: string) => {
     const host = app as App & { commands: { executeCommandById(id: string): boolean }; setting: { close(): void } };

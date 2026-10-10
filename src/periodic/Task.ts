@@ -1,3 +1,4 @@
+import { themeRowFilter } from '../theme/query-filter';
 import type { App, MarkdownPostProcessorContext } from 'obsidian';
 import type { TaskResult } from 'obsidian-dataview/lib/api/plugin-api';
 import type { PluginSettings, TaskConditionType } from '../type';
@@ -137,7 +138,13 @@ WHERE ${where} AND file.path != "${filepath}"
 SORT status ASC
     `)) as TaskResult;
 
-        await dataview.taskList(tasks, false, div, component, filepath);
+        const allowed = await themeRowFilter(
+          this.app,
+          this.settings,
+          tasks.map((task: STask) => task.path),
+          filepath,
+        );
+        await dataview.taskList(tasks.filter(allowed), false, div, component, filepath);
       },
       this.locale,
     );

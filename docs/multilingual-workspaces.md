@@ -4,7 +4,7 @@
 
 显示语言可在插件设置中修改。工作库的模板语言记录在 `.lifeos/template-profile.json`，初始化后保持固定，避免改名导致链接和查询失效。再次初始化只补缺失的文件，保留自定义内容。区域语言会规范化，例如 `pt-BR` 对应葡萄牙语，`ko-KR` 对应韩语，`zh-Hant-HK` 对应繁体中文；不支持的语言回退到英文。
 
-对应的开源示例仓库为 `quanru/obsidian-example-lifeos`。`examples/<language>/` 中包含带最小示例的 `LifeOS Vault` 和供个人使用的 `LifeOS Blank Vault`。包内配置与模板语言一致，不附带插件二进制；在 Obsidian 的第三方插件设置中安装并启用 LifeOS 和 Dataview。初始化、快速记录不依赖 Dataview，查询块依赖 Dataview。
+对应的开源示例仓库为 `quanru/obsidian-example-lifeos`。`examples/<language>/` 中包含原有 PARA 模式的 `LifeOS Vault`、`LifeOS Blank Vault`，以及普通主题模式的 `LifeOS Theme Vault`、`LifeOS Theme Blank Vault`。包内配置与模板语言一致，不附带插件二进制；在 Obsidian 的第三方插件设置中安装并启用 LifeOS 和 Dataview。初始化、快速记录与原生主题列表不依赖 Dataview；任务、记录和文件查询块依赖 Dataview。普通主题使用独立目录，无需 PARA；详见[主题笔记](theme-notes.md)。
 
 维护多语言时，先修改开源插件中的公开模板和翻译，再运行：
 
