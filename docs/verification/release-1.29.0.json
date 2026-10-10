@@ -1,0 +1,99 @@
+{
+  "version": "1.29.0",
+  "commit": "ad156fb0d093ee9fa07d06d0a5bf2fe8eaf16e19",
+  "url": "https://github.com/quanru/obsidian-lifeos/releases/tag/1.29.0",
+  "publishedAt": "2026-10-10T13:02:15Z",
+  "verifiedAt": "2026-10-10T13:05:14.435429+00:00",
+  "artifactSha256": {
+    "styles.css": "29f598dfc7cd4a1f3bb067f0b37c4dcfa961e554c46ea92d9b96efdb435f222f",
+    "main.js": "59884a77e8b31a1e6f2eb88f8367fd24495782c76e18b9709647c844e1df847f",
+    "manifest.json": "97eaee14ae2ef4f84d0c0f758ed42925b1ba1f8f05acbee89762b6e4bd36a87c",
+    "obsidian-periodic-para-1.29.0.zip": "8ed82f5a2a4df603143612b32d2a2832fb0f25b0ebd39c02c2a1bcd18891719e"
+  },
+  "downloadedAssetsMatched": true,
+  "publishedAssetDigestsMatched": true,
+  "unitTestsPassed": 85,
+  "runtimeHost": "macOS Obsidian 1.14.3",
+  "runtimeResults": {
+    "phase": "capture",
+    "taskWriteback": true,
+    "create": true,
+    "capture": true,
+    "snapshot": true,
+    "search": true,
+    "renameReadme": true,
+    "renameFolderName": true,
+    "renameConflict": true,
+    "paraSnapshot": true,
+    "firstTag": true,
+    "rawErrors": [],
+    "errors": [],
+    "windowErrors": [
+      {
+        "message": "ResizeObserver loop completed with undelivered notifications.",
+        "filename": "app://obsidian.md/index.html",
+        "line": 0,
+        "column": 0,
+        "error": "null"
+      },
+      {
+        "message": "ResizeObserver loop completed with undelivered notifications.",
+        "filename": "app://obsidian.md/index.html",
+        "line": 0,
+        "column": 0,
+        "error": "null"
+      },
+      {
+        "message": "ResizeObserver loop completed with undelivered notifications.",
+        "filename": "app://obsidian.md/index.html",
+        "line": 0,
+        "column": 0,
+        "error": "null"
+      },
+      {
+        "message": "ResizeObserver loop completed with undelivered notifications.",
+        "filename": "app://obsidian.md/index.html",
+        "line": 0,
+        "column": 0,
+        "error": "null"
+      },
+      {
+        "message": "ResizeObserver loop completed with undelivered notifications.",
+        "filename": "app://obsidian.md/index.html",
+        "line": 0,
+        "column": 0,
+        "error": "null"
+      },
+      {
+        "message": "ResizeObserver loop completed with undelivered notifications.",
+        "filename": "app://obsidian.md/index.html",
+        "line": 0,
+        "column": 0,
+        "error": "null"
+      },
+      {
+        "message": "ResizeObserver loop completed with undelivered notifications.",
+        "filename": "app://obsidian.md/index.html",
+        "line": 0,
+        "column": 0,
+        "error": "null"
+      },
+      {
+        "message": "ResizeObserver loop completed with undelivered notifications.",
+        "filename": "app://obsidian.md/index.html",
+        "line": 0,
+        "column": 0,
+        "error": "null"
+      },
+      {
+        "message": "ResizeObserver loop completed with undelivered notifications.",
+        "filename": "app://obsidian.md/index.html",
+        "line": 0,
+        "column": 0,
+        "error": "null"
+      }
+    ]
+  },
+  "remoteCITriggered": false,
+  "evidenceDirectory": "/Volumes/T5/personal/obsidian-lifeos/.verify/release-1.29.0"
+}
