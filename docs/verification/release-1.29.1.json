@@ -1,0 +1,62 @@
+{
+  "version": "1.29.1",
+  "baseVersion": "1.29.0",
+  "status": "published-and-download-verified",
+  "verifiedAt": "2026-10-12T13:04:29.965211+08:00",
+  "artifactSha256": {
+    "main.js": "bac59ec8250881b442e9d73593b7b0a30706e9f58926ff15d3991fe9b0968d94",
+    "styles.css": "23882a50c1fb9e44377650eee4b83b3168474816d80d06b451364bd6039a7d2a",
+    "manifest.json": "e99f8da0b0aed1df3a0ee346d9d617b07c99ad36957a1c2d96676a5c5133ccf1",
+    "obsidian-periodic-para-1.29.1.zip": "a406f0a0ca20829d8e6ef37e81204ec20449d6ff714b8154504ad2108fbcb342"
+  },
+  "unitTestsPassed": 90,
+  "desktopHost": "Obsidian 1.14.4 / Dataview 0.5.68",
+  "desktopResults": {
+    "plainThemeDefaults": true,
+    "sharedDefaultSelection": true,
+    "narrowTouchTargets": true,
+    "searchRecovery": true,
+    "keyboardSelection": true,
+    "shortViewportSave": true,
+    "themeNavigation": true,
+    "taskWriteback": true,
+    "captureIdsHiddenWithoutChangingSource": true,
+    "captureReload": true,
+    "errors": []
+  },
+  "androidResults": {
+    "platform": "Android",
+    "environment": "device",
+    "device": "Redmi K30 Ultra / Android 12",
+    "softKeyboardSave": true,
+    "taskCompletionWriteback": true,
+    "completionSurvivesRestart": true,
+    "themeSelectionApplied": true,
+    "pickerFooterAboveKeyboard": true,
+    "fullscreenDescriptionClear": true,
+    "installedArtifactHashes": {
+      "main.js": "bac59ec8250881b442e9d73593b7b0a30706e9f58926ff15d3991fe9b0968d94",
+      "styles.css": "23882a50c1fb9e44377650eee4b83b3168474816d80d06b451364bd6039a7d2a",
+      "manifest.json": "e99f8da0b0aed1df3a0ee346d9d617b07c99ad36957a1c2d96676a5c5133ccf1"
+    }
+  },
+  "mainVault": {
+    "installedBytesMatch": true,
+    "settingsUnchanged": true,
+    "enabled": true,
+    "proEnabled": true,
+    "historyRecords": 6719
+  },
+  "remoteCITriggered": false,
+  "limitations": ["iOS and minimum supported Obsidian version were not tested."],
+  "commit": "11644f14cdcde6c7e6717395e4fa4aaea5a7f427",
+  "sourceInputSha256": "26c443d60d3e94fba702ec6aa10e69ca4c73a483207e180f8c873b91724f0b15",
+  "validUntil": "2026-10-13T05:02:01.170051+00:00",
+  "url": "https://github.com/quanru/obsidian-lifeos/releases/tag/1.29.1",
+  "publishedAt": "2026-10-12T05:03:15Z",
+  "downloadedAssetsMatched": true,
+  "publishedAssetDigestsMatched": true,
+  "tagMatchesCommit": true,
+  "androidLockReleased": true,
+  "previousAndroidVaultRestore": "Not run: another authorized task acquired the device after the test lock released."
+}
