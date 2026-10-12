@@ -117,10 +117,10 @@ export function CaptureSettings({
           m.none
         )}
         {failed ? <p>{m.failed}</p> : missing.length > 0 && <p>{m.missing}</p>}
-        {!settings.usePARANotes && <p>{m.paraOff}</p>}
+        {settings.useThemeNotes === false && <p>{m.themesOff}</p>}
       </div>
       <div className="lifeos-capture-settings-actions">
-        <Button onClick={choose} disabled={!settings.usePARANotes}>
+        <Button onClick={choose} disabled={settings.useThemeNotes === false}>
           {m.choose}
         </Button>
         <Button onClick={() => onChange([])} disabled={!paths.length}>

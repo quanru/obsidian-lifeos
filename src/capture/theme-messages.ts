@@ -5,6 +5,9 @@ const en = {
   search: 'Search themes',
   save: 'Apply',
   cancel: 'Cancel',
+  noResults: 'No matching themes. Try another name or tag.',
+  clearSearch: 'Clear search',
+  loadFailed: 'Could not load themes. Try again; your draft is kept.',
   empty: 'No tagged theme index notes found. Add tags to a theme’s index note first.',
   shared:
     'Some themes share tags. These themes may match together; shared tags are kept when another selected theme needs them.',
@@ -23,12 +26,15 @@ const en = {
 export type ThemeMessages = typeof en;
 const locales: Record<string, ThemeMessages> = {
   'zh-cn': {
+    noResults: '没有匹配的主题，请换个名称或标签搜索。',
+    clearSearch: '清除搜索',
+    loadFailed: '无法加载主题，请重试。草稿内容已保留。',
     associate: '关联主题',
     title: '关联的主题',
     search: '搜索主题',
     save: '应用',
     cancel: '取消',
-    empty: '没有找到带标签的 主题索引笔记，请先给主题的索引笔记添加 tags。',
+    empty: '没有找到带标签的主题索引笔记，请先给主题的索引笔记添加 tags。',
     shared: '部分主题共用标签，可能同时匹配；另一个已选主题需要的标签会保留。',
     changed: '草稿或主题已经变化，请关闭选择器后重新打开。输入内容已保留。',
     open: '打开主题',
@@ -43,12 +49,15 @@ const locales: Record<string, ThemeMessages> = {
     unavailable: '当前 Obsidian 版本无法启用实时预览，仍可使用 Markdown 输入。',
   },
   'zh-tw': {
+    noResults: '沒有符合的主題，請換個名稱或標籤搜尋。',
+    clearSearch: '清除搜尋',
+    loadFailed: '無法載入主題，請重試。草稿內容已保留。',
     associate: '關聯主題',
     title: '關聯的主題',
     search: '搜尋主題',
     save: '套用',
     cancel: '取消',
-    empty: '沒有找到帶標籤的 主題索引筆記，請先為主題的索引筆記新增 tags。',
+    empty: '沒有找到帶標籤的主題索引筆記，請先為主題的索引筆記新增 tags。',
     shared: '部分主題共用標籤，可能同時匹配；另一個已選主題需要的標籤會保留。',
     changed: '草稿或主題已經變更，請關閉選擇器後重新開啟。輸入內容已保留。',
     open: '開啟主題',
@@ -63,6 +72,9 @@ const locales: Record<string, ThemeMessages> = {
     unavailable: '目前 Obsidian 版本無法啟用即時預覽，仍可使用 Markdown 輸入。',
   },
   de: {
+    noResults: 'Keine passenden Themen. Suche nach einem anderen Namen oder Tag.',
+    clearSearch: 'Suche löschen',
+    loadFailed: 'Themen konnten nicht geladen werden. Versuche es erneut; dein Entwurf bleibt erhalten.',
     associate: 'Themen zuordnen',
     title: 'Zugeordnete Themen',
     search: 'Themen suchen',
@@ -84,6 +96,9 @@ const locales: Record<string, ThemeMessages> = {
     unavailable: 'Live-Vorschau ist nicht verfügbar. Markdown-Eingabe bleibt möglich.',
   },
   es: {
+    noResults: 'No hay temas coincidentes. Prueba otro nombre o etiqueta.',
+    clearSearch: 'Borrar búsqueda',
+    loadFailed: 'No se pudieron cargar los temas. Inténtalo de nuevo; tu borrador se conserva.',
     associate: 'Asociar temas',
     title: 'Temas asociados',
     search: 'Buscar temas',
@@ -105,6 +120,9 @@ const locales: Record<string, ThemeMessages> = {
     unavailable: 'La vista previa en vivo no está disponible. Puedes escribir Markdown.',
   },
   fr: {
+    noResults: 'Aucun thème correspondant. Essayez un autre nom ou une autre étiquette.',
+    clearSearch: 'Effacer la recherche',
+    loadFailed: 'Impossible de charger les thèmes. Réessayez ; votre brouillon est conservé.',
     associate: 'Associer des thèmes',
     title: 'Thèmes associés',
     search: 'Rechercher des thèmes',
@@ -126,6 +144,9 @@ const locales: Record<string, ThemeMessages> = {
     unavailable: 'L’aperçu en direct est indisponible. La saisie Markdown reste possible.',
   },
   pt: {
+    noResults: 'Nenhum tema correspondente. Tente outro nome ou etiqueta.',
+    clearSearch: 'Limpar busca',
+    loadFailed: 'Não foi possível carregar os temas. Tente novamente; seu rascunho foi mantido.',
     associate: 'Associar temas',
     title: 'Temas associados',
     search: 'Buscar temas',
@@ -147,6 +168,9 @@ const locales: Record<string, ThemeMessages> = {
     unavailable: 'A prévia ao vivo não está disponível. A entrada Markdown continua disponível.',
   },
   ja: {
+    noResults: '一致するテーマがありません。別の名前やタグで検索してください。',
+    clearSearch: '検索をクリア',
+    loadFailed: 'テーマを読み込めませんでした。再試行してください。下書きは保持されています。',
     associate: 'テーマを関連付け',
     title: '関連テーマ',
     search: 'テーマを検索',
@@ -168,6 +192,9 @@ const locales: Record<string, ThemeMessages> = {
     unavailable: 'ライブプレビューを利用できません。Markdown 入力は利用できます。',
   },
   ko: {
+    noResults: '일치하는 주제가 없습니다. 다른 이름이나 태그로 검색하세요.',
+    clearSearch: '검색 지우기',
+    loadFailed: '주제를 불러오지 못했습니다. 다시 시도하세요. 초안은 유지됩니다.',
     associate: '주제 연결',
     title: '연결된 주제',
     search: '주제 검색',
@@ -188,6 +215,9 @@ const locales: Record<string, ThemeMessages> = {
     unavailable: '라이브 미리보기를 사용할 수 없습니다. Markdown 입력은 가능합니다.',
   },
   ar: {
+    noResults: 'لا توجد مواضيع مطابقة. جرّب اسمًا أو وسمًا آخر.',
+    clearSearch: 'مسح البحث',
+    loadFailed: 'تعذر تحميل المواضيع. حاول مجددًا؛ المسودة محفوظة.',
     associate: 'ربط المواضيع',
     title: 'المواضيع المرتبطة',
     search: 'البحث عن مواضيع',

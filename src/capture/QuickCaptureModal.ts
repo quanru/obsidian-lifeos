@@ -15,6 +15,7 @@ import { CaptureRepository } from './repository';
 import { captureThemes } from './theme-catalog';
 import type { CaptureTheme } from './theme-model';
 import './index.less';
+import './responsive.less';
 
 export class QuickCaptureModal extends Modal {
   private composer!: CaptureComposer;
@@ -67,7 +68,7 @@ export class QuickCaptureModal extends Modal {
       cls: 'lifeos-quick-capture-description',
       text: this.m.description,
     });
-    const fullscreen = this.contentEl.createEl('button', {
+    const fullscreen = this.modalEl.createEl('button', {
       cls: 'lifeos-capture-fullscreen',
       attr: { 'aria-label': this.m.fullscreen, title: this.m.fullscreen },
     });

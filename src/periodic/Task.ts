@@ -1,7 +1,8 @@
-import { themeRowFilter } from '../theme/query-filter';
 import type { App, MarkdownPostProcessorContext } from 'obsidian';
 import type { TaskResult } from 'obsidian-dataview/lib/api/plugin-api';
+import { themeRowFilter } from '../theme/query-filter';
 import type { PluginSettings, TaskConditionType } from '../type';
+import { presentCaptureTask } from './task-presentation';
 
 import { moment } from 'obsidian';
 import type { STask } from 'obsidian-dataview';
@@ -56,7 +57,7 @@ export class Task {
           )
           .sort((t: STask) => t.completion, 'asc');
 
-        await dataview.taskList(tasks, false, div, component, filename);
+        await dataview.taskList(tasks.map(presentCaptureTask), false, div, component, filename);
       },
       this.locale,
     );
@@ -99,7 +100,7 @@ export class Task {
           tasks = [...dailyTasks, ...nonDailyTasks];
         }
 
-        await dataview.taskList(tasks, false, div, component, filename);
+        await dataview.taskList(tasks.map(presentCaptureTask), false, div, component, filename);
       },
       this.locale,
     );
@@ -144,7 +145,7 @@ SORT status ASC
           tasks.map((task: STask) => task.path),
           filepath,
         );
-        await dataview.taskList(tasks.filter(allowed), false, div, component, filepath);
+        await dataview.taskList(tasks.filter(allowed).map(presentCaptureTask), false, div, component, filepath);
       },
       this.locale,
     );

@@ -16,6 +16,12 @@ Open the LifeOS note creation panel and choose Theme notes. Enter a tag, folder 
 
 Use **Associate themes** in quick capture, select a theme, enter text and save. Default themes also work in plain mode. Selecting a theme adds its first tag; a record matching any of its tags is associated. Existing multi-tag records are preserved. Shared tags can associate several themes; the picker warns about this and preserves tags needed by another selected theme.
 
+Configure default themes in Settings → Quick capture → Choose themes. Plain theme mode supports this without PARA. Defaults store individual note paths, so themes sharing tags can be selected independently; records still match tags and may show multiple associated themes.
+
+![Default themes in plain mode (Simplified Chinese interface)](assets/theme-notes/defaults-zh.png)
+
+When a search has no matches, Clear search restores the list while keeping selections. Missing tags are reported only when there are no tagged theme indexes. Loading failures offer a retry and keep the draft. Keyboard selection keeps focus on the current checkbox.
+
 ![Theme picker](assets/theme-notes/picker-zh.png)
 
 The verified Chinese picker uses the same selection workflow. The built-in template includes TaskListByTag, BulletListByTag, FileListByTag and ThemeListByTag blocks. ThemeListByFolder lists the configured theme directory. Lists support search and refresh after index changes. Checking a task writes back to the source note. Daily task and record queries use the same heading boundaries as quick capture, excluding habits and unrelated subsections. Template and theme-index notes are excluded from task and record results.
@@ -23,6 +29,10 @@ The verified Chinese picker uses the same selection workflow. The built-in templ
 ![Tasks, records and files](assets/theme-notes/note-zh.png)
 
 Quick capture, theme creation and native theme lists work without Dataview. Task, record and file query blocks still require Dataview. The screenshots use synthetic example content in an isolated Obsidian vault.
+
+## Using other LifeOS plugins alongside the open-source plugin
+
+When another plugin already owns the `LifeOS` or `PeriodicPARA` query language, the open-source plugin keeps those entries intact. Use `LifeOSOpen` as the code-block language to explicitly render an open-source query; query names remain the same. Templater may use `<% LifeOSOpen.Theme.snapshot() %>`. With only the open-source plugin installed, the existing `LifeOS` and `PeriodicPARA` entries remain compatible.
 
 ## Snapshots, renames and examples
 

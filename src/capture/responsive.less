@@ -1,0 +1,126 @@
+.lifeos-quick-capture-modal {
+  position: relative;
+}
+
+.is-mobile .modal-container:has(.lifeos-theme-picker) {
+  height: calc(100dvh - var(--keyboard-height, 0px));
+}
+
+.is-mobile .lifeos-theme-picker {
+  max-height: calc(100dvh - var(--keyboard-height, 0px) - 32px);
+}
+
+.lifeos-theme-picker {
+  max-height: calc(100dvh - 32px);
+
+  .modal-content {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: auto;
+  }
+
+  .lifeos-theme-options {
+    min-height: 0;
+    flex: 1;
+  }
+
+  .lifeos-theme-footer,
+  input[type='search'] {
+    flex: none;
+  }
+
+  label,
+  label span {
+    min-width: 0;
+  }
+
+  input[type='checkbox'],
+  .lifeos-theme-row > button {
+    flex: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .lifeos-quick-capture-modal,
+  .lifeos-theme-picker {
+    width: calc(100vw - 16px);
+    max-width: calc(100vw - 16px);
+    max-height: calc(100dvh - 16px);
+    padding: 16px;
+  }
+
+  .lifeos-quick-capture-modal {
+    height: min(820px, calc(100dvh - 16px));
+
+    .lifeos-capture-fullscreen {
+      top: 12px;
+      right: 64px;
+      min-width: 44px;
+      min-height: 44px;
+    }
+
+    &[dir='rtl'] .lifeos-capture-fullscreen {
+      right: auto;
+      left: 64px;
+    }
+
+    .lifeos-capture-toolbar button,
+    .lifeos-capture-actions button,
+    .lifeos-capture-history-header button {
+      min-width: 44px;
+      min-height: 44px;
+    }
+
+    .lifeos-capture-actions {
+      flex-wrap: wrap;
+    }
+
+    .lifeos-capture-card-header .lifeos-capture-themes button {
+      min-height: 36px;
+    }
+  }
+
+  .lifeos-theme-picker {
+    .lifeos-theme-row {
+      padding: 8px 0;
+    }
+
+    label {
+      min-height: 44px;
+    }
+
+    button {
+      min-width: 44px;
+      min-height: 44px;
+    }
+  }
+}
+
+// Keep saving and theme selection reachable when the keyboard reduces the viewport.
+@media (max-height: 540px) {
+  .lifeos-quick-capture-modal {
+    height: calc(100dvh - 16px);
+    max-height: calc(100dvh - 16px);
+
+    .modal-content {
+      overflow: auto;
+    }
+
+    .lifeos-capture-list {
+      flex: none;
+      overflow: visible;
+    }
+
+    .lifeos-capture-native,
+    .lifeos-capture-native .workspace-leaf,
+    .lifeos-capture-native .cm-editor,
+    .lifeos-capture-native .cm-scroller {
+      min-height: 72px;
+    }
+
+    .lifeos-capture-native .cm-sizer {
+      min-height: 72px !important;
+    }
+  }
+}

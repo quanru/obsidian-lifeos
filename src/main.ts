@@ -1,11 +1,12 @@
-import { Theme } from './theme/Theme';
-import { ThemeRenameSync } from './theme/rename';
-import { migrateThemeSettings } from './theme/config';
 import { Notice, Platform, Plugin, TFile, setIcon } from 'obsidian';
 import type { MarkdownPostProcessorContext, Menu, TAbstractFile, WorkspaceLeaf } from 'obsidian';
 import type { DataviewApi } from 'obsidian-dataview';
 import { dataviewState, waitForDataview } from './dependencies/dataview';
 import { dependencyMessages } from './dependencies/messages';
+import { GlobalHelperPublisher, registerQueryLanguages } from './integration';
+import { Theme } from './theme/Theme';
+import { migrateThemeSettings } from './theme/config';
+import { ThemeRenameSync } from './theme/rename';
 import './dependencies/index.less';
 
 import dayjs from 'dayjs';
@@ -21,8 +22,8 @@ import { DailyRecord } from './periodic/DailyRecord';
 import { Date as PeriodicDate } from './periodic/Date';
 import { File } from './periodic/File';
 import { Task } from './periodic/Task';
-import { LogLevel, type PluginSettings } from './type';
-import { createPeriodicFile, logMessage, openOfficialSite, renderError } from './util';
+import type { PluginSettings } from './type';
+import { createPeriodicFile, openOfficialSite, renderError } from './util';
 import { CREATE_NOTE, CreateNoteView } from './view/CreateNote';
 import { SettingTabView } from './view/SettingTab';
 import { DEFAULT_SETTINGS } from './view/SettingTab';
@@ -66,6 +67,9 @@ export default class LifeOS extends Plugin {
   private isFreshInstall = false;
   private onboardingModal?: OnboardingModal;
   private quickCaptureModal?: QuickCaptureModal;
+  private globalHelpers = new GlobalHelperPublisher(
+    window as unknown as { LifeOSOpen?: unknown; LifeOS?: unknown; PeriodicPARA?: unknown },
+  );
 
   getDataviewAPI(): Promise<DataviewApi> {
     return waitForDataview(this.app, () => this.dataviewMessage());
@@ -77,6 +81,7 @@ export default class LifeOS extends Plugin {
 
   async onload() {
     await this.loadSettings();
+    this.register(() => this.globalHelpers.clear());
     this.registerView(CREATE_NOTE, (leaf) => {
       return new CreateNoteView(leaf, this.settings, this.locale, this);
     });
@@ -111,13 +116,9 @@ export default class LifeOS extends Plugin {
     this.loadGlobalHelpers();
     this.loadViews();
 
-    try {
-      this.registerMarkdownCodeBlockProcessor('LifeOS', this.markdownCodeBlockProcessor);
-      this.registerMarkdownCodeBlockProcessor('PeriodicPARA', this.markdownCodeBlockProcessor); // for backward compatibility
-    } catch (error) {
-      logMessage(error, LogLevel.error);
-      return;
-    }
+    registerQueryLanguages((language) =>
+      this.registerMarkdownCodeBlockProcessor(language, this.markdownCodeBlockProcessor),
+    );
     this.loadDailyRecord();
     this.registerFileMenu();
     const themeRename = new ThemeRenameSync(
@@ -334,8 +335,7 @@ export default class LifeOS extends Plugin {
       Date: this.date,
     };
 
-    (window as any).PeriodicPARA = helpers;
-    (window as any).LifeOS = helpers;
+    this.globalHelpers.publish(helpers);
   }
 
   initCreateNoteView = async () => {

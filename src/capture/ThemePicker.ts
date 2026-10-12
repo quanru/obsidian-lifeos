@@ -1,4 +1,5 @@
 import { type App, Modal, Notice } from 'obsidian';
+import { dependencyMessages } from '../dependencies/messages';
 import type { PluginSettings } from '../type';
 import { captureThemes } from './theme-catalog';
 import { type ThemeMessages, themeMessages } from './theme-messages';
@@ -33,6 +34,11 @@ export class ThemePicker extends Modal {
     this.modalEl.dir = this.locale.startsWith('ar') ? 'rtl' : 'ltr';
     this.setTitle(this.defaultSelection?.title ?? this.m.title);
     this.text = this.read();
+    await this.load();
+  }
+  private async load(): Promise<void> {
+    this.contentEl.empty();
+    this.contentEl.createEl('p', { text: this.m.loading, attr: { role: 'status' } });
     try {
       this.themes = await captureThemes(this.app, this.settings);
       if (!this.opened) return;
@@ -42,7 +48,11 @@ export class ThemePicker extends Modal {
       this.selected = new Set(this.original);
       this.render();
     } catch {
-      if (this.opened) new Notice(this.m.changed);
+      if (!this.opened) return;
+      this.contentEl.empty();
+      this.contentEl.createEl('p', { text: this.m.loadFailed, attr: { role: 'status' } });
+      const retry = this.contentEl.createEl('button', { text: dependencyMessages(this.locale).retry });
+      retry.onclick = () => void this.load();
     }
   }
   private render(): void {
@@ -62,7 +72,8 @@ export class ThemePicker extends Modal {
     const list = this.contentEl.createDiv('lifeos-theme-options');
     const render = () => {
       list.empty();
-      const query = search.value.toLocaleLowerCase();
+      const query = search.value.trim().toLocaleLowerCase();
+      const checks = new Map<string, HTMLInputElement>();
       const visible = this.themes.filter((theme) =>
         `${theme.name} ${theme.tags.join(' ')} ${this.m[theme.kind]}`.toLocaleLowerCase().includes(query),
       );
@@ -71,12 +82,18 @@ export class ThemePicker extends Modal {
         const label = row.createEl('label');
         const check = label.createEl('input', { type: 'checkbox' });
         check.checked = this.selected.has(theme.path);
+        checks.set(theme.path, check);
         check.onchange = () => {
           if (check.checked) this.selected.add(theme.path);
           else this.selected.delete(theme.path);
-          const effective = applyThemeSelection(this.text, this.themes, this.original, [...this.selected]);
-          this.selected = new Set(matchedThemes(effective, this.themes).map((item) => item.path));
-          render();
+          if (!this.defaultSelection) {
+            const effective = applyThemeSelection(this.text, this.themes, this.original, [...this.selected]);
+            this.selected = new Set(matchedThemes(effective, this.themes).map((item) => item.path));
+          }
+          // Update shared-tag matches without replacing the focused checkbox.
+          checks.forEach((input, path) => {
+            input.checked = this.selected.has(path);
+          });
         };
         const info = label.createSpan();
         info.createEl('strong', {
@@ -98,7 +115,20 @@ export class ThemePicker extends Modal {
             .catch(() => new Notice(this.m.changed));
         };
       }
-      if (!visible.length) list.createEl('p', { text: this.m.empty });
+      if (!visible.length) {
+        list.createEl('p', {
+          text: this.themes.length ? this.m.noResults : this.m.empty,
+          attr: { role: 'status' },
+        });
+        if (query && this.themes.length) {
+          const clear = list.createEl('button', { text: this.m.clearSearch });
+          clear.onclick = () => {
+            search.value = '';
+            render();
+            search.focus();
+          };
+        }
+      }
     };
     search.oninput = render;
     render();
