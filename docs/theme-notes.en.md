@@ -24,11 +24,47 @@ When a search has no matches, Clear search restores the list while keeping selec
 
 ![Theme picker](assets/theme-notes/picker-zh.png)
 
-The verified Chinese picker uses the same selection workflow. The built-in template includes TaskListByTag, BulletListByTag, FileListByTag and ThemeListByTag blocks. ThemeListByFolder lists the configured theme directory. Lists support search and refresh after index changes. Checking a task writes back to the source note. Daily task and record queries use the same heading boundaries as quick capture, excluding habits and unrelated subsections. Template and theme-index notes are excluded from task and record results.
+The verified Chinese picker uses the same selection workflow. The built-in template includes TaskOpenListByTag, BulletListByTag, FileListByTag and ThemeListByTag blocks. ThemeListByFolder lists the configured theme directory. Lists support search and refresh after index changes. Checking a task writes back to the source note. Daily task and record queries use the same heading boundaries as quick capture, excluding habits and unrelated subsections. Template and theme-index notes are excluded from task and record results.
 
-![Tasks, records and files](assets/theme-notes/note-zh.png)
+### Theme overview (next-release candidate)
+
+New built-in theme templates use `TaskOpenListByTag` for unfinished tasks, alongside records and resources. Checking a task updates its source note and removes it from the open list. Record source links and resource links open the original notes.
+
+![Theme overview with English plugin content](assets/theme-overview/overview-en.png)
+
+Each section displays its result count. Expand **Inclusion rules** to inspect matching tags and exclusions. Empty sections explain how to add content. Resources refresh after index changes too. Queries opened while Dataview is indexing recover automatically when the index is ready.
+
+Task and record items match complete tags or descendant tags: `#learn/typescript` does not match `#learn/typescript-extra`. Resource results exclude periodic notes, templates, the current note and theme indexes.
+
+Existing notes and custom templates are preserved. To show unfinished tasks in an existing overview, replace `TaskListByTag` with `TaskOpenListByTag` inside a `LifeOSOpen` code block. The old query continues to include completed tasks. The new query is unreleased and requires a matching candidate build. The screenshot shows English plugin content in a Chinese-language Obsidian host.
 
 Quick capture, theme creation and native theme lists work without Dataview. Task, record and file query blocks still require Dataview. The screenshots use synthetic example content in an isolated Obsidian vault.
+
+The quick capture composer shows the associated theme name beside the record/task switch. When multiple themes match, it shows the first name and an additional count; the tooltip and accessible label include all names. Manual tag edits update this summary, and saved-record editing uses the same behavior. Shared tags may match multiple themes.
+
+## Upgrade existing theme notes and templates (next-release candidate)
+
+Open a theme index or a configured theme template, then run **LifeOS: Upgrade theme queries** from the command palette or choose **Upgrade theme queries** in the file menu. Plain themes and PARA indexes are supported. Updating the plugin does not rewrite existing notes automatically.
+
+Review each change with its line number and before/after text. Select only the blocks you want to upgrade, then choose **Apply selected changes**. `TaskListByTag` becomes `TaskOpenListByTag`; compatible standard theme queries use `LifeOSOpen` so they can coexist with Pro.
+
+![Selective upgrade preview in English](assets/theme-upgrade/preview-en.png)
+
+Custom query parameters, other code blocks, handwritten text and headings are preserved. If the note changes after preview, applying stops and presents a fresh preview for confirmation. Already upgraded blocks are not duplicated. Leave a task block unselected if you want to retain its completed tasks.
+
+## Dataview and empty results
+
+Task, record and resource queries still require Dataview. Quick capture, theme creation and native theme lists do not. Installing LifeOS does not install Dataview automatically.
+
+| State               | Next step                                                                        |
+| ------------------- | -------------------------------------------------------------------------------- |
+| Dataview missing    | Open community plugin settings, find Dataview, then install and enable it        |
+| Dataview disabled   | Enable it in community plugin settings                                           |
+| Indexing            | Results appear automatically when the index is ready; Retry is also available    |
+| Missing theme tags  | Choose Edit theme tags and add valid tags to the note properties                 |
+| No matching results | Expand Inclusion rules and check item tags, daily headings and completion status |
+
+The Chinese and English plugin interfaces use the same workflow; screenshots were taken in a Chinese-language Obsidian host.
 
 ## Using other LifeOS plugins alongside the open-source plugin
 
@@ -41,5 +77,7 @@ The plain-theme daily template uses `{{snapshot:Theme}}`. LifeOS replaces it wit
 Optional name synchronization updates a matching folder-name index or Folder.README.md after a folder rename; README.md stays unchanged. In folder-name mode, renaming the index also renames its folder. Collisions are reported without overwriting the destination; the user's initial rename is retained.
 
 Each language in the [open-source example repository](https://github.com/quanru/obsidian-example-lifeos) includes LifeOS Vault, LifeOS Blank Vault, LifeOS Theme Vault and LifeOS Theme Blank Vault. The theme example contains linked daily records, tasks, reference notes and a tagged habit entry to demonstrate filtering. Blank vaults contain only guides, templates and settings. Install the updated open-source LifeOS plugin and Dataview separately; no plugin binaries are bundled. The companion release is Examples 1.20.0; use LifeOS 1.29.0 or newer.
+
+The next-release candidate examples add **Learn TypeScript** and **Launch a personal site** to the Chinese and English populated `LifeOS Theme Vault` folders in the independent example repository. Open **Theme overview walkthrough** to test task writeback, record sources and resources. Blank vaults stay empty. These new examples are not yet included in public download packages.
 
 [中文指南](theme-notes.md)

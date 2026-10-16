@@ -1,0 +1,23 @@
+.lifeos-quick-capture-modal .lifeos-capture-theme-choice {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  max-width: min(220px, 32%);
+  color: var(--text-muted);
+
+  svg {
+    flex: none;
+  }
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &.is-associated {
+    color: var(--text-normal);
+    background: color-mix(in srgb, var(--interactive-accent) 10%, transparent);
+  }
+}

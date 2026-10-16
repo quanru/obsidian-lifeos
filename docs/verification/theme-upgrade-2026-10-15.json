@@ -1,0 +1,37 @@
+{
+  "passed": true,
+  "pluginSha256": "4d73c5024f8e1be8db0a61916ab8ec8d5c35b3ab8acaf344dad8825d393723e0",
+  "environment": "isolated Obsidian 1.14.4, public Dataview 0.5.68, installed Pro 3.1.13 binaries without configuration",
+  "claims": [
+    "real missing Dataview guidance and settings navigation",
+    "selective plain-theme upgrade preserves handwritten text and custom query",
+    "stale preview refuses overwrite and refreshes for confirmation",
+    "repeat upgrade is a no-op",
+    "configured custom template preserves layout and prose",
+    "installed but disabled Dataview distinguished",
+    "missing tags differentiated and edit action opens source",
+    "upgraded standard queries render after enabling dependency",
+    "PARA project upgrade and open-task query",
+    "real Pro 3.1.13 loads first; OSS loads and LifeOSOpen renders; no paid activation used",
+    "English upgrade preview and narrow-window controls"
+  ],
+  "coexist": {
+    "proLoaded": true,
+    "ossLoaded": true,
+    "ownerExisted": true,
+    "ownerPreserved": true,
+    "independent": true
+  },
+  "unitTests": 101,
+  "exampleFilesChecked": 942,
+  "screenshots": [
+    "/Volumes/T5/personal/studio_4/.verify/oss-upgrade-20261015/upgrade-preview.png",
+    "/Volumes/T5/personal/studio_4/.verify/oss-upgrade-20261015/upgrade-en.png",
+    "/Volumes/T5/personal/studio_4/.verify/oss-upgrade-20261015/upgrade-narrow.png",
+    "/Volumes/T5/personal/studio_4/.verify/oss-upgrade-20261015/upgrade-conflict.png",
+    "/Volumes/T5/personal/studio_4/.verify/oss-upgrade-20261015/dataview-missing.png",
+    "/Volumes/T5/personal/studio_4/.verify/oss-upgrade-20261015/dataview-disabled.png",
+    "/Volumes/T5/personal/studio_4/.verify/oss-upgrade-20261015/missing-tags.png",
+    "/Volumes/T5/personal/studio_4/.verify/oss-upgrade-20261015/pro-coexist.png"
+  ]
+}

@@ -14,9 +14,12 @@ import { getI18n } from '../i18n';
 import type { PluginSettings } from '../type';
 import { productMessages } from './messages';
 import './index.less';
+import { upgradeValue } from './upgrade-value';
+import './upgrade-value.less';
 
 export function ProductSettings({ app, settings, locale }: { app: App; settings: PluginSettings; locale: string }) {
   const m = productMessages(locale);
+  const value = upgradeValue(locale);
   const t = getI18n(locale);
   const language = locale.startsWith('zh') ? '/zh' : '';
   const comparison = `https://lifeos.md${language}/plugin/lifeos/pricing?source=lifeos-oss-settings`;
@@ -41,7 +44,7 @@ export function ProductSettings({ app, settings, locale }: { app: App; settings:
     <div className="lifeos-product-settings" dir={locale.startsWith('ar') ? 'rtl' : 'ltr'}>
       <header className="lifeos-product-heading">
         <h3>{m.freeTitle}</h3>
-        <p>{m.freeBody}</p>
+        <p>{value.free}</p>
       </header>
       <div className="lifeos-product-shortcuts">
         <button type="button" onClick={() => run('periodic-para-open-today-records')}>
@@ -60,7 +63,22 @@ export function ProductSettings({ app, settings, locale }: { app: App; settings:
           </span>
           <h3>LifeOS Pro</h3>
         </div>
-        <p>{m.proBody}</p>
+        <p>{value.intro}</p>
+        <details className="lifeos-upgrade-value">
+          <summary>{value.title}</summary>
+          {value.scenarios.map(([title, free, pro]) => (
+            <section key={title}>
+              <h4>{title}</h4>
+              <p>
+                <strong>{value.freeLabel}</strong> · {free}
+              </p>
+              <p>
+                <strong>{value.proLabel}</strong> · {pro}
+              </p>
+            </section>
+          ))}
+          <p className="lifeos-product-caption">{value.boundary}</p>
+        </details>
         <p className="lifeos-product-caption">{m.independent}</p>
         <a className="lifeos-product-link" href={comparison} target="_blank" rel="noopener noreferrer">
           <span>{m.compare}</span>

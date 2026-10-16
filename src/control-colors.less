@@ -1,0 +1,46 @@
+// Independent open-source host styling. Native Obsidian controls and Ant Design
+// controls share the same restrained selection and action treatment.
+:where(
+  .lifeos,
+  .periodic-para-create-note,
+  .lifeos-quick-capture-modal,
+  .lifeos-theme-picker,
+  .lifeos-onboarding-modal,
+  .lifeos-product-settings
+) {
+  --lifeos-action-background: var(--background-modifier-hover);
+  --lifeos-action-hover: var(--background-modifier-hover);
+  --lifeos-action-text: var(--text-normal);
+}
+@supports (background: color-mix(in srgb, black 10%, white)) {
+  :where(
+    .lifeos,
+    .periodic-para-create-note,
+    .lifeos-quick-capture-modal,
+    .lifeos-theme-picker,
+    .lifeos-onboarding-modal,
+    .lifeos-product-settings
+  ) {
+    --lifeos-action-background: color-mix(in srgb, var(--interactive-accent) 10%, transparent);
+    --lifeos-action-hover: color-mix(in srgb, var(--interactive-accent) 16%, transparent);
+    --lifeos-action-text: color-mix(in srgb, var(--text-accent) 55%, var(--text-normal));
+  }
+}
+:is(.lifeos-quick-capture-modal, .lifeos-theme-picker, .lifeos-onboarding-modal, .lifeos-product-settings)
+  button.mod-cta,
+.periodic-para-create-note .ant-btn-primary,
+.periodic-para-create-note .ant-picker-cell-selected .ant-picker-cell-inner,
+.periodic-para-create-note .cell-container .label:is(.holiday, .workday),
+.lifeos-quick-capture-modal .lifeos-capture-kind .lifeos-capture-tool[aria-pressed='true'] {
+  background: var(--lifeos-action-background) !important;
+  color: var(--lifeos-action-text) !important;
+  box-shadow: none;
+}
+:is(.lifeos-quick-capture-modal, .lifeos-theme-picker, .lifeos-onboarding-modal, .lifeos-product-settings)
+  button.mod-cta:hover:not(:disabled),
+.periodic-para-create-note .ant-btn-primary:hover:not(:disabled) {
+  background: var(--lifeos-action-hover) !important;
+}
+.periodic-para-create-note .ant-picker-cell-selected .ant-picker-cell-inner .cell-container .chinese-cal {
+  color: var(--text-muted);
+}

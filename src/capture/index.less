@@ -11,17 +11,48 @@
     margin: 0 34px 16px 0;
     font-size: var(--font-ui-small);
   }
-  .lifeos-capture-fullscreen {
+  .lifeos-capture-header-actions {
     position: absolute;
-    right: 44px;
-    top: 15px;
-    padding: 6px;
+    inset-inline-end: 12px;
+    top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .modal-title {
+    padding-inline-end: 80px;
+  }
+  .lifeos-capture-header-actions > * {
+    position: static;
+    inset: auto;
+    transform: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    flex: none;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-s);
+    background: transparent;
+    box-shadow: none;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+  .lifeos-capture-header-actions > :hover {
+    background: var(--background-modifier-hover);
+    color: var(--text-normal);
+  }
+  .lifeos-capture-header-actions svg {
+    width: 18px;
+    height: 18px;
   }
   &[dir='rtl'] {
-    .lifeos-capture-fullscreen {
-      right: auto;
-      left: 44px;
-    }
     .lifeos-quick-capture-description {
       margin: 0 0 16px 34px;
     }
@@ -63,9 +94,10 @@
     display: flex;
     gap: 2px;
   }
-  [aria-pressed='true'] {
-    color: var(--text-on-accent);
-    background: var(--interactive-accent);
+  .lifeos-capture-kind .lifeos-capture-tool[aria-pressed='true'] {
+    color: var(--text-accent);
+    background: var(--background-modifier-hover);
+    background: color-mix(in srgb, var(--interactive-accent) 12%, transparent);
   }
   .lifeos-capture-spacer {
     flex: 1;

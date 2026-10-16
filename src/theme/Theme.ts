@@ -1,8 +1,8 @@
-import { MarkdownRenderer, type App, type MarkdownPostProcessorContext } from 'obsidian';
-import type { PluginSettings } from '../type';
-import { renderTaskQuery } from '../component/TaskQuery';
-import { themeIndexNotes, themeSnapshot } from './catalog';
+import { type App, type MarkdownPostProcessorContext, MarkdownRenderer, TFile } from 'obsidian';
 import { themeTags } from '../capture/theme-model';
+import { renderTaskQuery } from '../component/TaskQuery';
+import type { PluginSettings } from '../type';
+import { themeIndexNotes, themeSnapshot } from './catalog';
 import { themeSettingsMessages } from './messages';
 export class Theme {
   constructor(
@@ -20,8 +20,9 @@ export class Theme {
       ctx,
       async (container, component) => {
         const m = themeSettingsMessages(this.locale);
-        const file = this.app.vault.getFileByPath(ctx.sourcePath);
-        const tags = byTag && file ? themeTags(this.app.metadataCache.getFileCache(file)?.frontmatter?.tags) : [];
+        const file = this.app.vault.getAbstractFileByPath(ctx.sourcePath);
+        const tags =
+          byTag && file instanceof TFile ? themeTags(this.app.metadataCache.getFileCache(file)?.frontmatter?.tags) : [];
         const notes =
           byTag && !tags.length
             ? []

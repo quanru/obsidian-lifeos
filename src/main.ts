@@ -1,6 +1,9 @@
+import { openCommunityPluginSettings, queryHelpMessages } from './dependencies/query-help';
+import { registerThemeUpgrade } from './theme/ThemeUpgradeModal';
 import { Notice, Platform, Plugin, TFile, setIcon } from 'obsidian';
 import type { MarkdownPostProcessorContext, Menu, TAbstractFile, WorkspaceLeaf } from 'obsidian';
 import type { DataviewApi } from 'obsidian-dataview';
+import { QueryIndexWait } from './dependencies/QueryIndexWait';
 import { dataviewState, waitForDataview } from './dependencies/dataview';
 import { dependencyMessages } from './dependencies/messages';
 import { GlobalHelperPublisher, registerQueryLanguages } from './integration';
@@ -109,6 +112,7 @@ export default class LifeOS extends Plugin {
       callback: () => openOfficialSite(this.getCurrentLocaleKey()),
     });
     this.registerWorkspaceCommands();
+    registerThemeUpgrade(this);
     this.addRibbonIcon('message-square-text', getFeatureI18n(this.getCurrentLocaleKey()).quickRecordTitle, () =>
       this.openQuickCapture('record'),
     );
@@ -218,6 +222,7 @@ export default class LifeOS extends Plugin {
       BulletRecordListByTime: this.bullet.listByTime,
       // views by tag -> topic context -> para
       TaskListByTag: this.task.listByTag,
+      TaskOpenListByTag: this.task.listByTag,
       BulletListByTag: this.bullet.listByTag,
       FileListByTag: this.file.listByTag,
       ProjectListByTag: this.project.listByTag,
@@ -273,11 +278,18 @@ export default class LifeOS extends Plugin {
     if (!view.endsWith('ByFolder') && view !== 'ThemeListByTag' && dataviewState(this.app) !== 'ready') {
       const container = el.createDiv({ cls: 'lifeos-dependency-message' });
       container.createEl('p', { text: this.dataviewMessage() });
+      const state = dataviewState(this.app);
+      if (state === 'missing' || state === 'disabled') {
+        const settings = container.createEl('button', { text: queryHelpMessages(localeKey).plugins });
+        settings.onclick = () => openCommunityPluginSettings(this.app, localeKey);
+      }
       const button = container.createEl('button', { text: dependencyMessages(localeKey).retry });
-      button.addEventListener('click', () => {
+      const waiting = new QueryIndexWait(container, this.app, () => {
         el.empty();
         void this.markdownCodeBlockProcessor(source, el, ctx);
       });
+      button.addEventListener('click', waiting.retry);
+      ctx.addChild(waiting);
       return;
     }
     return Promise.resolve(callback(view, el, ctx)).catch(() => {

@@ -2,21 +2,21 @@
   "en": {
     "missing": "Dataview is not installed. Install it in Settings → Community plugins, then enable it.",
     "disabled": "Dataview is disabled. Enable it in Settings → Community plugins.",
-    "indexing": "Dataview is still preparing its index. Wait a moment, then retry.",
+    "indexing": "Dataview is preparing its index. Results will appear automatically when it is ready.",
     "ready": "The query could not be rendered. Check the view name and Dataview settings, then retry.",
     "retry": "Retry"
   },
   "zh-cn": {
     "missing": "尚未安装 Dataview。请在“设置 → 第三方插件”中安装并启用。",
     "disabled": "Dataview 尚未启用。请在“设置 → 第三方插件”中启用。",
-    "indexing": "Dataview 正在准备索引，请稍后重试。",
+    "indexing": "Dataview 正在准备索引，完成后会自动显示查询结果。",
     "ready": "查询视图无法显示，请检查视图名称和 Dataview 设置后重试。",
     "retry": "重试"
   },
   "zh-tw": {
     "missing": "尚未安裝 Dataview。請在「設定 → 第三方外掛」中安裝並啟用。",
     "disabled": "Dataview 尚未啟用。請在「設定 → 第三方外掛」中啟用。",
-    "indexing": "Dataview 正在準備索引，請稍後重試。",
+    "indexing": "Dataview 正在準備索引，完成後會自動顯示查詢結果。",
     "ready": "查詢檢視無法顯示，請檢查檢視名稱和 Dataview 設定後重試。",
     "retry": "重試"
   },

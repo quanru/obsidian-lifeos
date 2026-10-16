@@ -1,10 +1,10 @@
-import { themeSettingsMessages } from '../theme/messages';
-import { buildThemeTemplate } from '../theme/templates';
-import translations from './translations.json';
 import { ARCHIVE, AREA, DAILY, MONTHLY, PROJECT, QUARTERLY, RESOURCE, WEEKLY, YEARLY } from '../constant';
 import { getFeatureI18n } from '../feature-i18n';
-import type { PeriodicNotesTemplateFilePath, PluginSettings } from '../type';
 import { joinVaultPath } from '../periodic/paths';
+import { themeSettingsMessages } from '../theme/messages';
+import { buildThemeTemplate } from '../theme/templates';
+import type { PeriodicNotesTemplateFilePath, PluginSettings } from '../type';
+import translations from './translations.json';
 
 export type WorkspaceMode = 'periodic' | 'para' | 'theme';
 export { normalizeWorkspaceLocale } from './locale';
@@ -250,7 +250,7 @@ export function getExamplePlan(mode: WorkspaceMode, locale?: string): TemplatePl
   };
 }
 
-const codeBlock = (view: string) => `\`\`\`LifeOS\n${view}\n\`\`\``;
+const codeBlock = (view: string) => `\`\`\`LifeOSOpen\n${view}\n\`\`\``;
 
 function getPeriodicTemplatePath(settings: PluginSettings, periodType: string): string {
   const settingKey = `periodicNotesTemplateFilePath${periodType}` as PeriodicNotesTemplateFilePath;

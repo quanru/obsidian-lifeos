@@ -18,13 +18,19 @@
 
 The starter workflow now supports ten languages (English, Simplified and Traditional Chinese, German, Spanish, French, Portuguese, Japanese, Korean, Arabic), including workspace setup, quick capture, templates, and folder settings. See [multilingual workspace maintenance](docs/multilingual-workspaces.md).
 
+Get started with [the capture guide](docs/getting-started.en.md) ([中文](docs/getting-started.md)).
+
+Task, record and resource queries require **Dataview** to be installed and enabled separately. Quick capture, theme creation and native theme lists work without it. See [dependency guidance and query upgrades](docs/theme-notes.en.md#dataview-and-empty-results).
+
 ## Theme notes, with or without PARA
 
 Enable Theme notes independently of PARA. Create tagged theme folders and index notes, associate quick captures, query tasks, records and files, and generate theme snapshots in daily notes. README and folder-name indexes, templates, list search and optional name synchronization are supported. See the [theme guide](docs/theme-notes.en.md). The example repository includes plain-theme example and blank vaults in all ten languages. Existing PARA configuration and notes are preserved.
 
 ## Free tools and the independent Pro plugin
 
-Quick capture, basic task entry, topic links remain fully free. Settings → **Usage and upgrade** offers shortcuts, a read-only preview of your folder settings, and a static promotional link to the independently paid LifeOS Pro plugin. This plugin does not contain paid unlocks or automatically install Pro. Its new promotional section does not fetch remote ads, send telemetry, or upload notes; opening the website is optional and includes only a fixed channel parameter. Existing optional usememos integration is configured separately.
+Quick capture, basic task entry, topic links remain fully free. Settings → **Usage and upgrade** offers shortcuts, a read-only preview of your folder settings, and an optional, collapsed comparison of calendar planning, advanced lists and project workflow scenarios with the independently paid LifeOS Pro plugin. This plugin does not contain paid unlocks or automatically install Pro. Its new promotional section does not fetch remote ads, send telemetry, or upload notes; opening the website is optional and includes only a fixed channel parameter. Existing optional usememos integration is configured separately.
+
+LifeOS Pro alone does not include AI: AI requires the separate DeepAsk plugin and a supported model service or CLI configured by the user. See [when Pro helps](docs/pro-handover.en.md).
 
 Use the **Today’s records** command to open today's daily note at the record section. See the [handover guide](docs/pro-handover.md) before switching plugins. Pro source code, private configuration and activation data are not part of this repository.
 

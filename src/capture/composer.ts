@@ -11,6 +11,8 @@ import { captureAttachmentPath } from './attachments';
 import type { QuickCaptureKind } from './content';
 import type { CaptureMessages } from './messages';
 import { themeMessages } from './theme-messages';
+import { type CaptureTheme, matchedThemes } from './theme-model';
+import './composer-themes.less';
 
 export class CaptureComposer {
   readonly input: HTMLTextAreaElement;
@@ -22,6 +24,9 @@ export class CaptureComposer {
   private closed = false;
   private initializationError?: string;
   private picker?: ThemePicker;
+  private themes: CaptureTheme[] = [];
+  private themeButton: HTMLButtonElement;
+  private themeLabel: HTMLSpanElement;
   kind: QuickCaptureKind;
   private footer: HTMLDivElement;
   private saveButton: HTMLButtonElement;
@@ -77,7 +82,7 @@ export class CaptureComposer {
       this.controls.push(button);
     }
     const tm = themeMessages(locale);
-    this.button(tm.associate, 'tags', () => {
+    this.themeButton = this.button(tm.associate, 'tags', () => {
       this.picker = new ThemePicker(
         app,
         settings,
@@ -94,6 +99,9 @@ export class CaptureComposer {
       );
       this.picker.open();
     });
+    this.themeButton.addClass('lifeos-capture-theme-choice');
+    this.themeLabel = this.themeButton.createSpan({ text: tm.associate });
+    this.input.addEventListener('input', () => this.renderThemes());
     this.footer.createSpan('lifeos-capture-spacer');
     this.cancelButton = this.footer.createEl('button', { text: m.cancel });
     this.cancelButton.hidden = true;
@@ -134,6 +142,7 @@ export class CaptureComposer {
       m.placeholder,
       () => {
         this.input.value = this.native?.getText() ?? this.input.value;
+        this.renderThemes();
       },
       (menu) => {
         menu.addSeparator();
@@ -201,6 +210,7 @@ export class CaptureComposer {
   private setText(text: string): void {
     this.input.value = text;
     this.native?.setText(text);
+    this.renderThemes();
   }
   focus(): void {
     if (this.nativeReady) this.native?.focus();
@@ -254,7 +264,26 @@ export class CaptureComposer {
     this.native?.setText(text, true);
     this.setKind(kind);
     this.cancelButton.hidden = !editing;
+    this.renderThemes();
     this.focus();
+  }
+
+  setThemes(themes: CaptureTheme[]): void {
+    this.themes = themes;
+    this.renderThemes();
+  }
+
+  private renderThemes(): void {
+    const tm = themeMessages(this.locale);
+    const selected = matchedThemes(this.getText(), this.themes);
+    this.themeLabel.textContent = selected.length
+      ? `${selected[0].name}${selected.length > 1 ? ` +${selected.length - 1}` : ''}`
+      : tm.associate;
+    const names = selected.map((theme) => `${tm[theme.kind]} · ${theme.name}`).join(', ');
+    this.themeButton.title = names ? `${tm.associate}: ${names}` : tm.associate;
+    this.themeButton.setAttribute('aria-label', this.themeButton.title);
+    this.themeButton.setAttribute('aria-haspopup', 'dialog');
+    this.themeButton.toggleClass('is-associated', selected.length > 0);
   }
 
   private setKind(kind: QuickCaptureKind): void {

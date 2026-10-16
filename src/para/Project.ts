@@ -70,7 +70,7 @@ export class Project extends Item {
     const tasks = [];
 
     for (const periodicNote of periodicNotes) {
-      const file = this.app.vault.getFileByPath(periodicNote);
+      const file = this.app.vault.getAbstractFileByPath(periodicNote);
 
       if (file instanceof TFile) {
         const reg = generateHeaderRegExp(header);

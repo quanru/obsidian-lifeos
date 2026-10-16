@@ -1,0 +1,155 @@
+{
+  "candidate": "1.29.2",
+  "status": "verified-awaiting-push-approval",
+  "minAppVersion": "1.4.5",
+  "tests": {
+    "passed": 93,
+    "failed": 0
+  },
+  "audit": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0
+  },
+  "desktop": {
+    "hostVersion": "1.14.4",
+    "plainThemeDefaults": true,
+    "sharedDefaultSelection": true,
+    "narrowTouchTargets": true,
+    "searchRecovery": true,
+    "keyboardSelection": true,
+    "shortViewportSave": true,
+    "themeNavigation": true,
+    "taskWriteback": true,
+    "captureIdsHiddenWithoutChangingSource": true,
+    "captureReload": true,
+    "errors": []
+  },
+  "firstUse": {
+    "zh": {
+      "onboardingVersion": 1,
+      "dataviewLoaded": false,
+      "saved": true,
+      "profileCreated": false
+    },
+    "en": {
+      "onboardingVersion": 1,
+      "dataviewLoaded": false,
+      "saved": true,
+      "profileCreated": false
+    }
+  },
+  "exampleVaults": {
+    "languages": 10,
+    "variants": 40,
+    "validatedFiles": 930
+  },
+  "site": {
+    "build": "passed",
+    "zhBrowser": "passed",
+    "enBrowser": "passed"
+  },
+  "chromeCredential": {
+    "newTokenExchange": "passed",
+    "publisherReadOnlyApi": 200,
+    "oldTokenExchange": 401,
+    "oldSecretDeleted": true,
+    "localConfigUpdated": true
+  },
+  "ios": {
+    "status": "not-required-user-selected-android",
+    "reason": "User selected Android physical-device acceptance instead of iPhone",
+    "device": "iPhone 14 Pro",
+    "appVersion": "1.14.4",
+    "testVaultPrepared": true,
+    "deviceLockReleased": true,
+    "required": false
+  },
+  "artifacts": {
+    "main.js": "6e5d650d5338ea6d0002f9b9f01d3d20e7abe5c27d33c905c7bd6aebdea280e8",
+    "styles.css": "fb56a0058d9ab57d35fa8fb5d4ce29123088d95e743b30d5481b88ca15fbcdbf",
+    "manifest.json": "f86f1e5859cfc2bb6a78d1faeed5b9a38a11506d5fae7ac5a55df65bea2510e6"
+  },
+  "legacy": {
+    "hostVersion": "1.4.5",
+    "title": "README - vault - Obsidian v1.4.5",
+    "saved": true,
+    "version": "1.29.2",
+    "taskWrittenBack": true,
+    "fileLookup": "undefined"
+  },
+  "gitBase": "9eadb95b56f79518dd3a7d4bdb17d739e4f823b1",
+  "mobile": {
+    "platform": "Android",
+    "environment": "device",
+    "device": "Redmi K30 Ultra",
+    "serial": "s4ey59ytbitot4yp",
+    "pluginVersion": "1.29.2",
+    "firstUsePassed": true,
+    "emptyThemeGuidancePassed": true,
+    "draftPreserved": true,
+    "saveWithKeyboardPassed": true,
+    "restartPersistencePassed": true,
+    "dataviewInstalled": false,
+    "profileCreated": false,
+    "templatesCreated": [
+      "PeriodicNotes/Templates/Daily.md"
+    ],
+    "artifacts": {
+      "main.js": "6e5d650d5338ea6d0002f9b9f01d3d20e7abe5c27d33c905c7bd6aebdea280e8",
+      "styles.css": "38683499e4f1a8589e75ddb79087caa2234566f8d8ad8c5a742aa6ea1a16be3e",
+      "manifest.json": "f86f1e5859cfc2bb6a78d1faeed5b9a38a11506d5fae7ac5a55df65bea2510e6"
+    },
+    "screenshots": [
+      "android/first-use-ready.png",
+      "android/empty-theme.png",
+      "android/keyboard-before-save.png",
+      "android/saved-with-keyboard.png",
+      "android/capture-after-restart.png",
+      "android/capture-after-restart-visible.png"
+    ]
+  },
+  "kindHighlight": {
+    "scope": "CSS only; JavaScript and manifest unchanged",
+    "previousArtifacts": {
+      "main.js": "6e5d650d5338ea6d0002f9b9f01d3d20e7abe5c27d33c905c7bd6aebdea280e8",
+      "styles.css": "38683499e4f1a8589e75ddb79087caa2234566f8d8ad8c5a742aa6ea1a16be3e",
+      "manifest.json": "f86f1e5859cfc2bb6a78d1faeed5b9a38a11506d5fae7ac5a55df65bea2510e6"
+    },
+    "lightAndDarkAndroidVisualChecks": "passed",
+    "build": "passed",
+    "recordAndTaskToggle": "passed",
+    "screenshots": [
+      ".verify/capture-kind-2026-10-12/record-keyboard.png",
+      ".verify/capture-kind-2026-10-12/task-selected.png",
+      ".verify/capture-kind-2026-10-12/dark-record.png",
+      ".verify/capture-kind-2026-10-12/dark-task.png"
+    ]
+  },
+  "sourceInputSha256BeforeHighlight": "e7be13397da0e9ebdb98fc0adefaaf8be0aaccd8279e3d099c681dc3ea732560",
+  "sourceInputSha256": "51636297cd6f6ac4df57b5972b4f90c05f25c126be0825410009f2f8341a3db9",
+  "sourceInputHashMethod": "SHA-256 of sorted source/build-input paths, NUL, content, NUL",
+  "controlPalette": {
+    "oldArtifacts": {
+      "main.js": "6e5d650d5338ea6d0002f9b9f01d3d20e7abe5c27d33c905c7bd6aebdea280e8",
+      "styles.css": "d75ac8cbc484face19f9cc87488053e08409bf836f257e673645bfd401658fb0",
+      "manifest.json": "f86f1e5859cfc2bb6a78d1faeed5b9a38a11506d5fae7ac5a55df65bea2510e6"
+    },
+    "foreground": "55% theme accent text + normal text",
+    "fill": "10% transparent accent",
+    "hover": "16% transparent accent",
+    "build": "passed",
+    "desktopFirstUseZh": "passed",
+    "desktopFirstUseEn": "passed",
+    "androidLight": "passed",
+    "androidDark": "passed",
+    "androidAppearanceRestored": true,
+    "screenshots": [
+      ".verify/capture-kind-2026-10-12/final-light.png",
+      ".verify/capture-kind-2026-10-12/final-dark.png"
+    ],
+    "legacy145": "passed"
+  }
+}

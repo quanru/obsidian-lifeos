@@ -53,16 +53,14 @@
   .lifeos-quick-capture-modal {
     height: min(820px, calc(100dvh - 16px));
 
-    .lifeos-capture-fullscreen {
-      top: 12px;
-      right: 64px;
+    .lifeos-capture-header-actions > * {
+      width: 44px;
+      height: 44px;
       min-width: 44px;
       min-height: 44px;
     }
-
-    &[dir='rtl'] .lifeos-capture-fullscreen {
-      right: auto;
-      left: 64px;
+    .modal-title {
+      padding-inline-end: 104px;
     }
 
     .lifeos-capture-toolbar button,
@@ -123,4 +121,10 @@
       min-height: 72px !important;
     }
   }
+}
+
+.lifeos-theme-help-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
 }

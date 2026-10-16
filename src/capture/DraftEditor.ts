@@ -67,6 +67,15 @@ export class DraftEditor {
       view.containerEl.addEventListener(event, listener);
       this.listeners.push(() => view.containerEl.removeEventListener(event, listener));
     }
+    // CodeMirror can consume native input before it bubbles to the container.
+    // Read the committed document after Obsidian reports an editor change.
+    const changedRef = this.app.workspace.on('editor-change', (editor) => {
+      if (editor !== view.editor) return;
+      queueMicrotask(() => {
+        if (!this.disposed) this.changed();
+      });
+    });
+    this.listeners.push(() => this.app.workspace.offref(changedRef));
     const content = view.containerEl.querySelector<HTMLElement>('.cm-content');
     content?.setAttribute('aria-label', this.placeholder);
     content?.setAttribute('data-placeholder', this.placeholder);

@@ -1,20 +1,21 @@
+import { renderMissingThemeTags } from '../dependencies/query-help';
+import { matchesThemeTag } from '../theme/tag-match';
 import type { App, MarkdownPostProcessorContext } from 'obsidian';
 import type { TaskResult } from 'obsidian-dataview/lib/api/plugin-api';
+import { renderThemeQuerySummary } from '../theme/query-summary';
 import { themeRowFilter } from '../theme/query-filter';
 import type { PluginSettings, TaskConditionType } from '../type';
 import { presentCaptureTask } from './task-presentation';
 
 import { moment } from 'obsidian';
 import type { STask } from 'obsidian-dataview';
-import { ERROR_MESSAGE } from '../constant';
 import { TaskStatusType } from '../type';
 
 import { renderTaskQuery } from '../component/TaskQuery';
-import { getI18n } from '../i18n';
 import type LifeOS from '../main';
 import { Date as PeriodicDate } from '../periodic/Date';
 import { File } from '../periodic/File';
-import { generateIgnoreOperator, renderError } from '../util';
+import { generateIgnoreOperator } from '../util';
 
 export class Task {
   app: App;
@@ -116,7 +117,7 @@ export class Task {
         const tags = this.file.tags(filepath);
 
         if (!tags.length) {
-          return renderError(this.app, getI18n(this.locale)[`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`], div, filepath);
+          return renderMissingThemeTags(this.app, div, filepath, this.locale);
         }
 
         const from = tags
@@ -125,17 +126,11 @@ export class Task {
           })
           .join(' ')
           .trim();
-        const where = tags
-          .map((tag: string, index: number) => {
-            return `contains(lower(tags), "#${tag.toLowerCase()}") ${index === tags.length - 1 ? '' : 'OR'}`;
-          })
-          .join(' ');
-
         const dataview = await this.plugin.getDataviewAPI();
         const { values: tasks } = (await dataview.tryQuery(`
 TASK
 FROM (${from}) ${generateIgnoreOperator(this.settings)}
-WHERE ${where} AND file.path != "${filepath}"
+WHERE file.path != "${filepath}"
 SORT status ASC
     `)) as TaskResult;
 
@@ -145,7 +140,16 @@ SORT status ASC
           tasks.map((task: STask) => task.path),
           filepath,
         );
-        await dataview.taskList(tasks.filter(allowed).map(presentCaptureTask), false, div, component, filepath);
+        const openOnly = source === 'TaskOpenListByTag';
+        const keep = (task: STask) =>
+          allowed(task) && matchesThemeTag(task.tags, tags) && (!openOnly || !task.completed);
+        const present = (task: STask): STask => ({
+          ...presentCaptureTask(task),
+          children: task.children.filter(keep).map(present),
+        });
+        const matches = tasks.filter(keep);
+        renderThemeQuerySummary(div, this.locale, tags, matches.length, openOnly ? 'open' : 'tasks');
+        if (matches.length) await dataview.taskList(matches.map(present), false, div, component, filepath);
       },
       this.locale,
     );

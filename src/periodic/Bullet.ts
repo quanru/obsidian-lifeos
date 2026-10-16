@@ -1,3 +1,6 @@
+import { renderMissingThemeTags } from '../dependencies/query-help';
+import { matchesThemeTag } from '../theme/tag-match';
+import { renderThemeQuerySummary } from '../theme/query-summary';
 import { themeRowFilter } from '../theme/query-filter';
 import { renderTaskQuery } from '../component/TaskQuery';
 import type { App, MarkdownPostProcessorContext, Plugin } from 'obsidian';
@@ -6,12 +9,10 @@ import type { PluginSettings } from '../type';
 import type { DataviewApi, Link, STask } from 'obsidian-dataview';
 import { Markdown } from '../component/Markdown';
 
-import { ERROR_MESSAGE } from '../constant';
-import { getI18n } from '../i18n';
 import type LifeOS from '../main';
 import { Date as PeriodicDate } from '../periodic/Date';
 import { File } from '../periodic/File';
-import { generateIgnoreOperator, renderError } from '../util';
+import { generateIgnoreOperator } from '../util';
 
 type Element = { text: string; link: Link };
 
@@ -78,14 +79,14 @@ export class Bullet {
 
   listByTag = async (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
     const filepath = ctx.sourcePath;
-    const tags = this.file.tags(filepath);
     return renderTaskQuery(
       this.app,
       el,
       ctx,
       async (div, component) => {
+        const tags = this.file.tags(filepath);
         if (!tags.length) {
-          return renderError(this.app, getI18n(this.locale)[`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`], div, filepath);
+          return renderMissingThemeTags(this.app, div, filepath, this.locale);
         }
 
         const from = tags
@@ -103,15 +104,7 @@ export class Bullet {
           filepath,
         );
         const result = lists.where((L: { task: STask; path: string; line: number; tags: string[] }) => {
-          let includeTag = false;
-          if (L.task || !allowed(L)) return false;
-          for (const tag of tags) {
-            includeTag = L.tags.join(' ').toLowerCase().includes(`#${tag.toLowerCase()}`);
-            if (includeTag) {
-              break;
-            }
-          }
-          return includeTag;
+          return !L.task && allowed(L) && matchesThemeTag(L.tags, tags);
         });
         const groupResult = result.groupBy((elem: Element) => {
           return elem.link;
@@ -120,7 +113,15 @@ export class Bullet {
         const tableResult = sortResult.map((k: { rows: Element }) => [k.rows.text as string, k.rows.link as Link]);
         const tableValues = tableResult.array();
 
-        dataview.table(['Bullet', 'Link'], tableValues, div, component, filepath);
+        renderThemeQuerySummary(div, this.locale, tags, result.length, 'records');
+        if (tableValues.length)
+          await dataview.table(
+            this.locale.startsWith('zh') ? ['记录', '来源'] : ['Record', 'Source'],
+            tableValues,
+            div,
+            component,
+            filepath,
+          );
       },
       this.locale,
     );

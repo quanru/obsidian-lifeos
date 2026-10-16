@@ -1,0 +1,72 @@
+{
+  "en": {
+    "captureNow": "Capture now",
+    "captureHelp": "You can start with a plain record. Set up folders and themes later.",
+    "emptyThemeHelp": "Close this picker, open Create notes, choose Theme notes and enter a name and tags. If themes are disabled, enable them in Settings → Theme notes. You can save records without a theme.",
+    "themeGuide": "Theme guide",
+    "examples": "Example vaults"
+  },
+  "zh-cn": {
+    "captureNow": "直接开始记录",
+    "captureHelp": "先记一条，目录和主题可以稍后设置。",
+    "emptyThemeHelp": "关闭选择器，打开「创建笔记」，切换到「主题笔记」，填写名称和标签。若主题功能未开启，请先到设置 → 主题笔记启用。普通记录无需关联主题。",
+    "themeGuide": "主题使用指南",
+    "examples": "下载示例库"
+  },
+  "zh-tw": {
+    "captureNow": "直接開始記錄",
+    "captureHelp": "先記一條，目錄和主題可以稍後設定。",
+    "emptyThemeHelp": "關閉選擇器，開啟「建立筆記」，切換到「主題筆記」，填寫名稱和標籤。若主題功能未開啟，請先到設定 → 主題筆記啟用。一般記錄無需關聯主題。",
+    "themeGuide": "主題使用指南",
+    "examples": "下載範例庫"
+  },
+  "de": {
+    "captureNow": "Jetzt erfassen",
+    "captureHelp": "Starte mit einem Eintrag. Ordner und Themen kannst du später einrichten.",
+    "emptyThemeHelp": "Schließe die Auswahl und öffne Notizen erstellen → Themennotizen. Gib Name und Tags ein. Aktiviere Themen bei Bedarf in den Einstellungen. Einträge funktionieren auch ohne Thema.",
+    "themeGuide": "Themenanleitung",
+    "examples": "Beispiel-Vaults"
+  },
+  "es": {
+    "captureNow": "Registrar ahora",
+    "captureHelp": "Empieza con un registro. Configura carpetas y temas después.",
+    "emptyThemeHelp": "Cierra el selector y abre Crear notas → Notas de tema. Introduce un nombre y etiquetas. Activa los temas en Ajustes si es necesario. Puedes guardar sin un tema.",
+    "themeGuide": "Guía de temas",
+    "examples": "Vaults de ejemplo"
+  },
+  "fr": {
+    "captureNow": "Noter maintenant",
+    "captureHelp": "Commencez par une note. Configurez les dossiers et thèmes plus tard.",
+    "emptyThemeHelp": "Fermez le sélecteur et ouvrez Créer des notes → Notes thématiques. Saisissez un nom et des tags. Activez les thèmes dans les réglages si nécessaire. Vous pouvez enregistrer sans thème.",
+    "themeGuide": "Guide des thèmes",
+    "examples": "Coffres exemples"
+  },
+  "pt": {
+    "captureNow": "Registar agora",
+    "captureHelp": "Comece com um registo. Configure pastas e temas depois.",
+    "emptyThemeHelp": "Feche o seletor e abra Criar notas → Notas de tema. Introduza nome e etiquetas. Ative os temas nas definições, se necessário. Pode guardar sem tema.",
+    "themeGuide": "Guia de temas",
+    "examples": "Cofres de exemplo"
+  },
+  "ja": {
+    "captureNow": "今すぐ記録",
+    "captureHelp": "まず1件記録しましょう。フォルダーとテーマは後から設定できます。",
+    "emptyThemeHelp": "選択画面を閉じ、「ノート作成」→「テーマノート」で名前とタグを入力してください。無効の場合は設定でテーマを有効にします。テーマなしでも記録を保存できます。",
+    "themeGuide": "テーマガイド",
+    "examples": "サンプル保管庫"
+  },
+  "ko": {
+    "captureNow": "바로 기록",
+    "captureHelp": "먼저 기록하세요. 폴더와 주제는 나중에 설정할 수 있습니다.",
+    "emptyThemeHelp": "선택 창을 닫고 노트 만들기 → 주제 노트에서 이름과 태그를 입력하세요. 필요하면 설정에서 주제를 활성화하세요. 주제 없이도 기록을 저장할 수 있습니다.",
+    "themeGuide": "주제 안내",
+    "examples": "예제 보관함"
+  },
+  "ar": {
+    "captureNow": "سجّل الآن",
+    "captureHelp": "ابدأ بسجل عادي. يمكنك إعداد المجلدات والمواضيع لاحقًا.",
+    "emptyThemeHelp": "أغلق المحدد وافتح إنشاء ملاحظات ثم ملاحظات المواضيع، وأدخل الاسم والوسوم. فعّل المواضيع من الإعدادات عند الحاجة. يمكنك الحفظ دون موضوع.",
+    "themeGuide": "دليل المواضيع",
+    "examples": "خزائن أمثلة"
+  }
+}

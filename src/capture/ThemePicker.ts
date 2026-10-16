@@ -1,5 +1,6 @@
 import { type App, Modal, Notice } from 'obsidian';
 import { dependencyMessages } from '../dependencies/messages';
+import { entryMessages } from '../onboarding/entry-messages';
 import type { PluginSettings } from '../type';
 import { captureThemes } from './theme-catalog';
 import { type ThemeMessages, themeMessages } from './theme-messages';
@@ -120,6 +121,21 @@ export class ThemePicker extends Modal {
           text: this.themes.length ? this.m.noResults : this.m.empty,
           attr: { role: 'status' },
         });
+        if (!this.themes.length) {
+          const help = entryMessages(this.locale);
+          list.createEl('p', { text: help.emptyThemeHelp, cls: 'lifeos-theme-help' });
+          const links = list.createDiv('lifeos-theme-help-links');
+          links.createEl('a', {
+            text: help.themeGuide,
+            href: `https://github.com/quanru/obsidian-lifeos/blob/main/docs/theme-notes${this.locale.startsWith('zh') ? '.md' : '.en.md'}`,
+            attr: { target: '_blank', rel: 'noopener noreferrer' },
+          });
+          links.createEl('a', {
+            text: help.examples,
+            href: 'https://github.com/quanru/obsidian-example-lifeos/releases/latest',
+            attr: { target: '_blank', rel: 'noopener noreferrer' },
+          });
+        }
         if (query && this.themes.length) {
           const clear = list.createEl('button', { text: this.m.clearSearch });
           clear.onclick = () => {

@@ -1,14 +1,17 @@
+import { renderMissingThemeTags } from '../dependencies/query-help';
+import { renderTaskQuery } from '../component/TaskQuery';
+import { renderThemeQuerySummary } from '../theme/query-summary';
+import { identifyTheme } from '../capture/theme-model';
 import { themeIndexStyle, isThemeIndex } from '../theme/config';
 import { themeTags } from '../capture/theme-model';
 import { type App, type MarkdownPostProcessorContext, TFile, TFolder } from 'obsidian';
 import type { IndexType, PluginSettings } from '../type';
 
 import dayjs from 'dayjs';
-import { Markdown } from '../component/Markdown';
 import { ERROR_MESSAGE } from '../constant';
 import { getI18n } from '../i18n';
 import type LifeOS from '../main';
-import { isInPeriodicNote, isInTemplateNote, logMessage, renderError } from '../util';
+import { isInPeriodicNote, isInTemplateNote, logMessage } from '../util';
 
 export class File {
   app: App;
@@ -127,42 +130,43 @@ export class File {
 
   listByTag = async (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
     const filepath = ctx.sourcePath;
-    const tags = this.tags(filepath);
-    const div = el.createEl('div');
-    const component = new Markdown(div);
-
-    if (!tags.length) {
-      return renderError(this.app, getI18n(this.locale)[`${ERROR_MESSAGE}NO_FRONT_MATTER_TAG`], div, filepath);
-    }
-
-    const from = tags
-      .map((tag: string, index: number) => {
-        return `#${tag} ${index === tags.length - 1 ? '' : 'OR'}`;
-      })
-      .join(' ')
-      .trim();
-
-    const dataview = await this.plugin.getDataviewAPI();
-    dataview.table(
-      ['File', 'Date'],
-      dataview
-        .pages(from)
-        .filter(
-          (b: { file: TFile }) =>
-            !isInPeriodicNote(b.file.path, this.settings) &&
-            !isInTemplateNote(b.file.path, this.settings) &&
-            b.file.path !== filepath,
-        )
-        .sort((b: { file: { ctime: { ts: number } } }) => b.file.ctime.ts, 'desc')
-        .map((b: { file: { link: string; ctime: { ts: number } } }) => [
-          b.file.link,
-          `[[${dayjs(b.file.ctime.ts).format('YYYY-MM-DD')}]]`,
-        ]),
-      div,
-      component,
-      filepath,
+    return renderTaskQuery(
+      this.app,
+      el,
+      ctx,
+      async (div, component) => {
+        const tags = this.tags(filepath);
+        if (!tags.length) {
+          return renderMissingThemeTags(this.app, div, filepath, this.locale);
+        }
+        const from = tags.map((tag) => `#${tag}`).join(' OR ');
+        const dataview = await this.plugin.getDataviewAPI();
+        const rows = dataview
+          .pages(from)
+          .filter(
+            (b: { file: TFile }) =>
+              !isInPeriodicNote(b.file.path, this.settings) &&
+              !isInTemplateNote(b.file.path, this.settings) &&
+              !identifyTheme(b.file.path, this.settings) &&
+              b.file.path !== filepath,
+          )
+          .sort((b: { file: { ctime: { ts: number } } }) => b.file.ctime.ts, 'desc')
+          .map((b: { file: { link: string; ctime: { ts: number } } }) => [
+            b.file.link,
+            `[[${dayjs(b.file.ctime.ts).format('YYYY-MM-DD')}]]`,
+          ])
+          .array();
+        renderThemeQuerySummary(div, this.locale, tags, rows.length, 'files');
+        if (rows.length)
+          await dataview.table(
+            this.locale.startsWith('zh') ? ['资料', '创建日期'] : ['Resource', 'Created'],
+            rows,
+            div,
+            component,
+            filepath,
+          );
+      },
+      this.locale,
     );
-
-    ctx.addChild(component);
   };
 }

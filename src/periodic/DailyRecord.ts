@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { type App, TFile, moment, normalizePath } from 'obsidian';
+import { type App, TFile, TFolder, moment, normalizePath } from 'obsidian';
 import semver from 'semver';
 import { DAILY, ERROR_MESSAGE, MESSAGE } from '../constant';
 import { getI18n } from '../i18n';
@@ -28,28 +28,7 @@ import {
   transformV2Record,
 } from '../util';
 import type { File } from './File';
-
-function getMemosUserIdFromOwner(owner: string | null | undefined): number | null {
-  const matchedUserId = owner?.match(/^users\/(\d+)$/);
-  if (!matchedUserId?.[1]) {
-    return null;
-  }
-
-  const parsedUserId = Number.parseInt(matchedUserId[1], 10);
-  return Number.isNaN(parsedUserId) ? null : parsedUserId;
-}
-
-function isMemosUserResourceName(value: string | null | undefined): value is string {
-  return Boolean(value?.match(/^users\/[^/]+$/));
-}
-
-function getMemosUserResourceNameFromOwner(owner: string | null | undefined): string | null {
-  return isMemosUserResourceName(owner) ? owner : null;
-}
-
-function celString(value: string): string {
-  return `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
-}
+import * as memosIdentity from './memos-identity';
 
 export class DailyRecord {
   app: App;
@@ -130,7 +109,7 @@ export class DailyRecord {
       return null;
     }
 
-    if (isMemosUserResourceName(user.name)) {
+    if (memosIdentity.isMemosUserResourceName(user.name)) {
       return user.name;
     }
 
@@ -183,11 +162,11 @@ export class DailyRecord {
     }
 
     if (this.memosUserId === null) {
-      this.memosUserId = getMemosUserIdFromOwner(this.memosProfile?.owner);
+      this.memosUserId = memosIdentity.getMemosUserIdFromOwner(this.memosProfile?.owner);
     }
 
     if (this.memosUserResourceName === null) {
-      this.memosUserResourceName = getMemosUserResourceNameFromOwner(this.memosProfile?.owner);
+      this.memosUserResourceName = memosIdentity.getMemosUserResourceNameFromOwner(this.memosProfile?.owner);
     }
   }
 
@@ -259,7 +238,7 @@ export class DailyRecord {
 
         filterParams = {
           state: 'NORMAL',
-          filter: `creator == ${celString(currentUserResourceName)}`,
+          filter: `creator == ${memosIdentity.celString(currentUserResourceName)}`,
         };
       } else if (this.memosVersion === 'v2.5') {
         if (this.memosUserId === null) {
@@ -463,7 +442,7 @@ export class DailyRecord {
           return;
         }
 
-        if (!this.app.vault.getFolderByPath(folder)) {
+        if (!(this.app.vault.getAbstractFileByPath(folder) instanceof TFolder)) {
           await this.app.vault.createFolder(folder);
         }
 

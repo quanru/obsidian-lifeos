@@ -1,0 +1,42 @@
+{
+  "passed": true,
+  "pluginSha256": "8da5bc5146cf54195d37465a5b5842a38da8e096a5d38b2ea6137b830454fc6a",
+  "environment": "isolated Obsidian 1.14.4 / public Dataview / copied Chinese and English examples; Chinese fixture tags namespaced only during English screenshot phase to avoid cross-language collisions",
+  "assertions": [
+    "open task only",
+    "source checkbox writeback",
+    "completed task disappears",
+    "habit excluded",
+    "resource indexes excluded",
+    "actual record source navigation",
+    "new record auto refresh",
+    "new resource auto refresh",
+    "prefix sibling excluded",
+    "actual resource navigation",
+    "frontmatter change refresh",
+    "empty guidance",
+    "independent project theme",
+    "light dark narrow screenshots"
+  ],
+  "date": "2026-10-15",
+  "build": "pnpm build passed",
+  "tests": {
+    "passed": 97,
+    "failed": 0
+  },
+  "exampleGenerator": {
+    "files": 942,
+    "languages": 10,
+    "status": "passed"
+  },
+  "releaseStatus": "local main only; no commit, push or release",
+  "screenshots": [
+    "/Volumes/T5/personal/studio_4/.verify/oss-theme-overview-20261015/overview-light.png",
+    "/Volumes/T5/personal/studio_4/.verify/oss-theme-overview-20261015/overview-en.png",
+    "/Volumes/T5/personal/studio_4/.verify/oss-theme-overview-20261015/rules.png",
+    "/Volumes/T5/personal/studio_4/.verify/oss-theme-overview-20261015/task-completed.png",
+    "/Volumes/T5/personal/studio_4/.verify/oss-theme-overview-20261015/empty.png",
+    "/Volumes/T5/personal/studio_4/.verify/oss-theme-overview-20261015/project-dark.png",
+    "/Volumes/T5/personal/studio_4/.verify/oss-theme-overview-20261015/narrow.png"
+  ]
+}

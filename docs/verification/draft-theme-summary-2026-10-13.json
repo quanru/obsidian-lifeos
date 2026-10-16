@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "pluginSha256": "c030271b3eac0c3f7ab4efb7f2fdb6cd41f84e9518a4960c49190c06f0cb388b",
+  "environment": "isolated Obsidian mock keychain",
+  "assertions": [
+    "visible theme entry",
+    "selection shown in draft",
+    "multiple theme count",
+    "theme tags and body persisted",
+    "selection reset after saving",
+    "narrow viewport",
+    "inline editor theme summary",
+    "manual tag removal updates summary",
+    "cancel editing preserves source"
+  ],
+  "geometry": {
+    "width": 84,
+    "scroll": 84,
+    "client": 84
+  }
+}

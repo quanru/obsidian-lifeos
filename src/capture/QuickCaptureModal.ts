@@ -68,10 +68,14 @@ export class QuickCaptureModal extends Modal {
       cls: 'lifeos-quick-capture-description',
       text: this.m.description,
     });
-    const fullscreen = this.modalEl.createEl('button', {
+    const headerActions = this.modalEl.createDiv('lifeos-capture-header-actions');
+    const fullscreen = headerActions.createEl('button', {
       cls: 'lifeos-capture-fullscreen',
       attr: { 'aria-label': this.m.fullscreen, title: this.m.fullscreen },
     });
+    // Keep Obsidian's native close handler, across old and new Modal markup.
+    const close = this.modalEl.querySelector<HTMLElement>('.modal-close-button, .modal-header-button');
+    if (close) headerActions.appendChild(close);
     setIcon(fullscreen, 'maximize');
     fullscreen.onclick = () => {
       const full = this.modalEl.hasClass('lifeos-capture-full');
@@ -151,6 +155,8 @@ export class QuickCaptureModal extends Modal {
       if (!this.opened || version !== this.queryVersion) return;
       this.records = records;
       this.themes = themes;
+      this.composer.setThemes(themes);
+      this.inlineEdit?.composer.setThemes(themes);
       if (this.pendingDefaults) {
         this.resetNewDraft();
         this.pendingDefaults = false;
@@ -313,6 +319,7 @@ export class QuickCaptureModal extends Modal {
         void this.renderList();
       },
     );
+    this.inlineEdit.composer.setThemes(this.themes);
   }
   private finishEdit(): void {
     this.inlineEdit?.destroy();

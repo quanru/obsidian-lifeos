@@ -28,3 +28,6 @@ CLAUDE.md
 
 # Isolated runtime evidence and scratch vaults
 .verify/
+
+# Local promotional drafts and scratch material
+.tmp/

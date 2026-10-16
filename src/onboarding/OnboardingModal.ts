@@ -1,12 +1,14 @@
-import { themeSettingsMessages } from '../theme/messages';
-import { WORKSPACE_LANGUAGES } from './locale';
 import dayjs from 'dayjs';
 import { Modal, Notice, Setting, TFile } from 'obsidian';
 import { QuickCaptureModal } from '../capture/QuickCaptureModal';
 import { DAILY } from '../constant';
 import { getFeatureI18n } from '../feature-i18n';
 import type LifeOS from '../main';
+import { themeSettingsMessages } from '../theme/messages';
 import { createPeriodicFile } from '../util';
+import { entryMessages } from './entry-messages';
+import { WORKSPACE_LANGUAGES } from './locale';
+import { prepareQuickCapture } from './quick-start';
 import {
   type WorkspaceLocale,
   type WorkspaceMode,
@@ -62,6 +64,25 @@ export class OnboardingModal extends Modal {
     this.contentEl.empty();
     this.setTitle(t.setupTitle);
     this.contentEl.createEl('p', { cls: 'lifeos-onboarding-description', text: t.setupDescription });
+
+    const entry = entryMessages(this.locale);
+    new Setting(this.contentEl)
+      .setName(entry.captureNow)
+      .setDesc(entry.captureHelp)
+      .addButton((button) =>
+        button.setButtonText(t.setupQuickRecord).onClick(async () => {
+          button.setDisabled(true);
+          try {
+            await prepareQuickCapture(this.app, this.plugin.settings, this.locale);
+            await this.plugin.saveSettings({ ...this.plugin.settings, locale: this.locale, onboardingVersion: 1 });
+            this.close();
+            new QuickCaptureModal(this.plugin, 'record').open();
+          } catch (error) {
+            new Notice(`${t.setupFailed}: ${error instanceof Error ? error.message : String(error)}`);
+            button.setDisabled(false);
+          }
+        }),
+      );
 
     if (this.profile) {
       this.contentEl.createDiv({ cls: 'lifeos-onboarding-lock', text: t.setupLocked });

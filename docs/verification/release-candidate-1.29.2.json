@@ -1,0 +1,20 @@
+{
+  "status": "superseded by local upgrade-value changes; not deployable; unpublished",
+  "version": "1.29.2",
+  "baseCommit": "9eadb95b56f79518dd3a7d4bdb17d739e4f823b1",
+  "sourceInputSha256": "e8846cce280411b2b632ee21a7c1c1c9b56cc7d82f19c15b2609020c0722e37a",
+  "artifacts": {
+    "main.js": "4d73c5024f8e1be8db0a61916ab8ec8d5c35b3ab8acaf344dad8825d393723e0",
+    "styles.css": "b5f000bc88996869f121c65042f13c2cd97def66e6ef61480ed9e4625f65c351",
+    "manifest.json": "f86f1e5859cfc2bb6a78d1faeed5b9a38a11506d5fae7ac5a55df65bea2510e6",
+    "obsidian-periodic-para-1.29.2.zip": "b931123d63203de1c25608e9f68497328a27fe541eea9d95c946c4deccba9df8",
+    "release-notes.md": "17fd9c7798f29b688760e1af01c2f452adeabac5871861a04169717a1631d181"
+  },
+  "runtimeEvidence": "/Volumes/T5/personal/studio_4/.verify/oss-upgrade-20261015/result.json",
+  "testsPassed": 101,
+  "exampleGeneratorFilesChecked": 942,
+  "remoteActions": [],
+  "localCandidateDirectory": "/Volumes/T5/personal/studio_4/.verify/oss-upgrade-20261015/candidate",
+  "sourceFileCount": 179,
+  "exampleFileCount": 44
+}

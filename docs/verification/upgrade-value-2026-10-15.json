@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "claims": [
+    "zh-cn collapsed default, three scenarios, fixed link, keyboard toggle",
+    "en collapsed default, three scenarios, fixed link, keyboard toggle",
+    "zh-tw collapsed default, three scenarios, fixed link, keyboard toggle"
+  ],
+  "sha256": "85ff49eb0e9b2941f3ecbb423b96c6f3e78f3dda9110047b7bbc22f563596df3"
+}
