@@ -1,0 +1,97 @@
+{
+  "repo": "quanru/obsidian-lifeos",
+  "version": "1.29.2",
+  "url": "https://github.com/quanru/obsidian-lifeos/releases/tag/1.29.2",
+  "publishedAt": "2026-10-16T01:20:05Z",
+  "verifiedAt": "2026-10-16T01:20:42.004916+00:00",
+  "downloadedAssetsMatched": true,
+  "publishedAssetDigestsMatched": true,
+  "latestReleaseVerified": true,
+  "assetNames": ["main.js", "manifest.json", "obsidian-periodic-para-1.29.2.zip", "styles.css"],
+  "artifactSha256": {
+    "styles.css": "f78902ce67a7d74332deb534ce02509cc197f4cda9bdf9aba1fe0c345e590465",
+    "main.js": "85ff49eb0e9b2941f3ecbb423b96c6f3e78f3dda9110047b7bbc22f563596df3",
+    "manifest.json": "f86f1e5859cfc2bb6a78d1faeed5b9a38a11506d5fae7ac5a55df65bea2510e6",
+    "obsidian-periodic-para-1.29.2.zip": "2523d2fc70d65388ec87851e738dc3832dd2c1c0422fd4a2541856ea9a565f49"
+  },
+  "commit": "5151e148323338b703f13864400861c346e18716",
+  "sourceInputSha256": "d490c28fdf623c5dcf1d0344685ec5c6c3681783ca9deafc055212474f630823",
+  "status": "published-and-download-verified",
+  "unitTestsPassed": 101,
+  "desktopHost": "Obsidian 1.14.4 / Dataview 0.5.68",
+  "validUntil": "2026-10-17T01:17:26.559156+00:00",
+  "baseCommit": "9eadb95b56f79518dd3a7d4bdb17d739e4f823b1",
+  "remoteCITriggered": false,
+  "dependencyAudit": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0
+  },
+  "runtimeSuites": {
+    "capture": {
+      "passed": true,
+      "assertions": [
+        "visible theme entry",
+        "selection shown in draft",
+        "multiple theme count",
+        "theme tags and body persisted",
+        "selection reset after saving",
+        "narrow viewport",
+        "inline editor theme summary",
+        "manual tag removal updates summary",
+        "cancel editing preserves source"
+      ],
+      "evidenceSha256": "6997a38db03610d853d01136c7fa8fddf6740ffcc66607965c29d6ffe9ba20b6"
+    },
+    "overview": {
+      "passed": true,
+      "assertions": [
+        "open task only",
+        "source checkbox writeback",
+        "completed task disappears",
+        "habit excluded",
+        "resource indexes excluded",
+        "actual record source navigation",
+        "new record auto refresh",
+        "new resource auto refresh",
+        "prefix sibling excluded",
+        "actual resource navigation",
+        "frontmatter change refresh",
+        "empty guidance",
+        "independent project theme",
+        "light dark narrow screenshots"
+      ],
+      "evidenceSha256": "dba49145995010c488034c38032dd388fe88455aca418425836e88c4e0adbc66"
+    },
+    "upgrade": {
+      "passed": true,
+      "assertions": [
+        "real missing Dataview guidance and settings navigation",
+        "selective plain-theme upgrade preserves handwritten text and custom query",
+        "stale preview refuses overwrite and refreshes for confirmation",
+        "repeat upgrade is a no-op",
+        "configured custom template preserves layout and prose",
+        "installed but disabled Dataview distinguished",
+        "missing tags differentiated and edit action opens source",
+        "upgraded standard queries render after enabling dependency",
+        "PARA project upgrade and open-task query",
+        "real Pro 3.1.13 loads first; OSS loads and LifeOSOpen renders; no paid activation used",
+        "English upgrade preview and narrow-window controls"
+      ],
+      "evidenceSha256": "4ade04d41c9d38d3d642f985cd0d6a88375f3048d7a256a3cd32c0382214cc71"
+    },
+    "value": {
+      "passed": true,
+      "assertions": [
+        "zh-cn collapsed default, three scenarios, fixed link, keyboard toggle",
+        "en collapsed default, three scenarios, fixed link, keyboard toggle",
+        "zh-tw collapsed default, three scenarios, fixed link, keyboard toggle"
+      ],
+      "evidenceSha256": "c51e5718a651a84b3f0082cdf5e14f409f00d0666018d71ced82d3d5566fade7"
+    }
+  },
+  "limitations": ["No iOS, Android, minimum-host or Memos service runtime coverage in this release round."],
+  "mainVaultModified": false
+}
