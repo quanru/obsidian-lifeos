@@ -168,19 +168,27 @@ export function formatDailyRecord(record: DailyRecordType, dailyRecordTag?: stri
   return [date, timeStamp, finalTargetContent].map(String);
 }
 
-export function transformV2Record(record: DailyRecordTypeV2) {
+export function transformV2Record(record: DailyRecordTypeV2, modern = false) {
   // Handle both resources (legacy) and attachments (v0.25.0+)
   const resourceList =
-    record.resources ||
+    (!modern && record.resources) ||
     (record.attachments
-      ? record.attachments.map((attachment) => ({
-          id: attachment.name,
-          name: attachment.name,
-          filename: attachment.filename,
-          externalLink: attachment.external_link || attachment.externalLink,
-          type: attachment.type,
-          uid: attachment.name,
-        }))
+      ? record.attachments.map((attachment) => {
+          const externalLink = attachment.external_link || attachment.externalLink;
+          const parsedId = attachment.name?.match(/^attachments\/([a-zA-Z0-9_-]+)$/)?.[1];
+          const id = modern ? parsedId : parsedId || attachment.name;
+          if (!id || typeof attachment.filename !== 'string' || !attachment.filename) {
+            throw new Error('Invalid Memos attachment metadata');
+          }
+          return {
+            id,
+            name: id,
+            filename: attachment.filename,
+            externalLink,
+            type: attachment.type,
+            uid: id,
+          };
+        })
       : undefined);
 
   return {
@@ -188,7 +196,7 @@ export function transformV2Record(record: DailyRecordTypeV2) {
     createdTs: new Date(record.createTime).getTime() / 1000,
     createdAt: new Date(record.createTime).toISOString(),
     updatedAt: new Date(record.updateTime).toISOString(),
-    content: record.content,
+    content: record.content ?? '',
     rowStatus: record.rowStatus,
     resourceList,
   };

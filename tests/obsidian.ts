@@ -61,3 +61,11 @@ export class MarkdownRenderChild extends Component {
 export class MarkdownRenderer {
   static async render() {}
 }
+
+let requestUrlMock: (options: import('obsidian').RequestUrlParam) => Promise<import('obsidian').RequestUrlResponse>;
+export function setRequestUrlMock(mock: typeof requestUrlMock) {
+  requestUrlMock = mock;
+}
+export async function requestUrl(options: import('obsidian').RequestUrlParam) {
+  return requestUrlMock(options);
+}

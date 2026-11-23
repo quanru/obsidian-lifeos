@@ -3,7 +3,7 @@ import { type App, TFile, TFolder, moment, normalizePath } from 'obsidian';
 import semver from 'semver';
 import { DAILY, ERROR_MESSAGE, MESSAGE } from '../constant';
 import { getI18n } from '../i18n';
-import { customRequest } from '../request';
+import { customRequest, isMissingEndpoint } from '../request';
 import {
   type AttachmentType,
   type DailyRecordResponseTypeV2,
@@ -27,6 +27,7 @@ import {
   sleep,
   transformV2Record,
 } from '../util';
+import { withVaultLock } from '../vault-lock';
 import type { File } from './File';
 import * as memosIdentity from './memos-identity';
 
@@ -46,7 +47,8 @@ export class DailyRecord {
   memosUserName: string;
   memosUserResourceName: string | null;
   memosUserId: number | null;
-  hasCreatedNewFile: boolean;
+  private hasCreatedNewFile: boolean;
+  private pendingSync: Promise<void> | null = null;
 
   constructor(app: App, settings: PluginSettings, file: File, locale: string) {
     if (!settings.dailyRecordAPI) {
@@ -64,7 +66,13 @@ export class DailyRecord {
       return;
     }
 
-    const { origin } = new URL(settings.dailyRecordAPI);
+    const endpoint = new URL(settings.dailyRecordAPI);
+    // Some existing settings contain a pasted API endpoint rather than the instance URL.
+    // Remove its known suffix without losing a reverse proxy's mount path.
+    const mountPath = endpoint.pathname
+      .replace(/\/+$/, '')
+      .replace(/\/api(?:\/v[12])?(?:\/memos?|\/(?:workspace|instance)\/profile)?$/, '');
+    this.baseURL = endpoint.origin + mountPath;
 
     this.app = app;
     this.file = file;
@@ -75,7 +83,6 @@ export class DailyRecord {
     this.localKey = `lifeos-daily-record-last-time-${this.settings.dailyRecordToken}`;
     this.lastTime = window.localStorage.getItem(this.localKey) || '';
     this.locale = locale;
-    this.baseURL = origin;
     this.memosUserResourceName = null;
     this.memosUserId = null;
     this.hasCreatedNewFile = false;
@@ -131,7 +138,9 @@ export class DailyRecord {
   async getMemosUserName() {
     let endpoint: { url: string; method: 'GET' | 'POST' };
 
-    if (this.memosVersion === 'v2.6') {
+    if (this.memosVersion === 'modern') {
+      endpoint = { url: '/api/auth/me', method: 'GET' };
+    } else if (this.memosVersion === 'v2.6') {
       endpoint = { url: '/api/v1/auth/me', method: 'GET' };
     } else if (this.memosVersion === 'v2.5') {
       endpoint = { url: '/api/v1/auth/sessions/current', method: 'GET' };
@@ -155,145 +164,182 @@ export class DailyRecord {
       const user = data && typeof data === 'object' && 'user' in data ? data.user : (data as UserType);
       this.memosUserName = user?.name || '';
       this.memosUserId = this.getMemosUserIdFromUser(user);
-      this.memosUserResourceName = this.getMemosUserResourceNameFromUser(user);
+      this.memosUserResourceName =
+        this.memosVersion === 'modern'
+          ? memosIdentity.isMemosUserResourceName(user?.name)
+            ? user.name
+            : null
+          : this.getMemosUserResourceNameFromUser(user);
     } catch (error) {
-      console.warn(`Failed to get user from ${endpoint.url} (version: ${this.memosVersion}): ${error.message}`);
-      logMessage(getI18n(this.locale)[`${ERROR_MESSAGE}AUTH_ENDPOINTS_FAILED`], LogLevel.info);
-    }
-
-    if (this.memosUserId === null) {
+      // Never substitute the instance owner for a token rejected by the server.
+      if (this.memosVersion === 'modern' || this.memosVersion === 'v2.6' || !isMissingEndpoint(error)) throw error;
       this.memosUserId = memosIdentity.getMemosUserIdFromOwner(this.memosProfile?.owner);
+      this.memosUserResourceName = memosIdentity.getMemosUserResourceNameFromOwner(this.memosProfile?.owner);
     }
 
-    if (this.memosUserResourceName === null) {
-      this.memosUserResourceName = memosIdentity.getMemosUserResourceNameFromOwner(this.memosProfile?.owner);
+    if (['modern', 'v2.6'].includes(this.memosVersion) && !this.memosUserResourceName) {
+      throw new Error('Failed to determine the authenticated Memos user');
     }
   }
 
   async getMemosVersion() {
-    // Try new instance/profile endpoint first (0.25.0+), then fall back to older workspace/profile endpoints
-    const urls = ['/api/v1/instance/profile', '/api/v1/workspace/profile', '/api/v2/workspace/profile'];
+    this.memosVersion = '';
+    const profiles = [
+      '/api/instance/profile',
+      '/api/v1/instance/profile',
+      '/api/v1/workspace/profile',
+      '/api/v2/workspace/profile',
+    ];
 
-    for (const url of urls) {
+    for (const url of profiles) {
+      let data: WorkspaceProfileType | InstanceProfileType;
       try {
-        const { json: data } = await customRequest<WorkspaceProfileType | InstanceProfileType>({
+        const response = await customRequest<WorkspaceProfileType | InstanceProfileType>({
           url: `${this.baseURL}${url}`,
           headers: {
             Authorization: `Bearer ${this.settings.dailyRecordToken}`,
           },
         });
-        // Handle both workspaceProfile and instanceProfile formats
-        this.memosProfile =
-          (data as WorkspaceProfileType).workspaceProfile || (data as InstanceProfileType).instanceProfile || data;
-        if (semver.lt(this.memosProfile.version, '0.22.0')) {
-          this.memosVersion = 'v1';
-        } else if (semver.lt(this.memosProfile.version, '0.25.0')) {
-          this.memosVersion = 'v2';
-        } else if (semver.lt(this.memosProfile.version, '0.26.0')) {
-          this.memosVersion = 'v2.5';
-        } else {
-          this.memosVersion = 'v2.6';
+        // Older Memos versions can return their SPA shell for an unknown API path.
+        // Do not interpret a proxy's sign-in page or a broken JSON response as an absent route.
+        const contentType = Object.entries(response.headers).find(
+          ([name]) => name.toLowerCase() === 'content-type',
+        )?.[1];
+        if (
+          response.status === 200 &&
+          /^text\/html(?:\s*;|$)/i.test(contentType || '') &&
+          (response.text.includes('<!-- memos.metadata.head -->') ||
+            (/<title>memos<\/title>/i.test(response.text) &&
+              response.text.includes('site.webmanifest') &&
+              response.text.includes('id="root"')))
+        ) {
+          continue;
         }
-        return; // 成功获取版本后退出方法
+        data = response.json;
       } catch (error) {
-        logMessage(`Failed to fetch from ${url}: ${error.message}`, LogLevel.warn);
+        if (!isMissingEndpoint(error)) throw error;
+        continue;
       }
+
+      const profile =
+        (data as WorkspaceProfileType)?.workspaceProfile ?? (data as InstanceProfileType)?.instanceProfile ?? data;
+      if (!profile || !semver.valid(profile.version)) {
+        throw new Error('Invalid Memos instance profile');
+      }
+      this.memosProfile = profile;
+      if (url === '/api/instance/profile') {
+        this.memosVersion = 'modern';
+      } else if (semver.lt(profile.version, '0.22.0')) {
+        this.memosVersion = 'v1';
+      } else if (semver.lt(profile.version, '0.25.0')) {
+        this.memosVersion = 'v2';
+      } else if (semver.lt(profile.version, '0.26.0')) {
+        this.memosVersion = 'v2.5';
+      } else {
+        this.memosVersion = 'v2.6';
+      }
+      return;
     }
 
-    if (!this.memosVersion) {
-      logMessage(`${getI18n(this.locale)[`${ERROR_MESSAGE}FAILED_GET_USEMEMOS_VERSION`]}`, LogLevel.warn);
-    }
+    throw new Error('No supported Memos profile endpoint');
   }
 
   async fetchMemosList() {
-    try {
-      if (this.memosVersion === 'v1') {
-        const { json: data } = await customRequest<DailyRecordType[] | FetchError>({
-          url: `${this.baseURL}/api/v1/memo`,
-          headers: {
-            Authorization: `Bearer ${this.settings.dailyRecordToken}`,
-          },
-          params: {
-            limit: this.pageSize.toString(),
-            offset: this.pageOffset.toString(),
-            rowStatus: 'NORMAL',
-          },
-        });
-
-        if (Array.isArray(data)) {
-          return data;
-        }
-
-        throw new Error(data.message || data.msg || data.error || JSON.stringify(data));
-      }
-
-      let filterParams = {};
-      const currentUserResourceName =
-        this.memosUserResourceName ?? (this.memosUserId !== null ? `users/${this.memosUserId}` : null);
-
-      if (this.memosVersion === 'v2.6') {
-        if (!currentUserResourceName) {
-          throw new Error('Failed to determine the current memos user');
-        }
-
-        filterParams = {
-          state: 'NORMAL',
-          filter: `creator == ${memosIdentity.celString(currentUserResourceName)}`,
-        };
-      } else if (this.memosVersion === 'v2.5') {
-        if (this.memosUserId === null) {
-          throw new Error('Failed to determine the current memos user ID');
-        }
-
-        filterParams = {
-          state: 'NORMAL',
-          filter: `creator_id == ${this.memosUserId}`,
-        };
-      } else if (semver.gte(this.memosProfile.version, '0.24.0')) {
-        if (!currentUserResourceName) {
-          throw new Error('Failed to determine the current memos user');
-        }
-
-        filterParams = {
-          parent: currentUserResourceName,
-          state: 'NORMAL',
-        };
-      } else if (semver.gte(this.memosProfile.version, '0.23.0')) {
-        if (!currentUserResourceName) {
-          throw new Error('Failed to determine the current memos user');
-        }
-
-        filterParams = {
-          filter: `creator == '${currentUserResourceName}' && state == 'NORMAL'`,
-        };
-      } else {
-        filterParams = {
-          filter: 'row_status=="NORMAL"',
-        };
-      }
-
-      const { json: data } = await customRequest<DailyRecordResponseTypeV2>({
-        url: `${this.baseURL}/api/v1/memos`,
+    if (this.memosVersion === 'v1') {
+      const { json: data } = await customRequest<DailyRecordType[] | FetchError>({
+        url: `${this.baseURL}/api/v1/memo`,
         headers: {
           Authorization: `Bearer ${this.settings.dailyRecordToken}`,
         },
         params: {
-          pageSize: this.pageSize.toString(),
-          pageToken: this.pageToken,
-          ...filterParams,
+          limit: this.pageSize.toString(),
+          offset: this.pageOffset.toString(),
+          rowStatus: 'NORMAL',
         },
       });
 
-      if (data.code === 1) {
-        throw new Error(data.message);
+      if (Array.isArray(data)) {
+        return data;
       }
 
-      this.pageToken = data.nextPageToken;
-
-      return data.memos?.map(transformV2Record);
-    } catch (error) {
-      logMessage(`${getI18n(this.locale)[`${ERROR_MESSAGE}DAILY_RECORD_FETCH_FAILED`]}: ${error}`, LogLevel.warn);
+      throw new Error(data.message || data.msg || data.error || JSON.stringify(data));
     }
+
+    let filterParams = {};
+    const currentUserResourceName =
+      this.memosUserResourceName ?? (this.memosUserId !== null ? `users/${this.memosUserId}` : null);
+
+    if (this.memosVersion === 'modern' || this.memosVersion === 'v2.6') {
+      if (!currentUserResourceName) {
+        throw new Error('Failed to determine the current memos user');
+      }
+
+      // 26.11.2 changed ListMemos to include comments and introduced the parent predicate;
+      // stock 26.11.1 rejects that predicate. Keep a wire-level guard as well.
+      const excludeComments = this.memosVersion === 'modern' && semver.gte(this.memosProfile.version, '26.11.2');
+      filterParams = {
+        state: 'NORMAL',
+        filter: `creator == ${memosIdentity.celString(currentUserResourceName)}${excludeComments ? ' && parent == null' : ''}`,
+      };
+    } else if (this.memosVersion === 'v2.5') {
+      if (this.memosUserId === null) {
+        throw new Error('Failed to determine the current memos user ID');
+      }
+
+      filterParams = {
+        state: 'NORMAL',
+        filter: `creator_id == ${this.memosUserId}`,
+      };
+    } else if (semver.gte(this.memosProfile.version, '0.24.0')) {
+      if (!currentUserResourceName) {
+        throw new Error('Failed to determine the current memos user');
+      }
+
+      filterParams = {
+        parent: currentUserResourceName,
+        state: 'NORMAL',
+      };
+    } else if (semver.gte(this.memosProfile.version, '0.23.0')) {
+      if (!currentUserResourceName) {
+        throw new Error('Failed to determine the current memos user');
+      }
+
+      filterParams = {
+        filter: `creator == '${currentUserResourceName}' && state == 'NORMAL'`,
+      };
+    } else {
+      filterParams = {
+        filter: 'row_status=="NORMAL"',
+      };
+    }
+
+    const prefix = this.memosVersion === 'modern' ? '/api' : '/api/v1';
+    const { json: data } = await customRequest<DailyRecordResponseTypeV2>({
+      url: `${this.baseURL}${prefix}/memos`,
+      headers: {
+        Authorization: `Bearer ${this.settings.dailyRecordToken}`,
+      },
+      params: {
+        pageSize: this.pageSize.toString(),
+        pageToken: this.pageToken,
+        ...filterParams,
+      },
+    });
+
+    if (
+      !data ||
+      data.code ||
+      !Array.isArray(data.memos) ||
+      (data.nextPageToken != null && typeof data.nextPageToken !== 'string')
+    ) {
+      throw new Error(data?.message || 'Invalid Memos list response');
+    }
+
+    this.pageToken = data.nextPageToken || '';
+
+    return data.memos
+      .filter((memo) => this.memosVersion !== 'modern' || !memo?.parent)
+      .map((memo) => transformV2Record(memo, this.memosVersion === 'modern'));
   }
 
   async fetchResourceList() {
@@ -343,11 +389,8 @@ export class DailyRecord {
             return resource;
           });
         } catch (attachmentError) {
-          // Fall back to resources API if attachments API fails
-          logMessage(
-            `Attachments API failed, falling back to resources API: ${attachmentError.message}`,
-            LogLevel.warn,
-          );
+          // Older Memos builds may lack attachments; permission and transient failures must remain visible.
+          if (!isMissingEndpoint(attachmentError)) throw attachmentError;
         }
       }
 
@@ -365,107 +408,132 @@ export class DailyRecord {
 
       return data?.resources;
     } catch (error) {
-      if (error.response?.status === 404) {
-        return;
-      }
-      logMessage(`${getI18n(this.locale)[`${ERROR_MESSAGE}RESOURCE_FETCH_FAILED`]}: ${error}`, LogLevel.warn);
+      if (isMissingEndpoint(error)) return;
+      throw error;
     }
   }
 
-  forceSync = async () => {
-    this.lastTime = '';
-    await this.sync();
-  };
+  forceSync = () => this.runSync(true);
 
-  sync = async () => {
-    logMessage(getI18n(this.locale)[`${MESSAGE}START_SYNC_USEMEMOS`]);
+  sync = () => this.runSync(false);
+
+  private runSync(force: boolean): Promise<void> {
+    if (this.pendingSync) {
+      // A manual backfill must not reset the state of an in-flight normal sync.
+      return force ? this.pendingSync.then(() => this.runSync(true)) : this.pendingSync;
+    }
+
+    const task = this.syncMemos(force).finally(() => {
+      this.pendingSync = null;
+    });
+    this.pendingSync = task;
+    return task;
+  }
+
+  private async syncMemos(force: boolean) {
+    if (!this.baseURL) return;
+    const syncStarted = Date.now().toString();
+    const previousCheckpoint = this.lastTime;
+    if (force) this.lastTime = '';
     this.pageOffset = 0;
     this.pageToken = '';
+    this.hasCreatedNewFile = false;
+    logMessage(getI18n(this.locale)[`${MESSAGE}START_SYNC_USEMEMOS`]);
 
-    // Execute version and user name detection with error handling
+    let errorKey = 'VERSION_DETECTION_FAILED';
     try {
       await this.getMemosVersion();
-    } catch (error) {
-      logMessage(
-        `${getI18n(this.locale)[`${ERROR_MESSAGE}VERSION_DETECTION_FAILED`]}: ${error.message}`,
-        LogLevel.warn,
-      );
-    }
-
-    try {
+      errorKey = 'USER_INFO_FAILED';
       await this.getMemosUserName();
+      errorKey = 'DAILY_RECORD_FETCH_FAILED';
+      await this.insertDailyRecord();
+      if (this.memosVersion !== 'modern') {
+        errorKey = 'RESOURCE_FETCH_FAILED';
+        await this.downloadResources((await this.fetchResourceList()) || []);
+      }
+
+      if (this.hasCreatedNewFile) {
+        // Keep the previous checkpoint if Templater is still preparing a new note.
+        this.lastTime = previousCheckpoint;
+      } else {
+        window.localStorage.setItem(this.localKey, syncStarted);
+        this.lastTime = syncStarted;
+      }
+      logMessage(getI18n(this.locale)[`${MESSAGE}END_SYNC_USEMEMOS`]);
     } catch (error) {
-      logMessage(`${getI18n(this.locale)[`${ERROR_MESSAGE}USER_INFO_FAILED`]}: ${error.message}`, LogLevel.warn);
+      this.lastTime = previousCheckpoint;
+      logMessage(`${getI18n(this.locale)[`${ERROR_MESSAGE}${errorKey}`]}: ${error}`, LogLevel.warn);
     }
-
-    await Promise.all([this.insertDailyRecord(), this.downloadResource()]);
-  };
-
-  async downloadResource() {
-    const resourceList = (await this.fetchResourceList()) || [];
-
-    await Promise.all(
-      resourceList.map(async (resource: ResourceType) => {
-        if (resource.externalLink) {
-          return;
-        }
-
-        const folder = joinVaultPath(this.settings.periodicNotesPath, 'Attachments');
-        const resourcePath = normalizePath(`${folder}/${generateFileName(resource)}`);
-
-        const isResourceExists = await this.app.vault.adapter.exists(resourcePath);
-
-        if (isResourceExists) {
-          return;
-        }
-
-        let downloadUrl;
-        if (this.memosVersion === 'v1') {
-          downloadUrl = `/o/r/${resource.uid || resource.name || resource.id}`;
-        } else if (this.memosVersion === 'v2.5' || this.memosVersion === 'v2.6') {
-          // New attachments API endpoint - use original name with "attachments/" prefix
-          const attachmentName = (resource as any).originalName || resource.name;
-          downloadUrl = `/file/${attachmentName}/${resource.filename}`;
-        } else {
-          // Legacy v2 resources API
-          downloadUrl = `/file/${resource.name}/${resource.filename}`;
-        }
-
-        const { arrayBuffer: data } = await customRequest({
-          url: `${this.baseURL}${downloadUrl}`,
-          headers: {
-            Authorization: `Bearer ${this.settings.dailyRecordToken}`,
-          },
-        });
-
-        if (!data) {
-          return;
-        }
-
-        if (!(this.app.vault.getAbstractFileByPath(folder) instanceof TFolder)) {
-          await this.app.vault.createFolder(folder);
-        }
-
-        await this.app.vault.adapter.writeBinary(resourcePath, data);
-      }),
-    );
   }
 
-  insertDailyRecord = async () => {
+  private async downloadResources(resources: ResourceType[]) {
+    const folder = joinVaultPath(this.settings.periodicNotesPath, 'Attachments');
+    for (const resource of resources) {
+      if (resource.externalLink) continue;
+
+      const resourcePath = normalizePath(`${folder}/${generateFileName(resource)}`);
+      if (await this.app.vault.adapter.exists(resourcePath)) continue;
+
+      let downloadUrl: string;
+      if (this.memosVersion === 'modern') {
+        downloadUrl = `/file/attachments/${encodeURIComponent(resource.id)}`;
+      } else if (this.memosVersion === 'v1') {
+        downloadUrl = `/o/r/${resource.uid || resource.name || resource.id}`;
+      } else {
+        const attachmentName = resource.originalName || resource.name;
+        downloadUrl = `/file/${attachmentName}/${encodeURIComponent(resource.filename)}`;
+      }
+
+      const { arrayBuffer: data } = await customRequest({
+        url: `${this.baseURL}${downloadUrl}`,
+        headers: {
+          Authorization: `Bearer ${this.settings.dailyRecordToken}`,
+        },
+      });
+
+      if (!data) throw new Error('Missing Memos attachment content');
+      if (!(this.app.vault.getAbstractFileByPath(folder) instanceof TFolder)) {
+        await this.app.vault.createFolder(folder);
+      }
+      await this.app.vault.adapter.writeBinary(resourcePath, data);
+    }
+  }
+
+  async insertDailyRecord() {
+    const seenTokens = new Set<string>();
+    while (true) {
+      const records = await this.fetchMemosList();
+      if (records.some((record) => !Number.isFinite(record.createdTs))) {
+        throw new Error('Invalid Memos record timestamp');
+      }
+      if (this.pageToken && seenTokens.has(this.pageToken)) {
+        throw new Error('Memos returned a repeated pagination token');
+      }
+
+      const checkpoint = Number(this.lastTime);
+      // Compare granularity with the source. Keep the boundary second eligible
+      // so a memo created just after the request started cannot be skipped.
+      const eligible = records.filter((record) => record.createdTs >= Math.floor(checkpoint / 1000));
+      if (this.memosVersion === 'modern') {
+        await this.downloadResources(eligible.flatMap((record) => record.resourceList ?? []));
+      }
+      await this.insertPage(eligible);
+
+      // An empty normalized page can still have a cursor (e.g. only comments).
+      if (records.length && !eligible.length) return;
+      if (this.memosVersion === 'v1') {
+        if (!records.length) return;
+        this.pageOffset += this.pageSize;
+      } else {
+        if (!this.pageToken) return;
+        seenTokens.add(this.pageToken);
+      }
+    }
+  }
+
+  private async insertPage(records: DailyRecordType[]) {
     const header = this.settings.dailyRecordHeader;
     const dailyRecordByDay: Record<string, Record<string, string>> = {};
-    const records = (await this.fetchMemosList()) || [];
-    const mostRecentTimeStamp = records[0]?.createdAt ? moment(records[0]?.createdAt).unix() : records[0]?.createdTs;
-
-    if (!records.length || mostRecentTimeStamp * 1000 < Number(this.lastTime)) {
-      // 直到 record 返回为空，或者最新的一条记录的时间，晚于上一次同步时间
-      logMessage(getI18n(this.locale)[`${MESSAGE}END_SYNC_USEMEMOS`]);
-
-      this.updateRecentTimestamp();
-
-      return;
-    }
-
     for (const record of records) {
       if (!record.content && !record.resourceList?.length) {
         continue;
@@ -482,7 +550,7 @@ export class DailyRecord {
       }
     }
 
-    await Promise.all(
+    const results = await Promise.allSettled(
       Object.keys(dailyRecordByDay).map(async (today) => {
         const momentDay = moment(today);
         const link = `${momentDay.year()}/Daily/${String(momentDay.month() + 1).padStart(
@@ -508,92 +576,74 @@ export class DailyRecord {
         const reg = generateHeaderRegExp(header);
 
         if (targetFile instanceof TFile) {
-          const originFileContent = await this.app.vault.read(targetFile);
-          const regMatch = originFileContent.match(reg);
+          const dailyFile = targetFile;
+          await withVaultLock(this.app.vault, () =>
+            this.app.vault.process(dailyFile, (originFileContent) => {
+              const regMatch = originFileContent.match(reg);
 
-          if (!regMatch?.length || !regMatch?.index) {
-            if (!this.settings.dailyRecordToken) {
-              logMessage('Current daily file will not insert daily record due to no daily record header');
-              return;
-            }
+              if (regMatch?.index === undefined) {
+                return originFileContent;
+              }
 
-            return;
-          }
+              const localRecordContent = regMatch[2]?.trim();
+              const from = regMatch.index + regMatch[1].length;
+              const to = regMatch.index + regMatch[0].length;
+              const prefix = originFileContent.slice(0, from);
+              const suffix = originFileContent.slice(to);
+              const localRecordList = localRecordContent ? localRecordContent.split(/\n(?=- )/g) : [];
+              const remoteRecordListWithTime: Record<string, string> = {};
+              const localRecordListWithTime: Record<string, string> = {};
+              const localRecordWithoutTime: string[] = [];
 
-          const localRecordContent = regMatch[2]?.trim();
-          const from = regMatch?.index + regMatch[1].length + 1;
-          const to = from + localRecordContent.length;
-          const prefix = originFileContent.slice(0, from);
-          const suffix = originFileContent.slice(to);
-          const localRecordList = localRecordContent ? localRecordContent.split(/\n(?=- )/g) : [];
-          const remoteRecordListWithTime: Record<string, string> = {};
-          const localRecordListWithTime: Record<string, string> = {};
-          const localRecordWithoutTime: string[] = [];
+              for (const record of localRecordList) {
+                const regMatch = record.match(/.*\^(\d{10})/);
+                const createdTs = regMatch?.length ? regMatch[1]?.trim() : '';
 
-          for (const record of localRecordList) {
-            const regMatch = record.match(/.*\^(\d{10})/);
-            const createdTs = regMatch?.length ? regMatch[1]?.trim() : '';
+                if (createdTs) {
+                  remoteRecordListWithTime[createdTs] = record;
+                } else if (/^- (\[.*\] )?\d\d:\d\d/.test(record)) {
+                  // 本地有时间的记录
+                  const regMatch = record.match(/\d\d:\d\d/);
 
-            if (createdTs) {
-              remoteRecordListWithTime[createdTs] = record;
-            } else if (/^- (\[.*\] )?\d\d:\d\d/.test(record)) {
-              // 本地有时间的记录
-              const regMatch = record.match(/\d\d:\d\d/);
+                  if (regMatch) {
+                    const time = regMatch[0]?.trim();
+                    const timeStamp = moment(`${today}-${time}`, 'YYYY-MM-DD-HH:mm').unix();
 
-              if (regMatch) {
-                const time = regMatch[0]?.trim();
-                const timeStamp = moment(`${today}-${time}`, 'YYYY-MM-DD-HH:mm').unix();
-
-                if (localRecordListWithTime[timeStamp]) {
-                  // 避免时间戳重复，导致相互覆盖
-                  localRecordListWithTime[timeStamp + 1] = record;
+                    if (localRecordListWithTime[timeStamp]) {
+                      // 避免时间戳重复，导致相互覆盖
+                      localRecordListWithTime[timeStamp + 1] = record;
+                    } else {
+                      localRecordListWithTime[timeStamp] = record;
+                    }
+                  }
                 } else {
-                  localRecordListWithTime[timeStamp] = record;
+                  localRecordWithoutTime.push(record);
                 }
               }
-            } else {
-              localRecordWithoutTime.push(record);
-            }
-          }
 
-          const sortedRecordList = Object.entries({
-            ...dailyRecordByDay[today],
-            ...remoteRecordListWithTime,
-            ...localRecordListWithTime,
-          })
-            .sort((a, b) => {
-              const indexA = Number(a[0]);
-              const indexB = Number(b[0]);
-              return indexA - indexB;
-            })
-            .map((item) => item[1]);
+              const sortedRecordList = Object.entries({
+                ...dailyRecordByDay[today],
+                ...remoteRecordListWithTime,
+                ...localRecordListWithTime,
+              })
+                .sort((a, b) => {
+                  const indexA = Number(a[0]);
+                  const indexB = Number(b[0]);
+                  return indexA - indexB;
+                })
+                .map((item) => item[1]);
 
-          const finalRecordContent = localRecordWithoutTime.concat(sortedRecordList).join('\n');
-          const fileContent = `${prefix.trim()}\n${finalRecordContent}\n\n${suffix.trim()}\n`;
+              const finalRecordContent = localRecordWithoutTime.concat(sortedRecordList).join('\n');
+              const fileContent = `${prefix}\n${finalRecordContent}\n${suffix}`;
 
-          await this.app.vault.modify(targetFile, fileContent);
+              return fileContent;
+            }),
+          );
         }
       }),
     );
-
-    if (this.memosVersion === 'v1') {
-      this.pageOffset = this.pageOffset + this.pageSize;
-    } else if (!this.pageToken) {
-      // v2 没有下一页 pageToken 时
-      logMessage(getI18n(this.locale)[`${MESSAGE}END_SYNC_USEMEMOS`]);
-
-      this.updateRecentTimestamp();
-
-      return;
+    for (const result of results) {
+      if (result.status === 'rejected') throw result.reason;
     }
-
-    await this.insertDailyRecord();
-  };
-
-  updateRecentTimestamp = () => {
-    // 只有当没有创建新文件时才更新 localStorage，避免在这种情况下，存在没有把 memos 同步到本地的情况
-    if (!this.hasCreatedNewFile) {
-      window.localStorage.setItem(this.localKey, Date.now().toString());
-    }
-  };
+  }
 }

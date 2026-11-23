@@ -122,6 +122,7 @@ export type DailyRecordType = {
 };
 
 export type DailyRecordTypeV2 = {
+  parent?: string | null;
   rowStatus: 'ARCHIVED' | 'ACTIVE' | 'NORMAL';
   content: string;
   updateTime: number;
